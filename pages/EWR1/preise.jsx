@@ -16,7 +16,6 @@ import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } fro
 import Statistik from '../EWR1/stk1';
 import Durchschnitt from '../EWR1/durch11';
 
-
 // Register Chart.js components
 ChartJSInstance.register(LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend, Filler);
 
@@ -119,6 +118,12 @@ const styles = `
   }
   .sidebar a:hover {
     background-color: #D9043D;
+  }
+  .sidebar a.active {
+    background-color: #D9043D;
+  }
+  .sidebar a.active .fa-chart-line {
+    color: #FFFFFF !important;
   }
   .sidebar a p {
     text-align: center;
@@ -388,9 +393,6 @@ const Energiemanager = () => {
         </header>
 
         <div className="content-wrapper">
-          
-       
-
           <div className="sidebar w-full p-3 bg-[#202026]">
             <div className="flex h-full flex-col justify-between">
               <div className="flex flex-col gap-3">
@@ -410,8 +412,11 @@ const Energiemanager = () => {
                     <FontAwesomeIcon icon={faHouse} style={{ color: '#05A696' }} />
                     <p className="text-white text-xs font-medium leading-normal">Home</p>
                   </a>
-                  <a href="/EWR1/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
-                    <FontAwesomeIcon icon={faChartLine} style={{ color: '#05A696' }} />
+                  <a
+                    href="/EWR1/preise"
+                    className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#D9043D] text-white active"
+                  >
+                    <FontAwesomeIcon icon={faChartLine} style={{ color: '#FFFFFF' }} />
                     <p className="text-white text-xs font-medium leading-normal">Preis</p>
                   </a>
                   <a href="/EWR1/rechner" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
@@ -436,7 +441,7 @@ const Energiemanager = () => {
               <div className="flex flex-col gap-6 mt-6 flex-1">
                 <div className="content-box flex min-w-[150px] flex-1 flex-col gap-3 rounded-xl bg-gray-50 shadow-sm">
                   <div>
-                    <Statistik/>
+                    <Statistik />
                   </div>
                 </div>
               </div>
@@ -444,10 +449,9 @@ const Energiemanager = () => {
           </div>
 
           <div className="bottom-boxes">
-            <Durchschnitt/>
+            <Durchschnitt />
           </div>
 
-          
         </div>
 
         <footer className="footer">

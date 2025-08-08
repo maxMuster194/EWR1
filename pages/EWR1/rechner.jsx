@@ -15,7 +15,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import StrompreisChart from '../EWR1/Profil8';
 
-
 // Register Chart.js components
 ChartJSInstance.register(LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend, Filler);
 
@@ -118,6 +117,12 @@ const styles = `
   }
   .sidebar a:hover {
     background-color: #D9043D;
+  }
+  .sidebar a.active {
+    background-color: #D9043D;
+  }
+  .sidebar a.active .fa-calculator {
+    color: #FFFFFF !important;
   }
   .sidebar a p {
     text-align: center;
@@ -414,19 +419,31 @@ const Energiemanager = () => {
                     <FontAwesomeIcon icon={faHouse} style={{ color: '#05A696' }} />
                     <p className="text-white text-xs font-medium leading-normal">Home</p>
                   </a>
-                  <a href="/EWR1/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+                  <a
+                    href="/EWR1/preise"
+                    className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#D9043D] text-white"
+                  >
                     <FontAwesomeIcon icon={faChartLine} style={{ color: '#05A696' }} />
                     <p className="text-white text-xs font-medium leading-normal">Preis</p>
                   </a>
-                  <a href="/EWR1/rechner" className="PD9043D] text-white">
-                    <FontAwesomeIcon icon={faCalculator} style={{ color: '#05A696' }} />
+                  <a
+                    href="/EWR1/rechner"
+                    className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#D9043D] text-white active"
+                  >
+                    <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF' }} />
                     <p className="text-white text-xs font-medium leading-normal">Rechner</p>
                   </a>
-                  <a href="/EWR1/details" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+                  <a
+                    href="/EWR1/details"
+                    className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#D9043D] text-white"
+                  >
                     <FontAwesomeIcon icon={faFileLines} style={{ color: '#05A696' }} />
                     <p className="text-white text-xs font-medium leading-normal">Detail-Rechner</p>
                   </a>
-                  <a href="/EWR1/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+                  <a
+                    href="/EWR1/hilfe"
+                    className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#D9043D] text-white"
+                  >
                     <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#05A696' }} />
                     <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
                   </a>
@@ -446,8 +463,6 @@ const Energiemanager = () => {
               </div>
             </div>
           </div>
-
-         
         </div>
 
         <footer className="footer">
