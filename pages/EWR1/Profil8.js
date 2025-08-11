@@ -257,14 +257,14 @@ function StrompreisChart() {
   const [error, setError] = useState(null);
   const [activeProfile, setActiveProfile] = useState(null);
   const [householdType, setHouseholdType] = useState('none');
-  const [selectedDiscount, setSelectedDiscount] = useState(null); // Initially no region selected
+  const [selectedDiscount, setSelectedDiscount] = useState(null);
 
   const profileFactors = { 1: 2.1, 2: 3.4, 3: 5.4, 4: 7, 5: 8.9 };
   const regionOptions = [
     { label: 'KF', value: 15 },
     { label: 'MN', value: 17 },
     { label: 'MOD', value: 13 },
-  ]; // Region labels with corresponding values in cents
+  ];
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -370,7 +370,7 @@ function StrompreisChart() {
   };
 
   const handleDiscountToggle = (value) => {
-    setSelectedDiscount(selectedDiscount === value ? null : value); // Toggle on/off, deselect others
+    setSelectedDiscount(selectedDiscount === value ? null : value);
   };
 
   const adjustedCustomPrice = selectedDiscount === null ? parseFloat(customPrice) : parseFloat(customPrice) - selectedDiscount;
@@ -668,7 +668,7 @@ function StrompreisChart() {
             transition: border-color 0.2s ease, background-color 0.2s ease;
           }
           .radio-input:checked {
-            border-color: rgb(5,166,150);
+            border: 2px solid rgb(5,166,150);
             background-color: #fff;
           }
           .radio-input:checked::before {
@@ -913,13 +913,6 @@ function StrompreisChart() {
         {strompreisChartData.length === 0 && !selectedH0Data && !selectedH0PVData && (
           <p style={styles.noData}>⚠️ Keine Daten für das ausgewählte Datum.</p>
         )}
-        <p style={styles.noteText}>
-          *Hinweis: Bei den gezeigten Daten handelt es sich um Vergleichswerte, die für 1 bis zu 5 Personen in einem Haushalt
-          durchschnittlich ermittelt werden. Diese Daten sind nur als grober Richtwert zu verstehen und bieten keine genaue
-          Auskunft über die zu erwartende Ersparnis gegenüber einem gewöhnlichen Stromvertrag. Für genauere Daten, die
-          genau auf Ihren Haushalt abgestimmt sind, bitte zum Detailrechner wechseln.
-        </p>
-
         {householdType !== 'none' && activeProfile && (
           <div style={styles.consumptionSummary}>
             <h3 style={styles.summaryTitle}>Täglicher Verbrauch und Kosten</h3>
@@ -975,6 +968,12 @@ function StrompreisChart() {
             </table>
           </div>
         )}
+        <p style={styles.noteText}>
+          *Hinweis: Bei den gezeigten Daten handelt es sich um Vergleichswerte, die für 1 bis zu 5 Personen in einem Haushalt
+          durchschnittlich ermittelt werden. Diese Daten sind nur als grober Richtwert zu verstehen und bieten keine genaue
+          Auskunft über die zu erwartende Ersparnis gegenüber einem gewöhnlichen Stromvertrag. Für genauere Daten, die
+          genau auf Ihren Haushalt abgestimmt sind, bitte zum Detailrechner wechseln.
+        </p>
       </div>
     </div>
   );
