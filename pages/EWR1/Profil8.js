@@ -261,9 +261,9 @@ function StrompreisChart() {
 
   const profileFactors = { 1: 2.1, 2: 3.4, 3: 5.4, 4: 7, 5: 8.9 };
   const regionOptions = [
-    { label: 'KF', value: 2 },
-    { label: 'MN', value: 5 },
-    { label: 'KE', value: 10 },
+    { label: 'KF', value: 15 },
+    { label: 'MN', value: 17 },
+    { label: 'MOD', value: 13 },
   ]; // Region labels with corresponding values in cents
 
   const getCurrentDate = () => {

@@ -13,8 +13,8 @@ import {
 } from 'chart.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import Statistik from '../EWR1/stk1';
-import Durchschnitt from '../EWR1/durch11';
+import Statistik from '../EWR1/stk3';
+import Durchschnitt from './durch12';
 
 // Register Chart.js components
 ChartJSInstance.register(LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend, Filler);
