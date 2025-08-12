@@ -393,6 +393,16 @@ const Energiemanager = () => {
         </header>
 
         <div className="content-wrapper">
+
+        <div className="top-box p-6 rounded-xl bg-white">
+            <div className="flex flex-col gap-3 rounded-xl p-6 bg-gray-50 shadow-sm text-center">
+              <div className="flex items-center justify-center gap-4">
+                <p className="text-[#409966] text-2xl font-bold leading-normal">BÖRSENPREIS ENERGIE
+                </p>
+              </div>
+            </div>
+            </div>
+
           <div className="sidebar w-full p-3 bg-[#202026]">
             <div className="flex h-full flex-col justify-between">
               <div className="flex flex-col gap-3">

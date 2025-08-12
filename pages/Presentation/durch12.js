@@ -329,7 +329,7 @@ export default function MongoDBPricesPage() {
 
   return (
     <div className="max-w-7xl mx-auto p-6 bg-white rounded-2xl shadow-lg">
-      <h1 className="text-3xl font-bold text-[#062316] text-center mb-8">Durchschnittspreise 2025</h1>
+      <h1 className="text-3xl font-bold text-[#062316] text-center mb-8">Kalkulation Ihrer Einsparmöglichkeiten</h1>
 
       <div className="bg-white p-6 rounded-xl shadow-md mb-8">
         <label className="block text-xl font-semibold text-[#062316] mb-4 text-center">
@@ -371,7 +371,7 @@ export default function MongoDBPricesPage() {
               }`}
               title={discount.tooltip}
             >
-              {discount.label} (-{discount.value}¢)
+              {discount.label} 
             </button>
           ))}
         </div>
@@ -391,7 +391,7 @@ export default function MongoDBPricesPage() {
               className={`p-6 rounded-xl shadow-md cursor-pointer text-center transition-all ${
                 selectedMonth === monthKey
                   ? 'bg-[#062316] text-white transform -translate-y-1'
-                  : 'bg-[#409966] text-white hover:bg-[#062316] hover:shadow-lg'
+                  : 'bg-[#062316] text-white hover:bg-[#75ff2b] hover:text-[#062316] hover:shadow-lg'
               }`}
             >
               <div className="text-xl font-bold">{monthNames[index]}</div>

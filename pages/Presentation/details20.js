@@ -934,7 +934,7 @@ body {
   background: linear-gradient(90deg, #062316,rgb(64, 153, 102));
 }
 .menu-header span {
-  font-size: 1.25rem;
+  font-size: 0.9rem;
   font-weight: 700;
 }
 
