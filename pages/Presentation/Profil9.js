@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
@@ -243,20 +244,34 @@ const styles = {
     alignItems: 'center',
     gap: '4px',
   },
+  imageContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: '8px',
+    margin: '12px 0',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+  },
+  image: {
+    width: '60px',
+    height: 'auto',
+    objectFit: 'contain',
+  },
 };
 
 function StrompreisChart() {
   const [strompreisData, setStrompreisData] = useState([]);
   const [h0Data, setH0Data] = useState([]);
   const [h0PVData, setH0PVData] = useState([]);
-  const [h0PVStorageData, setH0PVStorageData] = useState([]); // Neue State-Variable für PV mit Speicher
+  const [h0PVStorageData, setH0PVStorageData] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [availableDates, setAvailableDates] = useState([]);
   const [customPrice, setCustomPrice] = useState('32');
   const [inputError, setInputError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeProfile, setActiveProfile] = useState(null);
+  const [activeProfile, setActiveProfile] = useState(1);
   const [householdType, setHouseholdType] = useState('none');
   const [selectedDiscount, setSelectedDiscount] = useState(null);
 
@@ -315,18 +330,16 @@ function StrompreisChart() {
         }
         setH0PVData(h0PVResult);
 
-        // Auskommentiert, um 404-Fehler zu vermeiden
-        /*
-        const h0PVStorageResponse = await fetch('/api/h0pvStorage');
-        if (!h0PVStorageResponse.ok) {
-          throw new Error(`HTTP error for H0PVStorage: ${h0PVStorageResponse.status}`);
-        }
-        const h0PVStorageResult = await h0PVStorageResponse.json();
-        if (!Array.isArray(h0PVStorageResult)) {
-          throw new Error('No H0PVStorage data received from API');
-        }
-        setH0PVStorageData(h0PVStorageResult);
-        */
+        // Uncomment if /api/h0pvStorage is available
+        // const h0PVStorageResponse = await fetch('/api/h0pvStorage');
+        // if (!h0PVStorageResponse.ok) {
+        //   throw new Error(`HTTP error for H0PVStorage: ${h0PVStorageResponse.status}`);
+        // }
+        // const h0PVStorageResult = await h0PVStorageResponse.json();
+        // if (!Array.isArray(h0PVStorageResult)) {
+        //   throw new Error('No H0PVStorage data received from API');
+        // }
+        // setH0PVStorageData(h0PVStorageResult);
 
         const uniqueDates = [...new Set(
           germanyData
@@ -406,7 +419,7 @@ function StrompreisChart() {
 
   const selectedH0Data = h0Data.find((item) => item.date === formatDateForComparison(selectedDate));
   const selectedH0PVData = h0PVData.find((item) => item.date === formatDateForComparison(selectedDate));
-  const selectedH0PVStorageData = h0PVStorageData.find((item) => item.date === formatDateForComparison(selectedDate)); // Neue Daten für PV mit Speicher
+  const selectedH0PVStorageData = h0PVStorageData.find((item) => item.date === formatDateForComparison(selectedDate));
 
   const calculateConsumptionAndCosts = (profile) => {
     const factor = profileFactors[profile];
@@ -692,7 +705,7 @@ function StrompreisChart() {
             box-shadow: 0 0 0 3px rgba(3, 160, 129, 0.1);
           }
           .input-error {
-            color:rgb(218, 17, 17);
+            color: rgb(218, 17, 17);
             font-size: 12px;
             margin-top: 4px;
           }
@@ -789,6 +802,22 @@ function StrompreisChart() {
           .discount-switch-container input:focus + .discount-switch-slider {
             box-shadow: 0 0 0 3px rgba(3, 160, 129, 0.1);
           }
+          /* CSS für individuelle Bildpositionierung */
+          .menschen1 {
+            transform: translate(0px, 0px); /* Beispiel: Bild 1 bleibt an Originalposition */
+          }
+          .menschen2 {
+            transform: translate(10px, 0px); /* Beispiel: Bild 2 leicht verschoben */
+          }
+          .menschen3 {
+            transform: translate(15px, 0px); /* Beispiel: Bild 3 nach oben/links */
+          }
+          .menschen4 {
+            transform: translate(18px, 0px); /* Beispiel: Bild 4 nach rechts */
+          }
+          .menschen5 {
+            transform: translate(20px, 0px); /* Beispiel: Bild 5 nach unten */
+          }
           @media (max-width: 900px) {
             .main-container {
               flex-direction: column;
@@ -819,6 +848,16 @@ function StrompreisChart() {
               flex: 1;
               min-width: 60px;
             }
+            .image-container {
+              flex-wrap: wrap;
+              justify-content: center;
+            }
+            .image {
+              width: 50px;
+            }
+            .menschen1, .menschen2, .menschen3, .menschen4, .menschen5 {
+              transform: none; /* Entfernt Verschiebung auf kleinen Bildschirmen */
+            }
           }
         `}
       </style>
@@ -830,35 +869,34 @@ function StrompreisChart() {
         {!loading && !error && (
           <>
             <div style={styles.controlGroup}>
-  <label style={styles.sliderLabel}>Wie viele Personen leben in Ihrem Haushalt?</label>
-  <img
-    src="/bilder/menschen.jpg"
-    alt="Haushaltsmitglieder"
-    style={{
-      width: '100%', // Bild nimmt die volle Breite des Containers ein
-      maxWidth: '240px', // Maximale Breite, anpassbar
-      height: 'auto', // Höhe passt sich proportional an
-      margin: '12px 0', // Abstand oben und unten, anpassbar
-      marginLeft: '50px', // Bild wird 20px nach rechts eingerückt
-      objectFit: 'contain', // Bild wird skaliert, ohne verzerrt zu werden
-      display: 'block', // Sorgt dafür, dass das Bild als Block-Element angezeigt wird
-    }}
-  />
-  <input
-    type="range"
-    min="0"
-    max="5"
-    step="1"
-    value={activeProfile || 0}
-    onChange={handleProfileChange}
-    style={{ ...styles.slider }}
-    className="slider"
-  />
-  <div style={{ fontSize: '14px', color: '#333' }}>
-    {activeProfile ? `${activeProfile} Person${activeProfile === 1 ? '' : 'en'}` : '0 Personen '}
-  </div>
-</div>
-
+              <label style={styles.sliderLabel}>Wie viele Personen leben in Ihrem Haushalt?</label>
+              {activeProfile >= 1 && (
+                <div style={styles.imageContainer} className="image-container">
+                  {['menschen1', 'menschen2', 'menschen3', 'menschen4', 'menschen5'].map((id) => (
+                    <img
+                      key={id}
+                      src={`/bilder/${id}.jpg`}
+                      alt={`Haushaltsmitglied ${id.replace('menschen', '')}`}
+                      style={styles.image}
+                      className={id}
+                    />
+                  ))}
+                </div>
+              )}
+              <input
+                type="range"
+                min="1"
+                max="5"
+                step="1"
+                value={activeProfile || 1}
+                onChange={handleProfileChange}
+                style={{ ...styles.slider }}
+                className="slider"
+              />
+              <div style={{ fontSize: '14px', color: '#333' }}>
+                {activeProfile ? `${activeProfile} Person${activeProfile === 1 ? '' : 'en'}` : '1 Person'}
+              </div>
+            </div>
             <div style={styles.controlGroup}>
               <label style={styles.inputLabel}>Haben Sie eine PV-Anlage?</label>
               <div style={styles.householdSelector}>
