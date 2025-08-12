@@ -54,12 +54,12 @@ const verbraucherBeschreibungen = {
 };
 
 const timePeriods = [
-  { label: 'Früh', startzeit: '06:00', endzeit: '08:00' },
-  { label: 'Vormittag', startzeit: '08:00', endzeit: '12:00' },
+  { label: 'Früh', startzeit: '06:00', endzeit: '09:00' },
+  { label: 'Vormittag', startzeit: '09:00', endzeit: '12:00' },
   { label: 'Mittag', startzeit: '12:00', endzeit: '14:00' },
   { label: 'Nachmittag', startzeit: '14:00', endzeit: '18:00' },
-  { label: 'Abend', startzeit: '18:00', endzeit: '22:00' },
-  { label: 'Nacht', startzeit: '22:00', endzeit: '06:00' },
+  { label: 'Abend', startzeit: '18:00', endzeit: '00:00' },
+  { label: 'Nacht', startzeit: '00:00', endzeit: '06:00' },
 ];
 
 // Functions
@@ -192,7 +192,7 @@ const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => 
 
 // Home Component
 export default function Home() {
-  const [strompreis, setStrompreis] = useState(0.30);
+  const [strompreis, setStrompreis] = useState(0.32);
   const [plz, setPlz] = useState('');
   const [verbraucherDaten, setVerbraucherDaten] = useState(
     Object.keys(standardVerbrauch).reduce((acc, key) => ({
@@ -718,8 +718,8 @@ export default function Home() {
         label: 'Stromverbrauch (kW)',
         data: hourlyData.map(d => d.total),
         fill: false,
-        borderColor: '#4372b7',
-        backgroundColor: '#4372b7',
+        borderColor: '#05A696',
+        backgroundColor: '#05A696',
         tension: 0.1,
         yAxisID: 'y',
       },
@@ -727,8 +727,8 @@ export default function Home() {
         label: `Dynamischer Preis am ${selectedDate || 'N/A'} (€/kWh)`,
         data: chartConvertedValues,
         fill: false,
-        borderColor: '#905fa4',
-        backgroundColor: '#905fa4',
+        borderColor: '#D9043D',
+        backgroundColor: '#D9043D',
         tension: 0.1,
         yAxisID: 'y1',
       },
@@ -782,16 +782,16 @@ export default function Home() {
           return (d.total * price).toFixed(2);
         }),
         fill: false,
-        borderColor: '#905fa4',
-        backgroundColor: '#905fa4',
+        borderColor: '#D9043D',
+        backgroundColor: '#D9043D',
         tension: 0.1,
       },
       {
         label: `Ersparnis (Fester Tarif) am ${selectedDate || 'N/A'} (€)`,
         data: hourlyData.map((d) => (d.total * strompreis).toFixed(2)),
         fill: false,
-        borderColor: '#4372b7',
-        backgroundColor: '#4372b7',
+        borderColor: '#05A696',
+        backgroundColor: '#05A696',
         tension: 0.1,
       },
     ],
@@ -837,7 +837,7 @@ export default function Home() {
   return (
     <>
       <style>{`
-  body {
+ body {
   margin: 0;
   font-family: Arial, sans-serif;
   background-color: #f3f4f6;
@@ -871,7 +871,7 @@ export default function Home() {
   overflow-y: auto; /* Ermöglicht vertikales Scrollen */
   flex-shrink: 0;
   scrollbar-width: thin; /* Firefox: Dünner Scrollbalken */
-  scrollbar-color: #4372b7 #f0f0f0; /* Firefox: Scrollbalkenfarbe */
+  scrollbar-color: #05A696 #f0f0f0; /* Firefox: Scrollbalkenfarbe */
 }
 
 /* Chrome, Edge, Safari: Anpassung des Scrollbalkens */
@@ -884,7 +884,7 @@ export default function Home() {
 }
 
 .calculation-report::-webkit-scrollbar-thumb {
-  background-color: #4372b7;
+  background-color: #05A696;
   border-radius: 4px;
   border: 2px solid #f0f0f0;
 }
@@ -911,7 +911,7 @@ export default function Home() {
 
 .chart-container {
   width: 526px;
-  height: 420px;
+  height: 294px; /* Original 420px, reduziert um 30% (420 * 0.7 = 294) */
   margin: 0 auto;
 }
 
@@ -919,7 +919,7 @@ export default function Home() {
   font-size: 1.05rem;
   font-weight: 700;
   margin-bottom: 11.2px;
-  color: #4372b7;
+  color: #05A696;
 }
 
 .report-content p {
@@ -930,7 +930,7 @@ export default function Home() {
   font-size: 0.875rem;
   font-weight: 600;
   margin-bottom: 11.2px;
-  color: #4372b7;
+  color: #05A696;
 }
 
 .input-container-html {
@@ -957,7 +957,7 @@ export default function Home() {
 
 .input-container-html input:focus,
 .input-container-html select:focus {
-  border-color: #4372b7;
+  border-color: #05A696;
   box-shadow: 0 0 3.5px rgba(67, 114, 183, 0.3);
   outline: none;
 }
@@ -971,7 +971,7 @@ export default function Home() {
 }
 
 .menu-header {
-  background-color: #4372b7;
+  background-color: #05A696;
   color: white;
   padding: 10.5px;
   display: flex;
@@ -984,7 +984,7 @@ export default function Home() {
 }
 
 .menu-header:hover {
-  background-color: #5a8cd0;
+  background-color: #05A696;
 }
 
 .menu-content {
@@ -1056,7 +1056,7 @@ export default function Home() {
   appearance: none;
   width: 12.6px;
   height: 12.6px;
-  border: 1.4px solid #4372b7;
+  border: 1.4px solid #05A696;
   border-radius: 2.8px;
   margin-right: 7px;
   cursor: pointer;
@@ -1065,8 +1065,8 @@ export default function Home() {
 }
 
 .checkbox-group input[type="checkbox"]:checked {
-  background-color: #4372b7;
-  border-color: #4372b7;
+  background-color: #05A696;
+  border-color: #05A696;
 }
 
 .checkbox-group input[type="checkbox"]:checked::after {
@@ -1080,7 +1080,7 @@ export default function Home() {
 }
 
 .checkbox-group input[type="checkbox"]:hover {
-  border-color: #5a8cd0;
+  border-color: #05A696;
 }
 
 .info-field {
@@ -1098,7 +1098,7 @@ export default function Home() {
   width: 14px;
   height: 14px;
   line-height: 14px;
-  background-color: #4372b7;
+  background-color: #05A696;
   color: white;
   border-radius: 50%;
   font-size: 8.4px;
@@ -1146,7 +1146,7 @@ export default function Home() {
   flex: 0.8;
   cursor: pointer;
   padding: 4.2px 8.4px;
-  background-color: #4372b7;
+  background-color: #05A696;
   color: white;
   border: none;
   border-radius: 4.2px;
@@ -1154,7 +1154,7 @@ export default function Home() {
 }
 
 .settings-field:hover {
-  background-color: #5a8cd0;
+  background-color: #05A696;
 }
 
 .settings-field::before {
@@ -1186,15 +1186,15 @@ export default function Home() {
 }
 
 .watt-input:focus {
-  border-color: #4372b7;
+  border-color: #05A696;
   outline: none;
 }
 
 .settings-container {
   margin-top: 7px;
   padding: 10.5px;
-  background-color: #e6f3e6;
-  border: 0.7px solid #4372b7;
+  background-color: #fff; /* Weißer Hintergrund */
+  border: 0.7px solid #05A696;
   border-radius: 4.2px;
   display: flex;
   flex-direction: column;
@@ -1215,7 +1215,7 @@ export default function Home() {
 }
 
 .settings-input:focus {
-  border-color: #4372b7;
+  border-color: #05A696;
   outline: none;
 }
 
@@ -1237,7 +1237,7 @@ export default function Home() {
   appearance: none;
   width: 11.2px;
   height: 11.2px;
-  border: 1.4px solid #4372b7;
+  border: 1.4px solid #05A696;
   border-radius: 50%;
   margin-right: 5.6px;
   cursor: pointer;
@@ -1246,8 +1246,8 @@ export default function Home() {
 }
 
 .radio-group-settings input[type="radio"]:checked {
-  background-color: #4372b7;
-  border-color: #4372b7;
+  background-color: #05A696;
+  border-color: #05A696;
 }
 
 .radio-group-settings input[type="radio"]:checked::after {
@@ -1263,7 +1263,7 @@ export default function Home() {
 }
 
 .radio-group-settings input[type="radio"]:hover {
-  border-color: #5a8cd0;
+  border-color: #05A696;
 }
 
 .price-display {
@@ -1296,7 +1296,7 @@ export default function Home() {
   padding-top: 10.5px;
   border-top: 0.7px solid #eee;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: justify;
   gap: 7px;
   align-items: center;
 }
@@ -1311,7 +1311,7 @@ export default function Home() {
 }
 
 .new-option-input:focus {
-  border-color: #4372b7;
+  border-color: #05A696;
   outline: none;
 }
 
@@ -1326,14 +1326,14 @@ export default function Home() {
 }
 
 .new-option-watt:focus {
-  border-color: #4372b7;
+  border-color: #05A696;
   outline: none;
 }
 
 .add-option-button,
 .save-option-button {
   padding: 7px 14px;
-  background-color: #4372b7;
+  background-color: #05A696;
   color: white;
   border: none;
   border-radius: 4.2px;
@@ -1344,7 +1344,7 @@ export default function Home() {
 
 .add-option-button:hover,
 .save-option-button:hover {
-  background-color: #5a8cd0;
+  background-color: #05A696;
 }
 
 .confirm-dialog {
@@ -1434,7 +1434,7 @@ export default function Home() {
   font-size: 0.84rem;
   font-weight: 600;
   margin-bottom: 7px;
-  color: #4372b7;
+  color: #05A696;
 }
 
 .summary-item {
@@ -1469,7 +1469,7 @@ export default function Home() {
             <h2 className="report-title">Rechenbericht</h2>
             <div className="report-content">
               <div className="input-container-html">
-                <label htmlFor="strompreis">Strompreis (€/kWh):</label>
+                <label htmlFor="strompreis">Strompreis (Cent/kWh):</label>
                 <input
                   type="number"
                   id="strompreis"
@@ -1490,46 +1490,38 @@ export default function Home() {
                 />
               </div>
               <div className="input-container-html date-picker-container">
-                <label className="date-picker-label" htmlFor="date-picker">Datum für dynamischen Preis:</label>
-                <select
-                  id="date-picker"
-                  className="date-picker"
-                  value={selectedDate ? toInputDate(selectedDate) : ''}
-                  onChange={(e) => setSelectedDate(fromInputDate(e.target.value))}
-                >
-                  {availableDates.length === 0 ? (
-                    <option value="">Kein Datum verfügbar</option>
-                  ) : (
-                    availableDates.map((date) => (
-                      <option key={date} value={toInputDate(date)}>
-                        {date}
-                      </option>
-                    ))
-                  )}
-                </select>
-              </div>
-              {apiLoading && <div className="loading">Lade dynamische Strompreise...</div>}
-              {!apiLoading && availableDates.length === 0 && (
-                <div className="no-data">Keine Daten für dynamische Strompreise verfügbar.</div>
-              )}
-              {error && <div className="no-data">{error}</div>}
+  <label className="date-picker-label" htmlFor="date-picker">Datum für dynamischen Preis:</label>
+  <input
+    type="date"
+    id="date-picker"
+    className="date-picker"
+    value={selectedDate ? toInputDate(selectedDate) : ''}
+    onChange={(e) => setSelectedDate(fromInputDate(e.target.value))}
+  />
+</div>
+{apiLoading && <div className="loading">Lade dynamische Strompreise...</div>}
+{!apiLoading && availableDates.length === 0 && (
+  <div className="no-data">Keine Daten für dynamische Strompreise verfügbar.</div>
+)}
+{error && <div className="no-data">{error}</div>}
 
-              {menus.map((menu) => (
-                <div key={menu.id} className="menu">
-                  <div className="menu-header" onClick={() => toggleMenu(menu.id)}>
-                    <span>{menu.label}</span>
-                    <span className={`triangle ${openMenus[menu.id] ? 'open' : 'closed'}`}>▼</span>
-                  </div>
+{menus.map((menu) => (
+  <div key={menu.id} className="menu">
+    <div className="menu-header" onClick={() => toggleMenu(menu.id)}>
+      <span>{menu.label}</span>
+      <span className={`triangle ${openMenus[menu.id] ? 'open' : 'closed'}`}>▼</span>
+    </div>
+ 
                   {openMenus[menu.id] && (
                     <div className="menu-content">
                       <ul className="checkbox-group">
                         <li className="checkbox-group-header">
                           <span>{menu.id === 'stromerzeuger' ? 'Erzeuger' : 'Verbraucher'}</span>
                           <span>Info</span>
-                          <span>Wattleistung</span>
-                          <span>Ersparnis</span>
+                          <span>Watt</span>
+                          <span></span>
                           {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && <span className="dynamischeverbraucher-extra">Einstellungen</span>}
-                          <span>Löschen</span>
+                          <span></span>
                         </li>
                         {menu.options.map((option) => (
                           <li and key={option.name}>

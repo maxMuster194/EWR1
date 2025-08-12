@@ -35,8 +35,8 @@ const standardVerbrauch = {
   Herd: 700,
   Multimedia: 350,
   Licht: 175,
-  EAuto: 11000, // 11 kW (typische Ladeleistung einer Wallbox)
-  ZweitesEAuto: 7400, // 7.4 kW (z.B. langsamere Wallbox oder anderes Fahrzeug)
+  EAuto: 11000,
+  ZweitesEAuto: 7400,
 };
 
 const verbraucherBeschreibungen = {
@@ -83,7 +83,7 @@ const updateKosten = (watt, verbraucher, strompreis, setVerbraucherDaten, erweit
     case 'eauto':
     case 'zweiteseauto':
       if (standardLadung) {
-        kosten = (batterieKapazitaet * nutzung * 52) / 1000 * kiospreis;
+        kosten = (batterieKapazitaet * nutzung * 52) / 1000 * strompreis;
       } else {
         kosten = (wallboxLeistung * totalDauer * nutzung * 52) / 1000 * strompreis;
       }
@@ -167,7 +167,6 @@ const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => 
     if (watt <= 0) return;
     const isGrundlast = ['kühlschrank', 'gefrierschrank', 'aquarium'].includes(verbraucher.toLowerCase());
     if (isGrundlast) {
-      // Grundlastverbraucher laufen 24/7
       for (let i = 0; i < 24; i++) {
         stunden[i].total += watt / 1000;
         stunden[i].verbraucher.push(verbraucher);
@@ -178,8 +177,8 @@ const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => 
         const dauer = parseFloat(zeitraum.dauer) || 0;
         if (!startzeit || dauer <= 0) return;
         let startStunde = parseInt(startzeit.split(':')[0]);
-        let endStunde = startStunde + Math.ceil(dauer); // Endzeit ist Startzeit + Dauer (aufgerundet)
-        if (endStunde > 24) endStunde = 24; // Begrenze auf 24 Stunden
+        let endStunde = startStunde + Math.ceil(dauer);
+        if (endStunde > 24) endStunde = 24;
         for (let i = startStunde; i < endStunde; i++) {
           stunden[i % 24].total += watt / 1000;
           stunden[i % 24].verbraucher.push(verbraucher);
@@ -192,7 +191,7 @@ const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => 
 
 // Home Component
 export default function Home() {
-  const [strompreis, setStrompreis] = useState(0.32);
+  const [strompreis, setStrompreis] = useState(0.31);
   const [plz, setPlz] = useState('');
   const [verbraucherDaten, setVerbraucherDaten] = useState(
     Object.keys(standardVerbrauch).reduce((acc, key) => ({
@@ -245,8 +244,8 @@ export default function Home() {
           endzeit = '02:00';
           dauer = 4.0;
           nutzung = 3;
-          batterieKapazitaet = 60; // kWh
-          wallboxLeistung = 11000; // W
+          batterieKapazitaet = 60;
+          wallboxLeistung = 11000;
           standardLadung = false;
           break;
         case 'zweiteseauto':
@@ -254,8 +253,8 @@ export default function Home() {
           endzeit = '02:00';
           dauer = 3.0;
           nutzung = 2;
-          batterieKapazitaet = 40; // kWh
-          wallboxLeistung = 7400; // W
+          batterieKapazitaet = 40;
+          wallboxLeistung = 7400;
           standardLadung = false;
           break;
         default:
@@ -456,7 +455,7 @@ export default function Home() {
     setError('');
     const isDynamisch = ['waschmaschine', 'geschirrspüler', 'trockner', 'herd', 'multimedia', 'licht', 'eauto', 'zweiteseauto'].includes(verbraucher.toLowerCase());
     if (isDynamisch) {
-      const kosten = berehablóchneDynamischenVerbrauch(watt, verbraucher, strompreis, erweiterteEinstellungen);
+      const kosten = berechneDynamischenVerbrauch(watt, verbraucher, strompreis, erweiterteEinstellungen);
       setVerbraucherDaten((prev) => ({
         ...prev,
         [verbraucher]: { ...prev[verbraucher], kosten: kosten.toFixed(2) },
@@ -644,7 +643,7 @@ export default function Home() {
     }
   };
 
-  const handleDeleteOptionCopy = (menuId, optionName) => {
+  const handleDeleteOptionClick = (menuId, optionName) => {
     setDeleteConfirmOption({ menuId, optionName });
   };
 
@@ -718,8 +717,8 @@ export default function Home() {
         label: 'Stromverbrauch (kW)',
         data: hourlyData.map(d => d.total),
         fill: false,
-        borderColor: '#05A696',
-        backgroundColor: '#05A696',
+        borderColor: '#409966',
+        backgroundColor: '#409966',
         tension: 0.1,
         yAxisID: 'y',
       },
@@ -727,8 +726,8 @@ export default function Home() {
         label: `Dynamischer Preis am ${selectedDate || 'N/A'} (€/kWh)`,
         data: chartConvertedValues,
         fill: false,
-        borderColor: '#D9043D',
-        backgroundColor: '#D9043D',
+        borderColor: '#062316',
+        backgroundColor: '#062316',
         tension: 0.1,
         yAxisID: 'y1',
       },
@@ -782,16 +781,16 @@ export default function Home() {
           return (d.total * price).toFixed(2);
         }),
         fill: false,
-        borderColor: '#D9043D',
-        backgroundColor: '#D9043D',
+        borderColor: '#062316',
+        backgroundColor: '#062316',
         tension: 0.1,
       },
       {
         label: `Ersparnis (Fester Tarif) am ${selectedDate || 'N/A'} (€)`,
         data: hourlyData.map((d) => (d.total * strompreis).toFixed(2)),
         fill: false,
-        borderColor: '#05A696',
-        backgroundColor: '#05A696',
+        borderColor: '#409966',
+        backgroundColor: '#409966',
         tension: 0.1,
       },
     ],
@@ -837,660 +836,548 @@ export default function Home() {
   return (
     <>
       <style>{`
- body {
+ /* Modified CSS to ensure consistent width matching the menu */
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  background: linear-gradient(135deg, #e5e7eb, #f3f4f6);
   margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f3f4f6;
+  color: #1f2937;
 }
 
 .app-container {
-  min-height: 100vh;
-  padding: 20px 4cm;
-  box-sizing: border-box;
-  display: flex;
-  justify-content: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr; /* Single column by default */
+  gap: 32px;
+  height: calc(100vh - 64px); /* Full viewport height minus padding */
 }
-
-.container {
-  display: flex;
-  gap: 28px;
-  justify-content: center;
-  flex-wrap: nowrap;
-  width: 100%;
-  max-width: 1200px; /* Begrenzt die Gesamtbreite für große Bildschirme */
+@media (min-width: 1024px) {
+  .app-container {
+    grid-template-columns: minmax(0, 600px) minmax(0, 600px); /* Fixed width for columns to match menu */
+  }
 }
 
 .calculation-report {
-  width: 560px; /* Feste Breite, gleich wie diagrams-container */
-  background-color: white;
-  padding: 16.8px;
-  border-radius: 5.6px;
-  box-shadow: 0 0.7px 2.1px rgba(0, 0, 0, 0.1), 0 0.7px 1.4px rgba(0, 0, 0, 0.06);
-  box-sizing: border-box;
-  max-height: calc(100vh - 40px); /* Passt sich an die Bildschirmhöhe an, abzüglich Padding */
-  overflow-y: auto; /* Ermöglicht vertikales Scrollen */
-  flex-shrink: 0;
-  scrollbar-width: thin; /* Firefox: Dünner Scrollbalken */
-  scrollbar-color: #05A696 #f0f0f0; /* Firefox: Scrollbalkenfarbe */
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: calc(100vh - 64px); /* Match viewport height minus padding */
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color:rgb(0, 0, 0) #e5e7eb; /* Scrollbar style */
 }
-
-/* Chrome, Edge, Safari: Anpassung des Scrollbalkens */
 .calculation-report::-webkit-scrollbar {
   width: 8px;
 }
-
 .calculation-report::-webkit-scrollbar-track {
-  background: #f0f0f0;
-}
-
-.calculation-report::-webkit-scrollbar-thumb {
-  background-color: #05A696;
+  background: #e5e7eb;
   border-radius: 4px;
-  border: 2px solid #f0f0f0;
+}
+.calculation-report::-webkit-scrollbar-thumb {
+  background: #409966;
+  border-radius: 4px;
+}
+.calculation-report:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 .diagrams-container {
-  width: 560px; /* Feste Breite, gleich wie calculation-report */
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  flex-shrink: 0;
-  box-sizing: border-box;
-  position: sticky; /* Fixiert den rechten Bereich relativ zum Container */
-  top: 20px; /* Abstand vom oberen Rand des Containers */
-  align-self: flex-start; /* Startet oben im Container */
+  gap: 32px;
+  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: calc(100vh - 64px); /* Match viewport height minus padding */
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: #409966 #e5e7eb; /* Scrollbar style */
 }
-
-.diagram {
-  background-color: white;
-  padding: 16.8px;
-  border-radius: 5.6px;
-  box-shadow: 0 0.7px 2.1px rgba(0, 0, 0, 0.1), 0 0.7px 1.4px rgba(0, 0, 0, 0.06);
-  box-sizing: border-box;
+.diagrams-container::-webkit-scrollbar {
+  width: 8px;
 }
-
-.chart-container {
-  width: 526px;
-  height: 294px; /* Original 420px, reduziert um 30% (420 * 0.7 = 294) */
-  margin: 0 auto;
+.diagrams-container::-webkit-scrollbar-track {
+  background: #e5e7eb;
+  border-radius: 4px;
 }
-
-.report-title {
-  font-size: 1.05rem;
-  font-weight: 700;
-  margin-bottom: 11.2px;
-  color: #05A696;
-}
-
-.report-content p {
-  color: #4b5563;
-}
-
-.diagram-title {
-  font-size: 0.875rem;
-  font-weight: 600;
-  margin-bottom: 11.2px;
-  color: #05A696;
-}
-
-.input-container-html {
-  margin-bottom: 14px;
-}
-
-.input-container-html label {
-  display: block;
-  margin-bottom: 5.6px;
-  font-weight: bold;
-  color: #000; /* Schriftfarbe auf Schwarz */
-}
-
-.input-container-html input,
-.input-container-html select {
-  padding: 8.4px;
-  width: 100%;
-  max-width: 154px;
-  border: 0.7px solid #ddd;
-  border-radius: 4.2px;
-  font-size: 11.2px;
-  color: #000; /* Schriftfarbe auf Schwarz */
-}
-
-.input-container-html input:focus,
-.input-container-html select:focus {
-  border-color: #05A696;
-  box-shadow: 0 0 3.5px rgba(67, 114, 183, 0.3);
-  outline: none;
+.diagrams-container::-webkit-scrollbar-thumb {
+  background: #409966;
+  border-radius: 4px;
 }
 
 .menu {
-  margin-bottom: 10.5px;
-  background-color: #fff;
-  border-radius: 5.6px;
-  overflow: hidden;
-  box-shadow: 0 1.4px 5.6px rgba(0, 0, 0, 0.08);
+  background: #f9fafb;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+  max-width: 600px; /* Set a fixed max-width to define the layout */
+  width: 100%; /* Ensure it takes full available width up to max-width */
+}
+.menu:hover {
+  transform: translateY(-2px);
 }
 
 .menu-header {
-  background-color: #05A696;
-  color: white;
-  padding: 10.5px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 12.6px;
-  font-weight: bold;
+  padding: 20px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  background: linear-gradient(90deg, #062316,rgb(64, 153, 102));
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  color: #ffffff;
+  transition: background 0.3s ease;
 }
-
 .menu-header:hover {
-  background-color: #05A696;
+  background: linear-gradient(90deg, #062316,rgb(64, 153, 102));
 }
-
-.menu-content {
-  padding: 14px;
-  background-color: #f9f9f9;
+.menu-header span {
+  font-size: 1.25rem;
+  font-weight: 700;
 }
 
 .triangle {
-  transition: transform 0.3s;
-  font-size: 9.8px;
+  transition: transform 0.3s ease;
 }
-
 .triangle.open {
   transform: rotate(180deg);
 }
 
-.triangle.closed {
-  transform: rotate(90deg);
+.menu-content {
+  padding: 20px;
+  max-width: 100%; /* Ensure content fits within menu's max-width */
+}
+
+.report-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #409966;
+}
+@media (min-width: 1024px) {
+  .report-title {
+    font-size: 2rem; /* From previous request */
+  }
+}
+
+.report-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.input-container-html {
+  display: flex;
+  flex-direction: column;
+}
+.input-container-html label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+.input-container-html input,
+.input-container-html select {
+  padding: 12px;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  width: 100%;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.input-container-html input:focus,
+.input-container-html select:focus {
+  outline: none;
+  border-color: #409966;
+  box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.3);
+}
+
+.loading,
+.no-data {
+  color: #dc2626;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .checkbox-group {
-  margin-bottom: 10.5px;
-  list-style: none;
-  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .checkbox-group-header {
-  display: flex;
-  align-items: center;
-  font-weight: bold;
-  color: #000; /* Schriftfarbe auf Schwarz */
-  padding: 7px;
-  background-color: #f0f0f0;
-  border-bottom: 0.7px solid #ddd;
-}
-
-.checkbox-group-header span {
-  flex: 1;
-  text-align: center;
-}
-
-.checkbox-group-header span.dynamischeverbraucher-extra {
-  flex: 0.8;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  gap: 20px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #409966;
 }
 
 .checkbox-group li {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  gap: 20px;
   align-items: center;
-  padding: 7px;
-  border-bottom: 0.7px solid #eee;
-  transition: background-color 0.2s;
-}
-
-.checkbox-group li:hover {
-  background-color: #f0f0f0;
 }
 
 .checkbox-group-label {
   display: flex;
   align-items: center;
-  font-size: 11.2px;
-  color: #000; /* Schriftfarbe auf Schwarz */
+  gap: 12px;
+}
+.checkbox-group-label input {
+  width: 20px;
+  height: 20px;
+  accent-color: #409966;
   cursor: pointer;
-  flex: 1;
-  min-width: 105px;
-}
-
-.checkbox-group input[type="checkbox"] {
-  appearance: none;
-  width: 12.6px;
-  height: 12.6px;
-  border: 1.4px solid #05A696;
-  border-radius: 2.8px;
-  margin-right: 7px;
-  cursor: pointer;
-  position: relative;
-  transition: background-color 0.2s, border-color 0.2s;
-}
-
-.checkbox-group input[type="checkbox"]:checked {
-  background-color: #05A696;
-  border-color: #05A696;
-}
-
-.checkbox-group input[type="checkbox"]:checked::after {
-  content: '✔';
-  color: white;
-  font-size: 8.4px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.checkbox-group input[type="checkbox"]:hover {
-  border-color: #05A696;
 }
 
 .info-field {
-  width: 56px;
-  font-size: 9.8px;
-  text-align: center;
-  flex: 1;
   position: relative;
-  cursor: pointer;
 }
-
-.info-field::before {
-  content: 'ℹ';
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  line-height: 14px;
-  background-color: #05A696;
-  color: white;
-  border-radius: 50%;
-  font-size: 8.4px;
-  text-align: center;
-  vertical-align: middle;
+.info-field .tooltip {
+  visibility: hidden;
+  position: absolute;
+  background: #409966;
+  color: #ffffff;
+  font-size: 0.875rem;
+  padding: 8px 12px;
+  border-radius: 6px;
+  z-index: 10;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
-
 .info-field:hover .tooltip {
   visibility: visible;
   opacity: 1;
 }
 
-.info-field .tooltip {
-  visibility: hidden;
-  opacity: 0;
-  background-color: #333;
-  color: white;
-  text-align: left;
-  padding: 7px;
-  border-radius: 4.2px;
-  position: absolute;
-  z-index: 1;
-  top: -7px;
-  left: 100%;
-  transform: translateY(-50%);
-  width: 140px;
-  font-size: 8.4px;
-  transition: opacity 0.3s;
-}
-
-.info-field .tooltip::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  right: 100%;
-  transform: translateY(-50%);
-  border: 4.2px solid transparent;
-  border-right-color: #333;
-}
-
-.settings-field {
-  width: 56px;
-  font-size: 9.8px;
-  text-align: center;
-  flex: 0.8;
-  cursor: pointer;
-  padding: 4.2px 8.4px;
-  background-color: #05A696;
-  color: white;
-  border: none;
-  border-radius: 4.2px;
-  transition: background-color 0.3s;
-}
-
-.settings-field:hover {
-  background-color: #05A696;
-}
-
-.settings-field::before {
-  content: '⚙️';
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  line-height: 14px;
-  font-size: 11.2px;
-  text-align: center;
-  vertical-align: middle;
-}
-
-.input-group {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
-
-.watt-input {
-  padding: 5.6px;
-  width: 56px;
-  border: 0.7px solid #ddd;
-  border-radius: 4.2px;
-  font-size: 9.8px;
-  text-align: center;
-  color: #000; /* Schriftfarbe auf Schwarz */
-  transition: border-color 0.3s;
-}
-
-.watt-input:focus {
-  border-color: #05A696;
-  outline: none;
-}
-
-.settings-container {
-  margin-top: 7px;
-  padding: 10.5px;
-  background-color: #fff; /* Weißer Hintergrund */
-  border: 0.7px solid #05A696;
-  border-radius: 4.2px;
-  display: flex;
-  flex-direction: column;
-  gap: 10.5px;
-  width: 100%;
-  color: #000;
-}
-
+.watt-input,
 .settings-input {
-  padding: 5.6px;
-  width: 70px;
-  border: 0.7px solid #ddd;
-  border-radius: 4.2px;
-  font-size: 9.8px;
-  text-align: center;
-  color: #000; /* Schriftfarbe auf Schwarz */
-  transition: border-color 0.3s;
+  padding: 12px;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  width: 100%;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
-
+.watt-input:focus,
 .settings-input:focus {
-  border-color: #05A696;
   outline: none;
-}
-
-.radio-group-settings {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 7px;
-}
-
-.radio-group-settings label {
-  display: flex;
-  align-items: center;
-  font-size: 9.8px;
-  color: #000; /* Schriftfarbe auf Schwarz */
-  cursor: pointer;
-}
-
-.radio-group-settings input[type="radio"] {
-  appearance: none;
-  width: 11.2px;
-  height: 11.2px;
-  border: 1.4px solid #05A696;
-  border-radius: 50%;
-  margin-right: 5.6px;
-  cursor: pointer;
-  position: relative;
-  transition: background-color 0.2s, border-color 0.2s;
-}
-
-.radio-group-settings input[type="radio"]:checked {
-  background-color: #05A696;
-  border-color: #05A696;
-}
-
-.radio-group-settings input[type="radio"]:checked::after {
-  content: '';
-  width: 5.6px;
-  height: 5.6px;
-  background-color: white;
-  border-radius: 50%;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.radio-group-settings input[type="radio"]:hover {
-  border-color: #05A696;
+  border-color: #409966;
+  box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.3);
 }
 
 .price-display {
-  width: 56px;
-  font-size: 9.8px;
-  color: #000; /* Schriftfarbe auf Schwarz */
-  text-align: center;
-  flex: 1;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.settings-field {
+  background: linear-gradient(90deg, #062316,rgb(64, 153, 102));
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+.settings-field:hover {
+  background: linear-gradient(90deg, #062316, rgb(64, 153, 102));
+  transform: scale(1.05);
 }
 
 .delete-option-button {
-  padding: 4.2px 8.4px;
-  background-color: #a00;
-  color: white;
+  color: #dc2626;
+  font-size: 1rem;
+  font-weight: 500;
   border: none;
-  border-radius: 4.2px;
+  background: none;
   cursor: pointer;
-  font-size: 9.8px;
-  flex: 1;
-  text-align: center;
-  max-width: 56px;
+  transition: color 0.3s ease, transform 0.2s ease;
 }
-
 .delete-option-button:hover {
-  background-color: #c00;
-}
-
-.new-option-container {
-  margin-top: 10.5px;
-  padding-top: 10.5px;
-  border-top: 0.7px solid #eee;
-  display: flex;
-  flex-wrap: justify;
-  gap: 7px;
-  align-items: center;
-}
-
-.new-option-input {
-  padding: 5.6px;
-  width: 140px;
-  border: 0.7px solid #ddd;
-  border-radius: 2.8px;
-  font-size: 9.8px;
-  color: #000; /* Schriftfarbe auf Schwarz */
-}
-
-.new-option-input:focus {
-  border-color: #05A696;
-  outline: none;
-}
-
-.new-option-watt {
-  padding: 5.6px;
-  width: 70px;
-  border: 0.7px solid #ddd;
-  border-radius: 4.2px;
-  font-size: 9.8px;
-  text-align: center;
-  color: #000; /* Schriftfarbe auf Schwarz */
-}
-
-.new-option-watt:focus {
-  border-color: #05A696;
-  outline: none;
-}
-
-.add-option-button,
-.save-option-button {
-  padding: 7px 14px;
-  background-color: #05A696;
-  color: white;
-  border: none;
-  border-radius: 4.2px;
-  cursor: pointer;
-  font-size: 9.8px;
-  transition: background-color 0.3s;
-}
-
-.add-option-button:hover,
-.save-option-button:hover {
-  background-color: #05A696;
+  color: #b91c1c;
+  transform: scale(1.1);
 }
 
 .confirm-dialog {
-  margin-top: 7px;
-  padding: 10.5px;
-  background-color: #ffe6e6;
-  border: 0.7px solid #a00;
-  border-radius: 4.2px;
+  grid-column: span 5;
+  background: linear-gradient(135deg, #fef9c3, #fef08a);
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 12px;
   display: flex;
+  gap: 12px;
   align-items: center;
-  gap: 7px;
-  flex-wrap: wrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .confirm-button {
-  padding: 4.2px 8.4px;
-  background-color: #a00;
-  color: white;
+  background: linear-gradient(90deg, #dc2626, #ef4444);
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 1rem;
   border: none;
-  border-radius: 4.2px;
   cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
 }
-
 .confirm-button:hover {
-  background-color: #c00;
+  background: linear-gradient(90deg, #b91c1c, #dc2626);
+  transform: scale(1.05);
 }
 
 .cancel-button {
-  padding: 4.2px 8.4px;
-  background-color: #666;
-  color: white;
+  background: linear-gradient(90deg, #9ca3af, #d1d5db);
+  color: #1f2937;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 1rem;
   border: none;
-  border-radius: 2.8px;
   cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
 }
-
 .cancel-button:hover {
-  background-color: #777;
+  background: linear-gradient(90deg, #6b7280, #9ca3af);
+  transform: scale(1.05);
 }
 
-.date-picker-container {
+.settings-container {
+  grid-column: span 5;
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  transition: transform 0.3s ease;
+}
+.settings-container:hover {
+  transform: translateY(-2px);
+}
+.settings-container h4 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #409966;
+}
+.settings-container h5 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #409966;
+  margin-bottom: 12px;
+}
+.settings-container .grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+@media (min-width: 640px) {
+  .settings-container .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .settings-container .zeitraum-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.settings-container label {
+  display: flex;
+  flex-direction: column;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+.settings-container select {
+  padding: 12px;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  width: 100%;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.settings-container select:focus {
+  outline: none;
+  border-color: #409966;
+  box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.3);
+}
+
+.radio-group-settings {
+  display: flex;
+  gap: 20px;
+  margin-top: 8px;
+}
+.radio-group-settings label {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 12px;
 }
-
-.date-picker-label {
-  font-size: 0.63rem;
-  font-weight: 500;
-  color: #000; /* Schriftfarbe auf Schwarz */
-}
-
-.date-picker {
-  padding: 0.35rem;
-  border: 0.7px solid #dfe6e9;
-  border-radius: 4.2px;
-  font-size: 0.63rem;
-  background-color: #fff;
-  box-shadow: inset 0 0.7px 2.1px rgba(0,0,0,0.05);
+.radio-group-settings input {
+  width: 20px;
+  height: 20px;
+  accent-color: #409966;
   cursor: pointer;
-  color: #000; /* Schriftfarbe auf Schwarz */
 }
 
-.loading {
-  font-size: 0.7rem;
-  color: #000; /* Schriftfarbe auf Schwarz */
-  text-align: center;
-  padding: 0.7rem;
+.zeitraum-section {
+  border-top: 2px solid #e5e7eb;
+  padding-top: 12px;
+  margin-top: 12px;
 }
 
-.no-data {
-  font-size: 0.7rem;
-  color: #e74c3c;
-  text-align: center;
-  padding: 0.7rem;
+.add-option-button {
+  background: linear-gradient(90deg, #062316,rgb(64, 153, 102));
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  margin-top: 24px;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+.add-option-button:hover {
+  background: linear-gradient(90deg, #062316, rgb(64, 153, 102));
+  transform: scale(1.05);
+}
+
+.new-option-container {
+  margin-top: 24px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f9fafb, #e5e7eb);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+@media (min-width: 640px) {
+  .new-option-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.new-option-input,
+.new-option-watt {
+  padding: 12px;
+  border: 2px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  width: 100%;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.new-option-input:focus,
+.new-option-watt:focus {
+  outline: none;
+  border-color: #062316;
+  box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.3);
+}
+
+.save-option-button {
+  background: linear-gradient(90deg, #062316, rgb(64, 153, 102));
+  color: #ffffff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+.save-option-button:hover {
+  background: linear-gradient(90deg, #062316, rgb(64, 153, 102));
+  transform: scale(1.05);
 }
 
 .summary-container {
-  margin-top: 14px;
-  padding: 10.5px;
-  background-color: #f9f9f9;
-  border-radius: 4.2px;
-  border: 0.7px solid #ddd;
+  margin-top: 32px;
+  background: linear-gradient(135deg, #f9fafb, #e5e7eb);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
-
 .summary-title {
-  font-size: 0.84rem;
-  font-weight: 600;
-  margin-bottom: 7px;
-  color: #05A696;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #409966;
+  margin-bottom: 12px;
+}
+@media (min-width: 1024px) {
+  .summary-title {
+    font-size: 1.75rem; /* From previous request */
+  }
 }
 
 .summary-item {
-  margin-bottom: 5.6px;
-  font-size: 0.7rem;
-  color: #000; /* Schriftfarbe auf Schwarz */
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 8px;
 }
 
-/* Media Query für kleinere Bildschirme */
-@media (max-width: 1200px) {
-  .container {
-    flex-direction: column;
-    align-items: center;
+.diagram {
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+.diagram:hover {
+  transform: translateY(-4px);
+}
+.diagram-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #409966;
+  margin-bottom: 24px;
+}
+@media (min-width: 1024px) {
+  .diagram-title {
+    font-size: 1.75rem; /* From previous request */
   }
+}
 
-  .calculation-report {
-    width: 100%;
-    max-width: 560px;
-  }
-
-  .diagrams-container {
-    position: static; /* Entfernt sticky auf kleinen Bildschirmen */
-    width: 100%;
-    max-width: 560px;
-  }
+.chart-container {
+  height: 360px;
 }
       `}</style>
       <div className="app-container">
-        <div className="container">
-          {/* Linker Bereich: Rechenbericht */}
-          <div className="calculation-report">
-            <h2 className="report-title">Rechenbericht</h2>
-            <div className="report-content">
-              <div className="input-container-html">
-                <label htmlFor="strompreis">Strompreis (Cent/kWh):</label>
-                <input
-                  type="number"
-                  id="strompreis"
-                  value={strompreis}
-                  onChange={(e) => handleStrompreisChange(e.target.value)}
-                  step="0.01"
-                  min="0"
-                />
-              </div>
-              <div className="input-container-html">
-                <label htmlFor="plz">Postleitzahl:</label>
-                <input
-                  type="text"
-                  id="plz"
-                  value={plz}
-                  onChange={(e) => setPlz(e.target.value)}
-                  placeholder="z.B. 10115"
-                />
-              </div>
-              <div className="input-container-html date-picker-container">
-  <label className="date-picker-label" htmlFor="date-picker">Datum für dynamischen Preis:</label>
+        <div className="calculation-report">
+          <h2 className="report-title">Rechenbericht</h2>
+          <div className="report-content">
+            <div className="input-container-html">
+              <label htmlFor="strompreis">Strompreis (Cent/kWh):</label>
+              <input
+                type="number"
+                id="strompreis"
+                value={strompreis}
+                onChange={(e) => handleStrompreisChange(e.target.value)}
+                step="0.01"
+                min="0"
+              />
+            </div>
+            <div className="input-container-html">
+              <label htmlFor="plz">Postleitzahl:</label>
+              <input
+                type="text"
+                id="plz"
+                value={plz}
+                onChange={(e) => setPlz(e.target.value)}
+                placeholder="z.B. 10115"
+              />
+            </div>
+            <div className="input-container-html date-picker-container">
+            <label className="date-picker-label" htmlFor="date-picker">Datum für dynamischen Preis:</label>
   <input
     type="date"
     id="date-picker"
@@ -1511,73 +1398,82 @@ export default function Home() {
       <span>{menu.label}</span>
       <span className={`triangle ${openMenus[menu.id] ? 'open' : 'closed'}`}>▼</span>
     </div>
- 
-                  {openMenus[menu.id] && (
-                    <div className="menu-content">
-                      <ul className="checkbox-group">
-                        <li className="checkbox-group-header">
-                          <span>{menu.id === 'stromerzeuger' ? 'Erzeuger' : 'Verbraucher'}</span>
-                          <span>Info</span>
-                          <span>Watt</span>
-                          <span></span>
-                          {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && <span className="dynamischeverbraucher-extra">Einstellungen</span>}
-                          <span></span>
-                        </li>
-                        {menu.options.map((option) => (
-                          <li and key={option.name}>
-                            <label className="checkbox-group-label">
-                              <input
-                                type="checkbox"
-                                checked={verbraucherDaten[option.name]?.checked || false}
-                                onChange={(e) => onCheckboxChange(option.name, e.target.checked, menu.id)}
-                              />
-                              {option.name}
-                            </label>
-                            <div className="info-field">
-                              <span className="tooltip">{verbraucherBeschreibungen[option.name] || option.specifications}</span>
-                            </div>
-                            <div className="input-group">
-                              <input
-                                type="number"
-                                className="watt-input"
-                                value={verbraucherDaten[option.name]?.watt || ''}
-                                onChange={(e) => handleWattChange(option.name, e.target.value)}
-                                min="0"
-                                placeholder="Watt"
-                              />
-                            </div>
-                            <div className="price-display">
-                              {verbraucherDaten[option.name]?.kosten || '0.00'} €
-                            </div>
-                            {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
-                              <button
-                                className="settings-field"
-                                onClick={() => toggleErweiterteOptionen(menu.id, option.name)}
-                              >
-                                Einstellungen
-                              </button>
-                            )}
+
+
+                {openMenus[menu.id] && (
+                  <div className="menu-content">
+                    <ul className="checkbox-group">
+                      <li className="checkbox-group-header">
+                        <span>{menu.id === 'stromerzeuger' ? 'Erzeuger' : 'Verbraucher'}</span>
+                        <span>Info</span>
+                        <span>Watt</span>
+                        <span>Kosten</span>
+                        {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && <span>Einstellungen</span>}
+                      </li>
+                      {menu.options.map((option) => (
+                        <li key={option.name}>
+                          <label className="checkbox-group-label">
+                            <input
+                              type="checkbox"
+                              checked={verbraucherDaten[option.name]?.checked || false}
+                              onChange={(e) => onCheckboxChange(option.name, e.target.checked, menu.id)}
+                            />
+                            <span>{option.name}</span>
+                          </label>
+                          <div className="info-field">
+                            <span className="tooltip">{verbraucherBeschreibungen[option.name] || option.specifications}</span>
+                            <span>ℹ️</span>
+                          </div>
+                          <div className="input-group">
+                            <input
+                              type="number"
+                              className="watt-input"
+                              value={verbraucherDaten[option.name]?.watt || ''}
+                              onChange={(e) => handleWattChange(option.name, e.target.value)}
+                              min="0"
+                              placeholder="Watt"
+                            />
+                          </div>
+                          <div className="price-display">
+                            {verbraucherDaten[option.name]?.kosten || '0.00'} €
+                          </div>
+                          {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
                             <button
-                              className="delete-option-button"
-                              onClick={() => handleDeleteOptionClick(menu.id, option.name)}
+                              className="settings-field"
+                              onClick={() => toggleErweiterteOptionen(menu.id, option.name)}
                             >
-                              Löschen
+                              Einstellungen
                             </button>
-                            {deleteConfirmOption?.menuId === menu.id && deleteConfirmOption?.optionName === option.name && (
-                              <div className="confirm-dialog">
-                                <span>{`Möchten Sie "${option.name}" wirklich löschen?`}</span>
-                                <button className="confirm-button" onClick={() => confirmDeleteOption(menu.id, option.name)}>
-                                  Ja
-                                </button>
-                                <button className="cancel-button" onClick={cancelDeleteOption}>
-                                  Nein
-                                </button>
-                              </div>
-                            )}
-                            {showErweiterteOptionen[menu.id]?.[option.name] && (menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
-                              <div className="settings-container">
-                                {menu.id === 'eauto' ? (
-                                  <>
+                          )}
+                          <button
+                            className="delete-option-button"
+                            onClick={() => handleDeleteOptionClick(menu.id, option.name)}
+                          >
+                            Löschen
+                          </button>
+                          {deleteConfirmOption?.menuId === menu.id && deleteConfirmOption?.optionName === option.name && (
+                            <div className="confirm-dialog">
+                              <span>{`Möchten Sie "${option.name}" wirklich löschen?`}</span>
+                              <button
+                                className="confirm-button"
+                                onClick={() => confirmDeleteOption(menu.id, option.name)}
+                              >
+                                Ja
+                              </button>
+                              <button
+                                className="cancel-button"
+                                onClick={cancelDeleteOption}
+                              >
+                                Nein
+                              </button>
+                            </div>
+                          )}
+                          {showErweiterteOptionen[menu.id]?.[option.name] && (menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
+                            <div className="settings-container">
+                              {menu.id === 'eauto' ? (
+                                <div>
+                                  <h4>E-Auto Einstellungen</h4>
+                                  <div className="grid">
                                     <label>
                                       Batteriekapazität (kWh):
                                       <input
@@ -1598,6 +1494,17 @@ export default function Home() {
                                         onChange={(e) => handleErweiterteEinstellungChange(option.name, 'wallboxLeistung', e.target.value, null)}
                                         min="0"
                                         step="100"
+                                      />
+                                    </label>
+                                    <label>
+                                      Ladehäufigkeit (pro Woche):
+                                      <input
+                                        type="number"
+                                        className="settings-input"
+                                        value={erweiterteEinstellungen[option.name].nutzung}
+                                        onChange={(e) => handleErweiterteEinstellungChange(option.name, 'nutzung', e.target.value, null)}
+                                        min="0"
+                                        step="1"
                                       />
                                     </label>
                                     <label>
@@ -1625,71 +1532,12 @@ export default function Home() {
                                         </label>
                                       </div>
                                     </label>
-                                    <label>
-                                      Ladehäufigkeit (pro Woche):
-                                      <input
-                                        type="number"
-                                        className="settings-input"
-                                        value={erweiterteEinstellungen[option.name].nutzung}
-                                        onChange={(e) => handleErweiterteEinstellungChange(option.name, 'nutzung', e.target.value, null)}
-                                        min="0"
-                                        step="1"
-                                      />
-                                    </label>
-                                    {!erweiterteEinstellungen[option.name].standardLadung && (
-                                      erweiterteEinstellungen[option.name].zeitraeume.map((zeitraum, index) => (
-                                        <div key={zeitraum.id} style={{ display: 'flex', flexDirection: 'column', gap: '7px', marginBottom: '7px' }}>
-                                          <div style={{ display: 'flex', gap: '7px', alignItems: 'center' }}>
-                                            <label>
-                                              Zeitraum:
-                                              <select
-                                                value={timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit)?.label || ''}
-                                                onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
-                                              >
-                                                {timePeriods.map((period) => (
-                                                  <option key={period.label} value={period.label}>
-                                                    {period.label}
-                                                  </option>
-                                                ))}
-                                              </select>
-                                            </label>
-                                            <label>
-                                              Dauer (h):
-                                              <input
-                                                type="number"
-                                                className="settings-input"
-                                                value={zeitraum.dauer}
-                                                onChange={(e) => handleErweiterteEinstellungChange(option.name, 'dauer', e.target.value, zeitraum.id)}
-                                                min="0"
-                                                step="0.1"
-                                              />
-                                            </label>
-                                            {index > 0 && (
-                                              <button
-                                                className="delete-option-button"
-                                                onClick={() => removeZeitraum(option.name, zeitraum.id)}
-                                              >
-                                                Zeitraum löschen
-                                              </button>
-                                            )}
-                                          </div>
-                                        </div>
-                                      ))
-                                    )}
-                                    {!erweiterteEinstellungen[option.name].standardLadung && (
-                                      <button
-                                        className="add-option-button"
-                                        onClick={() => addZeitraum(option.name)}
-                                      >
-                                        Zeitraum hinzufügen
-                                      </button>
-                                    )}
-                                  </>
-                                ) : (
-                                  <>
-                                    {erweiterteEinstellungen[option.name].zeitraeume.map((zeitraum, index) => (
-                                      <div key={zeitraum.id} style={{ display: 'flex', flexDirection: 'column', gap: '7px', marginBottom: '7px' }}>
-                                        <div style={{ display: 'flex', gap: '7px', alignItems: 'center' }}>
+                                  </div>
+                                  {!erweiterteEinstellungen[option.name].standardLadung && (
+                                    <div className="zeitraum-section">
+                                      <h5>Zeiträume</h5>
+                                      {erweiterteEinstellungen[option.name].zeitraeume.map((zeitraum, index) => (
+                                        <div key={zeitraum.id} className="zeitraum-grid">
                                           <label>
                                             Zeitraum:
                                             <select
@@ -1698,7 +1546,7 @@ export default function Home() {
                                             >
                                               {timePeriods.map((period) => (
                                                 <option key={period.label} value={period.label}>
-                                                  {period.label}
+                                                  {period.label} ({period.startzeit} - {period.endzeit})
                                                 </option>
                                               ))}
                                             </select>
@@ -1715,22 +1563,30 @@ export default function Home() {
                                             />
                                           </label>
                                           {index > 0 && (
-                                            <button
-                                              className="delete-option-button"
-                                              onClick={() => removeZeitraum(option.name, zeitraum.id)}
-                                            >
-                                              Zeitraum löschen
-                                            </button>
+                                            <div>
+                                              <button
+                                                className="delete-option-button"
+                                                onClick={() => removeZeitraum(option.name, zeitraum.id)}
+                                              >
+                                                Zeitraum löschen
+                                              </button>
+                                            </div>
                                           )}
                                         </div>
-                                      </div>
-                                    ))}
-                                    <button
-                                      className="add-option-button"
-                                      onClick={() => addZeitraum(option.name)}
-                                    >
-                                      Zeitraum hinzufügen
-                                    </button>
+                                      ))}
+                                      <button
+                                        className="add-option-button"
+                                        onClick={() => addZeitraum(option.name)}
+                                      >
+                                        Zeitraum hinzufügen
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                <div>
+                                  <h4>Verbraucher Einstellungen</h4>
+                                  <div className="grid">
                                     <label>
                                       Nutzung (pro Woche):
                                       <input
@@ -1739,74 +1595,121 @@ export default function Home() {
                                         value={erweiterteEinstellungen[option.name].nutzung}
                                         onChange={(e) => handleErweiterteEinstellungChange(option.name, 'nutzung', e.target.value, null)}
                                         min="0"
+                                        step="1"
                                       />
                                     </label>
-                                  </>
-                                )}
-                              </div>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                      <button
-                        className="add-option-button"
-                        onClick={() => toggleNewOptionForm(menu.id)}
-                      >
-                        Neue Option hinzufügen
-                      </button>
-                      {showNewOptionForm[menu.id] && (
-                        <div className="new-option-container">
-                          <input
-                            type="text"
-                            className="new-option-input"
-                            placeholder="Name der neuen Option"
-                            value={newOptionNames[menu.id] || ''}
-                            onChange={(e) => handleNewOptionName(menu.id, e.target.value)}
-                          />
-                          <input
-                            type="number"
-                            className="new-option-watt"
-                            placeholder="Wattleistung"
-                            value={newOptionWatt[menu.id] || ''}
-                            onChange={(e) => handleNewOptionWatt(menu.id, e.target.value)}
-                            min="0"
-                          />
-                          <button
-                            className="save-option-button"
-                            onClick={() => addNewOption(menu.id)}
-                          >
-                            Speichern
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
-
-              <div className="summary-container">
-                <h3 className="summary-title">Zusammenfassung</h3>
-                <div className="summary-item">Grundlast Ersparnis: {zusammenfassung.grundlast} €</div>
-                <div className="summary-item">Dynamische Ersparnis: {zusammenfassung.dynamisch} €</div>
-                <div className="summary-item">Gesamtersparnis: {zusammenfassung.gesamt} €</div>
-                <div className="summary-item">Gesamtwattage: {zusammenfassung.totalWattage} W</div>
+                                  </div>
+                                  <div className="zeitraum-section">
+                                    <h5>Zeiträume</h5>
+                                    {erweiterteEinstellungen[option.name].zeitraeume.map((zeitraum, index) => (
+                                      <div key={zeitraum.id} className="zeitraum-grid">
+                                        <label>
+                                          Zeitraum:
+                                          <select
+                                            value={timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit)?.label || ''}
+                                            onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
+                                          >
+                                            {timePeriods.map((period) => (
+                                              <option key={period.label} value={period.label}>
+                                                {period.label} ({period.startzeit} - {period.endzeit})
+                                              </option>
+                                            ))}
+                                          </select>
+                                        </label>
+                                        <label>
+                                          Dauer (h):
+                                          <input
+                                            type="number"
+                                            className="settings-input"
+                                            value={zeitraum.dauer}
+                                            onChange={(e) => handleErweiterteEinstellungChange(option.name, 'dauer', e.target.value, zeitraum.id)}
+                                            min="0"
+                                            step="0.1"
+                                          />
+                                        </label>
+                                        {index > 0 && (
+                                          <div>
+                                            <button
+                                              className="delete-option-button"
+                                              onClick={() => removeZeitraum(option.name, zeitraum.id)}
+                                            >
+                                              Zeitraum löschen
+                                            </button>
+                                          </div>
+                                        )}
+                                      </div>
+                                    ))}
+                                    <button
+                                      className="add-option-button"
+                                      onClick={() => addZeitraum(option.name)}
+                                    >
+                                      Zeitraum hinzufügen
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                    <button
+                      className="add-option-button"
+                      onClick={() => toggleNewOptionForm(menu.id)}
+                    >
+                      Neue Option hinzufügen
+                    </button>
+                    {showNewOptionForm[menu.id] && (
+                      <div className="new-option-container">
+                        <input
+                          type="text"
+                          className="new-option-input"
+                          placeholder="Name der neuen Option"
+                          value={newOptionNames[menu.id] || ''}
+                          onChange={(e) => handleNewOptionName(menu.id, e.target.value)}
+                        />
+                        <input
+                          type="number"
+                          className="new-option-watt"
+                          placeholder="Wattleistung"
+                          value={newOptionWatt[menu.id] || ''}
+                          onChange={(e) => handleNewOptionWatt(menu.id, e.target.value)}
+                          min="0"
+                        />
+                        <button
+                          className="save-option-button"
+                          onClick={() => addNewOption(menu.id)}
+                        >
+                          Speichern
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
+            ))}
+
+            <div className="summary-container">
+              <h3 className="summary-title">Zusammenfassung</h3>
+              <div className="summary-item">Grundlast Ersparnis: {zusammenfassung.grundlast} €</div>
+              <div className="summary-item">Dynamische Ersparnis: {zusammenfassung.dynamisch} €</div>
+              <div className="summary-item">Gesamtersparnis: {zusammenfassung.gesamt} €</div>
+              <div className="summary-item">Gesamtwattage: {zusammenfassung.totalWattage} W</div>
             </div>
           </div>
+        </div>
 
-          {/* Rechter Bereich: Diagramme */}
-          <div className="diagrams-container">
-            <div className="diagram">
-              <h3 className="diagram-title">Stromverbrauch pro Stunde</h3>
-              <div className="chart-container">
-                <Line data={chartData} options={chartOptions} />
-              </div>
+        <div className="diagrams-container">
+          <div className="diagram">
+            <h3 className="diagram-title">Stromverbrauch pro Stunde</h3>
+            <div className="chart-container">
+              <Line data={chartData} options={chartOptions} />
             </div>
-            <div className="diagram">
-              <h3 className="diagram-title">Stromersparnis pro Stunde</h3>
-              <div className="chart-container">
-                <Line data={chartDataKosten} options={chartOptionsKosten} />
-              </div>
+          </div>
+          <div className="diagram">
+            <h3 className="diagram-title">Stromersparnis pro Stunde</h3>
+            <div className="chart-container">
+              <Line data={chartDataKosten} options={chartOptionsKosten} />
             </div>
           </div>
         </div>

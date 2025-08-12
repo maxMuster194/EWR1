@@ -72,15 +72,6 @@ const styles = {
   },
 };
 
-// Funktion zur Berechnung der Kalenderwoche
-function getWeekNumber(date) {
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
-  d.setDate(d.getDate() + 4 - (d.getDay() || 7));
-  const yearStart = new Date(d.getFullYear(), 0, 1);
-  return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
-}
-
 // Statistik component
 function Statistik() {
   const [data, setData] = useState([]);
@@ -142,17 +133,13 @@ function Statistik() {
     return <div style={styles.noData}>⚠️ Keine Daten gefunden.</div>;
   }
 
-  // Gruppiere Daten nach Kalenderwoche
-  const weeklyData = {};
-  data.forEach((entry) => {
+  // Prepare chart data
+  const chartLabels = data.map((entry) => {
     const dateKey = Object.keys(entry).find((key) => key.includes('Prices - EPEX'));
-    if (!dateKey) return;
-    const dateStr = entry[dateKey];
-    const [day, month, year] = dateStr.split('/').map(Number);
-    const date = new Date(year, month - 1, day);
-    const weekNumber = getWeekNumber(date);
-    const weekKey = `KW${weekNumber}-${year}`;
+    return dateKey ? entry[dateKey] : '';
+  });
 
+  const chartData = data.map((entry) => {
     const prices = entry.__parsed_extra?.slice(0, 24) || [];
     const validPrices = prices
       .map((v) => {
@@ -160,43 +147,20 @@ function Statistik() {
         return isNaN(num) ? null : num * 0.1; // Convert to ct/kWh
       })
       .filter((v) => v !== null);
-
-    if (validPrices.length > 0) {
-      const avgPrice = validPrices.reduce((sum, val) => sum + val, 0) / validPrices.length;
-      if (!weeklyData[weekKey]) {
-        weeklyData[weekKey] = { prices: [], date: dateStr };
-      }
-      weeklyData[weekKey].prices.push(...validPrices);
-    }
+    return validPrices.length > 0
+      ? (validPrices.reduce((sum, val) => sum + val, 0) / validPrices.length).toFixed(2)
+      : null;
   });
-
-  // Berechne wöchentliche Durchschnittspreise
-  const chartLabels = [];
-  const chartData = [];
-  Object.keys(weeklyData)
-    .sort((a, b) => {
-      const [weekA, yearA] = a.split('-').map((v) => parseInt(v.replace('KW', '')));
-      const [weekB, yearB] = b.split('-').map((v) => parseInt(v.replace('KW', '')));
-      return yearA === yearB ? weekA - weekB : yearA - yearB;
-    })
-    .forEach((weekKey) => {
-      const prices = weeklyData[weekKey].prices;
-      if (prices.length > 0) {
-        const avgPrice = (prices.reduce((sum, val) => sum + val, 0) / prices.length).toFixed(2);
-        chartLabels.push(weekKey);
-        chartData.push(avgPrice);
-      }
-    });
 
   return (
     <>
       <Head>
-        <title>MongoDB Weekly Prices - Line Chart</title>
+        <title>MongoDB Daily Prices - Line Chart</title>
       </Head>
       <div style={styles.container}>
-        <h1 style={styles.title}>Energiepreise Dynamisch 2025</h1>
+        <h1 style={styles.title}>Energiepreise 2025</h1>
         <div style={styles.chartContainer}>
-          <h2 style={styles.chartTitle}>Wöchentliche Durchschnittspreise 2025</h2>
+          <h2 style={styles.chartTitle}>Tägliche Durchschnittspreise 2025</h2>
           <Line
             data={{
               labels: chartLabels,
@@ -251,8 +215,8 @@ function Statistik() {
                     font: {
                       size: 12,
                     },
-                    maxRotation: 0,
-                    minRotation: 0,
+                    maxRotation: 45,
+                    minRotation: 45,
                     autoSkip: true,
                     maxTicksLimit: 20, // Limit number of ticks for readability
                   },

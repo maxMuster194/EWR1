@@ -1,7 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import StromverbrauchRechner from '../EWR1/details20'; // Import der Details-Rechner-Komponente
 
 const styles = `
   .layout {
@@ -19,13 +18,8 @@ const styles = `
     flex: 1;
     overflow-y: auto;
     display: grid;
-    grid:
-      "sidebar top-box" auto
-      "sidebar main" 1fr
-      "sidebar bottom-boxes" auto
-      "sidebar extra-box-1" auto
-      "sidebar extra-box-2" auto
-      / minmax(100px, 120px) 1fr;
+    grid-template-columns: minmax(100px, 120px) 1fr;
+    grid-template-areas: "sidebar main";
     gap: 1rem;
     padding: 2rem 1rem 1rem 0;
     border: 1px solid #D1D5DB;
@@ -41,10 +35,12 @@ const styles = `
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    border: none;
     padding: 1rem 2rem;
-    background: linear-gradient(90deg, #D9043D, #05A696);
+    background: linear-gradient(90deg, #062316, #409966);
     box-sizing: border-box;
     margin: 0;
+    border-radius: 0;
   }
   .header-logo {
     max-width: 200px;
@@ -52,15 +48,6 @@ const styles = `
     width: 100%;
     height: auto;
     object-fit: contain;
-  }
-  .top-box {
-    grid-area: top-box;
-    padding: 2rem;
-    background-color: #FFFFFF;
-    border: 1px solid #D1D5DB;
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    box-sizing: border-box;
   }
   .sidebar {
     grid-area: sidebar;
@@ -90,10 +77,10 @@ const styles = `
     transition: background-color 0.2s;
   }
   .sidebar a:hover {
-    background-color: #D9043D;
+    background-color: #e6e6bf;
   }
   .sidebar a.active {
-    background-color: #D9043D;
+    background-color: #e6e6bf;
   }
   .sidebar a p {
     text-align: center;
@@ -103,7 +90,7 @@ const styles = `
   }
   .sidebar a svg {
     font-size: 16px;
-    color: #05A696 !important; /* Green icons, enforced */
+    color: #75ff2b !important;
   }
   .main {
     grid-area: main;
@@ -114,78 +101,16 @@ const styles = `
     background-color: #F3F4F6;
     border: 1px solid #D1D5DB;
     border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     box-sizing: border-box;
-  }
-  .bottom-boxes {
-    grid-area: bottom-boxes;
-    width: 1200px;
-    max-width: 90vw;
-    margin: 0 auto;
-    padding: 1.5rem;
-    background-color: #F3F4F6;
-    border: 1px solid #D1D5DB;
-    border-radius: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    box-sizing: border-box;
-  }
-  .extra-box-1 {
-    grid-area: extra-box-1;
-    padding: 1rem;
-    background-color: #F3F4F6;
-    border: 1px solid #D1D5DB;
-    border-radius: 12px;
-    box-sizing: border-box;
-  }
-  .extra-box-2 {
-    grid-area: extra-box-2;
-    padding: 1rem;
-    background-color: #F3F4F6;
-    border: 1px solid #D1D5DB;
-    border-radius: 12px;
-    box-sizing: border-box;
-  }
-  .content {
-    flex: 1;
-    overflow-y: auto;
-    max-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-sizing: border-box;
   }
-  .content-box {
-    border: 1px solid #D1D5DB;
-    border-radius: 12px;
-    overflow: hidden;
-    max-width: 800px;
-    max-height: 800px;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    box-sizing: border-box;
-  }
-  .content-box > div {
-    border-bottom: 1px solid #D1D5DB;
-    padding: 0.75rem;
-    background-color: #F9FAFB;
-    max-width: 800px;
-    max-height: 800px;
-    width: 100%;
-    height: 100%;
-    flex-shrink: 0;
-    flex-grow: 1;
-    overflow: auto;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-sizing: border-box;
-  }
-  .content-box > div:last-child {
-    border-bottom: none;
+  .main h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #202026;
+    text-align: center;
   }
   .footer {
     position: fixed;
@@ -196,13 +121,18 @@ const styles = `
     display: flex;
     align-items: center;
     justify-content: center;
+    border: none;
     padding: 1rem 2rem;
-    background: linear-gradient(90deg, #D9043D, #05A696);
+    background: linear-gradient(90deg, #062316, #409966);
     box-sizing: border-box;
     margin: 0;
+    border-radius: 0;
   }
   .footer p {
-    color: #D9043D;
+    color: #e6e6bf;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 500;
   }
   @media (max-width: 1024px) {
     .layout {
@@ -214,24 +144,19 @@ const styles = `
       gap: 0.75rem;
       padding: 1.5rem 0.75rem 0.75rem 0;
     }
-    .main, .bottom-boxes {
+    .main {
       width: 100%;
       max-width: 95vw;
       padding: 1rem;
-    }
-    .content-box {
-      max-width: 90vw;
-      max-height: 600px;
-    }
-    .content-box > div {
-      max-width: 90vw;
-      max-height: 600px;
     }
     .header-logo {
       max-width: 160px;
       max-height: 64px;
     }
-    .header, .footer {
+    .header {
+      padding: 0.75rem 1.5rem;
+    }
+    .footer {
       padding: 0.75rem 1.5rem;
     }
     .sidebar {
@@ -240,7 +165,6 @@ const styles = `
     }
     .sidebar a svg {
       font-size: 14px;
-      color: #05A696 !important; /* Green icons, enforced */
     }
   }
   @media (max-width: 767px) {
@@ -254,19 +178,24 @@ const styles = `
       gap: 0.5rem;
       padding: 1rem 0.5rem 0.5rem 0;
     }
-    .header, .footer, .sidebar, .main, .top-box, .bottom-boxes, .extra-box-1, .extra-box-2 {
+    .header, .footer, .sidebar, .main {
       width: 100%;
       max-width: 100%;
       padding: 0.5rem;
       border: 1px solid #D1D5DB;
       border-radius: 8px;
     }
-    .main, .bottom-boxes {
+    .main {
       max-width: 100%;
       margin: 0;
       padding: 0.75rem;
     }
-    .header, .footer {
+    .header {
+      padding: 0.5rem;
+      border: none;
+      margin: 0;
+    }
+    .footer {
       padding: 0.5rem;
       border: none;
       margin: 0;
@@ -275,24 +204,11 @@ const styles = `
       max-width: 120px;
       max-height: 48px;
     }
-    .content {
-      max-height: none;
-    }
-    .content-box {
-      max-width: 100%;
-      max-height: 500px;
-    }
-    .content-box > div {
-      padding: 0.5rem;
-      max-width: 100%;
-      max-height: 500px;
-    }
     .sidebar {
       border-radius: 8px 8px 0 0;
     }
     .sidebar a svg {
       font-size: 14px;
-      color: #05A696 !important; /* Green icons, enforced */
     }
   }
 `;
@@ -304,42 +220,54 @@ const Energiemanager = () => {
       <div className="layout relative bg-gray-100" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
         <header className="header">
           <div className="flex items-center">
-            <img src="/bilder/EWR.jpg" alt="EWR Logo" className="header-logo" />
+            <img src="/bilder/ilumylogo2.png" alt="Ilumy Logo" className="header-logo" />
           </div>
         </header>
 
         <div className="content-wrapper">
-          <div className="sidebar w-full p-3 bg-blue-900">
+          <div className="sidebar w-full p-3 bg-[#202026]">
             <div className="flex h-full flex-col justify-between">
               <div className="flex flex-col gap-3">
-                <div className="flex gap-1">
+                <div className="flex gap-2">
                   <div
                     className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8"
                    
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <a href="/EWR1/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-blue-800 text-white">
+                  <a
+                    href="/Presentation/startseite"
+                    className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#e6e6bf] text-white"
+                  >
                     <FontAwesomeIcon icon={faHouse} style={{ color: '#05A696' }} />
                     <p className="text-white text-xs font-medium leading-normal">Home</p>
                   </a>
-                  <a href="/EWR1/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-blue-800 text-white">
+                  <a
+                    href="/Presentation/preise"
+                    className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#e6e6bf] text-white"
+                  >
                     <FontAwesomeIcon icon={faChartLine} style={{ color: '#05A696' }} />
                     <p className="text-white text-xs font-medium leading-normal">Preis</p>
                   </a>
-                  <a href="/EWR1/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-blue-800 text-white">
+                  <a
+                    href="/Presentation/rechner"
+                    className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#e6e6bf] text-white"
+                  >
                     <FontAwesomeIcon icon={faCalculator} style={{ color: '#05A696' }} />
                     <p className="text-white text-xs font-medium leading-normal">Rechner</p>
                   </a>
                   <a
-                    href="/EWR1/details"
-                    className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white active"
-                    style={{ backgroundColor: '#D9043D' }} // Simulate hover state
+                    href="/Presentation/details"
+                    className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#e6e6bf] text-white"
                   >
                     <FontAwesomeIcon icon={faFileLines} style={{ color: '#05A696' }} />
                     <p className="text-white text-xs font-medium leading-normal">Detail-Rechner</p>
                   </a>
-                  <a href="/EWR1/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-blue-800 text-white">
+                  <a
+                    href="/Presentation/hilfe"
+                    className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white active"
+                    style={{ backgroundColor: '#e6e6bf' }}
+                  >
                     <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#05A696' }} />
                     <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
                   </a>
@@ -349,18 +277,13 @@ const Energiemanager = () => {
           </div>
 
           <div className="main flex flex-col gap-6">
-            <div className="content flex-1 p-6 rounded-xl bg-white shadow-md flex flex-col">
-              <div className="flex flex-col gap-6 mt-6 flex-1">
-                <div>
-                  <StromverbrauchRechner />
-                </div>
-              </div>
-            </div>
+            <h1>Hilfe</h1>
+            
           </div>
         </div>
 
         <footer className="footer">
-          <p className="text-blue-600 text-base font-medium leading-normal">© 2025 Energiemanager</p>
+          <p className="text-[#e6e6bf] text-base font-medium leading-normal">© 2025 Energiemanager</p>
         </footer>
       </div>
     </>

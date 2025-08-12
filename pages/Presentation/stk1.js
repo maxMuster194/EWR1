@@ -25,7 +25,7 @@ ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Tooltip,
 const styles = {
   container: {
     padding: '1.5rem',
-    maxWidth: '1440px',
+    maxWidth: '144法規1440px',
     margin: '0 auto',
     fontFamily: "'Inter', 'Roboto', sans-serif",
     backgroundColor: '#f8fafc',
@@ -35,7 +35,7 @@ const styles = {
     fontSize: '2.5rem',
     fontWeight: '700',
     marginBottom: '2rem',
-    color: '#D9043D',
+    color: '#D9043D', // Changed to Red
     textAlign: 'center',
   },
   chartContainer: {
@@ -49,13 +49,13 @@ const styles = {
     fontSize: '1.875rem',
     fontWeight: '600',
     marginBottom: '1.5rem',
-    color: '#D9043D',
+    color: '#D9043D', // Changed to Red
     textAlign: 'center',
   },
   loading: {
     fontSize: '1.5rem',
     fontWeight: '500',
-    color: '#D9043D',
+    color: '#D9043D', // Changed to Red
     textAlign: 'center',
     padding: '2rem',
     backgroundColor: '#ffffff',
@@ -64,7 +64,7 @@ const styles = {
   noData: {
     fontSize: '1.5rem',
     fontWeight: '500',
-    color: '#D9043D',
+    color: '#D9043D', // Changed to Red
     textAlign: 'center',
     padding: '2rem',
     backgroundColor: '#ffffff',
@@ -72,18 +72,21 @@ const styles = {
   },
 };
 
-// Funktion zur Berechnung der Kalenderwoche
-function getWeekNumber(date) {
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
-  d.setDate(d.getDate() + 4 - (d.getDay() || 7));
-  const yearStart = new Date(d.getFullYear(), 0, 1);
-  return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
-}
+// Data constants
+const months = [
+  '01/2025', '02/2025', '03/2025', '04/2025', '05/2025', '06/2025',
+  '07/2025', '08/2025', '09/2025', '10/2025', '11/2025', '12/2025',
+];
+
+const monthNames = [
+  'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
+  'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember',
+];
 
 // Statistik component
 function Statistik() {
   const [data, setData] = useState([]);
+  const [monthlyData, setMonthlyData] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -124,6 +127,40 @@ function Statistik() {
         });
 
         setData(sortedData);
+
+        const groupedByMonth = {};
+        sortedData.forEach((entry) => {
+          const dateKey = Object.keys(entry).find((key) => key.includes('Prices - EPEX'));
+          if (!dateKey) return;
+          const dateStr = entry[dateKey];
+          if (!dateStr || !/^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) return;
+
+          const [, month, year] = dateStr.split('/').map(Number);
+          const monthKey = `${month.toString().padStart(2, '0')}/${year}`;
+
+          if (!groupedByMonth[monthKey]) {
+            groupedByMonth[monthKey] = [];
+          }
+
+          const prices = entry.__parsed_extra?.slice(0, 24) || [];
+          const validPrices = prices
+            .map((v) => {
+              const num = typeof v === 'number' ? v : parseFloat(v);
+              return isNaN(num) ? null : num * 0.1;
+            })
+            .filter((v) => v !== null);
+
+          const dailyAverage = validPrices.length > 0
+            ? (validPrices.reduce((sum, val) => sum + val, 0) / validPrices.length).toFixed(2)
+            : null;
+
+          groupedByMonth[monthKey].push({
+            date: dateStr,
+            average: dailyAverage !== null ? dailyAverage : '–',
+          });
+        });
+
+        setMonthlyData(groupedByMonth);
       } catch (error) {
         console.error('Fehler beim Abrufen der Daten:', error);
       } finally {
@@ -134,85 +171,53 @@ function Statistik() {
     fetchData();
   }, []);
 
+  const calculateMonthlyAverage = (monthData) => {
+    const validAverages = monthData
+      .filter((day) => day.average !== '–')
+      .map((day) => parseFloat(day.average));
+    return validAverages.length > 0
+      ? (validAverages.reduce((sum, val) => sum + val, 0) / validAverages.length).toFixed(2)
+      : '–';
+  };
+
   if (loading) {
     return <div style={styles.loading}>⏳ Daten werden geladen…</div>;
   }
 
-  if (!data.length) {
+  if (!data.length && !Object.keys(monthlyData).length) {
     return <div style={styles.noData}>⚠️ Keine Daten gefunden.</div>;
   }
-
-  // Gruppiere Daten nach Kalenderwoche
-  const weeklyData = {};
-  data.forEach((entry) => {
-    const dateKey = Object.keys(entry).find((key) => key.includes('Prices - EPEX'));
-    if (!dateKey) return;
-    const dateStr = entry[dateKey];
-    const [day, month, year] = dateStr.split('/').map(Number);
-    const date = new Date(year, month - 1, day);
-    const weekNumber = getWeekNumber(date);
-    const weekKey = `KW${weekNumber}-${year}`;
-
-    const prices = entry.__parsed_extra?.slice(0, 24) || [];
-    const validPrices = prices
-      .map((v) => {
-        const num = typeof v === 'number' ? v : parseFloat(v);
-        return isNaN(num) ? null : num * 0.1; // Convert to ct/kWh
-      })
-      .filter((v) => v !== null);
-
-    if (validPrices.length > 0) {
-      const avgPrice = validPrices.reduce((sum, val) => sum + val, 0) / validPrices.length;
-      if (!weeklyData[weekKey]) {
-        weeklyData[weekKey] = { prices: [], date: dateStr };
-      }
-      weeklyData[weekKey].prices.push(...validPrices);
-    }
-  });
-
-  // Berechne wöchentliche Durchschnittspreise
-  const chartLabels = [];
-  const chartData = [];
-  Object.keys(weeklyData)
-    .sort((a, b) => {
-      const [weekA, yearA] = a.split('-').map((v) => parseInt(v.replace('KW', '')));
-      const [weekB, yearB] = b.split('-').map((v) => parseInt(v.replace('KW', '')));
-      return yearA === yearB ? weekA - weekB : yearA - yearB;
-    })
-    .forEach((weekKey) => {
-      const prices = weeklyData[weekKey].prices;
-      if (prices.length > 0) {
-        const avgPrice = (prices.reduce((sum, val) => sum + val, 0) / prices.length).toFixed(2);
-        chartLabels.push(weekKey);
-        chartData.push(avgPrice);
-      }
-    });
 
   return (
     <>
       <Head>
-        <title>MongoDB Weekly Prices - Line Chart</title>
+        <title>MongoDB Monthly Prices - Line Chart</title>
       </Head>
       <div style={styles.container}>
-        <h1 style={styles.title}>Energiepreise Dynamisch 2025</h1>
+        <h1 style={styles.title}>Energiepreise 2025</h1>
         <div style={styles.chartContainer}>
-          <h2 style={styles.chartTitle}>Wöchentliche Durchschnittspreise 2025</h2>
+          <h2 style={styles.chartTitle}>Monatliche Durchschnittspreise 2025</h2>
           <Line
             data={{
-              labels: chartLabels,
+              labels: monthNames,
               datasets: [
                 {
                   label: 'Durchschnittspreis (ct/kWh)',
-                  data: chartData,
-                  borderColor: '#D9043D',
-                  backgroundColor: 'rgba(217, 4, 61, 0.2)',
-                  pointBackgroundColor: '#D9043D',
-                  pointBorderColor: '#05A696',
+                  data: months.map((monthKey) => {
+                    const monthlyAverage = monthlyData[monthKey]
+                      ? calculateMonthlyAverage(monthlyData[monthKey])
+                      : null;
+                    return monthlyAverage !== '–' ? parseFloat(monthlyAverage) : null;
+                  }),
+                  borderColor: '#D9043D', // Changed to Red
+                  backgroundColor: 'rgba(217, 4, 61, 0.2)', // Changed to Red with opacity
+                  pointBackgroundColor: '#D9043D', // Changed to Red
+                  pointBorderColor: '#05A696', // Changed to Green
                   pointBorderWidth: 2,
                   pointRadius: 5,
                   pointHoverRadius: 7,
                   fill: true,
-                  tension: 0.4,
+                  tension: 0.4, // Smooth curves
                 },
               ],
             }}
@@ -226,17 +231,17 @@ function Statistik() {
                       size: 14,
                       weight: '500',
                     },
-                    color: '#D9043D',
+                    color: '#D9043D', // Changed to Red
                   },
                 },
                 tooltip: {
-                  backgroundColor: '#05A696',
+                  backgroundColor: '#05A696', // Changed to Green
                   titleColor: '#ffffff',
                   bodyColor: '#ffffff',
                   callbacks: {
                     label: (context) => {
                       const value = context.raw;
-                      return value !== null ? `${value} Cent/kWh` : 'Keine Daten';
+                      return value !== null ? `${value.toFixed(2)} Cent/kWh` : 'Keine Daten';
                     },
                   },
                 },
@@ -247,23 +252,19 @@ function Statistik() {
                     display: false,
                   },
                   ticks: {
-                    color: '#D9043D',
+                    color: '#D9043D', // Changed to Red
                     font: {
                       size: 12,
                     },
-                    maxRotation: 0,
-                    minRotation: 0,
-                    autoSkip: true,
-                    maxTicksLimit: 20, // Limit number of ticks for readability
                   },
                 },
                 y: {
                   beginAtZero: true,
                   grid: {
-                    color: 'rgba(5, 166, 150, 0.1)',
+                    color: 'rgba(5, 166, 150, 0.1)', // Changed to Green with opacity
                   },
                   ticks: {
-                    color: '#D9043D',
+                    color: '#D9043D', // Changed to Red
                     font: {
                       size: 12,
                     },

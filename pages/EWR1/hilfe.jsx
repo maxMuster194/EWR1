@@ -278,6 +278,7 @@ const Energiemanager = () => {
 
           <div className="main flex flex-col gap-6">
             <h1>Hilfe</h1>
+            
           </div>
         </div>
 

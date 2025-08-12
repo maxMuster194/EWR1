@@ -1,7 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import StromverbrauchRechner from '../EWR1/details20'; // Import der Details-Rechner-Komponente
+import StromverbrauchRechner from '../Presentation/details20'; // Import der Details-Rechner-Komponente
 
 const styles = `
   .layout {
@@ -42,7 +42,7 @@ const styles = `
     align-items: center;
     justify-content: flex-start;
     padding: 1rem 2rem;
-    background: linear-gradient(90deg, #D9043D, #05A696);
+    background: linear-gradient(90deg, #062316, #409966);
     box-sizing: border-box;
     margin: 0;
   }
@@ -90,10 +90,10 @@ const styles = `
     transition: background-color 0.2s;
   }
   .sidebar a:hover {
-    background-color: #D9043D;
+    background-color: #e6e6bf;
   }
   .sidebar a.active {
-    background-color: #D9043D;
+    background-color: #e6e6bf;
   }
   .sidebar a p {
     text-align: center;
@@ -103,7 +103,7 @@ const styles = `
   }
   .sidebar a svg {
     font-size: 16px;
-    color: #05A696 !important; /* Green icons, enforced */
+    color: #75ff2b !important; /* Green icons, enforced */
   }
   .main {
     grid-area: main;
@@ -197,12 +197,12 @@ const styles = `
     align-items: center;
     justify-content: center;
     padding: 1rem 2rem;
-    background: linear-gradient(90deg, #D9043D, #05A696);
+    background: linear-gradient(90deg, #062316, #409966);
     box-sizing: border-box;
     margin: 0;
   }
   .footer p {
-    color: #D9043D;
+    color: #e6e6bf;
   }
   @media (max-width: 1024px) {
     .layout {
@@ -240,7 +240,8 @@ const styles = `
     }
     .sidebar a svg {
       font-size: 14px;
-      color: #05A696 !important; /* Green icons, enforced */
+      color: #75ff2b helles grün 
+ !important; /* Green icons, enforced */
     }
   }
   @media (max-width: 767px) {
@@ -292,7 +293,8 @@ const styles = `
     }
     .sidebar a svg {
       font-size: 14px;
-      color: #05A696 !important; /* Green icons, enforced */
+      color: #75ff2b helles grün 
+ !important; /* Green icons, enforced */
     }
   }
 `;
@@ -304,7 +306,7 @@ const Energiemanager = () => {
       <div className="layout relative bg-gray-100" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
         <header className="header">
           <div className="flex items-center">
-            <img src="/bilder/EWR.jpg" alt="EWR Logo" className="header-logo" />
+            <img src="/bilder/ilumylogo2.png" alt="Ilumy Logo" className="header-logo" />
           </div>
         </header>
 
@@ -319,28 +321,28 @@ const Energiemanager = () => {
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <a href="/EWR1/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-blue-800 text-white">
-                    <FontAwesomeIcon icon={faHouse} style={{ color: '#05A696' }} />
+                  <a href="/Presentation/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-blue-800 text-white">
+                    <FontAwesomeIcon icon={faHouse} style={{ color: '#75ff2b' }} />
                     <p className="text-white text-xs font-medium leading-normal">Home</p>
                   </a>
-                  <a href="/EWR1/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-blue-800 text-white">
-                    <FontAwesomeIcon icon={faChartLine} style={{ color: '#05A696' }} />
+                  <a href="/Presentation/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-blue-800 text-white">
+                    <FontAwesomeIcon icon={faChartLine} style={{ color: '#75ff2b' }} />
                     <p className="text-white text-xs font-medium leading-normal">Preis</p>
                   </a>
-                  <a href="/EWR1/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-blue-800 text-white">
-                    <FontAwesomeIcon icon={faCalculator} style={{ color: '#05A696' }} />
+                  <a href="/Presentation/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-blue-800 text-white">
+                    <FontAwesomeIcon icon={faCalculator} style={{ color: '#75ff2b' }} />
                     <p className="text-white text-xs font-medium leading-normal">Rechner</p>
                   </a>
                   <a
-                    href="/EWR1/details"
+                    href="/Presentation/details"
                     className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white active"
-                    style={{ backgroundColor: '#D9043D' }} // Simulate hover state
+                    style={{ backgroundColor: '#e6e6bf' }} // Simulate hover state
                   >
-                    <FontAwesomeIcon icon={faFileLines} style={{ color: '#05A696' }} />
+                    <FontAwesomeIcon icon={faFileLines} style={{ color: '#fffff' }} />
                     <p className="text-white text-xs font-medium leading-normal">Detail-Rechner</p>
                   </a>
-                  <a href="/EWR1/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-blue-800 text-white">
-                    <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#05A696' }} />
+                  <a href="/Presentation/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-blue-800 text-white">
+                    <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#75ff2b' }} />
                     <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
                   </a>
                 </div>

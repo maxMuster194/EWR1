@@ -28,14 +28,14 @@ const styles = {
     maxWidth: '1440px',
     margin: '0 auto',
     fontFamily: "'Inter', 'Roboto', sans-serif",
-    backgroundColor: '#f8fafc',
+    backgroundColor: '#e6e6bf', // Beige
     borderRadius: '12px',
   },
   title: {
     fontSize: '2.5rem',
     fontWeight: '700',
     marginBottom: '2rem',
-    color: '#D9043D',
+    color: '#062316', // Dunkelgrün
     textAlign: 'center',
   },
   chartContainer: {
@@ -49,13 +49,13 @@ const styles = {
     fontSize: '1.875rem',
     fontWeight: '600',
     marginBottom: '1.5rem',
-    color: '#D9043D',
+    color: '#062316', // Dunkelgrün
     textAlign: 'center',
   },
   loading: {
     fontSize: '1.5rem',
     fontWeight: '500',
-    color: '#D9043D',
+    color: '#062316', // Dunkelgrün
     textAlign: 'center',
     padding: '2rem',
     backgroundColor: '#ffffff',
@@ -64,7 +64,7 @@ const styles = {
   noData: {
     fontSize: '1.5rem',
     fontWeight: '500',
-    color: '#D9043D',
+    color: '#062316', // Dunkelgrün
     textAlign: 'center',
     padding: '2rem',
     backgroundColor: '#ffffff',
@@ -204,10 +204,10 @@ function Statistik() {
                 {
                   label: 'Durchschnittspreis (ct/kWh)',
                   data: chartData,
-                  borderColor: '#D9043D',
-                  backgroundColor: 'rgba(217, 4, 61, 0.2)',
-                  pointBackgroundColor: '#D9043D',
-                  pointBorderColor: '#05A696',
+                  borderColor: '#75ff2b', // Helles Grün
+                  backgroundColor: 'rgba(64, 153, 102, 0.2)', // Mittelgrün mit Transparenz
+                  pointBackgroundColor: '#062316', // Dunkelgrün
+                  pointBorderColor: '#409966', // Mittelgrün
                   pointBorderWidth: 2,
                   pointRadius: 5,
                   pointHoverRadius: 7,
@@ -226,13 +226,13 @@ function Statistik() {
                       size: 14,
                       weight: '500',
                     },
-                    color: '#D9043D',
+                    color: '#062316', // Dunkelgrün
                   },
                 },
                 tooltip: {
-                  backgroundColor: '#05A696',
-                  titleColor: '#ffffff',
-                  bodyColor: '#ffffff',
+                  backgroundColor: '#409966', // Mittelgrün
+                  titleColor: '#e6e6bf', // Beige
+                  bodyColor: '#e6e6bf', // Beige
                   callbacks: {
                     label: (context) => {
                       const value = context.raw;
@@ -247,7 +247,7 @@ function Statistik() {
                     display: false,
                   },
                   ticks: {
-                    color: '#D9043D',
+                    color: '#062316', // Dunkelgrün
                     font: {
                       size: 12,
                     },
@@ -260,10 +260,10 @@ function Statistik() {
                 y: {
                   beginAtZero: true,
                   grid: {
-                    color: 'rgba(5, 166, 150, 0.1)',
+                    color: 'rgba(64, 153, 102, 0.1)', // Mittelgrün mit Transparenz
                   },
                   ticks: {
-                    color: '#D9043D',
+                    color: '#062316', // Dunkelgrün
                     font: {
                       size: 12,
                     },
