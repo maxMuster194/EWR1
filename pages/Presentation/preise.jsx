@@ -388,7 +388,7 @@ const Energiemanager = () => {
       <div className="layout relative bg-gray-100" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
         <header className="header">
           <div className="flex items-center">
-            <img src="/bilder/Ilumylogo2.png" alt="Ilumy Logo" className="header-logo" />
+            <img src="/bilder/ilumylogo2.png" alt="Ilumy Logo" className="header-logo" />
           </div>
         </header>
 
