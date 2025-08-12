@@ -243,15 +243,6 @@ const styles = {
     alignItems: 'center',
     gap: '4px',
   },
-  personIconsContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: '8px',
-    marginBottom: '8px',
-    flexWrap: 'nowrap',
-    overflow: 'hidden',
-  },
 };
 
 function StrompreisChart() {
@@ -790,7 +781,7 @@ function StrompreisChart() {
             opacity: 1;
           }
           .discount-switch-container input:checked + .discount-switch-slider {
-            background-color: rgb(64, 153, 102);
+            background-color: rgb(5,166,150);
           }
           .discount-switch-container input:checked + .discount-switch-slider:before {
             transform: translateX(20px);
@@ -839,29 +830,34 @@ function StrompreisChart() {
         {!loading && !error && (
           <>
             <div style={styles.controlGroup}>
-              <label style={styles.sliderLabel}>Wie viele Personen leben in Ihrem Haushalt?</label>
-              <div style={styles.personIconsContainer}>
-                {Array.from({ length: activeProfile || 0 }).map((_, index) => (
-                  <svg key={index} width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="12" cy="6" r="4" fill="#333" />
-                    <path d="M5 22C5 17.5817 8.58172 14 13 14C17.4183 14 21 17.5817 21 22" stroke="#333" strokeWidth="2" />
-                  </svg>
-                ))}
-              </div>
-              <input
-                type="range"
-                min="0"
-                max="5"
-                step="1"
-                value={activeProfile || 0}
-                onChange={handleProfileChange}
-                style={{ ...styles.slider }}
-                className="slider"
-              />
-              <div style={{ fontSize: '14px', color: '#333' }}>
-                {activeProfile ? `${activeProfile} Person${activeProfile === 1 ? '' : 'en'}` : '0 Personen '}
-              </div>
-            </div>
+  <label style={styles.sliderLabel}>Wie viele Personen leben in Ihrem Haushalt?</label>
+  <img
+    src="/bilder/menschen.jpg"
+    alt="Haushaltsmitglieder"
+    style={{
+      width: '100%', // Bild nimmt die volle Breite des Containers ein
+      maxWidth: '240px', // Maximale Breite, anpassbar
+      height: 'auto', // Höhe passt sich proportional an
+      margin: '12px 0', // Abstand oben und unten, anpassbar
+      marginLeft: '50px', // Bild wird 20px nach rechts eingerückt
+      objectFit: 'contain', // Bild wird skaliert, ohne verzerrt zu werden
+      display: 'block', // Sorgt dafür, dass das Bild als Block-Element angezeigt wird
+    }}
+  />
+  <input
+    type="range"
+    min="0"
+    max="5"
+    step="1"
+    value={activeProfile || 0}
+    onChange={handleProfileChange}
+    style={{ ...styles.slider }}
+    className="slider"
+  />
+  <div style={{ fontSize: '14px', color: '#333' }}>
+    {activeProfile ? `${activeProfile} Person${activeProfile === 1 ? '' : 'en'}` : '0 Personen '}
+  </div>
+</div>
 
             <div style={styles.controlGroup}>
               <label style={styles.inputLabel}>Haben Sie eine PV-Anlage?</label>
