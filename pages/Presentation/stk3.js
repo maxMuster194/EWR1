@@ -194,7 +194,7 @@ function Statistik() {
         <title>MongoDB Weekly Prices - Line Chart</title>
       </Head>
       <div style={styles.container}>
-        <h1 style={styles.title}>Energiepreise Dynamisch 2025</h1>
+        <h1 style={styles.title}>BÖRSENPREIS ENERGIE</h1>
         <div style={styles.chartContainer}>
           <h2 style={styles.chartTitle}>Wöchentliche Durchschnittspreise 2025</h2>
           <Line
