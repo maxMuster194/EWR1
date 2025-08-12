@@ -837,7 +837,7 @@ export default function Home() {
   return (
     <>
       <style>{`
-  body {
+ body {
   margin: 0;
   font-family: Arial, sans-serif;
   background-color: #f3f4f6;
@@ -911,7 +911,7 @@ export default function Home() {
 
 .chart-container {
   width: 526px;
-  height: 420px;
+  height: 294px; /* Original 420px, reduziert um 30% (420 * 0.7 = 294) */
   margin: 0 auto;
 }
 
@@ -1296,7 +1296,7 @@ export default function Home() {
   padding-top: 10.5px;
   border-top: 0.7px solid #eee;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: justify;
   gap: 7px;
   align-items: center;
 }
@@ -1490,36 +1490,28 @@ export default function Home() {
                 />
               </div>
               <div className="input-container-html date-picker-container">
-                <label className="date-picker-label" htmlFor="date-picker">Datum für dynamischen Preis:</label>
-                <select
-                  id="date-picker"
-                  className="date-picker"
-                  value={selectedDate ? toInputDate(selectedDate) : ''}
-                  onChange={(e) => setSelectedDate(fromInputDate(e.target.value))}
-                >
-                  {availableDates.length === 0 ? (
-                    <option value="">Kein Datum verfügbar</option>
-                  ) : (
-                    availableDates.map((date) => (
-                      <option key={date} value={toInputDate(date)}>
-                        {date}
-                      </option>
-                    ))
-                  )}
-                </select>
-              </div>
-              {apiLoading && <div className="loading">Lade dynamische Strompreise...</div>}
-              {!apiLoading && availableDates.length === 0 && (
-                <div className="no-data">Keine Daten für dynamische Strompreise verfügbar.</div>
-              )}
-              {error && <div className="no-data">{error}</div>}
+  <label className="date-picker-label" htmlFor="date-picker">Datum für dynamischen Preis:</label>
+  <input
+    type="date"
+    id="date-picker"
+    className="date-picker"
+    value={selectedDate ? toInputDate(selectedDate) : ''}
+    onChange={(e) => setSelectedDate(fromInputDate(e.target.value))}
+  />
+</div>
+{apiLoading && <div className="loading">Lade dynamische Strompreise...</div>}
+{!apiLoading && availableDates.length === 0 && (
+  <div className="no-data">Keine Daten für dynamische Strompreise verfügbar.</div>
+)}
+{error && <div className="no-data">{error}</div>}
 
-              {menus.map((menu) => (
-                <div key={menu.id} className="menu">
-                  <div className="menu-header" onClick={() => toggleMenu(menu.id)}>
-                    <span>{menu.label}</span>
-                    <span className={`triangle ${openMenus[menu.id] ? 'open' : 'closed'}`}>▼</span>
-                  </div>
+{menus.map((menu) => (
+  <div key={menu.id} className="menu">
+    <div className="menu-header" onClick={() => toggleMenu(menu.id)}>
+      <span>{menu.label}</span>
+      <span className={`triangle ${openMenus[menu.id] ? 'open' : 'closed'}`}>▼</span>
+    </div>
+ 
                   {openMenus[menu.id] && (
                     <div className="menu-content">
                       <ul className="checkbox-group">
