@@ -10,14 +10,18 @@ export default function handler(req, res) {
   const { email, code, werbung } = req.body;
   const storedCode = getCode(email);
 
-  if (!storedCode || storedCode !== code) {
-    return res.status(400).json({ verified: false });
+  if (!storedCode) {
+    return res.status(400).json({ error: 'Kein Code gefunden oder Code abgelaufen', verified: false });
   }
 
-  // Code löschen (optional)
+  if (storedCode !== code) {
+    return res.status(400).json({ error: 'Falscher Code', verified: false });
+  }
+
+  // Code löschen
   clearCode(email);
 
-  // E-Mail + Werbung in JSON speichern
+  // E-Mail + Werbung speichern
   const filePath = path.join(process.cwd(), 'emails.json');
   let emailList = [];
 

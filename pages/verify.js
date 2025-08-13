@@ -127,7 +127,7 @@ export default function Home() {
 
         {verified && (
           <a
-            href="/downloads/affe.jpg"
+            href="/bilder/downloads/affe.jpg"
             download
             className="block mt-6 bg-green-600 text-white py-3 px-4 rounded-md text-center hover:bg-green-700 transition-colors"
           >
