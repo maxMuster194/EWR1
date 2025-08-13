@@ -26,15 +26,15 @@ ChartJS.register(
 
 // Default consumer data and descriptions
 const standardVerbrauch = {
-  Kühlschrank: 120,
-  Gefrierschrank: 200,
-  Aquarium: 50,
+  Kühlschrank: 135,
+  Gefrierschrank: 175,
+  Aquarium: 120,
   Waschmaschine: 1200,
   Geschirrspüler: 600,
   Trockner: 3500,
-  Herd: 700,
+  Herd: 1000,
   Multimedia: 350,
-  Licht: 175,
+  Licht: 140,
   EAuto: 11000,
   ZweitesEAuto: 7400,
 };
