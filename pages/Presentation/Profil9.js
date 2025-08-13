@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
@@ -850,7 +849,7 @@ function StrompreisChart() {
             }
             .image-container {
               flex-wrap: wrap;
-              justify-content: center;
+              justifyContent: center;
             }
             .image {
               width: 50px;
@@ -1051,13 +1050,17 @@ function StrompreisChart() {
         )}
         {householdType !== 'none' && activeProfile && (
           <div style={styles.consumptionSummary}>
-            <h3 style={styles.summaryTitle}>Täglicher Verbrauch und Kosten</h3>
+            <div style={styles.tooltipContainer} className="tooltip-container">
+              <h3 style={styles.summaryTitle}>Täglicher Verbrauch und Kosten</h3>
+              <svg style={styles.infoIcon} viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+              </svg>
+              <span className="tooltip">Preise sind auf zwei Nachkommastellen gerundet</span>
+            </div>
             <table style={styles.summaryTable}>
               <thead>
                 <tr style={styles.summaryTableHeader}>
-                  <th style={styles.summaryTableCell}>Profil (Faktor)</th>
                   <th style={styles.summaryTableCell}>Verbrauch (kWh)</th>
-                  <th style={styles.summaryTableCell}>Kosten (Cent)</th>
                   <th style={styles.summaryTableCell}>Kosten (Euro)</th>
                 </tr>
               </thead>
@@ -1067,27 +1070,8 @@ function StrompreisChart() {
                   const { h0Consumption, h0PVConsumption, h0PVStorageConsumption, h0Cost, h0PVCost, h0PVStorageCost, h0CustomCost, h0PVCustomCost, h0PVStorageCustomCost } = calculateConsumptionAndCosts(profile);
                   return (
                     <tr key={profile} style={styles.summaryTableRow}>
-                      <td style={styles.summaryTableCell}>Profil {profile} (Faktor {profileFactors[profile]})</td>
                       <td style={styles.summaryTableCell}>
                         {householdType === 'standard' ? `H0: ${h0Consumption} kWh` : householdType === 'pv' ? `H0PV: ${h0PVConsumption} kWh` : `H0PVStorage: ${h0PVStorageConsumption} kWh`}
-                      </td>
-                      <td style={styles.summaryTableCell}>
-                        {householdType === 'standard' ? (
-                          <>
-                            Dynamischer Tarif: {h0Cost.cent} Cent<br />
-                            Normaltarif: {h0CustomCost.cent} Cent
-                          </>
-                        ) : householdType === 'pv' ? (
-                          <>
-                            Dynamischer Tarif: {h0PVCost.cent} Cent<br />
-                            Normaltarif: {h0PVCustomCost.cent} Cent
-                          </>
-                        ) : (
-                          <>
-                            Dynamischer Tarif: {h0PVStorageCost.cent} Cent<br />
-                            Normaltarif: {h0PVStorageCustomCost.cent} Cent
-                          </>
-                        )}
                       </td>
                       <td style={styles.summaryTableCell}>
                         {householdType === 'standard' ? (

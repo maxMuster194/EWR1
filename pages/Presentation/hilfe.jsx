@@ -77,10 +77,10 @@ const styles = `
     transition: background-color 0.2s;
   }
   .sidebar a:hover {
-    background-color: #e6e6bf;
+    background-color: #062316;
   }
   .sidebar a.active {
-    background-color: #e6e6bf;
+    background-color: #062316;
   }
   .sidebar a p {
     text-align: center;
@@ -90,7 +90,7 @@ const styles = `
   }
   .sidebar a svg {
     font-size: 16px;
-    color: #75ff2b !important;
+    color: #e5dbc1 !important;
   }
   .main {
     grid-area: main;
@@ -266,7 +266,7 @@ const Energiemanager = () => {
                   <a
                     href="/Presentation/hilfe"
                     className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white active"
-                    style={{ backgroundColor: '#e6e6bf' }}
+                    style={{ backgroundColor: '#062316' }}
                   >
                     <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#05A696' }} />
                     <p className="text-white text-xs font-medium leading-normal">Hilfe</p>

@@ -391,7 +391,7 @@ export default function MongoDBPricesPage() {
               className={`p-6 rounded-xl shadow-md cursor-pointer text-center transition-all ${
                 selectedMonth === monthKey
                   ? 'bg-[#062316] text-white transform -translate-y-1'
-                  : 'bg-[#062316] text-white hover:bg-[#75ff2b] hover:text-[#062316] hover:shadow-lg'
+                  : 'bg-[#062316] text-white hover:bg-[#e5dbc1] hover:text-[#062316] hover:shadow-lg'
               }`}
             >
               <div className="text-xl font-bold">{monthNames[index]}</div>
@@ -535,7 +535,7 @@ export default function MongoDBPricesPage() {
                             data: calculateWeeklyAverages(selectedMonth, monthlyData[selectedMonth])
                               .filter((week) => week.average !== '–')
                               .map((week) => parseFloat(week.average)),
-                            backgroundColor: '#75ff2b', // Helles Grün nur für Balken
+                            backgroundColor: '#e5dbc1', // Helles Grün nur für Balken
                             borderColor: '#062316', // Dunkelgrün
                             borderWidth: 1,
                           },

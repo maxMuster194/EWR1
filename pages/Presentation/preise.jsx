@@ -117,10 +117,10 @@ const styles = `
     transition: background-color 0.2s;
   }
   .sidebar a:hover {
-    background-color: #e6e6bf;
+    background-color: #062316;
   }
   .sidebar a.active {
-    background-color: #e6e6bf;
+    background-color: #062316;
   }
   .sidebar a.active .fa-chart-line {
     color: #FFFFFF !important;
@@ -412,26 +412,26 @@ const Energiemanager = () => {
                     href="/Presentation/startseite"
                     className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#D9043D] text-white"
                   >
-                    <FontAwesomeIcon icon={faHouse} style={{ color: '#75ff2b' }} />
+                    <FontAwesomeIcon icon={faHouse} style={{ color: '#e5dbc1' }} />
                     <p className="text-white text-xs font-medium leading-normal">Home</p>
                   </a>
                   <a
                     href="/Presentation/preise"
                     className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#D9043D] text-white active"
                   >
-                    <FontAwesomeIcon icon={faChartLine} style={{ color: '#75ff2b' }} />
+                    <FontAwesomeIcon icon={faChartLine} style={{ color: '#e5dbc1' }} />
                     <p className="text-white text-xs font-medium leading-normal">Preis</p>
                   </a>
                   <a href="/Presentation/rechner" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
-                    <FontAwesomeIcon icon={faCalculator} style={{ color: '#75ff2b' }} />
+                    <FontAwesomeIcon icon={faCalculator} style={{ color: '#e5dbc1' }} />
                     <p className="text-white text-xs font-medium leading-normal">Rechner</p>
                   </a>
                   <a href="/Presentation/details" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
-                    <FontAwesomeIcon icon={faFileLines} style={{ color: '#75ff2b' }} />
+                    <FontAwesomeIcon icon={faFileLines} style={{ color: '#e5dbc1' }} />
                     <p className="text-white text-xs font-medium leading-normal">Detail-Rechner</p>
                   </a>
                   <a href="/Presentation/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
-                    <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#75ff2b' }} />
+                    <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#e5dbc1' }} />
                     <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
                   </a>
                 </div>

@@ -12,7 +12,7 @@ import {
   Filler,
 } from 'chart.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle, faUser } from '@fortawesome/free-solid-svg-icons';
 import Dypreis0 from '../Presentation/dypreis0';
 
 // Register Chart.js components
@@ -87,10 +87,10 @@ const styles = `
     transition: background-color 0.2s;
   }
   .sidebar a:hover {
-    background-color: #e6e6bf;
+    background-color: #062316;
   }
   .sidebar a.active {
-    background-color: #e6e6bf;
+    background-color: #062316;
   }
   .sidebar a.active .fa-house {
     color: #FFFFFF !important;
@@ -134,7 +134,7 @@ const styles = `
   }
   .content, .chart {
     flex: 1;
-    overflow-y: auto;
+    overflow: auto;
     max-height: 100vh;
   }
   .footer {
@@ -248,7 +248,7 @@ const Energiemanager = () => {
                 href="/Presentaition/rechner"
                 className="inline-flex items-center justify-center gap-1 px-3 py-1 rounded-lg bg-[#062316] hover:bg-[#409966] text-white text-sm font-medium leading-normal"
               >
-                <FontAwesomeIcon icon={faCalculator} style={{ color: '#75ff2b', fontSize: '14px' }} />
+                <FontAwesomeIcon icon={faCalculator} style={{ color: '#e5dbc1', fontSize: '14px' }} />
                 Zum Rechner
               </a>
             </div>
@@ -274,23 +274,23 @@ const Energiemanager = () => {
                   href="/Presentation/startseite"
                   className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#202026] hover:bg-[#D9043D] text-white active"
                 >
-                  <FontAwesomeIcon icon={faHouse} style={{ color: '#75ff2b', fontSize: '20px' }} />
+                  <FontAwesomeIcon icon={faHouse} style={{ color: '#e5dbc1', fontSize: '20px' }} />
                   <p className="text-white text-xs font-medium leading-normal">Home</p>
                 </a>
                 <a href="/Presentation/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
-                  <FontAwesomeIcon icon={faChartLine} style={{ color: '#75ff2b', fontSize: '20px' }} />
+                  <FontAwesomeIcon icon={faChartLine} style={{ color: '#e5dbc1', fontSize: '20px' }} />
                   <p className="text-white text-xs font-medium leading-normal">Preis</p>
                 </a>
                 <a href="/Presentation/rechner" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
-                  <FontAwesomeIcon icon={faCalculator} style={{ color: '#75ff2b', fontSize: '20px' }} />
+                  <FontAwesomeIcon icon={faCalculator} style={{ color: '#e5dbc1', fontSize: '20px' }} />
                   <p className="text-white text-xs font-medium leading-normal">Rechner</p>
                 </a>
                 <a href="/Presentation/details" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
-                  <FontAwesomeIcon icon={faFileLines} style={{ color: '#75ff2b', fontSize: '20px' }} />
+                  <FontAwesomeIcon icon={faFileLines} style={{ color: '#e5dbc1', fontSize: '20px' }} />
                   <p className="text-white text-xs font-medium leading-normal">Detail-Rechner</p>
                 </a>
                 <a href="/Presentation/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
-                  <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#75ff2b', fontSize: '20px' }} />
+                  <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#e5dbc1', fontSize: '20px' }} />
                   <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
                 </a>
               </div>
@@ -311,6 +311,13 @@ const Energiemanager = () => {
                   Im Gegensatz zu festen Tarifen variiert der Preis je nach Angebot und Nachfrage – 
                   zum Beispiel ist Strom nachts oder bei viel Wind und Sonne oft günstiger.
                 </p>
+                <a
+                  href="/Presentation/kontakt"
+                  className="inline-flex items-center justify-center gap-1.5 px-4 py-1.5 mt-4 rounded-lg bg-[#062316] hover:bg-[#409966] text-white text-lg font-medium leading-normal w-fit mx-auto"
+                >
+                  <FontAwesomeIcon icon={faUser} style={{ color: '#e5dbc1', fontSize: '19px' }} />
+                  Kontakt
+                </a>
               </div>
             </div>
           </div>
@@ -338,7 +345,7 @@ const Energiemanager = () => {
           <div className="flex flex-col gap-4 rounded-xl p-6 bg-gray-50 shadow-sm border border-[#D9043D] mt-4">
             <p className="text-[#b81414] text-xl font-bold leading-normal">Nachteile</p>
             <ul className="text-[#202026] text-base font-normal leading-relaxed list-disc list-inside space-y-2">
-              <li><span className="font-medium text-[#202026]">Preisschwankungen:</span> <span className="text-[#202026]">Strom kann zu bestimmten Tageszeiten sehr teuer sein, was die Planung erschwert.</span></li>
+              <li><span className="font-medium text-[#202026]">Preisschwankungen:</span> <span className="text-[#202026]">Strom kann zu bestimmten Tageszeiten sehr teuer sein, what die Planung erschwert.</span></li>
               <li><span className="font-medium text-[#202026]">Technischer Aufwand:</span> <span className="text-[#202026]">Ein digitaler Stromzähler (Smart Meter) ist meist Voraussetzung.</span></li>
               <li><span className="font-medium text-[#202026]">Komplexität:</span> <span className="text-[#202026]">Erfordert aktives Mitdenken oder technische Lösungen, um vom günstigen Preis zu profitieren.</span></li>
               <li><span className="font-medium text-[#202026]">Unvorhersehbarkeit:</span> <span className="text-[#202026]">Bei starker Nachfrage oder Krisen können Preise unerwartet steigen.</span></li>
@@ -354,7 +361,7 @@ const Energiemanager = () => {
                 href="/Amberg1/rechner"
                 className="inline-flex items-center justify-center gap-1 px-3 py-1 rounded-lg bg-[#062316] hover:bg-[#409966] text-white text-sm font-medium leading-normal"
               >
-                <FontAwesomeIcon icon={faCalculator} style={{ color: '#75ff2b', fontSize: '14px' }} />
+                <FontAwesomeIcon icon={faCalculator} style={{ color: '#e5dbc1', fontSize: '14px' }} />
                 Zum Rechner
               </a>
             </p>
@@ -385,7 +392,7 @@ const Energiemanager = () => {
             <FontAwesomeIcon icon={faFileLines} style={{ color: '#05A696', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Detail</p>
           </a>
-          <a href="Presentation/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+          <a href="/Presentation/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
             <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#05A696', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
           </a>

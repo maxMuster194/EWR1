@@ -90,10 +90,10 @@ const styles = `
     transition: background-color 0.2s;
   }
   .sidebar a:hover {
-    background-color: #e6e6bf;
+    background-color: #062316;
   }
   .sidebar a.active {
-    background-color: #e6e6bf;
+    background-color: #062316;
   }
   .sidebar a p {
     text-align: center;
@@ -103,7 +103,7 @@ const styles = `
   }
   .sidebar a svg {
     font-size: 16px;
-    color: #75ff2b !important; /* Green icons, enforced */
+    color: #e5dbc1 !important; /* Green icons, enforced */
   }
   .main {
     grid-area: main;
@@ -240,7 +240,7 @@ const styles = `
     }
     .sidebar a svg {
       font-size: 14px;
-      color: #75ff2b helles grün 
+      color: #062316 helles grün 
  !important; /* Green icons, enforced */
     }
   }
@@ -293,7 +293,7 @@ const styles = `
     }
     .sidebar a svg {
       font-size: 14px;
-      color: #75ff2b helles grün 
+      color: #062316 helles grün 
  !important; /* Green icons, enforced */
     }
   }
@@ -336,7 +336,7 @@ const Energiemanager = () => {
                   <a
                     href="/Presentation/details"
                     className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white active"
-                    style={{ backgroundColor: '#e6e6bf' }} // Simulate hover state
+                    style={{ backgroundColor: '#062316' }} // Simulate hover state
                   >
                     <FontAwesomeIcon icon={faFileLines} style={{ color: '#fffff' }} />
                     <p className="text-white text-xs font-medium leading-normal">Detail-Rechner</p>
