@@ -900,15 +900,7 @@ function StrompreisChart() {
               <label style={styles.inputLabel}>Haben Sie eine PV-Anlage?</label>
               <div style={styles.householdSelector}>
                 <label style={styles.radioLabel}>
-                  <input
-                    type="radio"
-                    value="none"
-                    name="householdType"
-                    checked={householdType === 'none'}
-                    onChange={handleHouseholdTypeChange}
-                    style={styles.radioInput}
-                    className="radio-input"
-                  />
+                 
                   Bitte wählen
                 </label>
                 <label style={styles.radioLabel}>

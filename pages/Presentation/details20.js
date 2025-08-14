@@ -57,10 +57,13 @@ const timePeriods = [
   { label: 'Früh', startzeit: '06:00', endzeit: '09:00' },
   { label: 'Vormittag', startzeit: '09:00', endzeit: '12:00' },
   { label: 'Mittag', startzeit: '12:00', endzeit: '14:00' },
-  { label: 'Nachmittag', startzeit: '14:00', endzeit: '18:00' },
-  { label: 'Abend', startzeit: '18:00', endzeit: '00:00' },
-  { label: 'Nacht', startzeit: '00:00', endzeit: '06:00' },
-];
+  { label: 'Nachmittag', startzeit: '14:00', endzeit: '16:00' },
+  { label: 'Spätnachmittag', startzeit: '16:00', endzeit: '18:00' },
+  { label: 'Abend', startzeit: '18:00', endzeit: '21:00' },
+  { label: 'Spätabend', startzeit: '21:00', endzeit: '00:00' },
+  { label: 'Nachts 1', startzeit: '00:00', endzeit: '03:00' },
+  { label: 'Nachts 2', startzeit: '03:00', endzeit: '06:00' },
+];;
 
 // Functions
 const getStrompreis = (strompreis) => strompreis;
@@ -204,53 +207,53 @@ export default function Home() {
       let startzeit, endzeit, dauer, nutzung, batterieKapazitaet, wallboxLeistung, standardLadung;
       switch (key.toLowerCase()) {
         case 'waschmaschine':
-          startzeit = '10:00';
-          endzeit = '11:30';
-          dauer = 1;
+          startzeit = '09:00'; // Vormittag
+          endzeit = '12:00';
+          dauer = 3.0;
           nutzung = 2;
           break;
         case 'trockner':
-          startzeit = '14:00';
-          endzeit = '15:30';
-          dauer = 1;
+          startzeit = '14:00'; // Nachmittag
+          endzeit = '16:00';
+          dauer = 2.0;
           nutzung = 2;
           break;
         case 'geschirrspüler':
-          startzeit = '18:40';
-          endzeit = '19:50';
-          dauer = 1;
+          startzeit = '18:00'; // Abend
+          endzeit = '21:00';
+          dauer = 3.0;
           nutzung = 7;
           break;
         case 'herd':
-          startzeit = '12:00';
-          endzeit = '13:00';
-          dauer = 1.0;
+          startzeit = '12:00'; // Mittag
+          endzeit = '14:00';
+          dauer = 2.0;
           nutzung = 3;
           break;
         case 'multimedia':
-          startzeit = '18:00';
+          startzeit = '18:00'; // Abend
           endzeit = '21:00';
           dauer = 3.0;
           nutzung = 3;
           break;
         case 'licht':
-          startzeit = '18:00';
-          endzeit = '23:00';
-          dauer = 5.0;
+          startzeit = '18:00'; // Abend
+          endzeit = '21:00';
+          dauer = 3.0;
           nutzung = 3;
           break;
         case 'eauto':
-          startzeit = '22:00';
-          endzeit = '02:00';
-          dauer = 4.0;
+          startzeit = '21:00'; // Spätabend
+          endzeit = '00:00';
+          dauer = 3.0;
           nutzung = 3;
           batterieKapazitaet = 60;
           wallboxLeistung = 11000;
           standardLadung = false;
           break;
         case 'zweiteseauto':
-          startzeit = '23:00';
-          endzeit = '02:00';
+          startzeit = '00:00'; // Nachts 1
+          endzeit = '03:00';
           dauer = 3.0;
           nutzung = 2;
           batterieKapazitaet = 40;
@@ -258,8 +261,8 @@ export default function Home() {
           standardLadung = false;
           break;
         default:
-          startzeit = '06:00';
-          endzeit = '08:00';
+          startzeit = '06:00'; // Früh
+          endzeit = '09:00';
           dauer = 0;
           nutzung = 0;
       }
@@ -466,43 +469,58 @@ export default function Home() {
     updateZusammenfassung(verbraucherDaten, setZusammenfassung);
   };
 
-  const handleErweiterteEinstellungChange = (verbraucher, field, value, zeitraumId) => {
-    const parsedValue = field === 'nutzung' || field === 'dauer' || field === 'batterieKapazitaet' || field === 'wallboxLeistung'
-      ? parseFloat(value) || 0
-      : field === 'standardLadung'
-      ? value === 'true'
-      : value;
-    if ((field === 'nutzung' || field === 'dauer' || field === 'batterieKapazitaet' || field === 'wallboxLeistung') && parsedValue < 0) {
-      setError(`Wert für ${field} bei ${verbraucher} darf nicht negativ sein.`);
-      return;
-    }
-    setErweiterteEinstellungen((prev) => ({
-      ...prev,
-      [verbraucher]: {
-        ...prev[verbraucher],
-        [field === 'nutzung' || field === 'batterieKapazitaet' || field === 'wallboxLeistung' || field === 'standardLadung'
-          ? field
-          : 'zeitraeume']: field === 'nutzung' || field === 'batterieKapazitaet' || field === 'wallboxLeistung' || field === 'standardLadung'
-          ? parsedValue
-          : prev[verbraucher].zeitraeume.map(zeitraum =>
-              zeitraum.id === zeitraumId ? { ...zeitraum, [field]: parsedValue } : zeitraum
-            ),
-      },
-    }));
-    setError('');
-    const isDynamisch = ['waschmaschine', 'geschirrspüler', 'trockner', 'herd', 'multimedia', 'licht', 'eauto', 'zweiteseauto'].includes(verbraucher.toLowerCase());
-    if (isDynamisch) {
-      const kosten = berechneDynamischenVerbrauch(verbraucherDaten[verbraucher].watt, verbraucher, strompreis, erweiterteEinstellungen);
-      setVerbraucherDaten((prev) => ({
+  
+    const handleErweiterteEinstellungChange = (verbraucher, field, value, zeitraumId) => {
+      const parsedValue = field === 'nutzung' || field === 'dauer' || field === 'batterieKapazitaet' || field === 'wallboxLeistung'
+        ? parseFloat(value) || 0
+        : field === 'standardLadung'
+        ? value === 'true'
+        : value;
+      if ((field === 'nutzung' || field === 'dauer' || field === 'batterieKapazitaet' || field === 'wallboxLeistung') && parsedValue < 0) {
+        setError(`Wert für ${field} bei ${verbraucher} darf nicht negativ sein.`);
+        return;
+      }
+      if (field === 'dauer') {
+        const zeitraum = erweiterteEinstellungen[verbraucher].zeitraeume.find(z => z.id === zeitraumId);
+        const period = timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit);
+        if (period) {
+          const [startHour, startMin] = period.startzeit.split(':').map(Number);
+          const [endHour, endMin] = period.endzeit.split(':').map(Number);
+          const periodHours = (endHour + endMin / 60) - (startHour + startMin / 60);
+          if (parsedValue > periodHours) {
+            setError(`Dauer für ${verbraucher} darf ${periodHours} Stunden nicht überschreiten.`);
+            return;
+          }
+        }
+      }
+      setErweiterteEinstellungen((prev) => ({
         ...prev,
-        [verbraucher]: { ...prev[verbraucher], kosten: kosten.toFixed(2) },
+        [verbraucher]: {
+          ...prev[verbraucher],
+          [field === 'nutzung' || field === 'batterieKapazitaet' || field === 'wallboxLeistung' || field === 'standardLadung'
+            ? field
+            : 'zeitraeume']: field === 'nutzung' || field === 'batterieKapazitaet' || field === 'wallboxLeistung' || field === 'standardLadung'
+            ? parsedValue
+            : prev[verbraucher].zeitraeume.map(zeitraum =>
+                zeitraum.id === zeitraumId ? { ...zeitraum, [field]: parsedValue } : zeitraum
+              ),
+        },
       }));
-      updateZusammenfassung(verbraucherDaten, setZusammenfassung);
-    }
-  };
+      setError('');
+      const isDynamisch = ['waschmaschine', 'geschirrspüler', 'trockner', 'herd', 'multimedia', 'licht', 'eauto', 'zweiteseauto'].includes(verbraucher.toLowerCase());
+      if (isDynamisch) {
+        const kosten = berechneDynamischenVerbrauch(verbraucherDaten[verbraucher].watt, verbraucher, strompreis, erweiterteEinstellungen);
+        setVerbraucherDaten((prev) => ({
+          ...prev,
+          [verbraucher]: { ...prev[verbraucher], kosten: kosten.toFixed(2) },
+        }));
+        updateZusammenfassung(verbraucherDaten, setZusammenfassung);
+      }
+    };
 
   const handleTimePeriodChange = (verbraucher, periodLabel, zeitraumId) => {
-    const period = timePeriods.find(p => p.label === periodLabel);
+    const periodIndex = timePeriods.findIndex((p, index) => p.label === periodLabel && index === timePeriods.findIndex(q => q.label === periodLabel && q.startzeit === p.startzeit));
+    const period = timePeriods[periodIndex];
     if (period) {
       setErweiterteEinstellungen((prev) => ({
         ...prev,
@@ -1635,16 +1653,18 @@ table, th, td {
                                         <div key={zeitraum.id} className="zeitraum-grid">
                                           <label>
                                             Zeitraum:
+
                                             <select
-                                              value={timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit)?.label || ''}
-                                              onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
-                                            >
-                                              {timePeriods.map((period) => (
-                                                <option key={period.label} value={period.label}>
-                                                  {period.label} ({period.startzeit} - {period.endzeit})
-                                                </option>
-                                              ))}
-                                            </select>
+  value={timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit)?.label || ''}
+  onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
+>
+  {timePeriods.map((period, index) => (
+    <option key={`${period.label}-${index}`} value={period.label}>
+      {`${period.label} (${period.startzeit} - ${period.endzeit})`}
+    </option>
+  ))}
+</select>
+
                                           </label>
                                           <label>
                                             Dauer (h):
