@@ -12,7 +12,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import jsPDF from 'jspdf'; // Neu: Importiere jsPDF
+import jsPDF from 'jspdf';
 
 // Register Chart.js components
 ChartJS.register(
@@ -58,12 +58,13 @@ const timePeriods = [
   { label: 'Früh', startzeit: '06:00', endzeit: '09:00' },
   { label: 'Vormittag', startzeit: '09:00', endzeit: '12:00' },
   { label: 'Mittag', startzeit: '12:00', endzeit: '14:00' },
-  { label: 'Nachmittag', startzeit: '14:00', endzeit: '18:00' },
-  { label: 'Abend', startzeit: '18:00', endzeit: '00:00' },
-  { label: 'Nacht', startzeit: '00:00', endzeit: '06:00' },
+  { label: 'Nachmittag', startzeit: '14:00', endzeit: '16:00' },
+  { label: 'Spätnachmittag', startzeit: '16:00', endzeit: '18:00' },
+  { label: 'Abend', startzeit: '18:00', endzeit: '21:00' },
+  { label: 'Spätabend', startzeit: '21:00', endzeit: '00:00' },
+  { label: 'Nachts 1', startzeit: '00:00', endzeit: '03:00' },
+  { label: 'Nachts 2', startzeit: '03:00', endzeit: '06:00' },
 ];
-
-
 
 // Functions
 const getStrompreis = (strompreis) => strompreis;
@@ -104,8 +105,6 @@ const updateKosten = (watt, verbraucher, strompreis, setVerbraucherDaten, erweit
     [verbraucher]: { ...prev[verbraucher], kosten: kosten.toFixed(2) },
   }));
 };
-
-
 
 const berechneDynamischenVerbrauch = (watt, verbraucher, strompreis, erweiterteEinstellungen) => {
   const einstellung = erweiterteEinstellungen[verbraucher];
@@ -209,27 +208,27 @@ export default function Home() {
       let startzeit, endzeit, dauer, nutzung, batterieKapazitaet, wallboxLeistung, standardLadung;
       switch (key.toLowerCase()) {
         case 'waschmaschine':
-          startzeit = '10:00';
-          endzeit = '11:30';
-          dauer = 1;
+          startzeit = '09:00';
+          endzeit = '12:00';
+          dauer = 3.0;
           nutzung = 2;
           break;
         case 'trockner':
           startzeit = '14:00';
-          endzeit = '15:30';
-          dauer = 1;
+          endzeit = '16:00';
+          dauer = 2.0;
           nutzung = 2;
           break;
         case 'geschirrspüler':
-          startzeit = '18:40';
-          endzeit = '19:50';
-          dauer = 1;
+          startzeit = '18:00';
+          endzeit = '21:00';
+          dauer = 3.0;
           nutzung = 7;
           break;
         case 'herd':
           startzeit = '12:00';
-          endzeit = '13:00';
-          dauer = 1.0;
+          endzeit = '14:00';
+          dauer = 2.0;
           nutzung = 3;
           break;
         case 'multimedia':
@@ -240,22 +239,22 @@ export default function Home() {
           break;
         case 'licht':
           startzeit = '18:00';
-          endzeit = '23:00';
-          dauer = 5.0;
+          endzeit = '21:00';
+          dauer = 3.0;
           nutzung = 3;
           break;
         case 'eauto':
-          startzeit = '22:00';
-          endzeit = '02:00';
-          dauer = 4.0;
+          startzeit = '21:00';
+          endzeit = '00:00';
+          dauer = 3.0;
           nutzung = 3;
           batterieKapazitaet = 60;
           wallboxLeistung = 11000;
           standardLadung = false;
           break;
         case 'zweiteseauto':
-          startzeit = '23:00';
-          endzeit = '02:00';
+          startzeit = '00:00';
+          endzeit = '03:00';
           dauer = 3.0;
           nutzung = 2;
           batterieKapazitaet = 40;
@@ -264,7 +263,7 @@ export default function Home() {
           break;
         default:
           startzeit = '06:00';
-          endzeit = '08:00';
+          endzeit = '09:00';
           dauer = 0;
           nutzung = 0;
       }
@@ -303,6 +302,18 @@ export default function Home() {
   const [apiLoading, setApiLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState('');
   const [availableDates, setAvailableDates] = useState([]);
+  
+  // Email verification states
+  const [showModal, setShowModal] = useState(false);
+  const [email, setEmail] = useState('');
+  const [code, setCode] = useState('');
+  const [step, setStep] = useState(1);
+  const [message, setMessage] = useState('');
+  const [verified, setVerified] = useState(false);
+  const [agb, setAgb] = useState(false);
+  const [werbung, setWerbung] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
 
   const [menus, setMenus] = useState([
     {
@@ -352,6 +363,17 @@ export default function Home() {
       ],
     },
   ]);
+
+  // Countdown logic for email verification
+  useEffect(() => {
+    let timer;
+    if (cooldown > 0) {
+      timer = setInterval(() => {
+        setCooldown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [cooldown]);
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -464,7 +486,7 @@ export default function Home() {
       setVerbraucherDaten((prev) => ({
         ...prev,
         [verbraucher]: { ...prev[verbraucher], kosten: kosten.toFixed(2) },
-      }));
+      }))
     } else {
       updateKosten(watt, verbraucher, strompreis, setVerbraucherDaten, erweiterteEinstellungen);
     }
@@ -480,6 +502,19 @@ export default function Home() {
     if ((field === 'nutzung' || field === 'dauer' || field === 'batterieKapazitaet' || field === 'wallboxLeistung') && parsedValue < 0) {
       setError(`Wert für ${field} bei ${verbraucher} darf nicht negativ sein.`);
       return;
+    }
+    if (field === 'dauer') {
+      const zeitraum = erweiterteEinstellungen[verbraucher].zeitraeume.find(z => z.id === zeitraumId);
+      const period = timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit);
+      if (period) {
+        const [startHour, startMin] = period.startzeit.split(':').map(Number);
+        const [endHour, endMin] = period.endzeit.split(':').map(Number);
+        const periodHours = (endHour + endMin / 60) - (startHour + startMin / 60);
+        if (parsedValue > periodHours) {
+          setError(`Dauer für ${verbraucher} darf ${periodHours} Stunden nicht überschreiten.`);
+          return;
+        }
+      }
     }
     setErweiterteEinstellungen((prev) => ({
       ...prev,
@@ -507,7 +542,8 @@ export default function Home() {
   };
 
   const handleTimePeriodChange = (verbraucher, periodLabel, zeitraumId) => {
-    const period = timePeriods.find(p => p.label === periodLabel);
+    const periodIndex = timePeriods.findIndex((p, index) => p.label === periodLabel && index === timePeriods.findIndex(q => q.label === periodLabel && q.startzeit === p.startzeit));
+    const period = timePeriods[periodIndex];
     if (period) {
       setErweiterteEinstellungen((prev) => ({
         ...prev,
@@ -696,9 +732,253 @@ export default function Home() {
     }));
   };
 
-  useEffect(() => {
-    updateZusammenfassung(verbraucherDaten, setZusammenfassung);
-  }, [verbraucherDaten, erweiterteEinstellungen]);
+  // Email verification functions
+  async function requestCode() {
+    setMessage('');
+    if (!email.includes('@')) {
+      setMessage('Bitte gültige E-Mail eingeben.');
+      return;
+    }
+    if (!agb) {
+      setMessage('Bitte akzeptiere die Allgemeinen Geschäftsbedingungen.');
+      return;
+    }
+    if (cooldown > 0) {
+      setMessage(`Bitte warte noch ${cooldown} Sekunden, bevor du erneut einen Code anforderst.`);
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/request-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, werbung }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMessage('Code wurde an deine E-Mail gesendet.');
+        setStep(2);
+        setCooldown(60);
+      } else {
+        setMessage(data.error || 'Fehler beim Senden des Codes.');
+      }
+    } catch (error) {
+      setMessage('Fehler beim Senden des Codes.');
+    }
+  }
+
+  async function verifyCode() {
+    setMessage('');
+    if (code.length !== 6) {
+      setMessage('Bitte 6-stelligen Code eingeben.');
+      return;
+    }
+    try {
+      const res = await fetch('/api/verify-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code }),
+      });
+      const data = await res.json();
+      if (res.ok && data.verified) {
+        setVerified(true);
+        setMessage('Verifiziert! Du kannst jetzt das PDF herunterladen.');
+        setShowModal(false); // Schließt das Modal nach erfolgreicher Verifizierung
+      } else {
+        setMessage('Falscher Code!');
+      }
+    } catch (error) {
+      setMessage('Fehler bei der Code-Verifizierung.');
+    }
+  }
+
+  const handleDownloadClick = () => {
+    if (!verified) {
+      setShowModal(true);
+    } else {
+      handleDownloadPDF();
+    }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setEmail('');
+    setCode('');
+    setStep(1);
+    setMessage('');
+    setAgb(false);
+    setWerbung(false);
+  };
+  const handleDownloadPDF = () => {
+    if (!verified) return;
+    const doc = new jsPDF();
+    let yPosition = 20;
+    const pageHeight = 280;
+    const lineHeight = 7;
+    const sectionSpacing = 10;
+    const subSectionSpacing = 5;
+    const pageWidth = 190;
+
+    const addNewPageIfNeeded = (requiredSpace = lineHeight) => {
+      if (yPosition + requiredSpace > pageHeight) {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.text(`Seite ${doc.internal.getCurrentPageInfo().pageNumber}`, pageWidth - 10, pageHeight + 10, { align: 'right' });
+        doc.addPage();
+        yPosition = 20;
+      }
+    };
+
+    const drawSectionLine = () => {
+      addNewPageIfNeeded();
+      doc.setLineWidth(0.5);
+      doc.line(10, yPosition, pageWidth, yPosition);
+      yPosition += subSectionSpacing;
+    };
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.text('Rechenbericht', 10, yPosition);
+    yPosition += sectionSpacing;
+    drawSectionLine();
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('Eingaben', 10, yPosition);
+    yPosition += sectionSpacing;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+
+    addNewPageIfNeeded();
+    doc.text(`Strompreis: ${strompreis} Cent/kWh`, 15, yPosition);
+    yPosition += lineHeight;
+    addNewPageIfNeeded();
+    doc.text(`Postleitzahl: ${plz || 'Nicht angegeben'}`, 15, yPosition);
+    yPosition += lineHeight;
+    addNewPageIfNeeded();
+
+    let formattedDate = 'Nicht ausgewählt';
+    if (selectedDate) {
+      if (typeof selectedDate === 'string' && selectedDate.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+        const [day, month, year] = selectedDate.split('/');
+        const date = new Date(`${year}-${month}-${day}`);
+        formattedDate = isNaN(date.getTime())
+          ? 'Ungültiges Datum'
+          : date.toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' });
+      } else if (selectedDate instanceof Date && !isNaN(selectedDate.getTime())) {
+        formattedDate = selectedDate.toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' });
+      } else {
+        formattedDate = 'Ungültiges Datum';
+      }
+    }
+    doc.text(`Datum: ${formattedDate}`, 15, yPosition);
+    yPosition += sectionSpacing;
+    drawSectionLine();
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('Ausgewählte Verbraucher/Erzeuger', 10, yPosition);
+    yPosition += sectionSpacing;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+
+    menus.forEach((menu) => {
+      addNewPageIfNeeded(sectionSpacing + lineHeight);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.text(`Menü: ${menu.label}`, 10, yPosition);
+      yPosition += lineHeight;
+      doc.setFont('helvetica', 'normal');
+
+      menu.options.forEach((option) => {
+        const data = verbraucherDaten[option.name];
+        if (data?.checked || data?.watt || data?.kosten) {
+          addNewPageIfNeeded();
+          doc.text(`- ${option.name}:`, 15, yPosition);
+          yPosition += subSectionSpacing;
+          addNewPageIfNeeded();
+          doc.text(`  Watt: ${data?.watt || '0'} W`, 20, yPosition);
+          yPosition += subSectionSpacing;
+          addNewPageIfNeeded();
+          doc.text(`  Kosten: ${data?.kosten || '0.00'} €`, 20, yPosition);
+          yPosition += subSectionSpacing;
+
+          const ext = erweiterteEinstellungen[option.name];
+          if (ext && (menu.id === 'dynamischeverbraucher' || menu.id === 'eauto')) {
+            addNewPageIfNeeded();
+            doc.text(`  Erweiterte Einstellungen:`, 20, yPosition);
+            yPosition += subSectionSpacing;
+            if (menu.id === 'eauto') {
+              addNewPageIfNeeded();
+              doc.text(`    Batteriekapazität: ${ext.batterieKapazitaet} kWh`, 25, yPosition);
+              yPosition += subSectionSpacing;
+              addNewPageIfNeeded();
+              doc.text(`    Wallbox-Leistung: ${ext.wallboxLeistung} W`, 25, yPosition);
+              yPosition += subSectionSpacing;
+              addNewPageIfNeeded();
+              doc.text(`    Ladehäufigkeit: ${ext.nutzung} pro Woche`, 25, yPosition);
+              yPosition += subSectionSpacing;
+              addNewPageIfNeeded();
+              doc.text(`    Standardladung: ${ext.standardLadung ? 'Ja' : 'Nein'}`, 25, yPosition);
+              yPosition += subSectionSpacing;
+            } else {
+              addNewPageIfNeeded();
+              doc.text(`    Nutzung: ${ext.nutzung} pro Woche`, 25, yPosition);
+              yPosition += subSectionSpacing;
+            }
+            if (ext.zeitraeume && ext.zeitraeume.length > 0) {
+              addNewPageIfNeeded();
+              doc.text(`    Zeiträume:`, 25, yPosition);
+              yPosition += subSectionSpacing;
+              ext.zeitraeume.forEach((z) => {
+                addNewPageIfNeeded();
+                doc.text(`      - ${z.startzeit} - ${z.endzeit}: Dauer ${z.dauer} h`, 30, yPosition);
+                yPosition += subSectionSpacing;
+              });
+            }
+          }
+        }
+      });
+      yPosition += sectionSpacing;
+      drawSectionLine();
+    });
+
+    addNewPageIfNeeded(sectionSpacing + lineHeight);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('Zusammenfassung', 10, yPosition);
+    yPosition += sectionSpacing;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+
+    addNewPageIfNeeded();
+    doc.text(`Grundlast Ersparnis: ${zusammenfassung.grundlast} €`, 15, yPosition);
+    yPosition += lineHeight;
+    addNewPageIfNeeded();
+    doc.text(`Dynamische Ersparnis: ${zusammenfassung.dynamisch} €`, 15, yPosition);
+    yPosition += lineHeight;
+    addNewPageIfNeeded();
+    doc.text(`Gesamtersparnis: ${zusammenfassung.gesamt} €`, 15, yPosition);
+    yPosition += lineHeight;
+    addNewPageIfNeeded();
+    doc.text(`Gesamtwattage: ${zusammenfassung.totalWattage} W`, 15, yPosition);
+    yPosition += sectionSpacing;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(`Seite ${doc.internal.getCurrentPageInfo().pageNumber}`, pageWidth - 10, pageHeight + 10, { align: 'right' });
+
+    doc.save('rechenbericht.pdf');
+    // Reset verification after download
+    setVerified(false);
+    setShowModal(false);
+    setEmail('');
+    setCode('');
+    setStep(1);
+    setMessage('');
+    setAgb(false);
+    setWerbung(false);
+  };
 
   // Chart data for hourly consumption (kW) and dynamic price
   const hourlyData = berechneStundenVerbrauch(verbraucherDaten, erweiterteEinstellungen);
@@ -838,192 +1118,42 @@ export default function Home() {
     },
   };
 
-
-  const handleDownloadPDF = () => {
-    const doc = new jsPDF();
-    let yPosition = 20; // Startposition für Text
-    const pageHeight = 280; // Nutzbarer Bereich einer A4-Seite (297 mm - Ränder)
-    const lineHeight = 7; // Zeilenhöhe für normalen Text
-    const sectionSpacing = 10; // Abstand zwischen Abschnitten
-    const subSectionSpacing = 5; // Abstand für Unterpunkte
-    const pageWidth = 190; // Nutzbare Breite (210 mm - Ränder)
-  
-    // Debugging: Logge den Wert und Typ von selectedDate
-    console.log('selectedDate:', {
-      value: selectedDate,
-      type: typeof selectedDate,
-      isDateObject: selectedDate instanceof Date,
-      isValidDate: selectedDate instanceof Date ? !isNaN(selectedDate.getTime()) : 'N/A'
-    });
-  
-    // Funktion zum Hinzufügen einer neuen Seite, wenn nötig
-    const addNewPageIfNeeded = (requiredSpace = lineHeight) => {
-      if (yPosition + requiredSpace > pageHeight) {
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(10);
-        doc.text(`Seite ${doc.internal.getCurrentPageInfo().pageNumber}`, pageWidth - 10, pageHeight + 10, { align: 'right' });
-        doc.addPage();
-        yPosition = 20; // Zurücksetzen für neue Seite
-      }
-    };
-  
-    // Funktion zum Zeichnen einer Trennlinie
-    const drawSectionLine = () => {
-      addNewPageIfNeeded();
-      doc.setLineWidth(0.5);
-      doc.line(10, yPosition, pageWidth, yPosition);
-      yPosition += subSectionSpacing;
-    };
-  
-    // Titel
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(18);
-    doc.text('Rechenbericht', 10, yPosition);
-    yPosition += sectionSpacing;
-    drawSectionLine();
-  
-    // Inputs
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.text('Eingaben', 10, yPosition);
-    yPosition += sectionSpacing;
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(12);
-  
-    addNewPageIfNeeded();
-    doc.text(`Strompreis: ${strompreis} Cent/kWh`, 15, yPosition);
-    yPosition += lineHeight;
-    addNewPageIfNeeded();
-    doc.text(`Postleitzahl: ${plz || 'Nicht angegeben'}`, 15, yPosition);
-    yPosition += lineHeight;
-    addNewPageIfNeeded();
-  
-    // Datum konvertieren
-    let formattedDate = 'Nicht ausgewählt';
-    if (selectedDate) {
-      if (typeof selectedDate === 'string' && selectedDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
-        const date = new Date(selectedDate);
-        formattedDate = isNaN(date.getTime())
-          ? 'Ungültiges Datum'
-          : date.toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' });
-      } else if (selectedDate instanceof Date && !isNaN(selectedDate.getTime())) {
-        formattedDate = selectedDate.toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' });
-      } else {
-        formattedDate = 'Ungültiges Datum';
-      }
-    }
-    doc.text(`Datum: ${formattedDate}`, 15, yPosition);
-    yPosition += sectionSpacing;
-    drawSectionLine();
-  
-    // Ausgewählte Optionen
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.text('Ausgewählte Verbraucher/Erzeuger', 10, yPosition);
-    yPosition += sectionSpacing;
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(12);
-  
-    menus.forEach((menu) => {
-      addNewPageIfNeeded(sectionSpacing + lineHeight);
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(12);
-      doc.text(`Menü: ${menu.label}`, 10, yPosition);
-      yPosition += lineHeight;
-      doc.setFont('helvetica', 'normal');
-  
-      menu.options.forEach((option) => {
-        const data = verbraucherDaten[option.name];
-        if (data?.checked || data?.watt || data?.kosten) {
-          addNewPageIfNeeded();
-          doc.text(`- ${option.name}:`, 15, yPosition);
-          yPosition += subSectionSpacing;
-          addNewPageIfNeeded();
-          doc.text(`  Watt: ${data?.watt || '0'} W`, 20, yPosition);
-          yPosition += subSectionSpacing;
-          addNewPageIfNeeded();
-          doc.text(`  Kosten: ${data?.kosten || '0.00'} €`, 20, yPosition);
-          yPosition += subSectionSpacing;
-  
-          // Erweiterte Einstellungen
-          const ext = erweiterteEinstellungen[option.name];
-          if (ext && (menu.id === 'dynamischeverbraucher' || menu.id === 'eauto')) {
-            addNewPageIfNeeded();
-            doc.text(`  Erweiterte Einstellungen:`, 20, yPosition);
-            yPosition += subSectionSpacing;
-            if (menu.id === 'eauto') {
-              addNewPageIfNeeded();
-              doc.text(`    Batteriekapazität: ${ext.batterieKapazitaet} kWh`, 25, yPosition);
-              yPosition += subSectionSpacing;
-              addNewPageIfNeeded();
-              doc.text(`    Wallbox-Leistung: ${ext.wallboxLeistung} W`, 25, yPosition);
-              yPosition += subSectionSpacing;
-              addNewPageIfNeeded();
-              doc.text(`    Ladehäufigkeit: ${ext.nutzung} pro Woche`, 25, yPosition);
-              yPosition += subSectionSpacing;
-              addNewPageIfNeeded();
-              doc.text(`    Standardladung: ${ext.standardLadung ? 'Ja' : 'Nein'}`, 25, yPosition);
-              yPosition += subSectionSpacing;
-            } else {
-              addNewPageIfNeeded();
-              doc.text(`    Nutzung: ${ext.nutzung} pro Woche`, 25, yPosition);
-              yPosition += subSectionSpacing;
-            }
-            if (ext.zeitraeume && ext.zeitraeume.length > 0) {
-              addNewPageIfNeeded();
-              doc.text(`    Zeiträume:`, 25, yPosition);
-              yPosition += subSectionSpacing;
-              ext.zeitraeume.forEach((z) => {
-                addNewPageIfNeeded();
-                doc.text(`      - ${z.startzeit} - ${z.endzeit}: Dauer ${z.dauer} h`, 30, yPosition);
-                yPosition += subSectionSpacing;
-              });
-            }
-          }
-        }
-      });
-      yPosition += sectionSpacing;
-      drawSectionLine();
-    });
-  
-    // Zusammenfassung
-    addNewPageIfNeeded(sectionSpacing + lineHeight);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.text('Zusammenfassung', 10, yPosition);
-    yPosition += sectionSpacing;
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(12);
-  
-    addNewPageIfNeeded();
-    doc.text(`Grundlast Ersparnis: ${zusammenfassung.grundlast} €`, 15, yPosition);
-    yPosition += lineHeight;
-    addNewPageIfNeeded();
-    doc.text(`Dynamische Ersparnis: ${zusammenfassung.dynamisch} €`, 15, yPosition);
-    yPosition += lineHeight;
-    addNewPageIfNeeded();
-    doc.text(`Gesamtersparnis: ${zusammenfassung.gesamt} €`, 15, yPosition);
-    yPosition += lineHeight;
-    addNewPageIfNeeded();
-    doc.text(`Gesamtwattage: ${zusammenfassung.totalWattage} W`, 15, yPosition);
-    yPosition += sectionSpacing;
-  
-    // Letzte Seitenzahl
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-    doc.text(`Seite ${doc.internal.getCurrentPageInfo().pageNumber}`, pageWidth - 10, pageHeight + 10, { align: 'right' });
-  
-    // Speichern
-    doc.save('rechenbericht.pdf');
-  };
-
   return (
     <>
       <style>{`
-/* CSS Reset for consistent rendering across browsers */
-* {
-/* CSS Reset for consistent rendering across browsers */
-* {
+
+  
+        .modal-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.5);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+        }
+        .modal-content {
+          background: white;
+          padding: 2rem;
+          border-radius: 0.5rem;
+          max-width: 28rem;
+          width: 100%;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+  .relative {
+    position: relative;
+  }
+  .modal-content input.pr-10 {
+    padding-right: 2.5rem; /* Platz für den X-Button */
+  }
+  .modal-content .absolute.top-2.right-2 {
+    z-index: 10; /* Stellt sicher, dass das X über dem Eingabefeld liegt */
+  }
+ {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -1628,371 +1758,496 @@ table {
 
 table, th, td {
   border: none;
-} `
-}</style>
-<div className="app-container">
-  <div className="calculation-report">
-    <h2 className="report-title">Rechenbericht</h2>
-    <div className="report-content">
-      <div className="input-container-html">
-        <label htmlFor="strompreis">Strompreis (Cent/kWh):</label>
-        <input
-          type="number"
-          id="strompreis"
-          value={strompreis}
-          onChange={(e) => handleStrompreisChange(e.target.value)}
-          step="0.01"
-          min="0"
-        />
-      </div>
-      <div className="input-container-html">
-        <label htmlFor="plz">Postleitzahl:</label>
-        <input
-          type="text"
-          id="plz"
-          value={plz}
-          onChange={(e) => setPlz(e.target.value)}
-          placeholder="z.B. 10115"
-        />
-      </div>
-      <div className="input-container-html date-picker-container">
-        <label className="date-picker-label" htmlFor="date-picker">Datum für dynamischen Preis:</label>
-        <input
-          type="date"
-          id="date-picker"
-          className="date-picker"
-          value={selectedDate ? toInputDate(selectedDate) : ''}
-          onChange={(e) => setSelectedDate(fromInputDate(e.target.value))}
-        />
-      </div>
-      {apiLoading && <div className="loading">Lade dynamische Strompreise...</div>}
-      {!apiLoading && availableDates.length === 0 && (
-        <div className="no-data">Keine Daten für dynamische Strompreise verfügbar.</div>
-      )}
-      {error && <div className="no-data">{error}</div>}
+} `}</style>
+      <div className="app-container">
+        <div className="calculation-report">
+          <h2 className="report-title">Rechenbericht</h2>
+          <div className="report-content">
+            <div className="input-container-html">
+              <label htmlFor="strompreis">Strompreis (Cent/kWh):</label>
+              <input
+                type="number"
+                id="strompreis"
+                value={strompreis}
+                onChange={(e) => handleStrompreisChange(e.target.value)}
+                step="0.01"
+                min="0"
+              />
+            </div>
+            <div className="input-container-html">
+              <label htmlFor="plz">Postleitzahl:</label>
+              <input
+                type="text"
+                id="plz"
+                value={plz}
+                onChange={(e) => setPlz(e.target.value)}
+                placeholder="z.B. 10115"
+              />
+            </div>
+            <div className="input-container-html date-picker-container">
+              <label className="date-picker-label" htmlFor="date-picker">Datum für dynamischen Preis:</label>
+              <input
+                type="date"
+                id="date-picker"
+                className="date-picker"
+                value={selectedDate ? toInputDate(selectedDate) : ''}
+                onChange={(e) => setSelectedDate(fromInputDate(e.target.value))}
+              />
+            </div>
+            {apiLoading && <div className="loading">Lade dynamische Strompreise...</div>}
+            {!apiLoading && availableDates.length === 0 && (
+              <div className="no-data">Keine Daten für dynamische Strompreise verfügbar.</div>
+            )}
+            {error && <div className="no-data">{error}</div>}
 
-      {menus.map((menu) => (
-        <div key={menu.id} className="menu">
-          <div className="menu-header" onClick={() => toggleMenu(menu.id)}>
-            <span>{menu.label}</span>
-            <span className={`triangle ${openMenus[menu.id] ? 'open' : 'closed'}`}>▼</span>
-          </div>
+            {menus.map((menu) => (
+              <div key={menu.id} className="menu">
+                <div className="menu-header" onClick={() => toggleMenu(menu.id)}>
+                  <span>{menu.label}</span>
+                  <span className={`triangle ${openMenus[menu.id] ? 'open' : 'closed'}`}>▼</span>
+                </div>
 
-          {openMenus[menu.id] && (
-            <div className="menu-content">
-              <ul className="checkbox-group">
-                <li className="checkbox-group-header">
-                  <span>{menu.id === 'stromerzeuger' ? 'Erzeuger' : 'Verbraucher'}</span>
-                  <span>Info</span>
-                  <span>Watt</span>
-                  <span>Kosten</span>
-                  {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && <span></span>}
-                </li>
-                {menu.options.map((option) => (
-                  <li key={option.name}>
-                    <label className="checkbox-group-label">
-                      <input
-                        type="checkbox"
-                        checked={verbraucherDaten[option.name]?.checked || false}
-                        onChange={(e) => onCheckboxChange(option.name, e.target.checked, menu.id)}
-                      />
-                      <span>{option.name}</span>
-                    </label>
-                    <div className="info-field">
-                      <span className="tooltip">{verbraucherBeschreibungen[option.name] || option.specifications}</span>
-                      <span>ℹ️</span>
-                    </div>
-                    <div className="input-group">
-                      <input
-                        type="number"
-                        className="watt-input"
-                        value={verbraucherDaten[option.name]?.watt || ''}
-                        onChange={(e) => handleWattChange(option.name, e.target.value)}
-                        min="0"
-                        placeholder="Watt"
-                      />
-                    </div>
-                    <div className="price-display">
-                      {verbraucherDaten[option.name]?.kosten || '0.00'} €
-                    </div>
-                    {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
-                      <button
-                        className="settings-field"
-                        onClick={() => toggleErweiterteOptionen(menu.id, option.name)}
-                      >
-                        Einstellungen
-                      </button>
-                    )}
-                    <button
-                      className="delete-option-button"
-                      onClick={() => handleDeleteOptionClick(menu.id, option.name)}
-                    >
-                      Löschen
-                    </button>
-                    {deleteConfirmOption?.menuId === menu.id && deleteConfirmOption?.optionName === option.name && (
-                      <div className="confirm-dialog">
-                        <span>{`Möchten Sie "${option.name}" wirklich löschen?`}</span>
-                        <button
-                          className="confirm-button"
-                          onClick={() => confirmDeleteOption(menu.id, option.name)}
-                        >
-                          Ja
-                        </button>
-                        <button
-                          className="cancel-button"
-                          onClick={cancelDeleteOption}
-                        >
-                          Nein
-                        </button>
-                      </div>
-                    )}
-                    {showErweiterteOptionen[menu.id]?.[option.name] && (menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
-                      <div className="settings-container">
-                        {menu.id === 'eauto' ? (
-                          <div>
-                            <h4>E-Auto Einstellungen</h4>
-                            <div className="grid">
-                              <label>
-                                Batteriekapazität (kWh):
-                                <input
-                                  type="number"
-                                  className="settings-input"
-                                  value={erweiterteEinstellungen[option.name].batterieKapazitaet}
-                                  onChange={(e) => handleErweiterteEinstellungChange(option.name, 'batterieKapazitaet', e.target.value, null)}
-                                  min="0"
-                                  step="0.1"
-                                />
-                              </label>
-                              <label>
-                                Wallbox-Leistung (W):
-                                <input
-                                  type="number"
-                                  className="settings-input"
-                                  value={erweiterteEinstellungen[option.name].wallboxLeistung}
-                                  onChange={(e) => handleErweiterteEinstellungChange(option.name, 'wallboxLeistung', e.target.value, null)}
-                                  min="0"
-                                  step="100"
-                                />
-                              </label>
-                              <label>
-                                Ladehäufigkeit (pro Woche):
-                                <input
-                                  type="number"
-                                  className="settings-input"
-                                  value={erweiterteEinstellungen[option.name].nutzung}
-                                  onChange={(e) => handleErweiterteEinstellungChange(option.name, 'nutzung', e.target.value, null)}
-                                  min="0"
-                                  step="1"
-                                />
-                              </label>
-                              <label>
-                                Standardladung:
-                                <div className="radio-group-settings">
-                                  <label>
-                                    <input
-                                      type="radio"
-                                      name={`standardLadung-${option.name}`}
-                                      value={true}
-                                      checked={erweiterteEinstellungen[option.name].standardLadung === true}
-                                      onChange={(e) => handleErweiterteEinstellungChange(option.name, 'standardLadung', e.target.value, null)}
-                                    />
-                                    Ja
-                                  </label>
-                                  <label>
-                                    <input
-                                      type="radio"
-                                      name={`standardLadung-${option.name}`}
-                                      value={false}
-                                      checked={erweiterteEinstellungen[option.name].standardLadung === false}
-                                      onChange={(e) => handleErweiterteEinstellungChange(option.name, 'standardLadung', e.target.value, null)}
-                                    />
-                                    Nein
-                                  </label>
-                                </div>
-                              </label>
+                {openMenus[menu.id] && (
+                  <div className="menu-content">
+                    <ul className="checkbox-group">
+                      <li className="checkbox-group-header">
+                        <span>{menu.id === 'stromerzeuger' ? 'Erzeuger' : 'Verbraucher'}</span>
+                        <span>Info</span>
+                        <span>Watt</span>
+                        <span>Kosten</span>
+                        {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && <span></span>}
+                      </li>
+                      {menu.options.map((option) => (
+                        <li key={option.name}>
+                          <label className="checkbox-group-label">
+                            <input
+                              type="checkbox"
+                              checked={verbraucherDaten[option.name]?.checked || false}
+                              onChange={(e) => onCheckboxChange(option.name, e.target.checked, menu.id)}
+                            />
+                            <span>{option.name}</span>
+                          </label>
+                          <div className="info-field">
+                            <span className="tooltip">{verbraucherBeschreibungen[option.name] || option.specifications}</span>
+                            <span>ℹ️</span>
+                          </div>
+                          <div className="input-group">
+                            <input
+                              type="number"
+                              className="watt-input"
+                              value={verbraucherDaten[option.name]?.watt || ''}
+                              onChange={(e) => handleWattChange(option.name, e.target.value)}
+                              min="0"
+                              placeholder="Watt"
+                            />
+                          </div>
+                          <div className="price-display">
+                            {verbraucherDaten[option.name]?.kosten || '0.00'} €
+                          </div>
+                          {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
+                            <button
+                              className="settings-field"
+                              onClick={() => toggleErweiterteOptionen(menu.id, option.name)}
+                            >
+                              Einstellungen
+                            </button>
+                          )}
+                          <button
+                            className="delete-option-button"
+                            onClick={() => handleDeleteOptionClick(menu.id, option.name)}
+                          >
+                            Löschen
+                          </button>
+                          {deleteConfirmOption?.menuId === menu.id && deleteConfirmOption?.optionName === option.name && (
+                            <div className="confirm-dialog">
+                              <span>{`Möchten Sie "${option.name}" wirklich löschen?`}</span>
+                              <button
+                                className="confirm-button"
+                                onClick={() => confirmDeleteOption(menu.id, option.name)}
+                              >
+                                Ja
+                              </button>
+                              <button
+                                className="cancel-button"
+                                onClick={cancelDeleteOption}
+                              >
+                                Nein
+                              </button>
                             </div>
-                            {!erweiterteEinstellungen[option.name].standardLadung && (
-                              <div className="zeitraum-section">
-                                <h5>Zeiträume</h5>
-                                {erweiterteEinstellungen[option.name].zeitraeume.map((zeitraum, index) => (
-                                  <div key={zeitraum.id} className="zeitraum-grid">
+                          )}
+                          {showErweiterteOptionen[menu.id]?.[option.name] && (menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
+                            <div className="settings-container">
+                              {menu.id === 'eauto' ? (
+                                <div>
+                                  <h4>E-Auto Einstellungen</h4>
+                                  <div className="grid">
                                     <label>
-                                      Zeitraum:
-                                      <select
-                                        value={timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit)?.label || ''}
-                                        onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
-                                      >
-                                        {timePeriods.map((period) => (
-                                          <option key={period.label} value={period.label}>
-                                            {period.label} ({period.startzeit} - {period.endzeit})
-                                          </option>
-                                        ))}
-                                      </select>
-                                    </label>
-                                    <label>
-                                      Dauer (h):
+                                      Batteriekapazität (kWh):
                                       <input
                                         type="number"
                                         className="settings-input"
-                                        value={zeitraum.dauer}
-                                        onChange={(e) => handleErweiterteEinstellungChange(option.name, 'dauer', e.target.value, zeitraum.id)}
+                                        value={erweiterteEinstellungen[option.name].batterieKapazitaet}
+                                        onChange={(e) => handleErweiterteEinstellungChange(option.name, 'batterieKapazitaet', e.target.value, null)}
                                         min="0"
                                         step="0.1"
                                       />
                                     </label>
-                                    {index > 0 && (
-                                      <div>
-                                        <button
-                                          className="delete-option-button"
-                                          onClick={() => removeZeitraum(option.name, zeitraum.id)}
-                                        >
-                                          Zeitraum löschen
-                                        </button>
+                                    <label>
+                                      Wallbox-Leistung (W):
+                                      <input
+                                        type="number"
+                                        className="settings-input"
+                                        value={erweiterteEinstellungen[option.name].wallboxLeistung}
+                                        onChange={(e) => handleErweiterteEinstellungChange(option.name, 'wallboxLeistung', e.target.value, null)}
+                                        min="0"
+                                        step="100"
+                                      />
+                                    </label>
+                                    <label>
+                                      Ladehäufigkeit (pro Woche):
+                                      <input
+                                        type="number"
+                                        className="settings-input"
+                                        value={erweiterteEinstellungen[option.name].nutzung}
+                                        onChange={(e) => handleErweiterteEinstellungChange(option.name, 'nutzung', e.target.value, null)}
+                                        min="0"
+                                        step="1"
+                                      />
+                                    </label>
+                                    <label>
+                                      Standardladung:
+                                      <div className="radio-group-settings">
+                                        <label>
+                                          <input
+                                            type="radio"
+                                            name={`standardLadung-${option.name}`}
+                                            value={true}
+                                            checked={erweiterteEinstellungen[option.name].standardLadung === true}
+                                            onChange={(e) => handleErweiterteEinstellungChange(option.name, 'standardLadung', e.target.value, null)}
+                                          />
+                                          Ja
+                                        </label>
+                                        <label>
+                                          <input
+                                            type="radio"
+                                            name={`standardLadung-${option.name}`}
+                                            value={false}
+                                            checked={erweiterteEinstellungen[option.name].standardLadung === false}
+                                            onChange={(e) => handleErweiterteEinstellungChange(option.name, 'standardLadung', e.target.value, null)}
+                                          />
+                                          Nein
+                                        </label>
                                       </div>
-                                    )}
+                                    </label>
                                   </div>
-                                ))}
-                                <button
-                                  className="add-option-button"
-                                  onClick={() => addZeitraum(option.name)}
-                                >
-                                  Zeitraum hinzufügen
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <div>
-                            <h4>Verbraucher Einstellungen</h4>
-                            <div className="grid">
-                              <label>
-                                Nutzung (pro Woche):
-                                <input
-                                  type="number"
-                                  className="settings-input"
-                                  value={erweiterteEinstellungen[option.name].nutzung}
-                                  onChange={(e) => handleErweiterteEinstellungChange(option.name, 'nutzung', e.target.value, null)}
-                                  min="0"
-                                  step="1"
-                                />
-                              </label>
-                            </div>
-                            <div className="zeitraum-section">
-                              <h5>Zeiträume</h5>
-                              {erweiterteEinstellungen[option.name].zeitraeume.map((zeitraum, index) => (
-                                <div key={zeitraum.id} className="zeitraum-grid">
-                                  <label>
-                                    Zeitraum:
-                                    <select
-                                      value={timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit)?.label || ''}
-                                      onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
-                                    >
-                                      {timePeriods.map((period) => (
-                                        <option key={period.label} value={period.label}>
-                                          {period.label} ({period.startzeit} - {period.endzeit})
-                                        </option>
+                                  {!erweiterteEinstellungen[option.name].standardLadung && (
+                                    <div className="zeitraum-section">
+                                      <h5>Zeiträume</h5>
+                                      {erweiterteEinstellungen[option.name].zeitraeume.map((zeitraum, index) => (
+                                        <div key={zeitraum.id} className="zeitraum-grid">
+                                          <label>
+                                            Zeitraum:
+                                            <select
+                                              value={timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit)?.label || ''}
+                                              onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
+                                            >
+                                              {timePeriods.map((period, index) => (
+                                                <option key={`${period.label}-${index}`} value={period.label}>
+                                                  {`${period.label} (${period.startzeit} - ${period.endzeit})`}
+                                                </option>
+                                              ))}
+                                            </select>
+                                          </label>
+                                          <label>
+                                            Dauer (h):
+                                            <input
+                                              type="number"
+                                              className="settings-input"
+                                              value={zeitraum.dauer}
+                                              onChange={(e) => handleErweiterteEinstellungChange(option.name, 'dauer', e.target.value, zeitraum.id)}
+                                              min="0"
+                                              step="0.1"
+                                            />
+                                          </label>
+                                          {index > 0 && (
+                                            <div>
+                                              <button
+                                                className="delete-option-button"
+                                                onClick={() => removeZeitraum(option.name, zeitraum.id)}
+                                              >
+                                                Zeitraum löschen
+                                              </button>
+                                            </div>
+                                          )}
+                                        </div>
                                       ))}
-                                    </select>
-                                  </label>
-                                  <label>
-                                    Dauer (h):
-                                    <input
-                                      type="number"
-                                      className="settings-input"
-                                      value={zeitraum.dauer}
-                                      onChange={(e) => handleErweiterteEinstellungChange(option.name, 'dauer', e.target.value, zeitraum.id)}
-                                      min="0"
-                                      step="0.1"
-                                    />
-                                  </label>
-                                  {index > 0 && (
-                                    <div>
                                       <button
-                                        className="delete-option-button"
-                                        onClick={() => removeZeitraum(option.name, zeitraum.id)}
+                                        className="add-option-button"
+                                        onClick={() => addZeitraum(option.name)}
                                       >
-                                        Zeitraum löschen
+                                        Zeitraum hinzufügen
                                       </button>
                                     </div>
                                   )}
                                 </div>
-                              ))}
-                              <button
-                                className="add-option-button"
-                                onClick={() => addZeitraum(option.name)}
-                              >
-                                Zeitraum hinzufügen
-                              </button>
+                              ) : (
+                                <div>
+                                  <h4>Verbraucher Einstellungen</h4>
+                                  <div className="grid">
+                                    <label>
+                                      Nutzung (pro Woche):
+                                      <input
+                                        type="number"
+                                        className="settings-input"
+                                        value={erweiterteEinstellungen[option.name].nutzung}
+                                        onChange={(e) => handleErweiterteEinstellungChange(option.name, 'nutzung', e.target.value, null)}
+                                        min="0"
+                                        step="1"
+                                      />
+                                    </label>
+                                  </div>
+                                  <div className="zeitraum-section">
+                                    <h5>Zeiträume</h5>
+                                    {erweiterteEinstellungen[option.name].zeitraeume.map((zeitraum, index) => (
+                                      <div key={zeitraum.id} className="zeitraum-grid">
+                                        <label>
+                                          Zeitraum:
+                                          <select
+                                            value={timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit)?.label || ''}
+                                            onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
+                                          >
+                                            {timePeriods.map((period) => (
+                                              <option key={period.label} value={period.label}>
+                                                {period.label} ({period.startzeit} - {period.endzeit})
+                                              </option>
+                                            ))}
+                                          </select>
+                                        </label>
+                                        <label>
+                                          Dauer (h):
+                                          <input
+                                            type="number"
+                                            className="settings-input"
+                                            value={zeitraum.dauer}
+                                            onChange={(e) => handleErweiterteEinstellungChange(option.name, 'dauer', e.target.value, zeitraum.id)}
+                                            min="0"
+                                            step="0.1"
+                                          />
+                                        </label>
+                                        {index > 0 && (
+                                          <div>
+                                            <button
+                                              className="delete-option-button"
+                                              onClick={() => removeZeitraum(option.name, zeitraum.id)}
+                                            >
+                                              Zeitraum löschen
+                                            </button>
+                                          </div>
+                                        )}
+                                      </div>
+                                    ))}
+                                    <button
+                                      className="add-option-button"
+                                      onClick={() => addZeitraum(option.name)}
+                                    >
+                                      Zeitraum hinzufügen
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
                             </div>
-                          </div>
-                        )}
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                    <button
+                      className="add-option-button"
+                      onClick={() => toggleNewOptionForm(menu.id)}
+                    >
+                      Neue Option hinzufügen
+                    </button>
+                    {showNewOptionForm[menu.id] && (
+                      <div className="new-option-container">
+                        <input
+                          type="text"
+                          className="new-option-input"
+                          placeholder="Name der neuen Option"
+                          value={newOptionNames[menu.id] || ''}
+                          onChange={(e) => handleNewOptionName(menu.id, e.target.value)}
+                        />
+                        <input
+                          type="number"
+                          className="new-option-watt"
+                          placeholder="Wattleistung"
+                          value={newOptionWatt[menu.id] || ''}
+                          onChange={(e) => handleNewOptionWatt(menu.id, e.target.value)}
+                          min="0"
+                        />
+                        <button
+                          className="save-option-button"
+                          onClick={() => addNewOption(menu.id)}
+                        >
+                          Speichern
+                        </button>
                       </div>
                     )}
-                  </li>
-                ))}
-              </ul>
-              <button
-                className="add-option-button"
-                onClick={() => toggleNewOptionForm(menu.id)}
-              >
-                Neue Option hinzufügen
+                  </div>
+                )}
+              </div>
+            ))}
+
+            <div className="summary-container">
+              <h3 className="summary-title">Zusammenfassung</h3>
+              <div className="summary-item">Grundlast Ersparnis: {zusammenfassung.grundlast} €</div>
+              <div className="summary-item">Dynamische Ersparnis: {zusammenfassung.dynamisch} €</div>
+              <div className="summary-item">Gesamtersparnis: {zusammenfassung.gesamt} €</div>
+              <div className="summary-item">Gesamtwattage: {zusammenfassung.totalWattage} W</div>
+              <button className="download-button bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700" onClick={handleDownloadClick}>
+                Download PDF
               </button>
-              {showNewOptionForm[menu.id] && (
-                <div className="new-option-container">
+            </div>
+          </div>
+        </div>
+
+        <div className="diagrams-container">
+          <div className="diagram">
+            <h3 className="diagram-title">Stromverbrauch pro Stunde</h3>
+            <div className="chart-container">
+              <Line data={chartData} options={chartOptions} />
+            </div>
+          </div>
+          <div className="diagram">
+            <h3 className="diagram-title">Stromersparnis pro Stunde</h3>
+            <div className="chart-container">
+              <Line data={chartDataKosten} options={chartOptionsKosten} />
+            </div>
+          </div>
+        </div>
+
+        {showModal && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
+                Download mit E-Mail-Verifizierung
+              </h1>
+              <button
+                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+                onClick={closeModal}
+              >
+                ✕
+              </button>
+              {step === 1 && (
+  <div className="space-y-4">
+    <div className="relative">
+      <input
+        type="email"
+        placeholder="Deine E-Mail"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 pr-10"
+      />
+      {email && (
+        <button
+          type="button"
+          onClick={() => setEmail('')}
+          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+        >
+          ✕
+        </button>
+      )}
+    </div>
+    <div className="text-sm">
+      <label className="flex items-center space-x-2">
+        <input
+          type="checkbox"
+          checked={agb}
+          onChange={(e) => setAgb(e.target.checked)}
+          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+        />
+        <span className="text-red-500">
+          AGB akzeptieren <span className="text-red-500">*</span>
+        </span>
+      </label>
+    </div>
+    <div className="text-sm">
+      <label className="flex items-center space-x-2">
+        <input
+          type="checkbox"
+          checked={werbung}
+          onChange={(e) => setWerbung(e.target.checked)}
+          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+        />
+        <span className="text-green-500">
+          Einwilligung zur Verwendung für Werbung (optional)
+        </span>
+      </label>
+    </div>
+    <button
+      onClick={requestCode}
+      disabled={cooldown > 0}
+      className={`w-full py-3 rounded-md transition-colors ${
+        cooldown > 0
+          ? 'bg-gray-400 text-white cursor-not-allowed'
+          : 'bg-blue-600 text-white hover:bg-blue-700'
+      }`}
+    >
+      {cooldown > 0 ? `Erneut anfordern in ${cooldown}s` : 'Code anfordern'}
+    </button>
+  </div>
+)}
+              {step === 2 && !verified && (
+                <div className="space-y-4">
+                  <p className="text-gray-600">
+                    Code wurde an <span className="font-semibold">{email}</span> gesendet. Bitte gib ihn ein:
+                  </p>
                   <input
                     type="text"
-                    className="new-option-input"
-                    placeholder="Name der neuen Option"
-                    value={newOptionNames[menu.id] || ''}
-                    onChange={(e) => handleNewOptionName(menu.id, e.target.value)}
-                  />
-                  <input
-                    type="number"
-                    className="new-option-watt"
-                    placeholder="Wattleistung"
-                    value={newOptionWatt[menu.id] || ''}
-                    onChange={(e) => handleNewOptionWatt(menu.id, e.target.value)}
-                    min="0"
+                    placeholder="6-stelliger Code"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
                   />
                   <button
-                    className="save-option-button"
-                    onClick={() => addNewOption(menu.id)}
+                    onClick={verifyCode}
+                    className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition-colors"
                   >
-                    Speichern
+                    Code prüfen
                   </button>
+                  {cooldown > 0 && (
+                    <p className="text-sm text-gray-500 text-center">
+                      Du kannst den Code in {cooldown} Sekunden erneut anfordern.
+                    </p>
+                  )}
                 </div>
               )}
+              {verified && (
+                <p className="text-green-500 text-center">
+                  Verifiziert! Der Download startet automatisch.
+                </p>
+              )}
+
+
+
+
+
+
+
+              
+              {message && (
+                <p
+                  className={`mt-4 text-center ${
+                    message.includes('Fehler') || message.includes('Falscher') || message.includes('Bitte')
+                      ? 'text-red-500'
+                      : 'text-green-500'
+                  }`}
+                >
+                  {message}
+                </p>
+              )}
             </div>
-          )}
-        </div>
-      ))}
-
-      <div className="summary-container">
-        <h3 className="summary-title">Zusammenfassung</h3>
-        <div className="summary-item">Grundlast Ersparnis: {zusammenfassung.grundlast} €</div>
-        <div className="summary-item">Dynamische Ersparnis: {zusammenfassung.dynamisch} €</div>
-        <div className="summary-item">Gesamtersparnis: {zusammenfassung.gesamt} €</div>
-        <div className="summary-item">Gesamtwattage: {zusammenfassung.totalWattage} W</div>
-        <button className="download-button" onClick={handleDownloadPDF}>Download PDF</button> {/* Neu: Download-Button */}
+          </div>
+        )}
       </div>
-    </div>
-  </div>
-
-  <div className="diagrams-container">
-    <div className="diagram">
-      <h3 className="diagram-title">Stromverbrauch pro Stunde</h3>
-      <div className="chart-container">
-        <Line data={chartData} options={chartOptions} />
-      </div>
-    </div>
-    <div className="diagram">
-      <h3 className="diagram-title">Stromersparnis pro Stunde</h3>
-      <div className="chart-container">
-        <Line data={chartDataKosten} options={chartOptionsKosten} />
-      </div>
-    </div>
-  </div>
-</div>
-</>
+    </>
   );
 }

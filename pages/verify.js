@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Home() {
   const [email, setEmail] = useState('');
@@ -7,8 +7,21 @@ export default function Home() {
   const [message, setMessage] = useState('');
   const [verified, setVerified] = useState(false);
 
-  const [agb, setAgb] = useState(false); // Pflichtfeld
-  const [werbung, setWerbung] = useState(false); // Optional
+  const [agb, setAgb] = useState(false);
+  const [werbung, setWerbung] = useState(false);
+
+  const [cooldown, setCooldown] = useState(0); // Countdown in Sekunden
+
+  // Countdown-Logik
+  useEffect(() => {
+    let timer;
+    if (cooldown > 0) {
+      timer = setInterval(() => {
+        setCooldown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [cooldown]);
 
   async function requestCode() {
     setMessage('');
@@ -18,6 +31,10 @@ export default function Home() {
     }
     if (!agb) {
       setMessage('Bitte akzeptiere die Allgemeinen Geschäftsbedingungen.');
+      return;
+    }
+    if (cooldown > 0) {
+      setMessage(`Bitte warte noch ${cooldown} Sekunden, bevor du erneut einen Code anforderst.`);
       return;
     }
 
@@ -30,6 +47,7 @@ export default function Home() {
     if (res.ok) {
       setMessage('Code wurde an deine E-Mail gesendet.');
       setStep(2);
+      setCooldown(60); // 60 Sekunden Sperre starten
     } else {
       setMessage(data.error || 'Fehler beim Senden des Codes.');
     }
@@ -44,7 +62,7 @@ export default function Home() {
     const res = await fetch('/api/verify-code', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, code, werbung }),
+      body: JSON.stringify({ email, code }),
     });
     const data = await res.json();
     if (res.ok && data.verified) {
@@ -92,14 +110,21 @@ export default function Home() {
                   onChange={(e) => setWerbung(e.target.checked)}
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
-                <span className="text-green-500" >Einwilligung zur Verwendung für Werbung (optional)</span>
+                <span className="text-green-500">
+                  Einwilligung zur Verwendung für Werbung (optional)
+                </span>
               </label>
             </div>
             <button
               onClick={requestCode}
-              className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition-colors"
+              disabled={cooldown > 0}
+              className={`w-full py-3 rounded-md transition-colors ${
+                cooldown > 0
+                  ? 'bg-gray-400 text-white cursor-not-allowed'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
+              }`}
             >
-              Code anfordern
+              {cooldown > 0 ? `Erneut anfordern in ${cooldown}s` : 'Code anfordern'}
             </button>
           </div>
         )}
@@ -122,6 +147,13 @@ export default function Home() {
             >
               Code prüfen
             </button>
+
+            {/* Countdown unter dem Code-Feld */}
+            {cooldown > 0 && (
+              <p className="text-sm text-gray-500 text-center">
+                Du kannst den Code in {cooldown} Sekunden erneut anfordern.
+              </p>
+            )}
           </div>
         )}
 
