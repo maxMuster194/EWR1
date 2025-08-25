@@ -1,4 +1,3 @@
-// pages/api/request-code.js
 import { connectToDatabase } from '@/lib/mongoose';
 import Email from '@/models/Email';
 import nodemailer from 'nodemailer';
@@ -23,15 +22,14 @@ export default async function handler(req, res) {
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 587,
-      secure: false, // TLS startet automatisch
+      secure: false,
       auth: {
         user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASS, // App-Passwort ohne Leerzeichen!
+        pass: process.env.GMAIL_PASS,
       },
       tls: { rejectUnauthorized: false },
-      family: 4, // zwingt IPv4, verhindert Timeout
+      family: 4, // IPv4 erzwingen
     });
-    
 
     await transporter.sendMail({
       from: process.env.GMAIL_USER,
