@@ -21,9 +21,17 @@ export default async function handler(req, res) {
     );
 
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_PASS },
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false, // TLS startet automatisch
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS, // App-Passwort ohne Leerzeichen!
+      },
+      tls: { rejectUnauthorized: false },
+      family: 4, // zwingt IPv4, verhindert Timeout
     });
+    
 
     await transporter.sendMail({
       from: process.env.GMAIL_USER,
@@ -34,7 +42,7 @@ export default async function handler(req, res) {
 
     res.status(200).json({ success: true });
   } catch (err) {
-    console.error('Fehler beim Request-Code:', err);
+    console.error('Fehler beim Request-Code:', err.stack || err);
     res.status(500).json({ error: 'Serverfehler' });
   }
 }
