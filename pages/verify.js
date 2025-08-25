@@ -38,7 +38,7 @@ export default function Home() {
       return;
     }
 
-    const res = await fetch('/api/request-code', {
+    const res = await fetch('http://46.62.162.37:3000/api/request-code', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, werbung }),
