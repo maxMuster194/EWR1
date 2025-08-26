@@ -34,9 +34,15 @@ const sftpConfig = {
 const fetchCSVData = async (remotePath) => {
   const sftp = new SFTPClient();
   try {
+    console.log(`🔄 Verbinde zu SFTP und hole Datei: ${remotePath}`);
     await sftp.connect(sftpConfig);
     const fileData = await sftp.get(remotePath);
     await sftp.end();
+
+    if (!fileData) {
+      console.warn(`⚠️ Keine Daten empfangen für ${remotePath}`);
+      return [];
+    }
 
     return new Promise((resolve, reject) => {
       Papa.parse(fileData.toString(), {
@@ -44,40 +50,62 @@ const fetchCSVData = async (remotePath) => {
         skipEmptyLines: true,
         delimiter: ",",
         dynamicTyping: true,
-        complete: (result) => resolve(result.data),
+        complete: (result) => {
+          console.log(`✅ CSV geladen (${remotePath}) → ${result.data.length} Zeilen`);
+          resolve(result.data);
+        },
         error: (error) => reject(error),
       });
     });
   } catch (err) {
-    console.error("Error fetching file:", err);
+    console.error(`❌ Fehler beim Laden von ${remotePath}:`, err.message);
     return [];
   }
 };
 
 // Save CSV locally
 const saveCSVFile = (data, filename) => {
+  if (!filename) {
+    throw new Error("❌ Filename missing in saveCSVFile!");
+  }
+  if (!data || data.length === 0) {
+    console.warn(`⚠️ Keine Daten für ${filename}, Datei wird nicht gespeichert.`);
+    return null;
+  }
+
   const csv = Papa.unparse(data);
+  if (!csv) {
+    console.warn(`⚠️ Papa.unparse() hat nichts zurückgegeben für ${filename}`);
+    return null;
+  }
+
   const filePath = path.join(process.cwd(), 'data', filename);
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, csv);
+
+  console.log(`💾 Datei gespeichert: ${filePath}`);
   return filePath;
 };
 
 // Update MongoDB: delete existing data and insert new data
 const updateMongoDB = async (data, model) => {
+  if (!data || data.length === 0) {
+    console.warn(`⚠️ Keine Daten für MongoDB Update (${model.modelName}), übersprungen.`);
+    return;
+  }
   try {
     await model.deleteMany({});
     await model.insertMany(data, { ordered: false });
-    console.log(`Data successfully updated in MongoDB (${model.modelName})`);
+    console.log(`✅ MongoDB aktualisiert: ${model.modelName} (${data.length} Datensätze)`);
   } catch (err) {
-    console.error(`Error updating MongoDB (${model.modelName}):`, err);
+    console.error(`❌ Fehler beim MongoDB-Update (${model.modelName}):`, err.message);
   }
 };
 
 // Function to fetch and update data
 const updateData = async () => {
-  console.log('Data update started:', new Date().toLocaleString());
-  
+  console.log('🚀 Datenupdate gestartet:', new Date().toLocaleString());
+
   const filePathGermany = '/germany/Day-Ahead Auction/Hourly/Current/Prices_Volumes/auction_spot_prices_germany_luxembourg_2025.csv';
   const filePathAustria = '/austria/Day-Ahead Auction/Hourly/Current/Prices_Volumes/auction_spot_prices_austria_2025.csv';
 
@@ -97,30 +125,28 @@ const updateData = async () => {
       updateMongoDB(austriaPrices, AustriaPrice),
     ]);
 
-    console.log('Data update successfully completed.');
+    console.log('✅ Datenupdate erfolgreich abgeschlossen.');
   } catch (error) {
-    console.error('Error during data update:', error);
+    console.error('❌ Fehler während Datenupdate:', error.message);
   }
 };
 
 // Function to schedule data update at a specified time
 const scheduleDataUpdate = (hour, minute) => {
-  // Validate input time
   if (!Number.isInteger(hour) || !Number.isInteger(minute) || 
       hour < 0 || hour > 23 || minute < 0 || minute > 59) {
-    console.error('Invalid time specified. Hour must be 0-23 and minute must be 0-59.');
+    console.error('❌ Ungültige Zeit für Cronjob.');
     return;
   }
 
-  // Schedule cron job
   const cronExpression = `${minute} ${hour} * * *`;
   cron.schedule(cronExpression, async () => {
-    console.log(`Scheduled data update at ${hour}:${minute < 10 ? '0' + minute : minute} started.`);
+    console.log(`⏰ Geplanter Datenupdate um ${hour}:${minute.toString().padStart(2, '0')} gestartet.`);
     await updateData();
   }, {
     timezone: 'Europe/Berlin'
   });
-  console.log(`Data update scheduled for ${hour}:${minute < 10 ? '0' + minute : minute} daily.`);
+  console.log(`📅 Cronjob eingerichtet für ${hour}:${minute.toString().padStart(2, '0')} (Europe/Berlin).`);
 };
 
 // API handler for manual trigger
@@ -133,12 +159,12 @@ export default async function handler(req, res) {
     await updateData();
     res.status(200).json({ message: "Data successfully updated." });
   } catch (error) {
-    console.error('API error:', error);
+    console.error('API error:', error.message);
     res.status(500).json({ error: error.message });
   }
 };
 
-// Example: Schedule data update at a specific time (e.g., 14:30)
+// Example: Schedule data update at a specific time (14:10)
 scheduleDataUpdate(14, 10);
 
 // Initial execution on script start
