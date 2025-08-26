@@ -1,4 +1,3 @@
-'use client';
 
 import { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
@@ -12,6 +11,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import jsPDF from 'jspdf';
 
 // Register Chart.js components
 ChartJS.register(
@@ -26,15 +26,15 @@ ChartJS.register(
 
 // Default consumer data and descriptions
 const standardVerbrauch = {
-  Kühlschrank: 135,
-  Gefrierschrank: 175,
-  Aquarium: 120,
+  Kühlschrank: 120,
+  Gefrierschrank: 200,
+  Aquarium: 50,
   Waschmaschine: 1200,
   Geschirrspüler: 600,
   Trockner: 3500,
-  Herd: 1000,
+  Herd: 700,
   Multimedia: 350,
-  Licht: 140,
+  Licht: 175,
   EAuto: 11000,
   ZweitesEAuto: 7400,
 };
@@ -63,7 +63,22 @@ const timePeriods = [
   { label: 'Spätabend', startzeit: '21:00', endzeit: '00:00' },
   { label: 'Nachts 1', startzeit: '00:00', endzeit: '03:00' },
   { label: 'Nachts 2', startzeit: '03:00', endzeit: '06:00' },
-];;
+];
+
+// Neue Struktur für Verbrauchertypen (grundlast, week, day, auto)
+const verbraucherTypes = {
+  Kühlschrank: 'grundlast',
+  Gefrierschrank: 'grundlast',
+  Aquarium: 'grundlast',
+  Waschmaschine: 'week',
+  Geschirrspüler: 'week',
+  Trockner: 'week',
+  Herd: 'day',
+  Multimedia: 'day',
+  Licht: 'day',
+  EAuto: 'auto',
+  ZweitesEAuto: 'auto',
+};
 
 // Functions
 const getStrompreis = (strompreis) => strompreis;
@@ -76,28 +91,20 @@ const updateKosten = (watt, verbraucher, strompreis, setVerbraucherDaten, erweit
   const batterieKapazitaet = einstellung?.batterieKapazitaet || 0;
   const wallboxLeistung = einstellung?.wallboxLeistung || watt;
   const standardLadung = einstellung?.standardLadung || false;
+  const type = verbraucherTypes[verbraucher] || 'grundlast'; // Fallback zu grundlast
 
-  switch (verbraucher.toLowerCase()) {
-    case 'waschmaschine':
-    case 'geschirrspüler':
-    case 'trockner':
-      kosten = (watt * totalDauer * nutzung * 52) / 1000 * strompreis;
-      break;
-    case 'eauto':
-    case 'zweiteseauto':
-      if (standardLadung) {
-        kosten = (batterieKapazitaet * nutzung * 52) / 1000 * strompreis;
-      } else {
-        kosten = (wallboxLeistung * totalDauer * nutzung * 52) / 1000 * strompreis;
-      }
-      break;
-    case 'herd':
-    case 'multimedia':
-    case 'licht':
-      kosten = (watt * totalDauer * nutzung * 365) / 1000 * strompreis;
-      break;
-    default:
-      kosten = (watt * strompreis * 24 * 365) / 1000;
+  if (type === 'week') {
+    kosten = (watt * totalDauer * nutzung * 52) / 1000 * strompreis;
+  } else if (type === 'auto') {
+    if (standardLadung) {
+      kosten = (batterieKapazitaet * nutzung * 52) / 1000 * strompreis;
+    } else {
+      kosten = (wallboxLeistung * totalDauer * nutzung * 52) / 1000 * strompreis;
+    }
+  } else if (type === 'day') {
+    kosten = (watt * totalDauer * nutzung * 365) / 1000 * strompreis;
+  } else { // grundlast
+    kosten = (watt * strompreis * 24 * 365) / 1000;
   }
   setVerbraucherDaten((prev) => ({
     ...prev,
@@ -118,16 +125,17 @@ const berechneDynamischenVerbrauch = (watt, verbraucher, strompreis, erweiterteE
   const batterieKapazitaet = einstellung?.batterieKapazitaet || 0;
   const wallboxLeistung = einstellung?.wallboxLeistung || watt;
   const standardLadung = einstellung?.standardLadung || false;
+  const type = verbraucherTypes[verbraucher] || 'grundlast';
 
-  if (['waschmaschine', 'geschirrspüler', 'trockner'].includes(verbraucher.toLowerCase())) {
+  if (type === 'week') {
     kosten = (watt * totalDauer * einstellung.nutzung * 52) / 1000 * strompreis;
-  } else if (['eauto', 'zweiteseauto'].includes(verbraucher.toLowerCase())) {
+  } else if (type === 'auto') {
     if (standardLadung) {
       kosten = (batterieKapazitaet * einstellung.nutzung * 52) / 1000 * strompreis;
     } else {
       kosten = (wallboxLeistung * totalDauer * einstellung.nutzung * 52) / 1000 * strompreis;
     }
-  } else if (['herd', 'multimedia', 'licht'].includes(verbraucher.toLowerCase())) {
+  } else if (type === 'day') {
     kosten = (watt * totalDauer * einstellung.nutzung * 365) / 1000 * strompreis;
   }
   return kosten;
@@ -141,34 +149,39 @@ const calculateTotalWattage = (verbraucherDaten) => {
 };
 
 const updateZusammenfassung = (verbraucherDaten, setZusammenfassung) => {
-  let grundlast = 0;
-  let dynamisch = 0;
-  Object.keys(standardVerbrauch).forEach((key) => {
-    const kosten = parseFloat(verbraucherDaten[key]?.kosten) || 0;
-    if (['kühlschrank', 'gefrierschrank', 'aquarium'].includes(key.toLowerCase())) {
-      grundlast += kosten;
-    } else {
-      dynamisch += kosten;
-    }
-  });
-  const totalWattage = calculateTotalWattage(verbraucherDaten);
-  setZusammenfassung({
-    grundlast: grundlast.toFixed(2),
-    dynamisch: dynamisch.toFixed(2),
-    gesamt: (grundlast + dynamisch).toFixed(2),
-    totalWattage,
-  });
-};
+    let grundlast = 0;
+    let dynamisch = 0;
+  
+    Object.keys(standardVerbrauch).forEach((key) => {
+      const kosten = parseFloat(verbraucherDaten[key]?.kosten) || 0;
+      if (isNaN(kosten)) return; // Ungültige Kosten ignorieren
+      if (verbraucherTypes[key] === 'grundlast') {
+        grundlast += kosten;
+      } else {
+        dynamisch += kosten;
+      }
+    });
+  
+    const totalWattage = calculateTotalWattage(verbraucherDaten);
+  
+    setZusammenfassung({
+      grundlast: grundlast.toFixed(2),
+      dynamisch: dynamisch.toFixed(2),
+      gesamt: (grundlast + dynamisch).toFixed(2),
+      totalWattage,
+    });
+  };
 
 const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => {
   const stunden = Array(24).fill(0).map(() => ({ total: 0, verbraucher: [] }));
   Object.keys(standardVerbrauch).forEach((verbraucher) => {
     const einstellung = erweiterteEinstellungen[verbraucher];
-    const watt = einstellung?.standardLadung && ['eauto', 'zweiteseauto'].includes(verbraucher.toLowerCase())
+    const type = verbraucherTypes[verbraucher] || 'grundlast';
+    const watt = (type === 'auto' && einstellung?.standardLadung)
       ? einstellung.batterieKapazitaet / einstellung.zeitraeume.reduce((sum, z) => sum + (parseFloat(z.dauer) || 0), 0)
       : verbraucherDaten[verbraucher]?.watt || 0;
     if (watt <= 0) return;
-    const isGrundlast = ['kühlschrank', 'gefrierschrank', 'aquarium'].includes(verbraucher.toLowerCase());
+    const isGrundlast = type === 'grundlast';
     if (isGrundlast) {
       for (let i = 0; i < 24; i++) {
         stunden[i].total += watt / 1000;
@@ -205,75 +218,37 @@ export default function Home() {
   const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
     Object.keys(standardVerbrauch).reduce((acc, key) => {
       let startzeit, endzeit, dauer, nutzung, batterieKapazitaet, wallboxLeistung, standardLadung;
-      switch (key.toLowerCase()) {
-        case 'waschmaschine':
-          startzeit = '09:00'; // Vormittag
-          endzeit = '12:00';
-          dauer = 3.0;
-          nutzung = 2;
-          break;
-        case 'trockner':
-          startzeit = '14:00'; // Nachmittag
-          endzeit = '16:00';
-          dauer = 2.0;
-          nutzung = 2;
-          break;
-        case 'geschirrspüler':
-          startzeit = '18:00'; // Abend
-          endzeit = '21:00';
-          dauer = 3.0;
-          nutzung = 7;
-          break;
-        case 'herd':
-          startzeit = '12:00'; // Mittag
-          endzeit = '14:00';
-          dauer = 2.0;
-          nutzung = 3;
-          break;
-        case 'multimedia':
-          startzeit = '18:00'; // Abend
-          endzeit = '21:00';
-          dauer = 3.0;
-          nutzung = 3;
-          break;
-        case 'licht':
-          startzeit = '18:00'; // Abend
-          endzeit = '21:00';
-          dauer = 3.0;
-          nutzung = 3;
-          break;
-        case 'eauto':
-          startzeit = '21:00'; // Spätabend
-          endzeit = '00:00';
-          dauer = 3.0;
-          nutzung = 3;
-          batterieKapazitaet = 60;
-          wallboxLeistung = 11000;
-          standardLadung = false;
-          break;
-        case 'zweiteseauto':
-          startzeit = '00:00'; // Nachts 1
-          endzeit = '03:00';
-          dauer = 3.0;
-          nutzung = 2;
-          batterieKapazitaet = 40;
-          wallboxLeistung = 7400;
-          standardLadung = false;
-          break;
-        default:
-          startzeit = '06:00'; // Früh
-          endzeit = '09:00';
-          dauer = 0;
-          nutzung = 0;
+      const type = verbraucherTypes[key];
+      if (type === 'grundlast') {
+        startzeit = '06:00';
+        endzeit = '09:00';
+        dauer = 0;
+        nutzung = 0;
+      } else if (type === 'week') {
+        startzeit = '09:00';
+        endzeit = '12:00';
+        dauer = 3.0;
+        nutzung = 2;
+      } else if (type === 'day') {
+        startzeit = '18:00';
+        endzeit = '21:00';
+        dauer = 3.0;
+        nutzung = 3;
+      } else if (type === 'auto') {
+        startzeit = '21:00';
+        endzeit = '00:00';
+        dauer = 3.0;
+        nutzung = 3;
+        batterieKapazitaet = 60;
+        wallboxLeistung = standardVerbrauch[key];
+        standardLadung = false;
       }
       return {
         ...acc,
         [key]: {
           nutzung,
           zeitraeume: [{ id: Date.now() + Math.random(), startzeit, endzeit, dauer }],
-          ...(key.toLowerCase() === 'eauto' || key.toLowerCase() === 'zweiteseauto'
-            ? { batterieKapazitaet, wallboxLeistung, standardLadung }
-            : {}),
+          ...(type === 'auto' ? { batterieKapazitaet, wallboxLeistung, standardLadung } : {}),
         },
       };
     }, {})
@@ -295,12 +270,25 @@ export default function Home() {
   });
   const [newOptionNames, setNewOptionNames] = useState({});
   const [newOptionWatt, setNewOptionWatt] = useState({});
+  const [newOptionTypes, setNewOptionTypes] = useState({}); // Neu für Typ-Auswahl bei dynamischen
   const [showNewOptionForm, setShowNewOptionForm] = useState({});
   const [deleteConfirmOption, setDeleteConfirmOption] = useState(null);
   const [apiData, setApiData] = useState([]);
   const [apiLoading, setApiLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState('');
   const [availableDates, setAvailableDates] = useState([]);
+  
+  // Email verification states
+  const [showModal, setShowModal] = useState(false);
+  const [email, setEmail] = useState('');
+  const [code, setCode] = useState('');
+  const [step, setStep] = useState(1);
+  const [message, setMessage] = useState('');
+  const [verified, setVerified] = useState(false);
+  const [agb, setAgb] = useState(false);
+  const [werbung, setWerbung] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
 
   const [menus, setMenus] = useState([
     {
@@ -350,6 +338,45 @@ export default function Home() {
       ],
     },
   ]);
+
+  // Temporäres Speichern in localStorage
+  useEffect(() => {
+    const savedData = localStorage.getItem('appData');
+    if (savedData) {
+      const parsed = JSON.parse(savedData);
+      setVerbraucherDaten(parsed.verbraucherDaten || verbraucherDaten);
+      setErweiterteEinstellungen(parsed.erweiterteEinstellungen || erweiterteEinstellungen);
+      setMenus(parsed.menus || menus);
+      // verbraucherTypes, standardVerbrauch, verbraucherBeschreibungen sind global, aber wir speichern sie auch
+      Object.assign(verbraucherTypes, parsed.verbraucherTypes || verbraucherTypes);
+      Object.assign(standardVerbrauch, parsed.standardVerbrauch || standardVerbrauch);
+      Object.assign(verbraucherBeschreibungen, parsed.verbraucherBeschreibungen || verbraucherBeschreibungen);
+      updateZusammenfassung(parsed.verbraucherDaten || verbraucherDaten, setZusammenfassung);
+    }
+  }, []);
+
+  useEffect(() => {
+    const dataToSave = {
+      verbraucherDaten,
+      erweiterteEinstellungen,
+      menus,
+      verbraucherTypes,
+      standardVerbrauch,
+      verbraucherBeschreibungen,
+    };
+    localStorage.setItem('appData', JSON.stringify(dataToSave));
+  }, [verbraucherDaten, erweiterteEinstellungen, menus]);
+
+  // Countdown logic for email verification
+  useEffect(() => {
+    let timer;
+    if (cooldown > 0) {
+      timer = setInterval(() => {
+        setCooldown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [cooldown]);
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -420,29 +447,29 @@ export default function Home() {
   }, []);
 
   const onCheckboxChange = (verbraucher, checked, menuId) => {
-    const watt = checked ? standardVerbrauch[verbraucher] || 0 : 0;
-    setVerbraucherDaten((prev) => ({
-      ...prev,
-      [verbraucher]: { ...prev[verbraucher], watt, checked },
-    }));
-    const isDynamisch = ['waschmaschine', 'geschirrspüler', 'trockner', 'herd', 'multimedia', 'licht', 'eauto', 'zweiteseauto'].includes(verbraucher.toLowerCase());
-    if (checked) {
-      if (isDynamisch) {
-        const kosten = berechneDynamischenVerbrauch(watt, verbraucher, strompreis, erweiterteEinstellungen);
-        setVerbraucherDaten((prev) => ({
-          ...prev,
-          [verbraucher]: { ...prev[verbraucher], kosten: kosten.toFixed(2) },
-        }));
-      } else {
-        updateKosten(watt, verbraucher, strompreis, setVerbraucherDaten, erweiterteEinstellungen);
+    setVerbraucherDaten((prev) => {
+      const watt = checked ? standardVerbrauch[verbraucher] || 0 : 0;
+      const type = verbraucherTypes[verbraucher] || 'grundlast';
+      let kosten = 0;
+  
+      if (checked) {
+        if (type !== 'grundlast') {
+          kosten = berechneDynamischenVerbrauch(watt, verbraucher, strompreis, erweiterteEinstellungen);
+        } else {
+          kosten = (watt * strompreis * 24 * 365) / 1000; // Grundlast Kosten
+        }
       }
-    } else {
-      setVerbraucherDaten((prev) => ({
+  
+      const updatedData = {
         ...prev,
-        [verbraucher]: { ...prev[verbraucher], kosten: 0 },
-      }));
-    }
-    updateZusammenfassung(verbraucherDaten, setZusammenfassung);
+        [verbraucher]: { ...prev[verbraucher], watt, checked, kosten: kosten.toFixed(2) },
+      };
+  
+      // Zusammenfassung direkt mit aktualisierten Daten berechnen
+      updateZusammenfassung(updatedData, setZusammenfassung);
+  
+      return updatedData;
+    });
   };
 
   const handleWattChange = (verbraucher, value) => {
@@ -451,49 +478,53 @@ export default function Home() {
       setError(`Wattleistung für ${verbraucher} darf nicht negativ sein.`);
       return;
     }
-    setVerbraucherDaten((prev) => ({
-      ...prev,
-      [verbraucher]: { ...prev[verbraucher], watt },
-    }));
     setError('');
-    const isDynamisch = ['waschmaschine', 'geschirrspüler', 'trockner', 'herd', 'multimedia', 'licht', 'eauto', 'zweiteseauto'].includes(verbraucher.toLowerCase());
-    if (isDynamisch) {
-      const kosten = berechneDynamischenVerbrauch(watt, verbraucher, strompreis, erweiterteEinstellungen);
-      setVerbraucherDaten((prev) => ({
-        ...prev,
-        [verbraucher]: { ...prev[verbraucher], kosten: kosten.toFixed(2) },
-      }));
-    } else {
-      updateKosten(watt, verbraucher, strompreis, setVerbraucherDaten, erweiterteEinstellungen);
-    }
-    updateZusammenfassung(verbraucherDaten, setZusammenfassung);
-  };
-
-  
-    const handleErweiterteEinstellungChange = (verbraucher, field, value, zeitraumId) => {
-      const parsedValue = field === 'nutzung' || field === 'dauer' || field === 'batterieKapazitaet' || field === 'wallboxLeistung'
-        ? parseFloat(value) || 0
-        : field === 'standardLadung'
-        ? value === 'true'
-        : value;
-      if ((field === 'nutzung' || field === 'dauer' || field === 'batterieKapazitaet' || field === 'wallboxLeistung') && parsedValue < 0) {
-        setError(`Wert für ${field} bei ${verbraucher} darf nicht negativ sein.`);
-        return;
-      }
-      if (field === 'dauer') {
-        const zeitraum = erweiterteEinstellungen[verbraucher].zeitraeume.find(z => z.id === zeitraumId);
-        const period = timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit);
-        if (period) {
-          const [startHour, startMin] = period.startzeit.split(':').map(Number);
-          const [endHour, endMin] = period.endzeit.split(':').map(Number);
-          const periodHours = (endHour + endMin / 60) - (startHour + startMin / 60);
-          if (parsedValue > periodHours) {
-            setError(`Dauer für ${verbraucher} darf ${periodHours} Stunden nicht überschreiten.`);
-            return;
-          }
+    setVerbraucherDaten((prev) => {
+      const type = verbraucherTypes[verbraucher] || 'grundlast';
+      let kosten = 0;
+      if (prev[verbraucher]?.checked || watt > 0) {
+        if (type !== 'grundlast') {
+          kosten = berechneDynamischenVerbrauch(watt, verbraucher, strompreis, erweiterteEinstellungen);
+        } else {
+          kosten = (watt * strompreis * 24 * 365) / 1000;
         }
       }
-      setErweiterteEinstellungen((prev) => ({
+      const updatedData = {
+        ...prev,
+        [verbraucher]: { ...prev[verbraucher], watt, kosten: kosten.toFixed(2) },
+      };
+      updateZusammenfassung(updatedData, setZusammenfassung);
+      return updatedData;
+    });
+  };
+
+  const handleErweiterteEinstellungChange = (verbraucher, field, value, zeitraumId) => {
+    const parsedValue = field === 'nutzung' || field === 'dauer' || field === 'batterieKapazitaet' || field === 'wallboxLeistung'
+      ? parseFloat(value) || 0
+      : field === 'standardLadung'
+      ? value === 'true'
+      : value;
+  
+    if ((field === 'nutzung' || field === 'dauer' || field === 'batterieKapazitaet' || field === 'wallboxLeistung') && parsedValue < 0) {
+      setError(`Wert für ${field} bei ${verbraucher} darf nicht negativ sein.`);
+      return;
+    }
+    if (field === 'dauer') {
+      const zeitraum = erweiterteEinstellungen[verbraucher].zeitraeume.find(z => z.id === zeitraumId);
+      const period = timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit);
+      if (period) {
+        const [startHour, startMin] = period.startzeit.split(':').map(Number);
+        const [endHour, endMin] = period.endzeit.split(':').map(Number);
+        const periodHours = (endHour + endMin / 60) - (startHour + startMin / 60);
+        if (parsedValue > periodHours) {
+          setError(`Dauer für ${verbraucher} darf ${periodHours} Stunden nicht überschreiten.`);
+          return;
+        }
+      }
+    }
+    setError('');
+    setErweiterteEinstellungen((prev) => {
+      const updatedSettings = {
         ...prev,
         [verbraucher]: {
           ...prev[verbraucher],
@@ -505,18 +536,24 @@ export default function Home() {
                 zeitraum.id === zeitraumId ? { ...zeitraum, [field]: parsedValue } : zeitraum
               ),
         },
-      }));
-      setError('');
-      const isDynamisch = ['waschmaschine', 'geschirrspüler', 'trockner', 'herd', 'multimedia', 'licht', 'eauto', 'zweiteseauto'].includes(verbraucher.toLowerCase());
-      if (isDynamisch) {
-        const kosten = berechneDynamischenVerbrauch(verbraucherDaten[verbraucher].watt, verbraucher, strompreis, erweiterteEinstellungen);
-        setVerbraucherDaten((prev) => ({
-          ...prev,
-          [verbraucher]: { ...prev[verbraucher], kosten: kosten.toFixed(2) },
-        }));
-        updateZusammenfassung(verbraucherDaten, setZusammenfassung);
+      };
+  
+      const type = verbraucherTypes[verbraucher];
+      if (type !== 'grundlast') {
+        setVerbraucherDaten((prev) => {
+          const kosten = berechneDynamischenVerbrauch(prev[verbraucher].watt, verbraucher, strompreis, updatedSettings);
+          const updatedData = {
+            ...prev,
+            [verbraucher]: { ...prev[verbraucher], kosten: kosten.toFixed(2) },
+          };
+          updateZusammenfassung(updatedData, setZusammenfassung);
+          return updatedData;
+        });
       }
-    };
+      return updatedSettings;
+    });
+  };
+
 
   const handleTimePeriodChange = (verbraucher, periodLabel, zeitraumId) => {
     const periodIndex = timePeriods.findIndex((p, index) => p.label === periodLabel && index === timePeriods.findIndex(q => q.label === periodLabel && q.startzeit === p.startzeit));
@@ -531,7 +568,8 @@ export default function Home() {
           ),
         },
       }));
-      const isDynamisch = ['waschmaschine', 'geschirrspüler', 'trockner', 'herd', 'multimedia', 'licht', 'eauto', 'zweiteseauto'].includes(verbraucher.toLowerCase());
+      const type = verbraucherTypes[verbraucher];
+      const isDynamisch = type !== 'grundlast';
       if (isDynamisch) {
         const kosten = berechneDynamischenVerbrauch(verbraucherDaten[verbraucher].watt, verbraucher, strompreis, erweiterteEinstellungen);
         setVerbraucherDaten((prev) => ({
@@ -573,7 +611,8 @@ export default function Home() {
         },
       };
     });
-    const isDynamisch = ['waschmaschine', 'geschirrspüler', 'trockner', 'herd', 'multimedia', 'licht', 'eauto', 'zweiteseauto'].includes(verbraucher.toLowerCase());
+    const type = verbraucherTypes[verbraucher];
+    const isDynamisch = type !== 'grundlast';
     if (isDynamisch) {
       const kosten = berechneDynamischenVerbrauch(verbraucherDaten[verbraucher].watt, verbraucher, strompreis, erweiterteEinstellungen);
       setVerbraucherDaten((prev) => ({
@@ -595,7 +634,9 @@ export default function Home() {
     Object.keys(verbraucherDaten).forEach((verbraucher) => {
       const { watt, checked } = verbraucherDaten[verbraucher];
       if (checked || watt > 0) {
-        if (isDynamisch(verbraucher)) {
+        const type = verbraucherTypes[verbraucher];
+        const isDynamisch = type !== 'grundlast';
+        if (isDynamisch) {
           const kosten = berechneDynamischenVerbrauch(watt, verbraucher, newStrompreis, erweiterteEinstellungen);
           setVerbraucherDaten((prev) => ({
             ...prev,
@@ -609,14 +650,16 @@ export default function Home() {
     updateZusammenfassung(verbraucherDaten, setZusammenfassung);
   };
 
-  const isDynamisch = (verbraucher) => ['waschmaschine', 'geschirrspüler', 'trockner', 'herd', 'multimedia', 'licht', 'eauto', 'zweiteseauto'].includes(verbraucher.toLowerCase());
-
   const handleNewOptionName = (menuId, value) => {
     setNewOptionNames((prev) => ({ ...prev, [menuId]: value }));
   };
 
   const handleNewOptionWatt = (menuId, value) => {
     setNewOptionWatt((prev) => ({ ...prev, [menuId]: value }));
+  };
+
+  const handleNewOptionType = (menuId, value) => {
+    setNewOptionTypes((prev) => ({ ...prev, [menuId]: value }));
   };
 
   const toggleNewOptionForm = (menuId) => {
@@ -629,7 +672,74 @@ export default function Home() {
   const addNewOption = (menuId) => {
     const name = newOptionNames[menuId]?.trim();
     const watt = parseFloat(newOptionWatt[menuId]) || 100;
+    let selectedType = newOptionTypes[menuId] || 'week'; // Default für dynamisch
     if (name && !isNaN(watt) && watt > 0) {
+      let vType;
+      let nutzung = 0;
+      let dauer = 0;
+      let startzeit = '06:00';
+      let endzeit = '09:00';
+      let batterieKapazitaet, wallboxLeistung, standardLadung;
+
+      if (menuId === 'grundlastverbraucher') {
+        vType = 'grundlast';
+        nutzung = 0;
+        dauer = 0;
+      } else if (menuId === 'dynamischeverbraucher') {
+        vType = selectedType === 'week' ? 'week' : 'day';
+        if (vType === 'week') {
+          startzeit = '09:00';
+          endzeit = '12:00';
+          dauer = 3.0;
+          nutzung = 2;
+        } else {
+          startzeit = '18:00';
+          endzeit = '21:00';
+          dauer = 3.0;
+          nutzung = 3;
+        }
+      } else if (menuId === 'eauto') {
+        vType = 'auto';
+        startzeit = '21:00';
+        endzeit = '00:00';
+        dauer = 3.0;
+        nutzung = 3;
+        batterieKapazitaet = 40;
+        wallboxLeistung = watt;
+        standardLadung = false;
+      } else {
+        // Für andere Menus keine Verbraucher-Logik
+        setMenus((prev) =>
+          prev.map((menu) =>
+            menu.id === menuId
+              ? { ...menu, options: [...menu.options, { name, specifications: `Leistung: ${watt} W` }] }
+              : menu
+          )
+        );
+        setNewOptionNames((prev) => ({ ...prev, [menuId]: '' }));
+        setNewOptionWatt((prev) => ({ ...prev, [menuId]: '' }));
+        setShowNewOptionForm((prev) => ({ ...prev, [menuId]: false }));
+        return;
+      }
+
+      verbraucherTypes[name] = vType;
+      standardVerbrauch[name] = watt;
+      verbraucherBeschreibungen[name] = `Benutzerdefinierter Verbraucher mit ${watt} W.`;
+
+      setVerbraucherDaten((prev) => ({
+        ...prev,
+        [name]: { watt: 0, checked: false, kosten: 0 },
+      }));
+
+      setErweiterteEinstellungen((prev) => ({
+        ...prev,
+        [name]: {
+          nutzung,
+          zeitraeume: [{ id: Date.now() + Math.random(), startzeit, endzeit, dauer }],
+          ...(vType === 'auto' ? { batterieKapazitaet, wallboxLeistung, standardLadung } : {}),
+        },
+      }));
+
       setMenus((prev) =>
         prev.map((menu) =>
           menu.id === menuId
@@ -637,24 +747,10 @@ export default function Home() {
             : menu
         )
       );
-      if (menuId === 'grundlastverbraucher' || menuId === 'dynamischeverbraucher' || menuId === 'eauto') {
-        standardVerbrauch[name] = watt;
-        setVerbraucherDaten((prev) => ({
-          ...prev,
-          [name]: { watt: 0, checked: false, kosten: 0 },
-        }));
-        setErweiterteEinstellungen((prev) => ({
-          ...prev,
-          [name]: {
-            nutzung: 0,
-            zeitraeume: [{ id: Date.now() + Math.random(), startzeit: '06:00', endzeit: '08:00', dauer: 0 }],
-            ...(menuId === 'eauto' ? { batterieKapazitaet: 40, wallboxLeistung: watt, standardLadung: false } : {}),
-          },
-        }));
-        verbraucherBeschreibungen[name] = `Benutzerdefinierter Verbraucher mit ${watt} W.`;
-      }
+
       setNewOptionNames((prev) => ({ ...prev, [menuId]: '' }));
       setNewOptionWatt((prev) => ({ ...prev, [menuId]: '' }));
+      setNewOptionTypes((prev) => ({ ...prev, [menuId]: '' }));
       setShowNewOptionForm((prev) => ({ ...prev, [menuId]: false }));
     } else {
       setError('Bitte geben Sie einen gültigen Namen und Wattleistung ein.');
@@ -686,6 +782,7 @@ export default function Home() {
       });
       delete standardVerbrauch[optionName];
       delete verbraucherBeschreibungen[optionName];
+      delete verbraucherTypes[optionName];
     }
     setDeleteConfirmOption(null);
     updateZusammenfassung(verbraucherDaten, setZusammenfassung);
@@ -709,9 +806,252 @@ export default function Home() {
     }));
   };
 
-  useEffect(() => {
-    updateZusammenfassung(verbraucherDaten, setZusammenfassung);
-  }, [verbraucherDaten, erweiterteEinstellungen]);
+  // Email verification functions
+  async function requestCode() {
+    setMessage('');
+    if (!email.includes('@')) {
+      setMessage('Bitte gültige E-Mail eingeben.');
+      return;
+    }
+    if (!agb) {
+      setMessage('Bitte akzeptiere die Allgemeinen Geschäftsbedingungen.');
+      return;
+    }
+    if (cooldown > 0) {
+      setMessage(`Bitte warte noch ${cooldown} Sekunden, bevor du erneut einen Code anforderst.`);
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/request-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, werbung }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMessage('Code wurde an deine E-Mail gesendet.');
+        setStep(2);
+        setCooldown(60);
+      } else {
+        setMessage(data.error || 'Fehler beim Senden des Codes.');
+      }
+    } catch (error) {
+      setMessage('Fehler beim Senden des Codes.');
+    }
+  }
+
+  async function verifyCode() {
+    setMessage('');
+    if (code.length !== 6) {
+      setMessage('Bitte 6-stelligen Code eingeben.');
+      return;
+    }
+    try {
+      const res = await fetch('/api/verify-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, code }),
+      });
+      const data = await res.json();
+      if (res.ok && data.verified) {
+        setVerified(true);
+        setMessage('Verifiziert!');
+      } else {
+        setMessage('Falscher Code!');
+      }
+    } catch (error) {
+      setMessage('Fehler bei der Code-Verifizierung.');
+    }
+  }
+
+  const handleDownloadClick = () => {
+    if (!verified) {
+      setShowModal(true);
+    } else {
+      handleDownloadPDF();
+    }
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setEmail('');
+    setCode('');
+    setStep(1);
+    setMessage('');
+    setAgb(false);
+    setWerbung(false);
+  };
+  const handleDownloadPDF = () => {
+    if (!verified) return;
+    const doc = new jsPDF();
+    let yPosition = 20;
+    const pageHeight = 280;
+    const lineHeight = 7;
+    const sectionSpacing = 10;
+    const subSectionSpacing = 5;
+    const pageWidth = 190;
+
+    const addNewPageIfNeeded = (requiredSpace = lineHeight) => {
+      if (yPosition + requiredSpace > pageHeight) {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.text(`Seite ${doc.internal.getCurrentPageInfo().pageNumber}`, pageWidth - 10, pageHeight + 10, { align: 'right' });
+        doc.addPage();
+        yPosition = 20;
+      }
+    };
+
+    const drawSectionLine = () => {
+      addNewPageIfNeeded();
+      doc.setLineWidth(0.5);
+      doc.line(10, yPosition, pageWidth, yPosition);
+      yPosition += subSectionSpacing;
+    };
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.text('Rechenbericht', 10, yPosition);
+    yPosition += sectionSpacing;
+    drawSectionLine();
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('Eingaben', 10, yPosition);
+    yPosition += sectionSpacing;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+
+    addNewPageIfNeeded();
+    doc.text(`Strompreis: ${strompreis} Cent/kWh`, 15, yPosition);
+    yPosition += lineHeight;
+    addNewPageIfNeeded();
+    doc.text(`Postleitzahl: ${plz || 'Nicht angegeben'}`, 15, yPosition);
+    yPosition += lineHeight;
+    addNewPageIfNeeded();
+
+    let formattedDate = 'Nicht ausgewählt';
+    if (selectedDate) {
+      if (typeof selectedDate === 'string' && selectedDate.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+        const [day, month, year] = selectedDate.split('/');
+        const date = new Date(`${year}-${month}-${day}`);
+        formattedDate = isNaN(date.getTime())
+          ? 'Ungültiges Datum'
+          : date.toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' });
+      } else if (selectedDate instanceof Date && !isNaN(selectedDate.getTime())) {
+        formattedDate = selectedDate.toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' });
+      } else {
+        formattedDate = 'Ungültiges Datum';
+      }
+    }
+    doc.text(`Datum: ${formattedDate}`, 15, yPosition);
+    yPosition += sectionSpacing;
+    drawSectionLine();
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('Ausgewählte Verbraucher/Erzeuger', 10, yPosition);
+    yPosition += sectionSpacing;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+
+    menus.forEach((menu) => {
+      addNewPageIfNeeded(sectionSpacing + lineHeight);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.text(`Menü: ${menu.label}`, 10, yPosition);
+      yPosition += lineHeight;
+      doc.setFont('helvetica', 'normal');
+
+      menu.options.forEach((option) => {
+        const data = verbraucherDaten[option.name];
+        if (data?.checked || data?.watt || data?.kosten) {
+          addNewPageIfNeeded();
+          doc.text(`- ${option.name}:`, 15, yPosition);
+          yPosition += subSectionSpacing;
+          addNewPageIfNeeded();
+          doc.text(`  Watt: ${data?.watt || '0'} W`, 20, yPosition);
+          yPosition += subSectionSpacing;
+          addNewPageIfNeeded();
+          doc.text(`  Kosten: ${data?.kosten || '0.00'} €`, 20, yPosition);
+          yPosition += subSectionSpacing;
+
+          const ext = erweiterteEinstellungen[option.name];
+          if (ext && (menu.id === 'dynamischeverbraucher' || menu.id === 'eauto')) {
+            addNewPageIfNeeded();
+            doc.text(`  Erweiterte Einstellungen:`, 20, yPosition);
+            yPosition += subSectionSpacing;
+            if (menu.id === 'eauto') {
+              addNewPageIfNeeded();
+              doc.text(`    Batteriekapazität: ${ext.batterieKapazitaet} kWh`, 25, yPosition);
+              yPosition += subSectionSpacing;
+              addNewPageIfNeeded();
+              doc.text(`    Wallbox-Leistung: ${ext.wallboxLeistung} W`, 25, yPosition);
+              yPosition += subSectionSpacing;
+              addNewPageIfNeeded();
+              doc.text(`    Ladehäufigkeit: ${ext.nutzung} pro Woche`, 25, yPosition);
+              yPosition += subSectionSpacing;
+              addNewPageIfNeeded();
+              doc.text(`    Standardladung: ${ext.standardLadung ? 'Ja' : 'Nein'}`, 25, yPosition);
+              yPosition += subSectionSpacing;
+            } else {
+              addNewPageIfNeeded();
+              doc.text(`    Nutzung: ${ext.nutzung} pro Woche`, 25, yPosition);
+              yPosition += subSectionSpacing;
+            }
+            if (ext.zeitraeume && ext.zeitraeume.length > 0) {
+              addNewPageIfNeeded();
+              doc.text(`    Zeiträume:`, 25, yPosition);
+              yPosition += subSectionSpacing;
+              ext.zeitraeume.forEach((z) => {
+                addNewPageIfNeeded();
+                doc.text(`      - ${z.startzeit} - ${z.endzeit}: Dauer ${z.dauer} h`, 30, yPosition);
+                yPosition += subSectionSpacing;
+              });
+            }
+          }
+        }
+      });
+      yPosition += sectionSpacing;
+      drawSectionLine();
+    });
+
+    addNewPageIfNeeded(sectionSpacing + lineHeight);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('Zusammenfassung', 10, yPosition);
+    yPosition += sectionSpacing;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+
+    addNewPageIfNeeded();
+    doc.text(`Grundlast Ersparnis: ${zusammenfassung.grundlast} €`, 15, yPosition);
+    yPosition += lineHeight;
+    addNewPageIfNeeded();
+    doc.text(`Dynamische Ersparnis: ${zusammenfassung.dynamisch} €`, 15, yPosition);
+    yPosition += lineHeight;
+    addNewPageIfNeeded();
+    doc.text(`Gesamtersparnis: ${zusammenfassung.gesamt} €`, 15, yPosition);
+    yPosition += lineHeight;
+    addNewPageIfNeeded();
+    doc.text(`Gesamtwattage: ${zusammenfassung.totalWattage} W`, 15, yPosition);
+    yPosition += sectionSpacing;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.text(`Seite ${doc.internal.getCurrentPageInfo().pageNumber}`, pageWidth - 10, pageHeight + 10, { align: 'right' });
+
+    doc.save('rechenbericht.pdf');
+    // Reset verification after download
+    setVerified(false);
+    setShowModal(false);
+    setEmail('');
+    setCode('');
+    setStep(1);
+    setMessage('');
+    setAgb(false);
+    setWerbung(false);
+  };
 
   // Chart data for hourly consumption (kW) and dynamic price
   const hourlyData = berechneStundenVerbrauch(verbraucherDaten, erweiterteEinstellungen);
@@ -854,616 +1194,646 @@ export default function Home() {
   return (
     <>
       <style>{`
-/* CSS Reset for consistent rendering across browsers */
-* {
-/* CSS Reset for consistent rendering across browsers */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  max-width: 28rem;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.relative {
+position: relative;
+}
+.modal-content input.pr-10 {
+padding-right: 2.5rem; /* Platz für den X-Button */
+}
+.modal-content .absolute.top-2.right-2 {
+z-index: 10; /* Stellt sicher, dass das X über dem Eingabefeld liegt */
+}
+{
+margin: 0;
+padding: 0;
+box-sizing: border-box;
 }
 
 html {
-  font-size: 16px; /* Base font size for consistency */
+font-size: 16px; /* Base font size for consistency */
 }
 
 body {
-  font-family: 'Inter', Arial, sans-serif;
-  background: linear-gradient(135deg, #e5e7eb, #f3f4f6);
-  color: #1f2937;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+font-family: 'Inter', Arial, sans-serif;
+background: linear-gradient(135deg, #e5e7eb, #f3f4f6);
+color: #1f2937;
+line-height: 1.5;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
 }
 
 .app-container {
-  max-width: 1400px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr; /* Single column by default */
-  gap: 24px; /* Reduzierter Gap für besseres Layout */
-  padding: 20px;
-  min-height: calc(100vh - 64px);
+max-width: 1400px;
+margin: 0 auto;
+display: grid;
+grid-template-columns: 1fr; /* Single column by default */
+gap: 24px; /* Reduzierter Gap für besseres Layout */
+padding: 20px;
+min-height: calc(100vh - 64px);
 }
 
 @media (min-width: 1024px) {
-  .app-container {
-    grid-template-columns: minmax(0, 600px) minmax(0, 600px);
-  }
+.app-container {
+grid-template-columns: minmax(0, 600px) minmax(0, 600px);
+}
 }
 
 .calculation-report {
-  background: #ffffff;
-  padding: 24px; /* Reduzierter Padding */
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  overflow-y: auto;
-  max-height: calc(100vh - 64px);
-  scrollbar-width: thin;
-  scrollbar-color: #409966 #e5e7eb;
+background: #ffffff;
+padding: 24px; /* Reduzierter Padding */
+border-radius: 12px;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+overflow-y: auto;
+max-height: calc(100vh - 64px);
+scrollbar-width: thin;
+scrollbar-color: #409966 #e5e7eb;
 }
 
 .calculation-report::-webkit-scrollbar {
-  width: 8px;
+width: 8px;
 }
 
 .calculation-report::-webkit-scrollbar-track {
-  background: #e5e7eb;
-  border-radius: 4px;
+background: #e5e7eb;
+border-radius: 4px;
 }
 
 .calculation-report::-webkit-scrollbar-thumb {
-  background: #409966;
-  border-radius: 4px;
+background: #409966;
+border-radius: 4px;
 }
 
 .calculation-report:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+transform: translateY(-4px);
+box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 .diagrams-container {
-  display: flex;
-  flex-direction: column;
-  gap: 24px; /* Reduzierter Gap */
-  overflow-y: auto;
-  max-height: calc(100vh - 64px);
-  scrollbar-width: thin;
-  scrollbar-color: #409966 #e5e7eb;
+display: flex;
+flex-direction: column;
+gap: 24px; /* Reduzierter Gap */
+overflow-y: auto;
+max-height: calc(100vh - 64px);
+scrollbar-width: thin;
+scrollbar-color: #409966 #e5e7eb;
 }
 
 .diagrams-container::-webkit-scrollbar {
-  width: 8px;
+width: 8px;
 }
 
 .diagrams-container::-webkit-scrollbar-track {
-  background: #e5e7eb;
-  border-radius: 4px;
+background: #e5e7eb;
+border-radius: 4px;
 }
 
 .diagrams-container::-webkit-scrollbar-thumb {
-  background: #409966;
-  border-radius: 4px;
+background: #409966;
+border-radius: 4px;
 }
 
 .menu {
-  background: #f9fafb;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease;
-  max-width: 600px;
-  width: 100%;
+background: #f9fafb;
+border-radius: 12px;
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+transition: transform 0.3s ease;
+max-width: 600px;
+width: 100%;
 }
 
 .menu:hover {
-  transform: translateY(-2px);
+transform: translateY(-2px);
 }
 
 .menu-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px; /* Reduzierter Padding */
-  cursor: pointer;
-  background: linear-gradient(90deg, #062316, #409966);
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-  color: #ffffff;
-  transition: background 0.3s ease;
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 16px; /* Reduzierter Padding */
+cursor: pointer;
+background: linear-gradient(90deg, #062316, #409966);
+border-top-left-radius: 12px;
+border-top-right-radius: 12px;
+color: #ffffff;
+transition: background 0.3s ease;
 }
 
 .menu-header:hover {
-  background: linear-gradient(90deg, #062316, #409966);
+background: linear-gradient(90deg, #062316, #409966);
 }
 
 .menu-header span {
-  font-size: 0.875rem; /* Kleinere Schrift */
-  font-weight: 700;
+font-size: 0.875rem; /* Kleinere Schrift */
+font-weight: 700;
 }
 
 .triangle {
-  transition: transform 0.3s ease;
+transition: transform 0.3s ease;
 }
 
 .triangle.open {
-  transform: rotate(180deg);
+transform: rotate(180deg);
 }
 
 .menu-content {
-  padding: 12px; /* Anpassung für besseres Layout */
-  background: #ffffff;
-  border-radius: 0 0 6px 6px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+padding: 12px; /* Anpassung für besseres Layout */
+background: #ffffff;
+border-radius: 0 0 6px 6px;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .report-title {
-  font-size: 1.5rem; /* Kleinere Schrift */
-  font-weight: 700;
-  margin-bottom: 16px; /* Reduzierter Abstand */
-  color: #409966;
+font-size: 1.5rem; /* Kleinere Schrift */
+font-weight: 700;
+margin-bottom: 16px; /* Reduzierter Abstand */
+color: #409966;
 }
 
 @media (min-width: 1024px) {
-  .report-title {
-    font-size: 1.75rem;
-  }
+.report-title {
+font-size: 1.75rem;
+}
 }
 
 .report-content {
-  display: flex;
-  flex-direction: column;
-  gap: 16px; /* Reduzierter Gap */
+display: flex;
+flex-direction: column;
+gap: 16px; /* Reduzierter Gap */
 }
 
 .input-container-html {
-  display: flex;
-  flex-direction: column;
+display: flex;
+flex-direction: column;
 }
 
 .input-container-html label {
-  font-size: 0.875rem; /* Kleinere Schrift */
-  font-weight: 600;
-  color: #1f2937;
-  margin-bottom: 6px; /* Reduzierter Abstand */
+font-size: 0.875rem; /* Kleinere Schrift */
+font-weight: 600;
+color: #1f2937;
+margin-bottom: 6px; /* Reduzierter Abstand */
 }
 
 .input-container-html input,
 .input-container-html select {
-  padding: 8px; /* Kleinere Padding */
-  border: 2px solid #d1d5db;
-  border-radius: 6px; /* Kleinere Radius */
-  font-size: 0.875rem; /* Kleinere Schrift */
-  width: 100%;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+padding: 8px; /* Kleinere Padding */
+border: 2px solid #d1d5db;
+border-radius: 6px; /* Kleinere Radius */
+font-size: 0.875rem; /* Kleinere Schrift */
+width: 100%;
+transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .input-container-html input:focus,
 .input-container-html select:focus {
-  outline: none;
-  border-color: #409966;
-  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.3); /* Kleinere Schattengröße */
+outline: none;
+border-color: #409966;
+box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.3); /* Kleinere Schattengröße */
 }
 
 .loading,
 .no-data {
-  color: #dc2626;
-  font-size: 0.875rem; /* Kleinere Schrift */
-  font-weight: 500;
+color: #dc2626;
+font-size: 0.875rem; /* Kleinere Schrift */
+font-weight: 500;
 }
 
 .checkbox-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px; /* Anpassung für kompakteres Layout */
+display: flex;
+flex-direction: column;
+gap: 8px; /* Anpassung für kompakteres Layout */
 }
 
 .checkbox-group-header {
-  display: grid;
-  grid-template-columns: 2fr 0.5fr 1fr 1fr 1fr;
-  gap: 8px;
-  font-weight: 700;
-  font-size: 0.9rem;
-  color: #409966;
-  padding: 6px 0;
-  background: #f0f4f8;
-  border-radius: 4px;
+display: grid;
+grid-template-columns: 2fr 0.5fr 1fr 1fr 1fr;
+gap: 8px;
+font-weight: 700;
+font-size: 0.9rem;
+color: #409966;
+padding: 6px 0;
+background: #f0f4f8;
+border-radius: 4px;
 }
 
 .checkbox-group-header > *:nth-child(4) {
-  padding-left: 40px; /* Verschiebt die "Kosten"-Überschrift 10px nach rechts */
+padding-left: 40px; /* Verschiebt die "Kosten"-Überschrift 10px nach rechts */
 }
-  .checkbox-group-header > *:nth-child(3) {
-  padding-left: 30px; /* Verschiebt die "Kosten"-Überschrift 10px nach rechts */
+.checkbox-group-header > *:nth-child(3) {
+padding-left: 30px; /* Verschiebt die "Kosten"-Überschrift 10px nach rechts */
 }
 
 .checkbox-group li {
-  display: grid;
-  grid-template-columns: 2fr 0.5fr 1fr 1fr 1fr;
-  gap: 8px;
-  align-items: center;
-  padding: 6px 0;
-  background: #ffffff;
-  border-radius: 4px;
-  transition: background 0.2s ease;
-  position: relative;
-  font-size: 0.85rem; /* Kleinere Schriftgröße für alle Inhalte in der Liste */
+display: grid;
+grid-template-columns: 2fr 0.5fr 1fr 1fr 1fr;
+gap: 8px;
+align-items: center;
+padding: 6px 0;
+background: #ffffff;
+border-radius: 4px;
+transition: background 0.2s ease;
+position: relative;
+font-size: 0.85rem; /* Kleinere Schriftgröße für alle Inhalte in der Liste */
 }
 
 .checkbox-group li:hover {
-  background: #f9fafb;
+background: #f9fafb;
 }
 
 .checkbox-group-label {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+display: flex;
+align-items: center;
+gap: 4px;
 }
 
 .checkbox-group-label input {
-  width: 16px;
-  height: 16px;
-  accent-color: #409966;
-  cursor: pointer;
+width: 16px;
+height: 16px;
+accent-color: #409966;
+cursor: pointer;
 }
 
 .info-field {
-  position: relative;
-  display: flex;
-  align-items: center;
+position: relative;
+display: flex;
+align-items: center;
 }
 
 .info-field .tooltip {
-  visibility: hidden;
-  position: absolute;
-  background: #409966;
-  color: #ffffff;
-  font-size: 0.75rem;
-  padding: 4px 6px;
-  border-radius: 3px;
-  z-index: 10;
-  top: -28px;
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+visibility: hidden;
+position: absolute;
+background: #409966;
+color: #ffffff;
+font-size: 0.75rem;
+padding: 4px 6px;
+border-radius: 3px;
+z-index: 10;
+top: -28px;
+left: 50%;
+transform: translateX(-50%);
+white-space: nowrap;
+opacity: 0;
+transition: opacity 0.2s ease, visibility 0s linear 0.2s;
 }
 
 .info-field:hover .tooltip {
-  visibility: visible;
-  opacity: 1;
-  transition: opacity 0.2s ease;
+visibility: visible;
+opacity: 1;
+transition: opacity 0.2s ease;
 }
 
 .input-group input.watt-input {
-  padding: 4px 6px;
-  border: 1px solid #d1d5db;
-  border-radius: 3px;
-  font-size: 0.875rem;
-  width: 100%;
-  transition: border-color 0.2s ease;
+padding: 4px 6px;
+border: 1px solid #d1d5db;
+border-radius: 3px;
+font-size: 0.875rem;
+width: 100%;
+transition: border-color 0.2s ease;
 }
 
 .input-group input.watt-input:focus {
-  outline: none;
-  border-color: #409966;
-  box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.2);
+outline: none;
+border-color: #409966;
+box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.2);
 }
 
 .price-display {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #1f2937;
-  text-align: right;
+font-size: 0.875rem;
+font-weight: 500;
+color: #1f2937;
+text-align: right;
 }
 
 .settings-field {
-  background: linear-gradient(90deg, #062316, #409966);
-  color: #ffffff;
-  padding: 4px 8px;
-  border-radius: 3px;
-  font-size: 0.875rem;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
+background: linear-gradient(90deg, #062316, #409966);
+color: #ffffff;
+padding: 4px 8px;
+border-radius: 3px;
+font-size: 0.875rem;
+border: none;
+cursor: pointer;
+transition: background 0.2s ease, transform 0.1s ease;
 }
 
 .settings-field:hover {
-  background: linear-gradient(90deg, #062316, #4caf50);
-  transform: scale(1.05);
+background: linear-gradient(90deg, #062316, #4caf50);
+transform: scale(1.05);
 }
 
 .delete-option-button {
-  color: #dc2626;
-  font-size: 0.875rem;
-  font-weight: 500;
-  border: none;
-  background: none;
-  cursor: pointer;
-  padding: 2px 4px;
-  transition: color 0.2s ease;
+color: #dc2626;
+font-size: 0.875rem;
+font-weight: 500;
+border: none;
+background: none;
+cursor: pointer;
+padding: 2px 4px;
+transition: color 0.2s ease;
 }
 
 .delete-option-button:hover {
-  color: #b91c1c;
+color: #b91c1c;
 }
 
 .confirm-dialog {
-  grid-column: 1 / -1;
-  background: linear-gradient(135deg, #fef9c3, #fef08a);
-  padding: 8px;
-  border-radius: 4px;
-  margin-top: 4px;
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  z-index: 20;
+grid-column: 1 / -1;
+background: linear-gradient(135deg, #fef9c3, #fef08a);
+padding: 8px;
+border-radius: 4px;
+margin-top: 4px;
+display: flex;
+gap: 6px;
+align-items: center;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+position: absolute;
+top: 100%;
+left: 0;
+width: 100%;
+z-index: 20;
 }
 
 .confirm-button {
-  background: linear-gradient(90deg, #dc2626, #ef4444);
-  color: #ffffff;
-  padding: 4px 8px;
-  border-radius: 3px;
-  font-size: 0.875rem;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
+background: linear-gradient(90deg, #dc2626, #ef4444);
+color: #ffffff;
+padding: 4px 8px;
+border-radius: 3px;
+font-size: 0.875rem;
+border: none;
+cursor: pointer;
+transition: background 0.2s ease, transform 0.1s ease;
 }
 
 .confirm-button:hover {
-  background: linear-gradient(90deg, #b91c1c, #dc2626);
-  transform: scale(1.05);
+background: linear-gradient(90deg, #b91c1c, #dc2626);
+transform: scale(1.05);
 }
 
 .cancel-button {
-  background: linear-gradient(90deg, #9ca3af, #d1d5db);
-  color: #1f2937;
-  padding: 4px 8px;
-  border-radius: 3px;
-  font-size: 0.875rem;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
+background: linear-gradient(90deg, #9ca3af, #d1d5db);
+color: #1f2937;
+padding: 4px 8px;
+border-radius: 3px;
+font-size: 0.875rem;
+border: none;
+cursor: pointer;
+transition: background 0.2s ease, transform 0.1s ease;
 }
 
 .cancel-button:hover {
-  background: linear-gradient(90deg, #6b7280, #9ca3af);
-  transform: scale(1.05);
+background: linear-gradient(90deg, #6b7280, #9ca3af);
+transform: scale(1.05);
 }
 
 .settings-container {
-  grid-column: 1 / -1;
-  background: #ffffff;
-  padding: 20px; /* Reduzierter Padding */
-  border-radius: 10px; /* Kleinere Radius */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  margin-top: 10px; /* Reduzierter Abstand */
-  display: flex;
-  flex-direction: column;
-  gap: 16px; /* Reduzierter Gap */
-  transition: transform 0.3s ease;
+grid-column: 1 / -1;
+background: #ffffff;
+padding: 20px; /* Reduzierter Padding */
+border-radius: 10px; /* Kleinere Radius */
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+margin-top: 10px; /* Reduzierter Abstand */
+display: flex;
+flex-direction: column;
+gap: 16px; /* Reduzierter Gap */
+transition: transform 0.3s ease;
 }
 
 .settings-container:hover {
-  transform: translateY(-2px);
+transform: translateY(-2px);
 }
 
 .settings-container h4 {
-  font-size: 1.25rem; /* Kleinere Schrift */
-  font-weight: 700;
-  color: #409966;
+font-size: 1.25rem; /* Kleinere Schrift */
+font-weight: 700;
+color: #409966;
 }
 
 .settings-container h5 {
-  font-size: 1rem; /* Kleinere Schrift */
-  font-weight: 600;
-  color: #409966;
-  margin-bottom: 10px; /* Reduzierter Abstand */
+font-size: 1rem; /* Kleinere Schrift */
+font-weight: 600;
+color: #409966;
+margin-bottom: 10px; /* Reduzierter Abstand */
 }
 
 .settings-container .grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px; /* Reduzierter Gap */
+display: grid;
+grid-template-columns: 1fr;
+gap: 16px; /* Reduzierter Gap */
 }
 
 @media (min-width: 640px) {
-  .settings-container .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .settings-container .zeitraum-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+.settings-container .grid {
+grid-template-columns: repeat(2, 1fr);
+}
+.settings-container .zeitraum-grid {
+grid-template-columns: repeat(3, 1fr);
+}
 }
 
 .settings-container label {
-  display: flex;
-  flex-direction: column;
-  font-size: 0.875rem; /* Kleinere Schrift */
-  font-weight: 600;
-  color: #1f2937;
+display: flex;
+flex-direction: column;
+font-size: 0.875rem; /* Kleinere Schrift */
+font-weight: 600;
+color: #1f2937;
 }
 
 .settings-container select {
-  padding: 8px; /* Kleinere Padding */
-  border: 2px solid #d1d5db;
-  border-radius: 6px; /* Kleinere Radius */
-  font-size: 0.875rem; /* Kleinere Schrift */
-  width: 100%;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+padding: 8px; /* Kleinere Padding */
+border: 2px solid #d1d5db;
+border-radius: 6px; /* Kleinere Radius */
+font-size: 0.875rem; /* Kleinere Schrift */
+width: 100%;
+transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .settings-container select:focus {
-  outline: none;
-  border-color: #409966;
-  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.3); /* Kleinere Schattengröße */
+outline: none;
+border-color: #409966;
+box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.3); /* Kleinere Schattengröße */
 }
 
 .radio-group-settings {
-  display: flex;
-  gap: 12px; /* Reduzierter Gap */
-  margin-top: 6px; /* Reduzierter Abstand */
+display: flex;
+gap: 12px; /* Reduzierter Gap */
+margin-top: 6px; /* Reduzierter Abstand */
 }
 
 .radio-group-settings label {
-  display: flex;
-  align-items: center;
-  gap: 8px; /* Reduzierter Gap */
+display: flex;
+align-items: center;
+gap: 8px; /* Reduzierter Gap */
 }
 
 .radio-group-settings input {
-  width: 16px; /* Kleinere Radio-Button */
-  height: 16px;
-  accent-color: #409966;
-  cursor: pointer;
+width: 16px; /* Kleinere Radio-Button */
+height: 16px;
+accent-color: #409966;
+cursor: pointer;
 }
 
 .zeitraum-section {
-  border-top: 1px solid #e5e7eb; /* Dünnerer Rand */
-  padding-top: 10px; /* Reduzierter Abstand */
-  margin-top: 10px; /* Reduzierter Abstand */
+border-top: 1px solid #e5e7eb; /* Dünnerer Rand */
+padding-top: 10px; /* Reduzierter Abstand */
+margin-top: 10px; /* Reduzierter Abstand */
 }
 
 .add-option-button {
-  background: linear-gradient(90deg, #062316, #409966);
-  color: #ffffff;
-  padding: 6px 12px; /* Reduzierter Padding */
-  border-radius: 6px; /* Kleinere Radius */
-  font-size: 0.875rem; /* Kleinere Schrift */
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  margin-top: 16px; /* Reduzierter Abstand */
-  transition: transform 0.2s ease, background 0.3s ease;
+background: linear-gradient(90deg, #062316, #409966);
+color: #ffffff;
+padding: 6px 12px; /* Reduzierter Padding */
+border-radius: 6px; /* Kleinere Radius */
+font-size: 0.875rem; /* Kleinere Schrift */
+font-weight: 600;
+border: none;
+cursor: pointer;
+margin-top: 16px; /* Reduzierter Abstand */
+transition: transform 0.2s ease, background 0.3s ease;
 }
 
 .add-option-button:hover {
-  background: linear-gradient(90deg, #062316, #409966);
-  transform: scale(1.05);
+background: linear-gradient(90deg, #062316, #409966);
+transform: scale(1.05);
 }
 
 .new-option-container {
-  margin-top: 16px; /* Reduzierter Abstand */
-  padding: 16px; /* Reduzierter Padding */
-  background: linear-gradient(135deg, #f9fafb, #e5e7eb);
-  border-radius: 10px; /* Kleinere Radius */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px; /* Reduzierter Gap */
+margin-top: 16px; /* Reduzierter Abstand */
+padding: 16px; /* Reduzierter Padding */
+background: linear-gradient(135deg, #f9fafb, #e5e7eb);
+border-radius: 10px; /* Kleinere Radius */
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+display: grid;
+grid-template-columns: 1fr;
+gap: 16px; /* Reduzierter Gap */
 }
 
 @media (min-width: 640px) {
-  .new-option-container {
-    grid-template-columns: repeat(3, 1fr);
-  }
+.new-option-container {
+grid-template-columns: repeat(3, 1fr);
+}
 }
 
 .new-option-input,
 .new-option-watt {
-  padding: 8px; /* Kleinere Padding */
-  border: 2px solid #d1d5db;
-  border-radius: 6px; /* Kleinere Radius */
-  font-size: 0.875rem; /* Kleinere Schrift */
-  width: 100%;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+padding: 8px; /* Kleinere Padding */
+border: 2px solid #d1d5db;
+border-radius: 6px; /* Kleinere Radius */
+font-size: 0.875rem; /* Kleinere Schrift */
+width: 100%;
+transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .new-option-input:focus,
 .new-option-watt:focus {
-  outline: none;
-  border-color: #062316;
-  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.3); /* Kleinere Schattengröße */
+outline: none;
+border-color: #062316;
+box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.3); /* Kleinere Schattengröße */
 }
 
 .save-option-button {
-  background: linear-gradient(90deg, #062316, #409966);
-  color: #ffffff;
-  padding: 6px 12px; /* Reduzierter Padding */
-  border-radius: 6px; /* Kleinere Radius */
-  font-size: 0.875rem; /* Kleinere Schrift */
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.2s ease, background 0.3s ease;
+background: linear-gradient(90deg, #062316, #409966);
+color: #ffffff;
+padding: 6px 12px; /* Reduzierter Padding */
+border-radius: 6px; /* Kleinere Radius */
+font-size: 0.875rem; /* Kleinere Schrift */
+font-weight: 600;
+border: none;
+cursor: pointer;
+transition: transform 0.2s ease, background 0.3s ease;
 }
 
 .save-option-button:hover {
-  background: linear-gradient(90deg, #062316, #409966);
-  transform: scale(1.05);
+background: linear-gradient(90deg, #062316, #409966);
+transform: scale(1.05);
 }
 
 .summary-container {
-  margin-top: 24px; /* Reduzierter Abstand */
-  background: linear-gradient(135deg, #f9fafb, #e5e7eb);
-  padding: 16px; /* Reduzierter Padding */
-  border-radius: 10px; /* Kleinere Radius */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+margin-top: 24px; /* Reduzierter Abstand */
+background: linear-gradient(135deg, #f9fafb, #e5e7eb);
+padding: 16px; /* Reduzierter Padding */
+border-radius: 10px; /* Kleinere Radius */
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .summary-title {
-  font-size: 1.25rem; /* Kleinere Schrift */
-  font-weight: 700;
-  color: #409966;
-  margin-bottom: 10px; /* Reduzierter Abstand */
+font-size: 1.25rem; /* Kleinere Schrift */
+font-weight: 700;
+color: #409966;
+margin-bottom: 10px; /* Reduzierter Abstand */
 }
 
 @media (min-width: 1024px) {
-  .summary-title {
-    font-size: 1.5rem;
-  }
+.summary-title {
+font-size: 1.5rem;
+}
 }
 
 .summary-item {
-  font-size: 0.875rem; /* Kleinere Schrift */
-  font-weight: 500;
-  margin-bottom: 6px; /* Reduzierter Abstand */
+font-size: 0.875rem; /* Kleinere Schrift */
+font-weight: 500;
+margin-bottom: 6px; /* Reduzierter Abstand */
 }
 
 .diagram {
-  background: #ffffff;
-  padding: 24px; /* Reduzierter Padding */
-  border-radius: 10px; /* Kleinere Radius */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease;
+background: #ffffff;
+padding: 24px; /* Reduzierter Padding */
+border-radius: 10px; /* Kleinere Radius */
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+transition: transform 0.3s ease;
 }
 
 .diagram:hover {
-  transform: translateY(-4px);
+transform: translateY(-4px);
 }
 
 .diagram-title {
-  font-size: 1.25rem; /* Kleinere Schrift */
-  font-weight: 700;
-  color: #409966;
-  margin-bottom: 16px; /* Reduzierter Abstand */
+font-size: 1.25rem; /* Kleinere Schrift */
+font-weight: 700;
+color: #409966;
+margin-bottom: 16px; /* Reduzierter Abstand */
 }
 
 @media (min-width: 1024px) {
-  .diagram-title {
-    font-size: 1.5rem;
-  }
+.diagram-title {
+font-size: 1.5rem;
+}
 }
 
 .chart-container {
-  height: 300px; /* Kleinere Höhe */
+height: 300px; /* Kleinere Höhe */
 }
 
 table {
-  border-collapse: collapse;
+border-collapse: collapse;
 }
 
 table, th, td {
-  border: none;
-} `
-}</style>
+border: none;
+} 
+
+
+`}</style>
       <div className="app-container">
         <div className="calculation-report">
           <h2 className="report-title">Rechenbericht</h2>
@@ -1490,28 +1860,27 @@ table, th, td {
               />
             </div>
             <div className="input-container-html date-picker-container">
-            <label className="date-picker-label" htmlFor="date-picker">Datum für dynamischen Preis:</label>
-  <input
-    type="date"
-    id="date-picker"
-    className="date-picker"
-    value={selectedDate ? toInputDate(selectedDate) : ''}
-    onChange={(e) => setSelectedDate(fromInputDate(e.target.value))}
-  />
-</div>
-{apiLoading && <div className="loading">Lade dynamische Strompreise...</div>}
-{!apiLoading && availableDates.length === 0 && (
-  <div className="no-data">Keine Daten für dynamische Strompreise verfügbar.</div>
-)}
-{error && <div className="no-data">{error}</div>}
+              <label className="date-picker-label" htmlFor="date-picker">Datum für dynamischen Preis:</label>
+              <input
+                type="date"
+                id="date-picker"
+                className="date-picker"
+                value={selectedDate ? toInputDate(selectedDate) : ''}
+                onChange={(e) => setSelectedDate(fromInputDate(e.target.value))}
+              />
+            </div>
+            {apiLoading && <div className="loading">Lade dynamische Strompreise...</div>}
+            {!apiLoading && availableDates.length === 0 && (
+              <div className="no-data">Keine Daten für dynamische Strompreise verfügbar.</div>
+            )}
+            {error && <div className="no-data">{error}</div>}
 
-{menus.map((menu) => (
-  <div key={menu.id} className="menu">
-    <div className="menu-header" onClick={() => toggleMenu(menu.id)}>
-      <span>{menu.label}</span>
-      <span className={`triangle ${openMenus[menu.id] ? 'open' : 'closed'}`}>▼</span>
-    </div>
-
+            {menus.map((menu) => (
+              <div key={menu.id} className="menu">
+                <div className="menu-header" onClick={() => toggleMenu(menu.id)}>
+                  <span>{menu.label}</span>
+                  <span className={`triangle ${openMenus[menu.id] ? 'open' : 'closed'}`}>▼</span>
+                </div>
 
                 {openMenus[menu.id] && (
                   <div className="menu-content">
@@ -1653,18 +2022,16 @@ table, th, td {
                                         <div key={zeitraum.id} className="zeitraum-grid">
                                           <label>
                                             Zeitraum:
-
                                             <select
-  value={timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit)?.label || ''}
-  onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
->
-  {timePeriods.map((period, index) => (
-    <option key={`${period.label}-${index}`} value={period.label}>
-      {`${period.label} (${period.startzeit} - ${period.endzeit})`}
-    </option>
-  ))}
-</select>
-
+                                              value={timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit)?.label || ''}
+                                              onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
+                                            >
+                                              {timePeriods.map((period, index) => (
+                                                <option key={`${period.label}-${index}`} value={period.label}>
+                                                  {`${period.label} (${period.startzeit} - ${period.endzeit})`}
+                                                </option>
+                                              ))}
+                                            </select>
                                           </label>
                                           <label>
                                             Dauer (h):
@@ -1747,21 +2114,22 @@ table, th, td {
                                             <button
                                               className="delete-option-button"
                                               onClick={() => removeZeitraum(option.name, zeitraum.id)}
-                                            >
-                                              Zeitraum löschen
-                                            </button>
-                                          </div>
-                                        )}
-                                      </div>
-                                    ))}
-                                    <button
-                                      className="add-option-button"
-                                      onClick={() => addZeitraum(option.name)}
-                                    >
-                                      Zeitraum hinzufügen
-                                    </button>
+                                              >
+                                                Zeitraum löschen
+                                              </button>
+                                            </div>
+                                          )}
+                                        </div>
+                                      ))}
+                                      <button
+                                        className="add-option-button"
+                                        onClick={() => addZeitraum(option.name)}
+                                      >
+                                        Zeitraum hinzufügen
+                                      </button>
+                                    </div>
                                   </div>
-                                </div>
+                                
                               )}
                             </div>
                           )}
@@ -1791,6 +2159,15 @@ table, th, td {
                           onChange={(e) => handleNewOptionWatt(menu.id, e.target.value)}
                           min="0"
                         />
+                        {menu.id === 'dynamischeverbraucher' && (
+                          <select
+                            value={newOptionTypes[menu.id] || 'week'}
+                            onChange={(e) => handleNewOptionType(menu.id, e.target.value)}
+                          >
+                            <option value="week">Wöchentlich (z.B. Waschmaschine)</option>
+                            <option value="day">Täglich (z.B. Herd)</option>
+                          </select>
+                        )}
                         <button
                           className="save-option-button"
                           onClick={() => addNewOption(menu.id)}
@@ -1810,6 +2187,9 @@ table, th, td {
               <div className="summary-item">Dynamische Ersparnis: {zusammenfassung.dynamisch} €</div>
               <div className="summary-item">Gesamtersparnis: {zusammenfassung.gesamt} €</div>
               <div className="summary-item">Gesamtwattage: {zusammenfassung.totalWattage} W</div>
+              <button className="download-button bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700" onClick={handleDownloadClick}>
+                Download PDF
+              </button>
             </div>
           </div>
         </div>
@@ -1828,6 +2208,133 @@ table, th, td {
             </div>
           </div>
         </div>
+
+        {showModal && (
+          <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="modal-content relative bg-white rounded-lg p-6 w-full max-w-md">
+              <button
+                className="absolute top-3 right-3 text-red-500 hover:text-red-700 text-3xl font-extrabold"
+                onClick={closeModal}
+              >
+                ✕
+              </button>
+              <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
+                Download mit E-Mail-Verifizierung
+              </h1>
+              {step === 1 && (
+                <div className="space-y-4">
+                  <div className="relative">
+                    <input
+                      type="email"
+                      placeholder="Deine E-Mail"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 pr-10"
+                    />
+                    {email && (
+                      <button
+                        type="button"
+                        onClick={() => setEmail('')}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-700 hover:text-gray-900 text-lg"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                  <div className="text-sm">
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={agb}
+                        onChange={(e) => setAgb(e.target.checked)}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <span className="text-red-500">
+                        AGB akzeptieren <span className="text-red-500">*</span>
+                      </span>
+                    </label>
+                  </div>
+                  <div className="text-sm">
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={werbung}
+                        onChange={(e) => setWerbung(e.target.checked)}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <span className="text-green-500">
+                        Einwilligung zur Verwendung für Werbung (optional)
+                      </span>
+                    </label>
+                  </div>
+                  <button
+                    onClick={requestCode}
+                    disabled={cooldown > 0}
+                    className={`w-full py-3 rounded-md transition-colors ${
+                      cooldown > 0
+                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                        : 'bg-blue-600 text-white hover:bg-blue-700'
+                    }`}
+                  >
+                    {cooldown > 0 ? `Erneut anfordern in ${cooldown}s` : 'Code anfordern'}
+                  </button>
+                </div>
+              )}
+              {step === 2 && !verified && (
+                <div className="space-y-4">
+                  <p className="text-gray-600">
+                    Code wurde an <span className="font-semibold">{email}</span> gesendet. Bitte gib ihn ein:
+                  </p>
+                  <input
+                    type="text"
+                    placeholder="6-stelliger Code"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+                  />
+                  <button
+                    onClick={verifyCode}
+                    className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition-colors"
+                  >
+                    Code prüfen
+                  </button>
+                  {cooldown > 0 && (
+                    <p className="text-sm text-gray-500 text-center">
+                      Du kannst den Code in {cooldown} Sekunden erneut anfordern.
+                    </p>
+                  )}
+                </div>
+              )}
+              {verified && (
+                <div className="space-y-4 text-center">
+                  <p className="text-green-500 text-lg font-semibold">
+                    Verifiziert!
+                  </p>
+                  <button
+                    onClick={() => {
+                      handleDownloadPDF();
+                      closeModal();
+                    }}
+                    className="w-full bg-green-500 text-white py-3 rounded-md hover:bg-green-600 transition-colors"
+                  >
+                    Hier klicken für Download
+                  </button>
+                </div>
+              )}
+              {message && (
+                <p
+                  className={`mt-4 text-center ${
+                    message.includes('Fehler') || message.includes('Falscher') || message.includes('Bitte')
+                      ? 'text-red-500'
+                      : 'text-green-500'
+                  }`}
+                >
+                  {message}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

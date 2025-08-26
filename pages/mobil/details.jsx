@@ -1,7 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import StromverbrauchRechner from '../Presentation/details20'; // Import der Details-Rechner-Komponente
+import StromverbrauchRechner from '../Presentation/details28'; // Import der Details-Rechner-Komponente
 
 const styles = `
   .layout {
