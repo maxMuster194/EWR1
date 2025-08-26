@@ -5,11 +5,14 @@ const connectDB = async () => {
   if (mongoose.connections[0].readyState) {
     return;
   }
+  const uri = process.env.MONGODB_URI;
+  if (!uri) {
+    throw new Error('MONGODB_URI is not defined in environment variables');
+  }
+
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    // Ab v4+ von Mongoose sind useNewUrlParser & useUnifiedTopology standardmäßig aktiv
+    await mongoose.connect(uri);
     console.log('MongoDB connected');
   } catch (error) {
     console.error('MongoDB connection error:', error);
@@ -19,8 +22,8 @@ const connectDB = async () => {
 
 // Schema für germanyprices
 const GermanyPriceSchema = new mongoose.Schema({
-  deliveryday: String, // Feld für das Datum
-  __parsed_extra: [mongoose.Mixed], // Für die Preisdaten
+  deliveryday: String,             // Feld für das Datum
+  __parsed_extra: [mongoose.Mixed] // Für die Preisdaten
 }, { collection: 'germanyprices', strict: false });
 
 const GermanyPrice = mongoose.models.GermanyPrice || mongoose.model('GermanyPrice', GermanyPriceSchema, 'germanyprices');
