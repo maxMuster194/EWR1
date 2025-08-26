@@ -413,35 +413,35 @@ const Energiemanager = () => {
                 </div>
                 <div className="flex flex-col gap-1">
                   <a
-                    href="/Presentation/startseite"
+                    href="/mobil/startseite"
                     className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#D9043D] text-white"
                   >
                     <FontAwesomeIcon icon={faHouse} style={{ color: '#e5dbc1' }} />
                     <p className="text-white text-xs font-medium leading-normal">Home</p>
                   </a>
                   <a
-                    href="/Presentation/preise"
+                    href="/mobil/preise"
                     className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#D9043D] text-white"
                   >
                     <FontAwesomeIcon icon={faChartLine} style={{ color: '#e5dbc1' }} />
                     <p className="text-white text-xs font-medium leading-normal">Preis</p>
                   </a>
                   <a
-                    href="/Presentation/rechner"
+                    href="/mobil/rechner"
                     className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#D9043D] text-white active"
                   >
                     <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF' }} />
                     <p className="text-white text-xs font-medium leading-normal">Rechner</p>
                   </a>
                   <a
-                    href="/Presentation/details"
+                    href="/mobil/details"
                     className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#D9043D] text-white"
                   >
                     <FontAwesomeIcon icon={faFileLines} style={{ color: '#e5dbc1' }} />
                     <p className="text-white text-xs font-medium leading-normal">Detail-Rechner</p>
                   </a>
                   <a
-                    href="/Presentation/hilfe"
+                    href="/mobil/hilfe"
                     className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#D9043D] text-white"
                   >
                     <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#e5dbc1' }} />

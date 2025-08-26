@@ -2053,7 +2053,7 @@ export default function Home() {
                         <span>{menu.id === 'stromerzeuger' ? 'Erzeuger' : 'Verbraucher'}</span>
                         <span>Info</span>
                         <span>Watt</span>
-                        <span>Ersparnis</span>
+                        <span>Kosten/Jahr</span>
                         {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && <span></span>}
                       </li>
                       {menu.options.map((option) => (

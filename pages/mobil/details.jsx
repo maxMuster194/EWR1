@@ -321,27 +321,27 @@ const Energiemanager = () => {
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <a href="/Presentation/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-blue-800 text-white">
+                  <a href="/mobil/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-blue-800 text-white">
                     <FontAwesomeIcon icon={faHouse} style={{ color: '#75ff2b' }} />
                     <p className="text-white text-xs font-medium leading-normal">Home</p>
                   </a>
-                  <a href="/Presentation/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-blue-800 text-white">
+                  <a href="/mobil/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-blue-800 text-white">
                     <FontAwesomeIcon icon={faChartLine} style={{ color: '#75ff2b' }} />
                     <p className="text-white text-xs font-medium leading-normal">Preis</p>
                   </a>
-                  <a href="/Presentation/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-blue-800 text-white">
+                  <a href="/mobil/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-blue-800 text-white">
                     <FontAwesomeIcon icon={faCalculator} style={{ color: '#75ff2b' }} />
                     <p className="text-white text-xs font-medium leading-normal">Rechner</p>
                   </a>
                   <a
-                    href="/Presentation/details"
+                    href="/mobil/details"
                     className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white active"
                     style={{ backgroundColor: '#062316' }} // Simulate hover state
                   >
                     <FontAwesomeIcon icon={faFileLines} style={{ color: '#fffff' }} />
                     <p className="text-white text-xs font-medium leading-normal">Detail-Rechner</p>
                   </a>
-                  <a href="/Presentation/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-blue-800 text-white">
+                  <a href="/mobil/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-blue-800 text-white">
                     <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#75ff2b' }} />
                     <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
                   </a>

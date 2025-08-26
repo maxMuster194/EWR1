@@ -13,23 +13,11 @@ import {
 } from 'chart.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import Statistik from '../Presentation/stk3';
-import Durchschnitt from '../Presentation/durch12';
+import Statistik from '../mobil/stk4';
+import Durchschnitt from '../mobil/durch12';
 
 // Register Chart.js components
 ChartJSInstance.register(LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend, Filler);
-
-const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  scales: {
-    x: { grid: { display: false }, ticks: { color: '#202026' } },
-    y: { grid: { color: '#E5E7EB' }, ticks: { color: '#202026' }, beginAtZero: true },
-  },
-  plugins: {
-    legend: { labels: { color: '#202026' } },
-  },
-};
 
 const styles = `
   .layout {
@@ -402,7 +390,24 @@ const styles = `
       align-items: center;
     }
   }
-`;
+
+  `;
+
+
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    x: { grid: { display: false }, ticks: { color: '#202026' } },
+    y: { grid: { color: '#E5E7EB' }, ticks: { color: '#202026' }, beginAtZero: true },
+  },
+  plugins: {
+    legend: { labels: { color: '#202026' } },
+  },
+};
+
+
+
 
 const Energiemanager = () => {
   return (
@@ -429,28 +434,28 @@ const Energiemanager = () => {
                 </div>
                 <div className="flex flex-col gap-1">
                   <a
-                    href="/Presentation/startseite"
+                    href="/mobil/startseite"
                     className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#D9043D] text-white"
                   >
                     <FontAwesomeIcon icon={faHouse} style={{ color: '#e5dbc1' }} />
                     <p className="text-white text-xs font-medium leading-normal">Home</p>
                   </a>
                   <a
-                    href="/Presentation/preise"
+                    href="/mobil/preise"
                     className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#D9043D] text-white active"
                   >
                     <FontAwesomeIcon icon={faChartLine} style={{ color: '#e5dbc1' }} />
                     <p className="text-white text-xs font-medium leading-normal">Preis</p>
                   </a>
-                  <a href="/Presentation/rechner" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+                  <a href="/mobil/rechner" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
                     <FontAwesomeIcon icon={faCalculator} style={{ color: '#e5dbc1' }} />
                     <p className="text-white text-xs font-medium leading-normal">Rechner</p>
                   </a>
-                  <a href="/Presentation/details" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+                  <a href="/mobil/details" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
                     <FontAwesomeIcon icon={faFileLines} style={{ color: '#e5dbc1' }} />
                     <p className="text-white text-xs font-medium leading-normal">Detail-Rechner</p>
                   </a>
-                  <a href="/Presentation/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+                  <a href="/mobil/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
                     <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#e5dbc1' }} />
                     <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
                   </a>
