@@ -15,7 +15,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
-import StrompreisChart from '../haushalt/Profil8';
+import StrompreisChart from '../profil/Profil8';
 import Statistik from '../monatstk/stk0';
 
 // Register Chart.js components

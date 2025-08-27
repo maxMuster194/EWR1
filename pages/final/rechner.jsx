@@ -2,7 +2,7 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle, faBars } from '@fortawesome/free-solid-svg-icons';
-import StrompreisChart from '../haushalt/Profil6';
+import StrompreisChart from '../profil/Profil6';
 import Statistik from '../monatstk/stk0';
 
 const Home = () => {

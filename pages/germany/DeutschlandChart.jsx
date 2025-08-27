@@ -12,7 +12,7 @@ import {
   Legend,
 } from 'chart.js';
 import Berechnung from '../berechnung/berechnung0.5';
-import Profil03 from '../haushalt/Profil0.3'; // Import der neuen Komponente (umbenannt für Klarheit)
+import Profil03 from '../profil/Profil0.3'; // Import der neuen Komponente (umbenannt für Klarheit)
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend);
 
