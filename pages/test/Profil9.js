@@ -1022,7 +1022,7 @@ function StrompreisChart() {
       </div>
 
       <div style={styles.chartContainer}>
-        <h2 style={styles.chartTitle}>Vergleich Normaltarif zu dynamischem Tarif</h2>
+        <h2 style={styles.chartTitle}>Vergleichsansicht </h2>
         <div style={styles.legendContainer}>
           <div style={styles.legendItem}>
             <div style={{ ...styles.legendColor, backgroundColor: 'rgb(6, 35, 22)' }} />
