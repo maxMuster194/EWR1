@@ -43,7 +43,7 @@ const styles = {
     backgroundColor: '#fff',
     boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)',
     cursor: 'pointer',
-    color: '#000', // Schriftfarbe des Eingabefelds auf Schwarz gesetzt
+    color: '#000',
   },
   chartContainer: {
     marginTop: '1rem',
@@ -79,6 +79,7 @@ export default function Dypreis0() {
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState('');
   const [availableDates, setAvailableDates] = useState([]);
+  const [isMobile, setIsMobile] = useState(false); // Standardwert für SSR
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -87,6 +88,19 @@ export default function Dypreis0() {
     const year = today.getFullYear();
     return `${day}/${month}/${year}`;
   };
+
+  // Prüfe Bildschirmgröße nur im Browser
+  useEffect(() => {
+    // Stelle sicher, dass window definiert ist
+    if (typeof window !== 'undefined') {
+      setIsMobile(window.innerWidth <= 768);
+      const handleResize = () => {
+        setIsMobile(window.innerWidth <= 768);
+      };
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -202,8 +216,8 @@ export default function Dypreis0() {
                   borderColor: 'rgb(64 153 102)',
                   backgroundColor: 'rgb(64 153 102)',
                   tension: 0.3,
-                  pointRadius: 4,
-                  pointHoverRadius: 6,
+                  pointRadius: isMobile ? 2 : 4, // Kleinere Punkte für mobile Geräte
+                  pointHoverRadius: isMobile ? 4 : 6, // Kleinere Hover-Punkte für mobile Geräte
                 },
               ],
             }}
