@@ -18,14 +18,17 @@ ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip,
 const styles = {
   mainContainer: {
     display: 'flex',
-    flexDirection: 'column', // Stack chart and controls vertically
+    flexDirection: 'column',
     width: '100%',
-    height: '100vh', // Full viewport height
-    margin: '0',
+    maxWidth: '1200px',
+    margin: '0 auto',
     padding: '0',
-    backgroundColor: '#f5f5f5', // Light background for modern look
+    backgroundColor: '#f5f5f5',
     fontFamily: "'Inter', sans-serif",
-    overflow: 'hidden', // Prevent main container from scrolling
+    overflowX: 'hidden',
+    overflowY: 'auto',
+    minHeight: '100vh',
+    boxSizing: 'border-box',
   },
   chartContainer: {
     backgroundColor: '#fff',
@@ -41,12 +44,15 @@ const styles = {
   
   controlsContainer: {
     flex: 1,
-    overflowY: 'auto', // Scrollable controls
     padding: '16px',
     backgroundColor: '#f5f5f5',
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
+    overflowY: 'auto',
+    overflowX: 'hidden',
+    boxSizing: 'border-box',
+    maxWidth: '100%',
   },
   chartTitle: {
     fontSize: '18px',
@@ -613,7 +619,7 @@ function StrompreisChart() {
 
   const combinedChartOptions = {
     responsive: true,
-    maintainAspectRatio: false, // Allow chart to stretch vertically
+    maintainAspectRatio: false,
     interaction: {
       mode: 'nearest',
       axis: 'x',
@@ -670,6 +676,8 @@ function StrompreisChart() {
             border-radius: 6px;
             background-color: #fff;
             width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
             color: #333;
           }
@@ -685,6 +693,8 @@ function StrompreisChart() {
             border-radius: 6px;
             background-color: #fff;
             width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
             color: #333;
           }
@@ -799,20 +809,20 @@ function StrompreisChart() {
           }
           @media (min-width: 900px) {
             .main-container {
-              flex-direction: row;
-              height: auto;
-              overflow: auto;
+              flex-direction: column;
+              overflow: hidden;
             }
             .chart-container {
-              position: relative;
-              flex: 1;
-              margin: 16px;
-              max-height: none;
+              width: 100%;
+              max-width: 33%;
+              margin: 16px auto;
             }
             .controls-container {
-              width: 300px;
+              width: 100%;
+              max-width: 100%;
+              margin: 16px auto;
               overflow-y: auto;
-              margin: 16px 8px 16px 16px;
+              overflow-x: hidden;
             }
             .chart-title {
               font-size: 20px;
@@ -836,9 +846,11 @@ function StrompreisChart() {
             .chart-container {
               margin: 8px;
               padding: 8px;
+              max-width: 100%;
             }
             .controls-container {
               padding: 8px;
+              max-width: 100%;
             }
             .control-group {
               padding: 10px;
@@ -868,7 +880,7 @@ function StrompreisChart() {
             <span style={styles.legendLabel}>Normaltarif</span>
           </div>
         </div>
-        <div style={{ height: '300px' }}> {/* Fixed height for chart */}
+        <div style={{ height: '300px' }}>
           <Line data={combinedChart} options={combinedChartOptions} />
         </div>
         {datasets.length === 0 && (
