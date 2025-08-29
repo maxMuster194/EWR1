@@ -134,8 +134,8 @@ const styles = `
     max-width: 90vw;
     margin: 0 auto;
     padding: 1.5rem;
-    background-color: #FFFFFF;
-    border: 1px solid #D1D5DB;
+    background-color: #F3F4F6;
+    border: 1px solid #F3F4F6;
     border-radius: 12px;
     box-sizing: border-box;
     display: flex;
@@ -405,23 +405,23 @@ const Energiemanager = () => {
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <a href="/layout1/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#062316] text-white">
+                <a href="/test/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#062316] text-white">
                   <FontAwesomeIcon icon={faHouse} style={{ color: '#e5dbc1' }} />
                   <p className="text-white text-xs font-medium leading-normal">Home</p>
                 </a>
-                <a href="/layout1/preise" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#062316] text-white">
+                <a href="/test/preise" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#062316] text-white">
                   <FontAwesomeIcon icon={faChartLine} style={{ color: '#e5dbc1' }} />
                   <p className="text-white text-xs font-medium leading-normal">Preis</p>
                 </a>
-                <a href="/layout1/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#062316] text-white active">
+                <a href="/test/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#062316] text-white active">
                   <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF' }} />
                   <p className="text-white text-xs font-medium leading-normal">Rechner</p>
                 </a>
-                <a href="/layout1/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#062316] text-white">
+                <a href="/test/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#062316] text-white">
                   <FontAwesomeIcon icon={faFileLines} style={{ color: '#e5dbc1' }} />
                   <p className="text-white text-xs font-medium leading-normal">Detail-Rechner</p>
                 </a>
-                <a href="/layout1/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#062316] text-white">
+                <a href="/test/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#062316] text-white">
                   <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#e5dbc1' }} />
                   <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
                 </a>
@@ -443,23 +443,23 @@ const Energiemanager = () => {
         </footer>
 
         <nav className="bottom-nav">
-          <a href="/layout1/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
+          <a href="/test/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
             <FontAwesomeIcon icon={faHouse} style={{ color: '#e5dbc1', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Home</p>
           </a>
-          <a href="/layout1/preise" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
+          <a href="/test/preise" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
             <FontAwesomeIcon icon={faChartLine} style={{ color: '#e5dbc1', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Preis</p>
           </a>
-          <a href="/layout1/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#062316] text-white active">
+          <a href="/test/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#062316] text-white active">
             <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Rechner</p>
           </a>
-          <a href="/layout1/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
+          <a href="/test/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
             <FontAwesomeIcon icon={faFileLines} style={{ color: '#e5dbc1', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Detail</p>
           </a>
-          <a href="/layout1/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
+          <a href="/test/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
             <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#e5dbc1', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
           </a>

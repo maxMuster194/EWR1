@@ -18,41 +18,49 @@ ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip,
 const styles = {
   mainContainer: {
     display: 'flex',
-    flexDirection: 'column', // Stack chart and controls vertically
+    flexDirection: 'column',
     width: '100%',
-    height: '100vh', // Full viewport height
-    margin: '0',
+    maxWidth: '1400px',
+    margin: '0 auto',
     padding: '0',
-    backgroundColor: '#f5f5f5', // Light background for modern look
+    backgroundColor: '#f5f5f5',
     fontFamily: "'Inter', sans-serif",
-    overflow: 'hidden', // Prevent main container from scrolling
+    minHeight: '100vh',
+    boxSizing: 'border-box',
   },
   chartContainer: {
     backgroundColor: '#fff',
-    padding: '16px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-    borderRadius: '8px',
-    margin: '8px',
+    padding: '2px',
+    boxShadow: '0 2px 2px rgba(0, 0, 0, 0.1)',
+    borderRadius: '2px',
+    margin: '0px 0',
     width: '100%',
-    maxWidth: '95%',
+    maxWidth: '100%',
     boxSizing: 'border-box',
-    height: '400px', // feste Höhe
+    height: '300px',
+    position: 'sticky',
+    top: 0,
+    zIndex: 10,
   },
-  
   controlsContainer: {
     flex: 1,
-    overflowY: 'auto', // Scrollable controls
-    padding: '16px',
+    padding: '12px',
     backgroundColor: '#f5f5f5',
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
+    overflowY: 'auto',
+    overflowX: 'hidden',
+    boxSizing: 'border-box',
+    width: '100%',
+    maxWidth: '1400px',
+    maxHeight: 'calc(100vh - 300px)',
   },
   chartTitle: {
     fontSize: '18px',
     fontWeight: '700',
     color: '#333',
-    margin: '16px 0 8px',
+    margin: '12px 0 8px',
     textAlign: 'center',
   },
   legendContainer: {
@@ -613,7 +621,7 @@ function StrompreisChart() {
 
   const combinedChartOptions = {
     responsive: true,
-    maintainAspectRatio: false, // Allow chart to stretch vertically
+    maintainAspectRatio: false,
     interaction: {
       mode: 'nearest',
       axis: 'x',
@@ -640,8 +648,8 @@ function StrompreisChart() {
     scales: {
       y: {
         beginAtZero: false,
-        title: { display: true, text: 'Stromkosten in ct/kWh', font: { size: 14, family: "'Inter', sans-serif" }, color: '#333' },
-        ticks: { callback: (value) => `${value.toFixed(2)}` },
+        title: { display: true, font: { size: 14, family: "'Inter', sans-serif" }, color: '#333' },
+        ticks: { callback: (value) => `${value.toFixed(2)} €` },
         grid: {
           display: true,
           color: 'rgba(0, 0, 0, 0.1)',
@@ -668,10 +676,13 @@ function StrompreisChart() {
             font-size: 13px;
             border: 1px solid #e0e0e0;
             border-radius: 6px;
-            background-color: #fff;
+            background-color: #f9f9f9;
             width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
             color: #333;
+            cursor: pointer;
           }
           .date-picker:focus {
             outline: none;
@@ -685,6 +696,8 @@ function StrompreisChart() {
             border-radius: 6px;
             background-color: #fff;
             width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
             color: #333;
           }
@@ -711,24 +724,24 @@ function StrompreisChart() {
             -webkit-appearance: none;
             width: 16px;
             height: 16px;
-            background: rgb(5,166,150);
+            background: rgb(6, 35, 22);
             border-radius: 50%;
             cursor: pointer;
             transition: background 0.2s ease;
           }
           .slider::-webkit-slider-thumb:hover {
-            background: rgb(3,140,130);
+            background: rgb(6, 35, 22);
           }
           .slider::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
-            background: rgb(5,166,150);
+            width: 22px;
+            height: 22px;
+            background: rgb(6, 35, 22);
             border-radius: 50%;
             cursor: pointer;
             transition: background 0.2s ease;
           }
           .slider::-moz-range-thumb:hover {
-            background: rgb(3,140,130);
+            background: rgb(6, 35, 22);
           }
           .radio-input {
             -webkit-appearance: none;
@@ -743,7 +756,7 @@ function StrompreisChart() {
             transition: border-color 0.2s ease, background-color 0.2s ease;
           }
           .radio-input:checked {
-            border: 2px solid rgb(5,166,150);
+            border: 2px solid rgb(6, 35, 22);
             background-color: #fff;
           }
           .radio-input:checked::before {
@@ -754,11 +767,11 @@ function StrompreisChart() {
             transform: translate(-50%, -50%);
             width: 8px;
             height: 8px;
-            background-color: rgb(5,166,150);
+            background-color: rgb(6, 35, 22);
             border-radius: 50%;
           }
           .radio-input:hover {
-            border-color: rgb(5,166,150);
+            border-color: rgb(6, 35, 22);
           }
           .tooltip {
             position: absolute;
@@ -780,13 +793,13 @@ function StrompreisChart() {
             opacity: 1;
           }
           .discount-switch-container input:checked + .discount-switch-slider {
-            background-color: rgb(5,166,150);
+            background-color: rgb(6, 35, 22);
           }
           .discount-switch-container input:checked + .discount-switch-slider:before {
             transform: translateX(18px);
           }
           .discount-switch-container input:focus + .discount-switch-slider {
-            box-shadow: 0 0 0 2px rgba(5,166,150,0.2);
+            box-shadow: 0 0 0 2px rgba(6, 35, 22);
           }
           .image-container {
             justify-content: center;
@@ -799,20 +812,22 @@ function StrompreisChart() {
           }
           @media (min-width: 900px) {
             .main-container {
-              flex-direction: row;
-              height: auto;
-              overflow: auto;
+              flex-direction: column;
+              overflow: hidden;
             }
             .chart-container {
-              position: relative;
-              flex: 1;
-              margin: 16px;
-              max-height: none;
+              width: 100%;
+              max-width: 98%;
+              margin: 12px auto;
+              height: 300px;
             }
             .controls-container {
-              width: 300px;
+              width: 100%;
+              max-width: 1400px;
+              margin: 12px auto;
               overflow-y: auto;
-              margin: 16px 8px 16px 16px;
+              overflow-x: hidden;
+              max-height: calc(100vh - 300px);
             }
             .chart-title {
               font-size: 20px;
@@ -834,11 +849,15 @@ function StrompreisChart() {
           }
           @media (max-width: 600px) {
             .chart-container {
-              margin: 8px;
-              padding: 8px;
+              margin: 4px 0;
+              padding: 4px;
+              max-width: 100%;
+              height: 250px;
             }
             .controls-container {
               padding: 8px;
+              max-width: 100%;
+              max-height: calc(100vh - 250px);
             }
             .control-group {
               padding: 10px;
@@ -852,31 +871,57 @@ function StrompreisChart() {
             .image {
               width: 35px;
             }
+            .no-data {
+              font-size: 12px !important;
+              padding: 8px !important;
+              width: 90% !important;
+            }
           }
         `}
       </style>
 
       <div style={styles.chartContainer} className="chart-container">
-        <h2 style={styles.chartTitle}>Vergleich Normaltarif zu dynamischem Tarif</h2>
-        <div style={styles.legendContainer}>
-          <div style={styles.legendItem}>
-            <div style={{ ...styles.legendColor, backgroundColor: 'rgb(6, 35, 22)' }} />
-            <span style={styles.legendLabel}>Dynamischer Tarif</span>
-          </div>
-          <div style={styles.legendItem}>
-            <div style={{ ...styles.legendColor, backgroundColor: 'rgb(64, 153, 102)' }} />
-            <span style={styles.legendLabel}>Normaltarif</span>
-          </div>
+        <h2 style={styles.chartTitle}>Vergleichsansicht</h2>
+        <div style={{ height: '250px', position: 'relative' }}>
+          {datasets.length === 0 ? (
+            <div
+              style={{
+                ...styles.noData,
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                fontSize: '12px',
+                padding: '8px',
+                textAlign: 'center',
+                width: '90%',
+              }}
+              className="no-data"
+            >
+              Bitte wählen Sie einen Haushaltstyp und ein Profil aus, um die Grafik zu sehen.
+            </div>
+          ) : (
+            <Line data={combinedChart} options={combinedChartOptions} />
+          )}
+          {strompreisChartData.length === 0 && !selectedH0Data && !selectedH0PVData && !selectedH0PVStorageData && (
+            <div
+              style={{
+                ...styles.noData,
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                fontSize: '12px',
+                padding: '8px',
+                textAlign: 'center',
+                width: '90%',
+              }}
+              className="no-data"
+            >
+              ⚠️ Keine Daten für das ausgewählte Datum.
+            </div>
+          )}
         </div>
-        <div style={{ height: '300px' }}> {/* Fixed height for chart */}
-          <Line data={combinedChart} options={combinedChartOptions} />
-        </div>
-        {datasets.length === 0 && (
-          <p style={styles.noData}>Bitte wählen Sie einen Haushaltstyp und ein Profil aus, um die Grafik zu sehen.</p>
-        )}
-        {strompreisChartData.length === 0 && !selectedH0Data && !selectedH0PVData && !selectedH0PVStorageData && (
-          <p style={styles.noData}>⚠️ Keine Daten für das ausgewählte Datum.</p>
-        )}
       </div>
 
       <div style={styles.controlsContainer} className="controls-container">
@@ -1023,7 +1068,15 @@ function StrompreisChart() {
                 dateFormat="dd/MM/yyyy"
                 placeholderText="Datum auswählen"
                 className="date-picker"
+                includeDates={availableDates.map((dateStr) => {
+                  const [day, month, year] = dateStr.split('/');
+                  return new Date(`${year}-${month}-${day}`);
+                })}
+                showPopperArrow={false}
                 disabled={availableDates.length === 0 && h0Data.length === 0 && h0PVData.length === 0 && h0PVStorageData.length === 0}
+                onKeyDown={(e) => e.preventDefault()}
+                onInput={(e) => e.preventDefault()}
+                popperPlacement="bottom-start"
               />
             </div>
 

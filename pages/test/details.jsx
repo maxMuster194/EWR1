@@ -13,11 +13,26 @@ import {
 } from 'chart.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import StrompreisChart from './Profil10'; // Alias for Profil10
-import Profil9 from './Profil9'; // Import for desktop profile
+import Profil9 from './details28'; // Placeholder: Replace with actual component
+import Profil10 from './details29'; // Placeholder: Replace with actual component
 
 // Register Chart.js components
 ChartJSInstance.register(LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend, Filler);
+
+// Sample chart data (placeholder, replace with actual data)
+const chartData = {
+  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+  datasets: [
+    {
+      label: 'Energy Usage',
+      data: [65, 59, 80, 81, 56, 55],
+      fill: true,
+      backgroundColor: 'rgba(64, 153, 102, 0.2)',
+      borderColor: '#409966',
+      tension: 0.4,
+    },
+  ],
+};
 
 const chartOptions = {
   responsive: true,
@@ -45,7 +60,7 @@ const styles = `
       "sidebar extra-box-1" auto
       "sidebar extra-box-2" auto
       "footer footer" auto
-      / minmax(100px, 120px) 1fr;
+      / minmax(100px, 200px) 1fr;
     gap: 12px;
     padding-top: 5rem;
     padding-bottom: 3rem;
@@ -86,7 +101,7 @@ const styles = `
   .sidebar {
     grid-area: sidebar;
     width: 100%;
-    max-width: 120px;
+    max-width: 200px;
     padding: 0.5rem;
     background-color: #202026;
     border: 1px solid #D1D5DB;
@@ -134,54 +149,35 @@ const styles = `
     max-width: 90vw;
     margin: 0 auto;
     padding: 1.5rem;
-    background-color: #FFFFFF;
-    border: 1px solid #D1D5DB;
+    background-color: #F3F4F6;
+    border: 1px solid #F3F4F6;
     border-radius: 12px;
     box-sizing: border-box;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: 1.5rem;
   }
-  .content-box {
+  .content, .chart {
+    flex: 1;
     border: 1px solid #D1D5DB;
     border-radius: 12px;
     overflow: hidden;
-    max-width: 800px;
     max-height: 800px;
-    width: 100%;
-    height: 100%;
+    background-color: #FFFFFF;
+    padding: 0.75rem;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    box-sizing: border-box;
   }
-  .content-box > div {
-    border-bottom: 1px solid #D1D5DB;
-    padding: 0.75rem;
-    background-color: #F9FAFB;
-    max-width: 800px;
-    max-height: 800px;
+  .content > div, .chart > div {
     width: 100%;
     height: 100%;
-    flex-shrink: 0;
-    flex-grow: 1;
     overflow: auto;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-sizing: border-box;
-  }
-  .content-box > div:last-child {
-    border-bottom: none;
-  }
-  .content-box > div > * {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    display: block;
-    margin: 0 auto;
   }
   .bottom-boxes {
     grid-area: bottom-boxes;
@@ -243,12 +239,7 @@ const styles = `
       max-width: 95vw;
       padding: 1rem;
     }
-    .content-box {
-      max-width: 90vw;
-      max-height: 600px;
-    }
-    .content-box > div {
-      max-width: 90vw;
+    .content, .chart {
       max-height: 600px;
     }
     .header-logo {
@@ -296,24 +287,11 @@ const styles = `
       flex-grow: 1;
       background-color: #F3F4F6;
     }
-    .content-box {
-      max-width: 100%;
+    .content, .chart {
       max-height: none;
-      height: 100%;
       border: none;
-      border-radius: 0;
-      background-color: transparent;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-    }
-    .content-box > div {
-      max-width: 100%;
-      max-height: none;
-      padding: 0.5rem;
-      border: none;
-      background-color: #FFFFFF;
       border-radius: 8px;
+      background-color: #FFFFFF;
       flex-grow: 1;
     }
     .header-logo {
@@ -373,7 +351,6 @@ const Energiemanager = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // Only runs on client side
     setIsMobile(window.innerWidth <= 767);
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 767);
@@ -415,12 +392,12 @@ const Energiemanager = () => {
                   <FontAwesomeIcon icon={faChartLine} style={{ color: '#e5dbc1' }} />
                   <p className="text-white text-xs font-medium leading-normal">Preis</p>
                 </a>
-                <a href="/layout1/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#062316] text-white active">
-                  <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF' }} />
+                <a href="/layout1/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#062316] text-white">
+                  <FontAwesomeIcon icon={faCalculator} style={{ color: '#e5dbc1' }} />
                   <p className="text-white text-xs font-medium leading-normal">Rechner</p>
                 </a>
-                <a href="/layout1/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#062316] text-white">
-                  <FontAwesomeIcon icon={faFileLines} style={{ color: '#e5dbc1' }} />
+                <a href="/layout1/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#062316] text-white active">
+                  <FontAwesomeIcon icon={faFileLines} style={{ color: '#FFFFFF' }} />
                   <p className="text-white text-xs font-medium leading-normal">Detail-Rechner</p>
                 </a>
                 <a href="/layout1/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#062316] text-white">
@@ -432,10 +409,13 @@ const Energiemanager = () => {
           </div>
         </div>
 
-        <div className="main flex flex-col gap-6">
-          <div className="content-box flex flex-1 flex-col gap-3 rounded-xl bg-gray-50 shadow-sm w-full">
+        <div className="main flex flex-col lg:flex-row gap-6">
+          <div className="content flex-1">
+            <div>{isMobile ? <Profil10 /> : <Profil9 />}</div>
+          </div>
+          <div className="chart flex-1">
             <div>
-              {isMobile ? <StrompreisChart /> : <Profil9 />}
+              <Line data={chartData} options={chartOptions} />
             </div>
           </div>
         </div>
@@ -457,12 +437,12 @@ const Energiemanager = () => {
             <FontAwesomeIcon icon={faChartLine} style={{ color: '#e5dbc1', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Preis</p>
           </a>
-          <a href="/layout1/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#062316] text-white active">
-            <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '18px' }} />
+          <a href="/layout1/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
+            <FontAwesomeIcon icon={faCalculator} style={{ color: '#e5dbc1', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Rechner</p>
           </a>
-          <a href="/layout1/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
-            <FontAwesomeIcon icon={faFileLines} style={{ color: '#e5dbc1', fontSize: '18px' }} />
+          <a href="/layout1/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#062316] text-white active">
+            <FontAwesomeIcon icon={faFileLines} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Detail</p>
           </a>
           <a href="/layout1/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
