@@ -13,7 +13,7 @@ import {
 } from 'chart.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import StrompreisChart from './Profil10'; // Alias for Profil10
+import Profil10 from './Profil10'; // mobil for Profil10
 import Profil9 from './Profil9'; // Import for desktop profile
 
 // Register Chart.js components
@@ -407,23 +407,23 @@ const Energiemanager = () => {
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <a href="/layout1/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#062316] text-white">
+                <a href="/test/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#062316] text-white">
                   <FontAwesomeIcon icon={faHouse} style={{ color: '#e5dbc1' }} />
                   <p className="text-white text-xs font-medium leading-normal">Home</p>
                 </a>
-                <a href="/layout1/preise" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#062316] text-white">
+                <a href="/test/preise" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#062316] text-white">
                   <FontAwesomeIcon icon={faChartLine} style={{ color: '#e5dbc1' }} />
                   <p className="text-white text-xs font-medium leading-normal">Preis</p>
                 </a>
-                <a href="/layout1/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#062316] text-white active">
+                <a href="/test/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#062316] text-white active">
                   <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF' }} />
                   <p className="text-white text-xs font-medium leading-normal">Rechner</p>
                 </a>
-                <a href="/layout1/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#062316] text-white">
+                <a href="/test/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#062316] text-white">
                   <FontAwesomeIcon icon={faFileLines} style={{ color: '#e5dbc1' }} />
                   <p className="text-white text-xs font-medium leading-normal">Detail-Rechner</p>
                 </a>
-                <a href="/layout1/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#062316] text-white">
+                <a href="/test/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#062316] text-white">
                   <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#e5dbc1' }} />
                   <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
                 </a>
@@ -435,7 +435,7 @@ const Energiemanager = () => {
         <div className="main flex flex-col gap-6">
           <div className="content-box flex flex-1 flex-col gap-3 rounded-xl bg-gray-50 shadow-sm w-full">
             <div>
-              {isMobile ? <StrompreisChart /> : <Profil9 />}
+              {isMobile ? <Profil10 /> : <Profil9 />}
             </div>
           </div>
         </div>
@@ -449,23 +449,23 @@ const Energiemanager = () => {
         </footer>
 
         <nav className="bottom-nav">
-          <a href="/layout1/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
+          <a href="/test/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
             <FontAwesomeIcon icon={faHouse} style={{ color: '#e5dbc1', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Home</p>
           </a>
-          <a href="/layout1/preise" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
+          <a href="/test/preise" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
             <FontAwesomeIcon icon={faChartLine} style={{ color: '#e5dbc1', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Preis</p>
           </a>
-          <a href="/layout1/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#062316] text-white active">
+          <a href="/test/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#062316] text-white active">
             <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Rechner</p>
           </a>
-          <a href="/layout1/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
+          <a href="/test/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
             <FontAwesomeIcon icon={faFileLines} style={{ color: '#e5dbc1', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Detail</p>
           </a>
-          <a href="/layout1/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
+          <a href="/test/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
             <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#e5dbc1', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
           </a>
