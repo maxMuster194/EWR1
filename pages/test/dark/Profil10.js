@@ -23,13 +23,13 @@ const styles = {
     maxWidth: '1400px',
     margin: '0 auto',
     padding: '0',
-    backgroundColor: '#1a1a1a', // Dark background for main container
+    backgroundColor: '#1a1a1a',
     fontFamily: "'Inter', sans-serif",
     minHeight: '100vh',
     boxSizing: 'border-box',
   },
   chartContainer: {
-    backgroundColor: '#2a2a2a', // Darker chart background
+    backgroundColor: '#2a2a2a',
     padding: '2px',
     boxShadow: '0 2px 2px rgba(0, 0, 0, 0.5)',
     borderRadius: '2px',
@@ -45,7 +45,7 @@ const styles = {
   controlsContainer: {
     flex: 1,
     padding: '12px',
-    backgroundColor: '#1a1a1a', // Dark background for controls
+    backgroundColor: '#1a1a1a',
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
@@ -59,7 +59,7 @@ const styles = {
   chartTitle: {
     fontSize: '18px',
     fontWeight: '700',
-    color: '#e0e0e0', // Light text for dark mode
+    color: '#e0e0e0',
     margin: '12px 0 8px',
     textAlign: 'center',
   },
@@ -70,7 +70,7 @@ const styles = {
     justifyContent: 'center',
     marginBottom: '12px',
     padding: '8px',
-    backgroundColor: '#2a2a2a', // Dark legend background
+    backgroundColor: '#2a2a2a',
     borderRadius: '8px',
   },
   legendItem: {
@@ -85,13 +85,13 @@ const styles = {
   },
   legendLabel: {
     fontSize: '13px',
-    color: '#e0e0e0', // Light text for dark mode
+    color: '#e0e0e0',
   },
   controlGroup: {
     display: 'flex',
     flexDirection: 'column',
     gap: '8px',
-    backgroundColor: '#2a2a2a', // Dark control group background
+    backgroundColor: '#2a2a2a',
     padding: '12px',
     borderRadius: '8px',
     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.5)',
@@ -104,7 +104,7 @@ const styles = {
   radioLabel: {
     fontSize: '14px',
     fontWeight: '500',
-    color: '#e0e0e0', // Light text for dark mode
+    color: '#e0e0e0',
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
@@ -118,51 +118,51 @@ const styles = {
   inputLabel: {
     fontSize: '14px',
     fontWeight: '600',
-    color: '#e0e0e0', // Light text for dark mode
+    color: '#e0e0e0',
   },
   sliderLabel: {
     fontSize: '14px',
     fontWeight: '600',
-    color: '#e0e0e0', // Light text for dark mode
+    color: '#e0e0e0',
   },
   loading: {
     textAlign: 'center',
     fontSize: '14px',
-    color: '#b0b0b0', // Lighter gray for loading text
+    color: '#b0b0b0',
     padding: '10px',
-    backgroundColor: '#2a2a2a', // Dark loading background
+    backgroundColor: '#2a2a2a',
     borderRadius: '8px',
   },
   error: {
     textAlign: 'center',
     fontSize: '14px',
     fontWeight: '500',
-    color: '#ff6b6b', // Bright error color for visibility
-    backgroundColor: '#3a1a1a', // Darker red-tinted background
+    color: '#ff6b6b',
+    backgroundColor: '#3a1a1a',
     padding: '10px',
     borderRadius: '8px',
   },
   noData: {
     textAlign: 'center',
     fontSize: '14px',
-    color: '#b0b0b0', // Lighter gray for no-data text
+    color: '#b0b0b0',
     padding: '10px',
-    backgroundColor: '#2a2a2a', // Dark no-data background
+    backgroundColor: '#2a2a2a',
     borderRadius: '8px',
   },
   consumptionSummary: {
     padding: '12px',
-    backgroundColor: '#2a2a2a', // Dark summary background
+    backgroundColor: '#2a2a2a',
     borderRadius: '8px',
     fontSize: '13px',
-    color: '#e0e0e0', // Light text for dark mode
+    color: '#e0e0e0',
   },
   summaryTitle: {
     fontSize: '16px',
     fontWeight: '600',
     marginBottom: '8px',
     textAlign: 'center',
-    color: '#05a696', // Keep brand color for title
+    color: '#05a696',
   },
   summaryTable: {
     width: '100%',
@@ -170,20 +170,20 @@ const styles = {
     fontSize: '13px',
   },
   summaryTableHeader: {
-    backgroundColor: '#054066', // Darker header background
+    backgroundColor: '#054066',
     fontWeight: '600',
     padding: '8px',
     borderBottom: '1px solid #444',
     textAlign: 'left',
-    color: '#e0e0e0', // Light text for dark mode
+    color: '#e0e0e0',
   },
   summaryTableRow: {
-    borderBottom: '1px solid #444', // Darker border
+    borderBottom: '1px solid #444',
   },
   summaryTableCell: {
     padding: '8px',
     textAlign: 'left',
-    color: '#e0e0e0', // Light text for dark mode
+    color: '#e0e0e0',
   },
   tooltipContainer: {
     position: 'relative',
@@ -195,13 +195,13 @@ const styles = {
     width: '14px',
     height: '14px',
     cursor: 'pointer',
-    color: '#05a696', // Keep brand color for icon
+    color: '#05a696',
   },
   noteText: {
     fontSize: '12px',
-    color: '#b0b0b0', // Lighter gray for note text
+    color: '#b0b0b0',
     padding: '10px',
-    backgroundColor: '#2a2a2a', // Dark note background
+    backgroundColor: '#2a2a2a',
     borderRadius: '8px',
     lineHeight: '1.5',
   },
@@ -222,13 +222,13 @@ const styles = {
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: '#444', // Darker switch background
+    backgroundColor: '#444',
     borderRadius: '9px',
     cursor: 'pointer',
     transition: 'background-color 0.2s ease',
   },
   discountSwitchSliderActive: {
-    backgroundColor: '#05a696', // Keep brand color for active state
+    backgroundColor: '#05a696',
   },
   discountSwitchSliderBefore: {
     position: 'absolute',
@@ -247,7 +247,7 @@ const styles = {
   regionLabel: {
     fontSize: '13px',
     fontWeight: '500',
-    color: '#e0e0e0', // Light text for dark mode
+    color: '#e0e0e0',
     textAlign: 'center',
     marginBottom: '4px',
   },
@@ -266,11 +266,16 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
+    flexWrap: 'wrap', // Prevent overflow on small screens
   },
   image: {
-    width: '40px',
-    height: 'auto',
-    objectFit: 'contain',
+    width: '32px',
+    height: '32px',
+    minWidth: '32px',
+    minHeight: '32px',
+    objectFit: 'cover',
+    flexShrink: 0,
+    flexGrow: 0,
   },
 };
 
@@ -543,7 +548,7 @@ function StrompreisChart() {
           {
             label: `Dynamischer Tarif (Profil ${profile}, Faktor ${factor})`,
             data: h0AdjustedValues,
-            borderColor: '#06a696', // Adjusted for dark mode visibility
+            borderColor: '#06a696',
             backgroundColor: 'rgba(6, 166, 150, 0.2)',
             fill: false,
             tension: 0.4,
@@ -553,7 +558,7 @@ function StrompreisChart() {
           {
             label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Cent/kWh, Profil ${profile}, Faktor ${factor})`,
             data: customPriceValues,
-            borderColor: '#409966', // Adjusted for dark mode visibility
+            borderColor: '#409966',
             backgroundColor: 'rgba(251, 140, 0, 0.2)',
             fill: false,
             tension: 0.4,
@@ -649,20 +654,20 @@ function StrompreisChart() {
     scales: {
       y: {
         beginAtZero: false,
-        title: { display: true, font: { size: 14, family: "'Inter', sans-serif" }, color: '#e0e0e0' }, // Light text
-        ticks: { callback: (value) => `${value.toFixed(2)} €`, color: '#e0e0e0' }, // Light ticks
+        title: { display: true, font: { size: 14, family: "'Inter', sans-serif" }, color: '#e0e0e0' },
+        ticks: { callback: (value) => `${value.toFixed(2)} €`, color: '#e0e0e0' },
         grid: {
           display: true,
-          color: 'rgba(255, 255, 255, 0.1)', // Light grid for dark mode
+          color: 'rgba(255, 255, 255, 0.1)',
           lineWidth: 1,
         },
       },
       x: {
-        title: { display: true, text: 'Uhrzeit', font: { size: 14, family: "'Inter', sans-serif" }, color: '#e0e0e0' }, // Light text
-        ticks: { color: '#e0e0e0' }, // Light ticks
+        title: { display: true, text: 'Uhrzeit', font: { size: 14, family: "'Inter', sans-serif" }, color: '#e0e0e0' },
+        ticks: { color: '#e0e0e0' },
         grid: {
           display: true,
-          color: 'rgba(255, 255, 255, 0.1)', // Light grid for dark mode
+          color: 'rgba(255, 255, 255, 0.1)',
           lineWidth: 1,
         },
       },
@@ -678,12 +683,12 @@ function StrompreisChart() {
             font-size: 13px;
             border: 1px solid #444;
             border-radius: 6px;
-            background-color: #2a2a2a; // Dark input background
+            background-color: #2a2a2a;
             width: 100%;
             max-width: 100%;
             box-sizing: border-box;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
-            color: #e0e0e0; // Light text
+            color: #e0e0e0;
             cursor: pointer;
           }
           .date-picker:focus {
@@ -696,12 +701,12 @@ function StrompreisChart() {
             font-size: 13px;
             border: 1px solid #444;
             border-radius: 6px;
-            background-color: #2a2a2a; // Dark input background
+            background-color: #2a2a2a;
             width: 100%;
             max-width: 100%;
             box-sizing: border-box;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
-            color: #e0e0e0; // Light text
+            color: #e0e0e0;
           }
           .price-input:focus {
             outline: none;
@@ -709,7 +714,7 @@ function StrompreisChart() {
             box-shadow: 0 0 0 2px rgba(5, 166, 150, 0.2);
           }
           .input-error {
-            color: #ff6b6b; // Bright error color
+            color: #ff6b6b;
             font-size: 12px;
             margin-top: 4px;
           }
@@ -717,7 +722,7 @@ function StrompreisChart() {
             -webkit-appearance: none;
             width: 100%;
             height: 6px;
-            background: #444; // Dark slider track
+            background: #444;
             border-radius: 3px;
             outline: none;
             transition: background 0.2s ease;
@@ -726,13 +731,13 @@ function StrompreisChart() {
             -webkit-appearance: none;
             width: 16px;
             height: 16px;
-            background: #05a696; // Brand color for thumb
+            background: #05a696;
             border-radius: 50%;
             cursor: pointer;
             transition: background 0.2s ease;
           }
           .slider::-webkit-slider-thumb:hover {
-            background: #06c8b4; // Lighter brand color on hover
+            background: #06c8b4;
           }
           .slider::-moz-range-thumb {
             width: 22px;
@@ -750,15 +755,15 @@ function StrompreisChart() {
             appearance: none;
             width: 16px;
             height: 16px;
-            border: 2px solid #666; // Darker border
+            border: 2px solid #666;
             border-radius: 50%;
-            background-color: #2a2a2a; // Dark background
+            background-color: #2a2a2a;
             cursor: pointer;
             position: relative;
             transition: border-color 0.2s ease, background-color 0.2s ease;
           }
           .radio-input:checked {
-            border: 2px solid #05a696; // Brand color
+            border: 2px solid #05a696;
             background-color: #2a2a2a;
           }
           .radio-input:checked::before {
@@ -769,18 +774,18 @@ function StrompreisChart() {
             transform: translate(-50%, -50%);
             width: 8px;
             height: 8px;
-            background-color: #05a696; // Brand color
+            background-color: #05a696;
             border-radius: 50%;
           }
           .radio-input:hover {
-            border-color: #06c8b4; // Lighter brand color
+            border-color: #06c8b4;
           }
           .tooltip {
             position: absolute;
             top: 100%;
             left: 0;
-            background-color: #333; // Dark tooltip background
-            color: #e0e0e0; // Light text
+            background-color: #333;
+            color: #e0e0e0;
             padding: 6px 8px;
             border-radius: 4px;
             font-size: 12px;
@@ -795,7 +800,7 @@ function StrompreisChart() {
             opacity: 1;
           }
           .discount-switch-container input:checked + .discount-switch-slider {
-            background-color: #05a696; // Brand color
+            background-color: #05a696;
           }
           .discount-switch-container input:checked + .discount-switch-slider:before {
             transform: translateX(18px);
@@ -805,9 +810,19 @@ function StrompreisChart() {
           }
           .image-container {
             justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
           }
           .image {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            min-height: 32px;
+            object-fit: cover;
+            flex-shrink: 0;
+            flex-grow: 0;
             transition: transform 0.2s ease;
+            display: block;
           }
           .image:hover {
             transform: scale(1.1);
@@ -846,7 +861,13 @@ function StrompreisChart() {
               height: 16px;
             }
             .image {
-              width: 50px;
+              width: 32px;
+              height: 32px;
+              min-width: 32px;
+              min-height: 32px;
+              object-fit: cover;
+              flex-shrink: 0;
+              flex-grow: 0;
             }
           }
           @media (max-width: 600px) {
@@ -871,7 +892,13 @@ function StrompreisChart() {
               padding: 6px;
             }
             .image {
-              width: 35px;
+              width: 32px;
+              height: 32px;
+              min-width: 32px;
+              min-height: 32px;
+              object-fit: cover;
+              flex-shrink: 0;
+              flex-grow: 0;
             }
             .no-data {
               font-size: 12px !important;
@@ -898,7 +925,6 @@ function StrompreisChart() {
                 textAlign: 'center',
                 width: '90%',
               }}
-功夫
               className="no-data"
             >
               Bitte wählen Sie einen Haushaltstyp und ein Profil aus, um die Grafik zu sehen.

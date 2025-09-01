@@ -1865,154 +1865,175 @@ export default function StromverbrauchRechnerMobile(){
           accent-color: #409966;
         }
   
-      /* Bestehendes CSS bleibt gleich, nur Ergänzungen und Anpassungen für horizontales Layout wie im Bild */
-
-.dynamic-consumer-layout {
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  gap: 0;
-  margin-top: 12px;
-  border-radius: 4px;
-  overflow: hidden;
-  position: relative;
-}
-
-.dynamic-bar {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 8px 12px;
-  flex: 1;
-  text-align: center;
-  border-right: 1px solid #d1d5db;
-  background: #f0f4f8;
-}
-
-.dynamic-bar:last-child {
-  border-right: none;
-}
-
-.bar-label {
-  font-weight: 600;
-  color: #ffffff;
-  padding: 4px 8px;
-  border-radius: 4px 4px 0 0;
-  margin-bottom: 8px;
-  display: block;
-}
-
-.bar-input {
-  padding: 6px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  width: 100%;
-  background: #ffffff;
-  text-align: center;
-}
-
-.bar-input[type="range"] {
-  appearance: none;
-  height: 4px;
-  background: #d1d5db;
-  border-radius: 2px;
-  width: 100%;
-  margin: 8px 0;
-}
-
-.bar-input[type="range"]::-webkit-slider-thumb {
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  background: #ffffff;
-  border: 1px solid #d1d5db;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.radio-group-settings.bar-input {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  gap: 8px;
-  border: none;
-  padding: 0;
-}
-
-.zeitraum-section.dynamic-consumer-layout {
-  margin-bottom: 8px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-}
-
-/* Farben wie im Bild */
-.bar-color-black {
-  background: #000000;
-}
-
-.bar-color-gray {
-  background: #808080;
-}
-
-.bar-color-blue {
-  background: #0000ff;
-}
-
-.bar-color-red {
-  background: #ff0000;
-}
-
-.bar-color-green {
-  background: #008000;
-}
-
-/* Slider-Linie unter den Bars simulieren (wie im Bild) */
-.dynamic-consumer-layout::after {
-  content: '';
-  position: absolute;
-  bottom: 40px; /* Anpassen je nach Höhe */
-  left: 10%;
-  right: 10%;
-  height: 2px;
-  background: #d1d5db;
-  z-index: -1;
-}
-
-/* Runder Knopf für Slider */
-.dynamic-bar:nth-child(2)::before { /* Beispiel für Position am Slider */
-  content: '';
-  position: absolute;
-  bottom: 35px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 12px;
-  height: 12px;
-  background: #ffffff;
-  border: 1px solid #000000;
-  border-radius: 50%;
-  z-index: 1;
-}
-
-/* Mobile Anpassungen */
-@media (max-width: 768px) {
-  .dynamic-consumer-layout {
-    flex-direction: column;
-    gap: 8px;
-  }
-  .dynamic-bar {
-    border-right: none;
-    border-bottom: 1px solid #d1d5db;
-  }
-  .dynamic-bar:last-child {
-    border-bottom: none;
-  }
-  .dynamic-consumer-layout::after {
-    display: none;
-  }
-  .dynamic-bar:nth-child(2)::before {
-    display: none;
-  }
-}
+        /* Neues Layout für dynamische Verbraucher - Balken-ähnliches Design inspiriert vom Bild */
+        .dynamic-consumer-layout {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          margin-top: 12px;
+        }
+  
+        .dynamic-bar {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px;
+          border-radius: 4px;
+          background: #f0f4f8;
+        }
+  
+        .bar-label {
+          font-weight: 600;
+          color: #1f2937;
+          min-width: 100px;
+        }
+  
+        .bar-input {
+          flex: 1;
+          padding: 6px;
+          border: 1px solid #d1d5db;
+          border-radius: 4px;
+        }
+  
+        .bar-color-black {
+          background: #000000;
+          color: #ffffff;
+          padding: 4px 8px;
+          border-radius: 4px;
+        }
+  
+        .bar-color-gray {
+          background: #808080;
+          color: #ffffff;
+          padding: 4px 8px;
+          border-radius: 4px;
+        }
+  
+        .bar-color-blue {
+          background: #0000ff;
+          color: #ffffff;
+          padding: 4px 8px;
+          border-radius: 4px;
+        }
+  
+        .bar-color-red {
+          background: #ff0000;
+          color: #ffffff;
+          padding: 4px 8px;
+          border-radius: 4px;
+        }
+  
+        .bar-color-green {
+          background: #008000;
+          color: #ffffff;
+          padding: 4px 8px;
+          border-radius: 4px;
+        }
+  
+        /* Mobile Anpassungen */
+        @media (max-width: 768px) {
+          .checkbox-group-header {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+          }
+  
+          .checkbox-group li {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 8px;
+          }
+  
+          .region-buttons {
+            flex-direction: column;
+          }
+  
+          .fixed-chart {
+            position: relative;
+            top: 0;
+          }
+  
+          .chart-container {
+            height: 200px;
+          }
+  
+          .settings-container .grid {
+            flex-direction: column;
+          }
+  
+          .dynamic-bar {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+  
+          .app-container {
+            padding: 8px;
+            gap: 8px;
+          }
+  
+          html {
+            font-size: 12px;
+          }
+        }
+  
+        /* Neues Feature: Dark Mode Toggle (als Beispiel für etwas Neues) */
+        .dark-mode-toggle {
+          background: linear-gradient(90deg, #062316, #409966);
+          color: #ffffff;
+          padding: 6px 12px;
+          border-radius: 4px;
+          border: none;
+          cursor: pointer;
+          margin-bottom: 12px;
+          align-self: flex-start;
+        }
+  
+        .dark-mode-toggle:hover {
+          background: linear-gradient(90deg, #062316, #4caf50);
+        }
+  
+        body.dark {
+          background: #1f2937;
+          color: #f3f4f6;
+        }
+  
+        .dark .calculation-report,
+        .dark .date-picker-container,
+        .dark .fixed-chart,
+        .dark .menu,
+        .dark .menu-content {
+          background: #374151;
+          color: #f3f4f6;
+        }
+  
+        .dark .menu-header {
+          background: linear-gradient(90deg, #1f2937, #6b7280);
+        }
+  
+        .dark .report-title {
+          color: #4ade80;
+        }
+  
+        .dark .input-container-html input,
+        .dark .input-container-html select {
+          background: #4b5563;
+          color: #f3f4f6;
+          border-color: #6b7280;
+        }
+  
+        .dark .checkbox-group-header {
+          background: #4b5563;
+          color: #4ade80;
+        }
+  
+        .dark .checkbox-group li {
+          background: #374151;
+        }
+  
+        .dark .checkbox-group li:hover {
+          background: #4b5563;
+        }
       `}</style>
       <div className="app-container">
         {/* Neues Feature: Dark Mode Toggle */}
@@ -2085,352 +2106,322 @@ export default function StromverbrauchRechnerMobile(){
   
             {error && <p style={{ color: '#dc2626', fontSize: '0.75rem' }}>{error}</p>}
   
-
-
-
-          {/* Menüs und Verbraucher */}
-{menus.map((menu) => (
-  <div key={menu.id} className="menu">
-    <div className="menu-header" onClick={() => toggleMenu(menu.id)}>
-      <span>{menu.label}</span>
-      <span className={`triangle ${openMenus[menu.id] ? 'open' : ''}`}>&#9660;</span>
-    </div>
-    {openMenus[menu.id] && (
-      <div className="menu-content">
-        <ul className="checkbox-group">
-          <li className="checkbox-group-header">
-            <span>Name</span>
-            <span>Leistung (W)</span>
-            <span>Ersparnis (€)</span>
-            <span>Einstellungen</span>
-          </li>
-          {menu.options.map((option) => (
-            <li key={option.name}>
-              <div className="checkbox-group-label">
-                <div className="icon-container">
-                  <svg
-                    className="verbraucher-icon"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke={verbraucherDaten[option.name]?.checked ? "#2c6b4f" : "#cbd5e0"}
-                    strokeWidth="2"
-                  >
-                    <path d="M12 3v3m0 12v3m9-9h-3m-12 0H3m15.364-6.364l-2.121 2.121m-6.486 6.486l-2.121 2.121m15.364-15.364l-2.121 2.121m-6.486 6.486L8.757 8.757" />
-                  </svg>
-                  <input
-                    type="checkbox"
-                    checked={verbraucherDaten[option.name]?.checked || false}
-                    onChange={(e) => onCheckboxChange(option.name, e.target.checked)}
-                  />
+            {/* Menüs und Verbraucher */}
+            {menus.map((menu) => (
+              <div key={menu.id} className="menu">
+                <div className="menu-header" onClick={() => toggleMenu(menu.id)}>
+                  <span>{menu.label}</span>
+                  <span className={`triangle ${openMenus[menu.id] ? 'open' : ''}`}>&#9660;</span>
                 </div>
-                <div className="info-field">
-                  <span>{option.name}</span>
-                  <span className="tooltip">{verbraucherBeschreibungen[option.name]}</span>
-                </div>
-              </div>
-              <span />
-              <div className="input-group">
-                <input
-                  className="watt-input"
-                  type="number"
-                  value={verbraucherDaten[option.name]?.watt || ''}
-                  onChange={(e) => handleWattChange(option.name, e.target.value)}
-                  disabled={!verbraucherDaten[option.name]?.checked}
-                />
-              </div>
-              <span className="price-display">{verbraucherDaten[option.name]?.kosten || '0.00'}</span>
-              {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
-                <button
-                  className="settings-field"
-                  onClick={() => toggleErweiterteOptionen(menu.id, option.name)}
-                >
-                  {showErweiterteOptionen[menu.id]?.[option.name] ? 'Verbergen' : 'Einstellungen'}
-                </button>
-              )}
-              {(menu.id === 'grundlastverbraucher' || menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
-                <button
-                  className="delete-option-button"
-                  onClick={() => handleDeleteOptionClick(menu.id, option.name)}
-                >
-                  Löschen
-                </button>
-              )}
-              {deleteConfirmOption?.menuId === menu.id &&
-                deleteConfirmOption?.optionName === option.name && (
-                  <div className="confirm-dialog">
-                    <span>{`"${option.name}" löschen?`}</span>
-                    <button
-                      className="confirm-button"
-                      onClick={() => confirmDeleteOption(menu.id, option.name)}
-                    >
-                      Ja
-                    </button>
-                    <button className="cancel-button" onClick={cancelDeleteOption}>
-                      Nein
-                    </button>
-                  </div>
-                )}
-              {showErweiterteOptionen[menu.id]?.[option.name] &&
-                (menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
-                  <div className="settings-container">
-                    <h4>Einstellungen für {option.name}</h4>
-                    <div className="grid">
-                      {menu.id === 'eauto' && (
-                        <>
-                          <label>
-                            Batteriekapazität (kWh)
+                {openMenus[menu.id] && (
+                  <div className="menu-content">
+                    <ul className="checkbox-group">
+                      <li className="checkbox-group-header">
+                        <span>Name</span>
+                        <span>Aktiv</span>
+                        <span>Leistung (W)</span>
+                        <span>Ersparnis (€)</span>
+                        <span>Einstellungen</span>
+                      </li>
+                      {menu.options.map((option) => (
+                        <li key={option.name}>
+                          <div className="checkbox-group-label">
                             <input
-                              type="number"
-                              value={erweiterteEinstellungen[option.name]?.batterieKapazitaet || ''}
-                              onChange={(e) =>
-                                handleErweiterteEinstellungChange(
-                                  option.name,
-                                  'batterieKapazitaet',
-                                  e.target.value,
-                                  null
-                                )
-                              }
+                              type="checkbox"
+                              checked={verbraucherDaten[option.name]?.checked || false}
+                              onChange={(e) => onCheckboxChange(option.name, e.target.checked)}
                             />
-                          </label>
-                          <label>
-                            Wallbox-Leistung (W)
-                            <input
-                              type="number"
-                              value={erweiterteEinstellungen[option.name]?.wallboxLeistung || ''}
-                              onChange={(e) =>
-                                handleErweiterteEinstellungChange(
-                                  option.name,
-                                  'wallboxLeistung',
-                                  e.target.value,
-                                  null
-                                )
-                              }
-                            />
-                          </label>
-                          <div className="radio-group-settings">
-                            <label>
-                              <input
-                                type="radio"
-                                name={`ladung-${option.name}`}
-                                value="true"
-                                checked={erweiterteEinstellungen[option.name]?.standardLadung === true}
-                                onChange={(e) =>
-                                  handleErweiterteEinstellungChange(
-                                    option.name,
-                                    'standardLadung',
-                                    e.target.value,
-                                    null
-                                  )
-                                }
-                              />
-                              Standardladung
-                            </label>
-                            <label>
-                              <input
-                                type="radio"
-                                name={`ladung-${option.name}`}
-                                value="false"
-                                checked={erweiterteEinstellungen[option.name]?.standardLadung === false}
-                                onChange={(e) =>
-                                  handleErweiterteEinstellungChange(
-                                    option.name,
-                                    'standardLadung',
-                                    e.target.value,
-                                    null
-                                  )
-                                }
-                              />
-                              Wallbox-Ladung
-                            </label>
-                          </div>
-                          <label>
-                            Ladehäufigkeit (pro Woche)
-                            <input
-                              type="number"
-                              value={erweiterteEinstellungen[option.name]?.nutzung || ''}
-                              onChange={(e) =>
-                                handleErweiterteEinstellungChange(
-                                  option.name,
-                                  'nutzung',
-                                  e.target.value,
-                                  null
-                                )
-                              }
-                            />
-                          </label>
-                        </>
-                      )}
-                      {menu.id === 'dynamischeverbraucher' && (
-                        <>
-                          {/* Neues Layout für dynamische Verbraucher */}
-                          <div className="dynamic-consumer-layout">
-                            <div className="dynamic-bar">
-                              <span className="bar-color-black bar-label">WASCHEN</span>
-                              <input className="bar-input" type="text" placeholder="Beschreibung" />
-                            </div>
-                            <div className="dynamic-bar">
-                              <span className="bar-color-gray bar-label">Nutzung pro Woche</span>
-                              <input
-                                className="bar-input"
-                                type="number"
-                                value={erweiterteEinstellungen[option.name]?.nutzung || ''}
-                                onChange={(e) =>
-                                  handleErweiterteEinstellungChange(
-                                    option.name,
-                                    'nutzung',
-                                    e.target.value,
-                                    null
-                                  )
-                                }
-                              />
-                            </div>
-                            <div className="dynamic-bar">
-                              <span className="bar-color-blue bar-label">Dauer</span>
-                              <input
-                                className="bar-input"
-                                type="number"
-                                step="0.1"
-                                placeholder="Stunden"
-                              />
-                            </div>
-                            <div className="dynamic-bar">
-                              <span className="bar-color-red bar-label">Zeitraum</span>
-                              <select className="bar-input">
-                                <option>Zeitraum wählen</option>
-                                {/* Optionen hinzufügen */}
-                              </select>
-                            </div>
-                            <div className="dynamic-bar">
-                              <span className="bar-color-green bar-label">Ergebnis</span>
-                              <span className="bar-input">Berechnet...</span>
+                            <div className="info-field">
+                              <span>{option.name}</span>
+                              <span className="tooltip">{verbraucherBeschreibungen[option.name]}</span>
                             </div>
                           </div>
-                        </>
-                      )}
-                      <h5>Zeiträume</h5>
-                      {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum) => (
-                        <div key={zeitraum.id} className="zeitraum-section">
-                          <label>
-                            Zeitraum
-                            <select
-                              value={
-                                timePeriods.find(
-                                  (p) =>
-                                    p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-                                )?.label || ''
-                              }
-                              onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
+                          <span />
+                          <div className="input-group">
+                            <input
+                              className="watt-input"
+                              type="number"
+                              value={verbraucherDaten[option.name]?.watt || ''}
+                              onChange={(e) => handleWattChange(option.name, e.target.value)}
+                              disabled={!verbraucherDaten[option.name]?.checked}
+                            />
+                          </div>
+                          <span className="price-display">{verbraucherDaten[option.name]?.kosten || '0.00'}</span>
+                          {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
+                            <button
+                              className="settings-field"
+                              onClick={() => toggleErweiterteOptionen(menu.id, option.name)}
                             >
-                              <option value="">Zeitraum wählen</option>
-                              {timePeriods.map((period) => (
-                                <option key={period.label} value={period.label}>
-                                  {period.label} ({period.startzeit} - {period.endzeit})
-                                </option>
-                              ))}
-                            </select>
-                          </label>
-                          <label>
-                            Dauer (Stunden)
-                            <input
-                              type="number"
-                              step="0.1"
-                              value={zeitraum.dauer || ''}
-                              onChange={(e) =>
-                                handleErweiterteEinstellungChange(
-                                  option.name,
-                                  'dauer',
-                                  e.target.value,
-                                  zeitraum.id
-                                )
-                              }
-                            />
-                          </label>
-                          <button
-                            className="delete-option-button"
-                            onClick={() => removeZeitraum(option.name, zeitraum.id)}
-                          >
-                            Zeitraum löschen
-                          </button>
-                        </div>
+                              {showErweiterteOptionen[menu.id]?.[option.name] ? 'Verbergen' : 'Einstellungen'}
+                            </button>
+                          )}
+                          {(menu.id === 'grundlastverbraucher' || menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
+                            <button
+                              className="delete-option-button"
+                              onClick={() => handleDeleteOptionClick(menu.id, option.name)}
+                            >
+                              Löschen
+                            </button>
+                          )}
+                          {deleteConfirmOption?.menuId === menu.id &&
+                            deleteConfirmOption?.optionName === option.name && (
+                              <div className="confirm-dialog">
+                                <span>{`"${option.name}" löschen?`}</span>
+                                <button
+                                  className="confirm-button"
+                                  onClick={() => confirmDeleteOption(menu.id, option.name)}
+                                >
+                                  Ja
+                                </button>
+                                <button className="cancel-button" onClick={cancelDeleteOption}>
+                                  Nein
+                                </button>
+                              </div>
+                            )}
+                          {showErweiterteOptionen[menu.id]?.[option.name] &&
+                            (menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
+                              <div className="settings-container">
+                                <h4>Einstellungen für {option.name}</h4>
+                                <div className="grid">
+                                  {menu.id === 'eauto' && (
+                                    <>
+                                      <label>
+                                        Batteriekapazität (kWh)
+                                        <input
+                                          type="number"
+                                          value={erweiterteEinstellungen[option.name]?.batterieKapazitaet || ''}
+                                          onChange={(e) =>
+                                            handleErweiterteEinstellungChange(
+                                              option.name,
+                                              'batterieKapazitaet',
+                                              e.target.value,
+                                              null
+                                            )
+                                          }
+                                        />
+                                      </label>
+                                      <label>
+                                        Wallbox-Leistung (W)
+                                        <input
+                                          type="number"
+                                          value={erweiterteEinstellungen[option.name]?.wallboxLeistung || ''}
+                                          onChange={(e) =>
+                                            handleErweiterteEinstellungChange(
+                                              option.name,
+                                              'wallboxLeistung',
+                                              e.target.value,
+                                              null
+                                            )
+                                          }
+                                        />
+                                      </label>
+                                      <div className="radio-group-settings">
+                                        <label>
+                                          <input
+                                            type="radio"
+                                            name={`ladung-${option.name}`}
+                                            value="true"
+                                            checked={erweiterteEinstellungen[option.name]?.standardLadung === true}
+                                            onChange={(e) =>
+                                              handleErweiterteEinstellungChange(
+                                                option.name,
+                                                'standardLadung',
+                                                e.target.value,
+                                                null
+                                              )
+                                            }
+                                          />
+                                          Standardladung
+                                        </label>
+                                        <label>
+                                          <input
+                                            type="radio"
+                                            name={`ladung-${option.name}`}
+                                            value="false"
+                                            checked={erweiterteEinstellungen[option.name]?.standardLadung === false}
+                                            onChange={(e) =>
+                                              handleErweiterteEinstellungChange(
+                                                option.name,
+                                                'standardLadung',
+                                                e.target.value,
+                                                null
+                                              )
+                                            }
+                                          />
+                                          Wallbox-Ladung
+                                        </label>
+                                      </div>
+                                      <label>
+                                        Ladehäufigkeit (pro Woche)
+                                        <input
+                                          type="number"
+                                          value={erweiterteEinstellungen[option.name]?.nutzung || ''}
+                                          onChange={(e) =>
+                                            handleErweiterteEinstellungChange(
+                                              option.name,
+                                              'nutzung',
+                                              e.target.value,
+                                              null
+                                            )
+                                          }
+                                        />
+                                      </label>
+                                    </>
+                                  )}
+                                  {menu.id === 'dynamischeverbraucher' && (
+                                    <>
+                                      {/* Neues Layout für dynamische Verbraucher */}
+                                      <div className="dynamic-consumer-layout">
+                                        <div className="dynamic-bar">
+                                          <span className="bar-color-black bar-label">WASCHEN</span>
+                                          <input className="bar-input" type="text" placeholder="Beschreibung" />
+                                        </div>
+                                        <div className="dynamic-bar">
+                                          <span className="bar-color-gray bar-label">Nutzung pro Woche</span>
+                                          <input className="bar-input" type="number" value={erweiterteEinstellungen[option.name]?.nutzung || ''} onChange={(e) =>
+                                            handleErweiterteEinstellungChange(
+                                              option.name,
+                                              'nutzung',
+                                              e.target.value,
+                                              null
+                                            )
+                                          } />
+                                        </div>
+                                        <div className="dynamic-bar">
+                                          <span className="bar-color-blue bar-label">Dauer</span>
+                                          <input className="bar-input" type="number" step="0.1" placeholder="Stunden" />
+                                        </div>
+                                        <div className="dynamic-bar">
+                                          <span className="bar-color-red bar-label">Zeitraum</span>
+                                          <select className="bar-input">
+                                            <option>Zeitraum wählen</option>
+                                            {/* Optionen hinzufügen */}
+                                          </select>
+                                        </div>
+                                        <div className="dynamic-bar">
+                                          <span className="bar-color-green bar-label">Ergebnis</span>
+                                          <span className="bar-input">Berechnet...</span>
+                                        </div>
+                                      </div>
+                                    </>
+                                  )}
+                                  <h5>Zeiträume</h5>
+                                  {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum) => (
+                                    <div key={zeitraum.id} className="zeitraum-section">
+                                      <label>
+                                        Zeitraum
+                                        <select
+                                          value={timePeriods.find(
+                                            (p) =>
+                                              p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+                                          )?.label || ''}
+                                          onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
+                                        >
+                                          <option value="">Zeitraum wählen</option>
+                                          {timePeriods.map((period) => (
+                                            <option key={period.label} value={period.label}>
+                                              {period.label} ({period.startzeit} - {period.endzeit})
+                                            </option>
+                                          ))}
+                                        </select>
+                                      </label>
+                                      <label>
+                                        Dauer (Stunden)
+                                        <input
+                                          type="number"
+                                          step="0.1"
+                                          value={zeitraum.dauer || ''}
+                                          onChange={(e) =>
+                                            handleErweiterteEinstellungChange(
+                                              option.name,
+                                              'dauer',
+                                              e.target.value,
+                                              zeitraum.id
+                                            )
+                                          }
+                                        />
+                                      </label>
+                                      <button
+                                        className="delete-option-button"
+                                        onClick={() => removeZeitraum(option.name, zeitraum.id)}
+                                      >
+                                        Zeitraum löschen
+                                      </button>
+                                    </div>
+                                  ))}
+                                  <button
+                                    className="add-option-button"
+                                    onClick={() => addZeitraum(option.name)}
+                                  >
+                                    Zeitraum hinzufügen
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                        </li>
                       ))}
-                      <button
-                        className="add-option-button"
-                        onClick={() => addZeitraum(option.name)}
-                      >
-                        Zeitraum hinzufügen
-                      </button>
-                    </div>
+                    </ul>
+                    {(menu.id === 'grundlastverbraucher' ||
+                      menu.id === 'dynamischeverbraucher' ||
+                      menu.id === 'eauto' ||
+                      menu.id === 'stromerzeuger' ||
+                      menu.id === 'strompeicher') && (
+                      <>
+                        <button
+                          className="add-option-button"
+                          onClick={() => toggleNewOptionForm(menu.id)}
+                        >
+                          {showNewOptionForm[menu.id]
+                            ? 'Formular schließen'
+                            : 'Neue Option hinzufügen'}
+                        </button>
+                        {showNewOptionForm[menu.id] && (
+                          <div className="new-option-container">
+                            <label>
+                              Name
+                              <input
+                                className="new-option-input"
+                                type="text"
+                                value={newOptionNames[menu.id] || ''}
+                                onChange={(e) => handleNewOptionName(menu.id, e.target.value)}
+                              />
+                            </label>
+                            <label>
+                              Leistung (W)
+                              <input
+                                className="new-option-watt"
+                                type="number"
+                                value={newOptionWatt[menu.id] || ''}
+                                onChange={(e) => handleNewOptionWatt(menu.id, e.target.value)}
+                              />
+                            </label>
+                            {(menu.id === 'dynamischeverbraucher') && (
+                              <label>
+                                Typ
+                                <select
+                                  value={newOptionTypes[menu.id] || 'week'}
+                                  onChange={(e) => handleNewOptionType(menu.id, e.target.value)}
+                                >
+                                  <option value="week">Wöchentlich</option>
+                                  <option value="day">Täglich</option>
+                                </select>
+                              </label>
+                            )}
+                            <button
+                              className="save-option-button"
+                              onClick={() => addNewOption(menu.id)}
+                            >
+                              Speichern
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
                 )}
-              </li>
+              </div>
             ))}
-          </ul>
-          {(menu.id === 'grundlastverbraucher' ||
-            menu.id === 'dynamischeverbraucher' ||
-            menu.id === 'eauto' ||
-            menu.id === 'stromerzeuger' ||
-            menu.id === 'strompeicher') && (
-            <>
-              <button
-                className="add-option-button"
-                onClick={() => toggleNewOptionForm(menu.id)}
-              >
-                {showNewOptionForm[menu.id] ? 'Formular schließen' : 'Neue Option hinzufügen'}
-              </button>
-              {showNewOptionForm[menu.id] && (
-                <div className="new-option-container">
-                  <label>
-                    Name
-                    <input
-                      className="new-option-input"
-                      type="text"
-                      value={newOptionNames[menu.id] || ''}
-                      onChange={(e) => handleNewOptionName(menu.id, e.target.value)}
-                    />
-                  </label>
-                  <label>
-                    Leistung (W)
-                    <input
-                      className="new-option-watt"
-                      type="number"
-                      value={newOptionWatt[menu.id] || ''}
-                      onChange={(e) => handleNewOptionWatt(menu.id, e.target.value)}
-                    />
-                  </label>
-                  {menu.id === 'dynamischeverbraucher' && (
-                    <label>
-                      Typ
-                      <select
-                        value={newOptionTypes[menu.id] || 'week'}
-                        onChange={(e) => handleNewOptionType(menu.id, e.target.value)}
-                      >
-                        <option value="week">Wöchentlich</option>
-                        <option value="day">Täglich</option>
-                      </select>
-                    </label>
-                  )}
-                  <button
-                    className="save-option-button"
-                    onClick={() => addNewOption(menu.id)}
-                  >
-                    Speichern
-                  </button>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      )}
-    </div>
-))}
-
-
-
-
-
-
+  
             {/* Zusammenfassung */}
             <div className="calculation-report">
               <h2 className="report-title">Zusammenfassung</h2>
@@ -2441,7 +2432,9 @@ export default function StromverbrauchRechnerMobile(){
             </div>
   
             {/* Zweiter Chart (Kosten) */}
-          
+            <div className="chart-container">
+              <Line data={chartDataKosten} options={chartOptionsKosten} />
+            </div>
   
             {/* Download-Button */}
             <button className="add-option-button" onClick={handleDownloadClick}>
