@@ -1295,1058 +1295,1044 @@ export default function StromverbrauchRechnerMobile(){
   return (
     <>
       <style>{`* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 14px;
+}
+
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  background: #f3f4f6;
+  color: #1f2937;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Container für die gesamte App */
+.app-container {
+  max-width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  min-height: 100vh;
+  padding-top: 332px; /* Angepasst für Chart-Verschiebung (300px + 12px padding + 20px top) */
+}
+
+/* Fixierter Chart-Bereich */
+.fixed-chart {
+  position: fixed;
+  top: 20px; /* Verschoben um 20px nach unten */
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: #ffffff;
+  padding: 12px;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Chart-Container */
+.chart-container {
+  height: 300px; /* Increased height for desktop */
+}
+
+/* Container für den Rechenbericht */
+.calculation-report {
+  background: #ffffff;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  flex: 1;
+}
+
+/* Titel des Rechenberichts */
+.report-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #409966;
+}
+
+/* Inhalt des Rechenberichts */
+.report-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Eingabefelder */
+.input-container-html {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-container-html label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.input-container-html input,
+.input-container-html select {
+  padding: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  width: 100%;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-container-html input:focus,
+.input-container-html select:focus {
+  outline: none;
+  border-color: #409966;
+  box-shadow: 0 0 0 2px rgba(64, 153, 102, 0.3);
+}
+
+/* Region-Buttons */
+.region-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  margin: 8px 0;
+  padding: 6px;
+}
+
+.region-switch-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 60px;
+}
+
+.region-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  text-align: center;
+  margin-bottom: 4px;
+  transition: color 0.2s ease;
+}
+
+.discount-switch-container {
+  position: relative;
+  width: 36px;
+  height: 20px;
+}
+
+.discount-switch-input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.discount-switch-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #d1d5db;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.2s ease;
+}
+
+.discount-switch-slider:before {
+  position: absolute;
+  content: '';
+  height: 16px;
+  width: 16px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.discount-switch-input:checked + .discount-switch-slider {
+  background-color: #047857;
+}
+
+.discount-switch-input:checked + .discount-switch-slider:before {
+  transform: translateX(16px);
+}
+
+.discount-switch-input:focus + .discount-switch-slider {
+  box-shadow: 0 0 0 2px rgba(4, 120, 87, 0.2);
+}
+
+.discount-switch-slider:hover {
+  background-color: #9ca3af;
+}
+
+.discount-switch-input:checked + .discount-switch-slider:hover {
+  background-color: #065f46;
+}
+
+.region-switch-wrapper:hover .region-label {
+  color: #047857;
+}
+
+/* Menüs */
+.menu {
+  background: #f9fafb;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 12px;
+}
+
+.menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  background: linear-gradient(90deg, #062316, #409966);
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  color: #ffffff;
+}
+
+.menu-header span {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.triangle {
+  transition: transform 0.3s ease;
+}
+
+.triangle.open {
+  transform: rotate(180deg);
+}
+
+.menu-content {
+  padding: 10px;
+  background: #ffffff;
+  border-radius: 0 0 8px 8px;
+}
+
+/* Checkbox-Gruppe */
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checkbox-group-header {
+  display: grid;
+  grid-template-columns: 40px 2fr 60px 80px 80px 40px; /* Icon, Info, Aktiv, Leistung, Ersparnis, Löschen */
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: #409966;
+  padding: 8px 0;
+  background: #f0f4f8;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.checkbox-group li {
+  display: grid;
+  grid-template-columns: 40px 2fr 60px 80px 80px 40px; /* Passend zur neuen Header-Anordnung */
+  gap: 8px;
+  align-items: center;
+  padding: 8px 0;
+  background: #ffffff;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  position: relative;
+}
+
+.checkbox-group li:hover {
+  background: #f9fafb;
+}
+
+.icon-field {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-field img {
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.info-field {
+  position: relative;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  font-weight: 500;
+}
+
+.info-field .tooltip {
+  display: inline-block;
+  font-size: 0.75rem;
+  color: #1f2937;
+}
+
+.info-field .tooltip-text {
+  visibility: hidden;
+  position: absolute;
+  background: #409966;
+  color: #ffffff;
+  font-size: 0.7rem;
+  padding: 3px 5px;
+  border-radius: 3px;
+  z-index: 10;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+}
+
+.info-field:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.checkbox-group-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.checkbox-group-label input {
+  width: 14px;
+  height: 14px;
+  accent-color: #409966;
+  cursor: pointer;
+}
+
+.input-group {
+  display: flex;
+  justify-content: center;
+}
+
+.input-group input.watt-input {
+  padding: 4px 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  width: 100%;
+  text-align: center;
+}
+
+.input-group input.watt-input:focus {
+  outline: none;
+  border-color: #409966;
+  box-shadow: 0 0 0 2px rgba(64, 153, 102, 0.2);
+}
+
+.price-display {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #1f2937;
+  text-align: center;
+}
+
+.delete-option-button {
+  background: #dc2626;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  padding: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  transition: background-color 0.2s ease;
+}
+
+.delete-option-button:hover {
+  background: #b91c1c;
+}
+
+.delete-option-button i {
+  font-size: 0.75rem;
+}
+
+.confirm-dialog {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, #fef9c3, #fef08a);
+  padding: 6px;
+  border-radius: 4px;
+  margin-top: 4px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: 20;
+  font-size: 0.75rem;
+}
+
+.confirm-button {
+  background: linear-gradient(90deg, #dc2626, #ef4444);
+  color: #ffffff;
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  border: none;
+  cursor: pointer;
+}
+
+.confirm-button:hover {
+  background: linear-gradient(90deg, #b91c1c, #dc2626);
+}
+
+.cancel-button {
+  background: linear-gradient(90deg, #9ca3af, #d1d5db);
+  color: #1f2937;
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  border: none;
+  cursor: pointer;
+}
+
+.cancel-button:hover {
+  background: linear-gradient(90deg, #6b7280, #9ca3af);
+}
+
+.settings-container {
+  grid-column: 1 / -1;
+  background: #ffffff;
+  padding: 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.settings-container h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #409966;
+}
+
+.settings-container h5 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #409966;
+  margin-bottom: 8px;
+}
+
+.settings-container .grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.settings-container label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.settings-container select {
+  padding: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  width: 100%;
+}
+
+.settings-container select:focus {
+  outline: none;
+  border-color: #409966;
+  box-shadow: 0 0 0 2px rgba(64, 153, 102, 0.2);
+}
+
+.radio-group-settings {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.radio-group-settings label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.radio-group-settings input {
+  width: 14px;
+  height: 14px;
+  accent-color: #409966;
+  cursor: pointer;
+}
+
+.zeitraum-section {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+.add-option-button {
+  background: linear-gradient(90deg, #062316, #409966);
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.add-option-button:hover {
+  background: linear-gradient(90deg, #062316, #4caf50);
+}
+
+.new-option-container {
+  margin-top: 8px;
+  padding: 10px;
+  background: linear-gradient(135deg, #f9fafb, #e5e7eb);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.new-option-input,
+.new-option-watt {
+  padding: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  width: 100%;
+}
+
+.new-option-input:focus,
+.new-option-watt:focus {
+  outline: none;
+  border-color: #062316;
+  box-shadow: 0 0 0 2px rgba(64, 153, 102, 0.2);
+}
+
+.save-option-button {
+  background: linear-gradient(90deg, #062316, #409966);
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.save-option-button:hover {
+  background: linear-gradient(90deg, #062316, #4caf50);
+}
+
+/* Modal-Styling */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modal-content {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.close-modal-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: #1f2937;
+}
+
+.close-modal-button:hover {
+  color: #dc2626;
+}
+
+.modal-content h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #409966;
+}
+
+.modal-content p {
+  font-size: 0.875rem;
+  color: #1f2937;
+}
+
+.modal-content input {
+  padding: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  width: 100%;
+}
+
+.modal-content input:focus {
+  outline: none;
+  border-color: #409966;
+  box-shadow: 0 0 0 2px rgba(64, 153, 102, 0.2);
+}
+
+.modal-content label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #1f2937;
+}
+
+.modal-content input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: #409966;
+}
+
+/* Neues Layout für dynamische Verbraucher */
+.dynamic-consumer-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.dynamic-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 4px;
+  background: #f0f4f8;
+}
+
+.bar-label {
+  font-weight: 600;
+  color: #1f2937;
+  min-width: 100px;
+}
+
+.bar-input {
+  flex: 1;
+  padding: 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+}
+
+.bar-color-black {
+  background: #000000;
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.bar-color-gray {
+  background: #808080;
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.bar-color-blue {
+  background: #0000ff;
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.bar-color-red {
+  background: #ff0000;
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.bar-color-green {
+  background: #008000;
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* Eingaben-Wrapper für Strompreis und Datum */
+.inputs-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (min-width: 769px) {
+  .inputs-wrapper {
+    flex-direction: row;
+    gap: 16px;
+    justify-content: space-between;
   }
-  
-  html {
-    font-size: 14px;
-  }
-  
-  body {
-    font-family: 'Inter', Arial, sans-serif;
-    background: #f3f4f6;
-    color: #1f2937;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  /* Container für die gesamte App */
-  .app-container {
-    max-width: 100%;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 12px;
-    min-height: 100vh;
-  }
-  
-  /* Fixierter Chart-Bereich */
-  .fixed-chart {
-    position: sticky;
-    top: 95px;
-    z-index: 10;
-    background: #ffffff;
-    padding: 12px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 12px;
-  }
-  
-  /* Chart-Container */
-  .chart-container {
-    height: 250px;
-  }
-  
-  /* Container für die Zeitraumauswahl */
+  .input-container-html,
   .date-picker-container {
-    background: #ffffff;
-    padding: 12px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 12px;
-  }
-  
-  /* Container für den Rechenbericht */
-  .calculation-report {
-    background: #ffffff;
-    padding: 12px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     flex: 1;
+    margin-bottom: 0;
+    box-shadow: none;
+    padding: 0;
+    background: transparent;
   }
-  
-  /* Titel des Rechenberichts */
-  .report-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: 12px;
-    color: #409966;
+}
+
+/* Media Query für Mobile */
+@media (max-width: 768px) {
+  html {
+    font-size: 9px; /* Kleinere Basis-Schriftgröße für Handydisplays */
   }
-  
-  /* Inhalt des Rechenberichts */
-  .report-content {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+
+  .app-container {
+    padding: 4px; /* Kleineres Padding */
+    gap: 4px; /* Kleinerer Abstand zwischen Elementen */
+    padding-top: 232px; /* Angepasst für Chart-Verschiebung (200px + 12px padding + 20px top) */
   }
-  
-  /* Eingabefelder */
-  .input-container-html {
-    display: flex;
-    flex-direction: column;
+
+  .fixed-chart {
+    position: fixed; /* Fixed to stay at the top */
+    top: 80px; /* Verschoben um 20px nach unten */
+    left: 0;
+    right: 0;
+    padding: 4px; /* Kleineres Padding */
+    border-radius: 0 0 6px 6px;
+    z-index: 10;
   }
-  
-  .input-container-html label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #1f2937;
-    margin-bottom: 4px;
+
+  .chart-container {
+    height: 200px; /* Increased height for mobile */
   }
-  
-  .input-container-html input,
-  .input-container-html select {
-    padding: 6px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    width: 100%;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .input-container-html input:focus,
-  .input-container-html select:focus {
-    outline: none;
-    border-color: #409966;
-    box-shadow: 0 0 0 2px rgba(64, 153, 102, 0.3);
-  }
-  
-  /* Region-Buttons */
+
+  /* Region-Buttons direkt unter dem Chart */
   .region-buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 8px;
     justify-content: center;
     align-items: center;
-    margin: 8px 0;
-    padding: 6px;
+    margin: 4px 0;
+    padding: 4px;
+    background: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   }
-  
+
   .region-switch-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    min-width: 60px;
+    min-width: 40px;
   }
-  
+
   .region-label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #1a1a1a;
-    text-align: center;
-    margin-bottom: 4px;
-    transition: color 0.2s ease;
+    font-size: 0.7rem;
   }
-  
+
   .discount-switch-container {
-    position: relative;
-    width: 36px;
-    height: 20px;
+    width: 28px;
+    height: 14px;
   }
-  
-  .discount-switch-input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  
-  .discount-switch-slider {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #d1d5db;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.2s ease;
-  }
-  
+
   .discount-switch-slider:before {
-    position: absolute;
-    content: '';
-    height: 16px;
-    width: 16px;
+    height: 10px;
+    width: 10px;
     left: 2px;
     bottom: 2px;
-    background-color: #ffffff;
-    border-radius: 50%;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease;
   }
-  
-  .discount-switch-input:checked + .discount-switch-slider {
-    background-color: #047857;
-  }
-  
+
   .discount-switch-input:checked + .discount-switch-slider:before {
-    transform: translateX(16px);
+    transform: translateX(14px);
   }
-  
-  .discount-switch-input:focus + .discount-switch-slider {
-    box-shadow: 0 0 0 2px rgba(4, 120, 87, 0.2);
-  }
-  
-  .discount-switch-slider:hover {
-    background-color: #9ca3af;
-  }
-  
-  .discount-switch-input:checked + .discount-switch-slider:hover {
-    background-color: #065f46;
-  }
-  
+
   .region-switch-wrapper:hover .region-label {
     color: #047857;
   }
-  
-  /* Menüs */
-  .menu {
-    background: #f9fafb;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 12px;
-  }
-  
-  .menu-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    cursor: pointer;
-    background: linear-gradient(90deg, #062316, #409966);
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-    color: #ffffff;
-  }
-  
-  .menu-header span {
-    font-size: 0.875rem;
-    font-weight: 600;
-  }
-  
-  .triangle {
-    transition: transform 0.3s ease;
-  }
-  
-  .triangle.open {
-    transform: rotate(180deg);
-  }
-  
-  .menu-content {
-    padding: 10px;
-    background: #ffffff;
-    border-radius: 0 0 8px 8px;
-  }
-  
-  /* Checkbox-Gruppe */
-  .checkbox-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .checkbox-group-header {
-    display: grid;
-    grid-template-columns: 40px 2fr 60px 80px 80px 40px; /* Icon, Info, Aktiv, Leistung, Ersparnis, Löschen */
-    gap: 8px;
-    font-weight: 600;
-    font-size: 0.75rem;
-    color: #409966;
-    padding: 8px 0;
-    background: #f0f4f8;
-    border-radius: 4px;
-    text-align: center;
-  }
-  
-  .checkbox-group li {
-    display: grid;
-    grid-template-columns: 40px 2fr 60px 80px 80px 40px; /* Passend zur neuen Header-Anordnung */
-    gap: 8px;
-    align-items: center;
-    padding: 8px 0;
-    background: #ffffff;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    position: relative;
-  }
-  
-  .checkbox-group li:hover {
-    background: #f9fafb;
-  }
-  
-  .icon-field {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .icon-field img {
-    width: 30px;
-    height: 30px;
-    object-fit: cover;
-    border-radius: 4px;
-  }
-  
-  .info-field {
-    position: relative;
-    display: flex;
-    justify-content: left;
-    align-items: center;
-    font-weight: 500;
-  }
-  
-  .info-field .tooltip {
-    display: inline-block;
-    font-size: 0.75rem;
-    color: #1f2937;
-  }
-  
-  .info-field .tooltip-text {
-    visibility: hidden;
-    position: absolute;
-    background: #409966;
-    color: #ffffff;
-    font-size: 0.7rem;
-    padding: 3px 5px;
-    border-radius: 3px;
-    z-index: 10;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity 0.2s ease, visibility 0s linear 0.2s;
-  }
-  
-  .info-field:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
-    transition: opacity 0.2s ease;
-  }
-  
-  .checkbox-group-label {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .checkbox-group-label input {
-    width: 14px;
-    height: 14px;
-    accent-color: #409966;
-    cursor: pointer;
-  }
-  
-  .input-group {
-    display: flex;
-    justify-content: center;
-  }
-  
-  .input-group input.watt-input {
-    padding: 4px 6px;
-    border: 1px solid #d1d5db;
-    border-radius: 3px;
-    font-size: 0.75rem;
-    width: 100%;
-    text-align: center;
-  }
-  
-  .input-group input.watt-input:focus {
-    outline: none;
-    border-color: #409966;
-    box-shadow: 0 0 0 2px rgba(64, 153, 102, 0.2);
-  }
-  
-  .price-display {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: #1f2937;
-    text-align: center;
-  }
-  
-  .delete-option-button {
-    background: #dc2626;
-    color: #ffffff;
-    border: none;
-    border-radius: 4px;
-    padding: 4px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    width: 24px;
-    height: 24px;
-    transition: background-color 0.2s ease;
-  }
-  
-  .delete-option-button:hover {
-    background: #b91c1c;
-  }
-  
-  .delete-option-button i {
-    font-size: 0.75rem;
-  }
-  
-  .confirm-dialog {
-    grid-column: 1 / -1;
-    background: linear-gradient(135deg, #fef9c3, #fef08a);
-    padding: 6px;
-    border-radius: 4px;
-    margin-top: 4px;
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    z-index: 20;
-    font-size: 0.75rem;
-  }
-  
-  .confirm-button {
-    background: linear-gradient(90deg, #dc2626, #ef4444);
-    color: #ffffff;
-    padding: 3px 6px;
-    border-radius: 3px;
-    font-size: 0.75rem;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .confirm-button:hover {
-    background: linear-gradient(90deg, #b91c1c, #dc2626);
-  }
-  
-  .cancel-button {
-    background: linear-gradient(90deg, #9ca3af, #d1d5db);
-    color: #1f2937;
-    padding: 3px 6px;
-    border-radius: 3px;
-    font-size: 0.75rem;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .cancel-button:hover {
-    background: linear-gradient(90deg, #6b7280, #9ca3af);
-  }
-  
-  .settings-container {
-    grid-column: 1 / -1;
-    background: #ffffff;
-    padding: 12px;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .settings-container h4 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #409966;
-  }
-  
-  .settings-container h5 {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #409966;
-    margin-bottom: 8px;
-  }
-  
-  .settings-container .grid {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .settings-container label {
-    display: flex;
-    flex-direction: column;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #1f2937;
-  }
-  
-  .settings-container select {
-    padding: 6px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    width: 100%;
-  }
-  
-  .settings-container select:focus {
-    outline: none;
-    border-color: #409966;
-    box-shadow: 0 0 0 2px rgba(64, 153, 102, 0.2);
-  }
-  
-  .radio-group-settings {
-    display: flex;
-    gap: 8px;
-    margin-top: 4px;
-  }
-  
-  .radio-group-settings label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  
-  .radio-group-settings input {
-    width: 14px;
-    height: 14px;
-    accent-color: #409966;
-    cursor: pointer;
-  }
-  
-  .zeitraum-section {
-    border-top: 1px solid #e5e7eb;
-    padding-top: 8px;
-    margin-top: 8px;
-  }
-  
-  .add-option-button {
-    background: linear-gradient(90deg, #062316, #409966);
-    color: #ffffff;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    margin-top: 8px;
-  }
-  
-  .add-option-button:hover {
-    background: linear-gradient(90deg, #062316, #4caf50);
-  }
-  
-  .new-option-container {
-    margin-top: 8px;
-    padding: 10px;
-    background: linear-gradient(135deg, #f9fafb, #e5e7eb);
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .new-option-input,
-  .new-option-watt {
-    padding: 6px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    width: 100%;
-  }
-  
-  .new-option-input:focus,
-  .new-option-watt:focus {
-    outline: none;
-    border-color: #062316;
-    box-shadow: 0 0 0 2px rgba(64, 153, 102, 0.2);
-  }
-  
-  .save-option-button {
-    background: linear-gradient(90deg, #062316, #409966);
-    color: #ffffff;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .save-option-button:hover {
-    background: linear-gradient(90deg, #062316, #4caf50);
-  }
-  
-  /* Modal-Styling */
-  .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 100;
-  }
-  
-  .modal-content {
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    position: relative;
-  }
-  
-  .close-modal-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 1.25rem;
-    cursor: pointer;
-    color: #1f2937;
-  }
-  
-  .close-modal-button:hover {
-    color: #dc2626;
-  }
-  
-  .modal-content h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #409966;
-  }
-  
-  .modal-content p {
-    font-size: 0.875rem;
-    color: #1f2937;
-  }
-  
-  .modal-content input {
-    padding: 6px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    width: 100%;
-  }
-  
-  .modal-content input:focus {
-    outline: none;
-    border-color: #409966;
-    box-shadow: 0 0 0 2px rgba(64, 153, 102, 0.2);
-  }
-  
-  .modal-content label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.75rem;
-    color: #1f2937;
-  }
-  
-  .modal-content input[type="checkbox"] {
-    width: 14px;
-    height: 14px;
-    accent-color: #409966;
-  }
-  
-  /* Neues Layout für dynamische Verbraucher */
-  .dynamic-consumer-layout {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 12px;
-  }
-  
-  .dynamic-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px;
-    border-radius: 4px;
-    background: #f0f4f8;
-  }
-  
-  .bar-label {
-    font-weight: 600;
-    color: #1f2937;
-    min-width: 100px;
-  }
-  
-  .bar-input {
-    flex: 1;
-    padding: 6px;
-    border: 1px solid #d1d5db;
-    border-radius: 4px;
-  }
-  
-  .bar-color-black {
-    background: #000000;
-    color: #ffffff;
-    padding: 4px 8px;
-    border-radius: 4px;
-  }
-  
-  .bar-color-gray {
-    background: #808080;
-    color: #ffffff;
-    padding: 4px 8px;
-    border-radius: 4px;
-  }
-  
-  .bar-color-blue {
-    background: #0000ff;
-    color: #ffffff;
-    padding: 4px 8px;
-    border-radius: 4px;
-  }
-  
-  .bar-color-red {
-    background: #ff0000;
-    color: #ffffff;
-    padding: 4px 8px;
-    border-radius: 4px;
-  }
-  
-  .bar-color-green {
-    background: #008000;
-    color: #ffffff;
-    padding: 4px 8px;
-    border-radius: 4px;
-  }
-  
-  /* Eingaben-Wrapper für Strompreis und Datum */
+
+  .discount-switch-slider:hover {
+    background-color: #9ca3af;
+  }
+
+  .discount-switch-input:checked + .discount-switch-slider:hover {
+    background-color: #065f46;
+  }
+
+  /* Eingaben-Wrapper für Mobile: Neben- statt untereinander */
   .inputs-wrapper {
     display: flex;
-    flex-direction: column;
-    gap: 12px;
+    flex-direction: row;
+    gap: 8px;
+    justify-content: space-between;
+    align-items: stretch;
+    background: #ffffff;
+    padding: 6px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 4px;
   }
-  
-  @media (min-width: 769px) {
-    .inputs-wrapper {
-      flex-direction: row;
-      gap: 16px;
-      justify-content: space-between;
-    }
-    .input-container-html,
-    .date-picker-container {
-      flex: 1;
-      margin-bottom: 0;
-      box-shadow: none;
-      padding: 0;
-      background: transparent;
-    }
+
+  .inputs-wrapper > div {
+    flex: 1;
   }
-  
-  
-  
-  
-  /* Bestehende Stile bleiben unverändert, nur die Media Query wird angepasst */
-  @media (max-width: 768px) {
-    html {
-      font-size: 9px; /* Kleinere Basis-Schriftgröße für Handydisplays */
-    }
-  
-    .app-container {
-      padding: 4px; /* Kleineres Padding */
-      gap: 4px; /* Kleinerer Abstand zwischen Elementen */
-    }
-  
-    .fixed-chart {
-      position: sticky; /* Sticky bleibt aktiv, um den Chart oben zu halten */
-      top: 0;
-      padding: 4px; /* Kleineres Padding */
-      margin-bottom: 4px;
-      z-index: 10;
-    }
-  
-    .chart-container {
-      height: 150px; /* Kleinere Chart-Höhe */
-    }
-  
-    /* Region-Buttons direkt unter dem Chart */
-    .region-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px; /* Etwas größere Lücke für bessere Optik */
-      justify-content: center;
-      align-items: center;
-      margin: 4px 0; /* Kleinerer Margin */
-      padding: 4px;
-      background: #ffffff; /* Wie Desktop, für Konsistenz */
-      border-radius: 6px;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); /* Leichter Schatten wie Desktop */
-    }
-  
-    .region-switch-wrapper {
-      min-width: 40px; /* Etwas größer für bessere Bedienbarkeit */
-    }
-  
-    .region-label {
-      font-size: 0.7rem; /* Etwas größere Schrift für Lesbarkeit */
-    }
-  
-    .discount-switch-container {
-      width: 28px; /* Etwas größer für bessere Bedienbarkeit */
-      height: 14px;
-    }
-  
-    .discount-switch-slider:before {
-      height: 10px;
-      width: 10px;
-      left: 2px;
-      bottom: 2px;
-    }
-  
-    .discount-switch-input:checked + .discount-switch-slider:before {
-      transform: translateX(14px);
-    }
-  
-    /* Hover-Effekt wie in der Desktop-Ansicht */
-    .region-switch-wrapper:hover .region-label {
-      color: #047857;
-    }
-  
-    .discount-switch-slider:hover {
-      background-color: #9ca3af;
-    }
-  
-    .discount-switch-input:checked + .discount-switch-slider:hover {
-      background-color: #065f46;
-    }
-  
-    /* Kompakte Datums-Box */
-    .date-picker-container {
-      padding: 0; /* Kleineres Padding für kompaktere Box */
-      margin-bottom: 0;
-      box-shadow: none; /* Leichterer Schatten */
-      max-width: none; /* Begrenzte Breite, damit es nicht die ganze Seite einnimmt */
-      margin-left: 0;
-      margin-right: 0; /* Zentriert die Box */
-      background: transparent;
-    }
-  
-    .date-picker-container input,
-    .date-picker-container select {
-      padding: 4px; /* Kompakteres Padding */
-      font-size: 0.65rem; /* Etwas größere Schrift für Lesbarkeit */
-      width: 100%; /* Passt sich der Container-Breite an */
-      max-width: none; /* Maximale Breite für das Eingabefeld */
-    }
-  
-    /* Kompakte Strompreis-Box */
-    .input-container-html {
-      max-width: none; /* Begrenzte Breite, damit es nicht die ganze Seite einnimmt */
-      margin-left: 0;
-      margin-right: 0; /* Zentriert die Box */
-      padding: 0; /* Kleineres Padding */
-    }
-  
-    .input-container-html label {
-      font-size: 0.65rem; /* Etwas größere Schrift für Lesbarkeit */
-      margin-bottom: 2px;
-    }
-  
-    .input-container-html input,
-    .input-container-html select {
-      padding: 4px; /* Kompakteres Padding */
-      font-size: 0.65rem;
-      width: 100%; /* Passt sich der Container-Breite an */
-      max-width: none;
-      border-radius: 3px;
-    }
-  
-    /* Eingaben-Wrapper für Mobile: Neben- statt untereinander */
-    .inputs-wrapper {
-      display: flex;
-      flex-direction: row;
-      gap: 8px;
-      justify-content: space-between;
-      align-items: stretch;
-      background: #ffffff;
-      padding: 6px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-      margin-bottom: 4px;
-    }
-  
-    .inputs-wrapper > div {
-      flex: 1;
-    }
-  
-    /* Menüs mit etwas größerer Schrift */
-    .menu {
-      margin-bottom: 4px;
-    }
-  
-    .menu-header {
-      padding: 6px; /* Etwas mehr Padding für bessere Optik */
-    }
-  
-    .menu-header span {
-      font-size: 0.75rem; /* Etwas größere Schrift */
-    }
-  
-    .menu-content {
-      padding: 6px;
-      font-size: 0.7rem; /* Etwas größere Schrift für Lesbarkeit */
-    }
-  
-    /* Checkbox-Gruppe */
-    .checkbox-group {
-      gap: 4px;
-    }
-  
-    .checkbox-group-header {
-      font-size: 0.65rem; /* Etwas größere Schrift */
-      padding: 4px 0;
-      gap: 4px;
-      grid-template-columns: 25px 1fr 40px 50px 50px 25px;
-    }
-  
-    .checkbox-group li {
-      font-size: 0.65rem;
-      padding: 4px 0;
-      gap: 4px;
-      grid-template-columns: 25px 1fr 40px 50px 50px 25px;
-    }
-  
-    .icon-field img {
-      width: 16px;
-      height: 16px;
-    }
-  
-    .info-field .tooltip {
-      font-size: 0.65rem;
-    }
-  
-    .info-field .tooltip-text {
-      font-size: 0.6rem;
-      padding: 2px 3px;
-    }
-  
-    .checkbox-group-label input {
-      width: 10px;
-      height: 10px;
-    }
-  
-    .input-group input.watt-input {
-      padding: 3px 4px;
-      font-size: 0.65rem;
-    }
-  
-    .price-display {
-      font-size: 0.65rem;
-    }
-  
-    .delete-option-button {
-      width: 16px;
-      height: 16px;
-      padding: 3px;
-    }
-  
-    .delete-option-button i {
-      font-size: 0.65rem;
-    }
-  
-    /* Dynamische Verbraucher */
-    .dynamic-consumer-layout {
-      gap: 4px;
-      margin-top: 6px;
-    }
-  
-    .dynamic-bar {
-      padding: 4px;
-      gap: 4px;
-    }
-  
-    .bar-label {
-      min-width: 60px;
-      font-size: 0.65rem;
-    }
-  
-    .bar-input {
-      padding: 4px;
-      font-size: 0.65rem;
-    }
-  
-    .bar-color-black,
-    .bar-color-gray,
-    .bar-color-blue,
-    .bar-color-red,
-    .bar-color-green {
-      padding: 3px 6px;
-      font-size: 0.65rem;
-    }
-  
-    /* Weitere Elemente */
-    .confirm-dialog {
-      font-size: 0.65rem;
-      padding: 3px;
-      gap: 3px;
-    }
-  
-    .confirm-button,
-    .cancel-button {
-      padding: 3px 4px;
-      font-size: 0.65rem;
-    }
-  
-    .settings-container {
-      padding: 6px;
-      margin-top: 4px;
-      gap: 6px;
-    }
-  
-    .settings-container h4 {
-      font-size: 0.75rem;
-    }
-  
-    .settings-container h5 {
-      font-size: 0.65rem;
-    }
-  
-    .settings-container label {
-      font-size: 0.65rem;
-    }
-  
-    .settings-container select,
-    .new-option-input,
-    .new-option-watt {
-      padding: 4px;
-      font-size: 0.65rem;
-    }
-  
-    .add-option-button,
-    .save-option-button {
-      padding: 3px 6px;
-      font-size: 0.65rem;
-    }
-  
-    .modal-content {
-      padding: 10px;
-      max-width: 280px; /* Etwas größere Modal-Größe für bessere Lesbarkeit */
-    }
-  
-    .modal-content h2 {
-      font-size: 0.85rem;
-    }
-  
-    .modal-content p,
-    .modal-content input,
-    .modal-content label {
-      font-size: 0.65rem;
-    }
-  
-    .modal-content input[type="checkbox"] {
-      width: 10px;
-      height: 10px;
-    }
-  
-    .close-modal-button {
-      font-size: 0.95rem;
-    }
-  
-    .dark-mode-toggle {
-      padding: 4px 8px;
-      font-size: 0.65rem;
-    }
-  }`}</style>
+
+  .date-picker-container {
+    padding: 0;
+    margin-bottom: 0;
+    box-shadow: none;
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+    background: transparent;
+  }
+
+  .date-picker-container input,
+  .date-picker-container select {
+    padding: 4px;
+    font-size: 0.65rem;
+    width: 100%;
+    max-width: none;
+    border-radius: 3px;
+  }
+
+  .input-container-html {
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0;
+  }
+
+  .input-container-html label {
+    font-size: 0.65rem;
+    margin-bottom: 2px;
+  }
+
+  .input-container-html input,
+  .input-container-html select {
+    padding: 4px;
+    font-size: 0.65rem;
+    width: 100%;
+    max-width: none;
+    border-radius: 3px;
+  }
+
+  .menu {
+    margin-bottom: 4px;
+  }
+
+  .menu-header {
+    padding: 6px;
+  }
+
+  .menu-header span {
+    font-size: 0.75rem;
+  }
+
+  .menu-content {
+    padding: 6px;
+    font-size: 0.7rem;
+  }
+
+  .checkbox-group {
+    gap: 4px;
+  }
+
+  .checkbox-group-header {
+    font-size: 0.65rem;
+    padding: 4px 0;
+    gap: 4px;
+    grid-template-columns: 25px 1fr 40px 50px 50px 25px;
+  }
+
+  .checkbox-group li {
+    font-size: 0.65rem;
+    padding: 4px 0;
+    gap: 4px;
+    grid-template-columns: 25px 1fr 40px 50px 50px 25px;
+  }
+
+  .icon-field img {
+    width: 16px;
+    height: 16px;
+  }
+
+  .info-field .tooltip {
+    font-size: 0.65rem;
+  }
+
+  .info-field .tooltip-text {
+    font-size: 0.6rem;
+    padding: 2px 3px;
+  }
+
+  .checkbox-group-label input {
+    width: 10px;
+    height: 10px;
+  }
+
+  .input-group input.watt-input {
+    padding: 3px 4px;
+    font-size: 0.65rem;
+  }
+
+  .price-display {
+    font-size: 0.65rem;
+  }
+
+  .delete-option-button {
+    width: 16px;
+    height: 16px;
+    padding: 3px;
+  }
+
+  .delete-option-button i {
+    font-size: 0.65rem;
+  }
+
+  .dynamic-consumer-layout {
+    gap: 4px;
+    margin-top: 6px;
+  }
+
+  .dynamic-bar {
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .bar-label {
+    min-width: 60px;
+    font-size: 0.65rem;
+  }
+
+  .bar-input {
+    padding: 4px;
+    font-size: 0.65rem;
+  }
+
+  .bar-color-black,
+  .bar-color-gray,
+  .bar-color-blue,
+  .bar-color-red,
+  .bar-color-green {
+    padding: 3px 6px;
+    font-size: 0.65rem;
+  }
+
+  .confirm-dialog {
+    font-size: 0.65rem;
+    padding: 3px;
+    gap: 3px;
+  }
+
+  .confirm-button,
+  .cancel-button {
+    padding: 3px 4px;
+    font-size: 0.65rem;
+  }
+
+  .settings-container {
+    padding: 6px;
+    margin-top: 4px;
+    gap: 6px;
+  }
+
+  .settings-container h4 {
+    font-size: 0.75rem;
+  }
+
+  .settings-container h5 {
+    font-size: 0.65rem;
+  }
+
+  .settings-container label {
+    font-size: 0.65rem;
+  }
+
+  .settings-container select,
+  .new-option-input,
+  .new-option-watt {
+    padding: 4px;
+    font-size: 0.65rem;
+  }
+
+  .add-option-button,
+  .save-option-button {
+    padding: 3px 6px;
+    font-size: 0.65rem;
+  }
+
+  .modal-content {
+    padding: 10px;
+    max-width: 280px;
+  }
+
+  .modal-content h2 {
+    font-size: 0.85rem;
+  }
+
+  .modal-content p,
+  .modal-content input,
+  .modal-content label {
+    font-size: 0.65rem;
+  }
+
+  .modal-content input[type="checkbox"] {
+    width: 10px;
+    height: 10px;
+  }
+
+  .close-modal-button {
+    font-size: 0.95rem;
+  }
+
+  .dark-mode-toggle {
+    padding: 4px 8px;
+    font-size: 0.65rem;
+  }
+}`}</style>
       <div className="app-container">
-       
         {/* Fixierter Chart-Bereich */}
         <div className="fixed-chart">
           <div className="chart-container">
@@ -2413,319 +2399,312 @@ export default function StromverbrauchRechnerMobile(){
   
             {error && <p style={{ color: '#dc2626', fontSize: '0.75rem' }}>{error}</p>}
   
-  
-  
-  
-         
-  {/* Menüs und Verbraucher */}
-  {menus.map((menu) => (
-    <div key={menu.id} className="menu">
-      <div className="menu-header" onClick={() => toggleMenu(menu.id)}>
-        <span>{menu.label}</span>
-        <span className={`triangle ${openMenus[menu.id] ? 'open' : ''}`}>&#9660;</span>
-      </div>
-      {openMenus[menu.id] && (
-        <div className="menu-content">
-          <ul className="checkbox-group">
-            <li className="checkbox-group-header">
-              <span>Icon</span>
-              <span>Info</span>
-              <span>Aktiv</span>
-              <span>Leistung (W)</span>
-              <span>Kosten (€)</span>
-              <span>Löschen</span>
-            </li>
-            {menu.options.map((option) => (
-              <li key={option.name}>
-                <div className="icon-field">
-                  <img
-                    src="/bilder/logo.png" // Platzhalterbild, ersetze durch deinen Bildpfad
-                    alt={`${option.name} icon`}
-                    style={{ width: '30px', height: '30px' }}
-                  />
+            {/* Menüs und Verbraucher */}
+            {menus.map((menu) => (
+              <div key={menu.id} className="menu">
+                <div className="menu-header" onClick={() => toggleMenu(menu.id)}>
+                  <span>{menu.label}</span>
+                  <span className={`triangle ${openMenus[menu.id] ? 'open' : ''}`}>&#9660;</span>
                 </div>
-                <div className="info-field">
-                  <span className="tooltip">
-                    {option.name}
-                    <span className="tooltip-text">{verbraucherBeschreibungen[option.name]}</span>
-                  </span>
-                </div>
-                <div className="checkbox-group-label">
-                  <input
-                    type="checkbox"
-                    checked={verbraucherDaten[option.name]?.checked || false}
-                    onChange={(e) => onCheckboxChange(option.name, e.target.checked)}
-                  />
-                </div>
-                <div className="input-group">
-                  <input
-                    className="watt-input"
-                    type="number"
-                    value={verbraucherDaten[option.name]?.watt || ''}
-                    onChange={(e) => handleWattChange(option.name, e.target.value)}
-                    disabled={!verbraucherDaten[option.name]?.checked}
-                  />
-                </div>
-                <span className="price-display">{verbraucherDaten[option.name]?.kosten || '0.00'}</span>
-                {(menu.id === 'grundlastverbraucher' || menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
-                  <button
-                    className="delete-option-button"
-                    onClick={() => handleDeleteOptionClick(menu.id, option.name)}
-                  >
-                    <i className="fas fa-times">x</i>
-                  </button>
-                )}
-                {deleteConfirmOption?.menuId === menu.id &&
-                  deleteConfirmOption?.optionName === option.name && (
-                    <div className="confirm-dialog">
-                      <span>{`"${option.name}" löschen?`}</span>
-                      <button
-                        className="confirm-button"
-                        onClick={() => confirmDeleteOption(menu.id, option.name)}
-                      >
-                        Ja
-                      </button>
-                      <button className="cancel-button" onClick={cancelDeleteOption}>
-                        Nein
-                      </button>
-                    </div>
-                  )}
-                {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
-                  <div className="settings-container">
-                    <h4 className="text-lg font-semibold text-gray-800 mb-3">Einstellungen für {option.name}</h4>
-                    <div className="combined-settings grid grid-cols-1 gap-4 p-4 bg-white rounded-lg shadow-sm">
-                      {menu.id === 'dynamischeverbraucher' && (
-                        <div className="dynamic-consumer-layout">
-                          <div className="dynamic-bar flex items-center justify-between p-3 bg-gray-100 rounded-lg">
-                            <span className="bar-label text-sm font-medium text-gray-700">Nutzung pro Woche</span>
-                            <input
-                              className="bar-input w-24 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                              type="number"
-                              value={erweiterteEinstellungen[option.name]?.nutzung || ''}
-                              onChange={(e) =>
-                                handleErweiterteEinstellungChange(
-                                  option.name,
-                                  'nutzung',
-                                  e.target.value,
-                                  null
-                                )
-                              }
+                {openMenus[menu.id] && (
+                  <div className="menu-content">
+                    <ul className="checkbox-group">
+                      <li className="checkbox-group-header">
+                        <span>Icon</span>
+                        <span>Info</span>
+                        <span>Aktiv</span>
+                        <span>Leistung (W)</span>
+                        <span>Kosten (€)</span>
+                        <span>Löschen</span>
+                      </li>
+                      {menu.options.map((option) => (
+                        <li key={option.name}>
+                          <div className="icon-field">
+                            <img
+                              src="/bilder/logo.png" // Platzhalterbild, ersetze durch deinen Bildpfad
+                              alt={`${option.name} icon`}
+                              style={{ width: '30px', height: '30px' }}
                             />
                           </div>
-                        </div>
-                      )}
-                      {menu.id === 'eauto' && (
-                        <>
-                          <label className="flex flex-col">
-                            <span className="text-sm font-medium text-gray-700">Batteriekapazität (kWh)</span>
-                            <input
-                              type="number"
-                              className="mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                              value={erweiterteEinstellungen[option.name]?.batterieKapazitaet || ''}
-                              onChange={(e) =>
-                                handleErweiterteEinstellungChange(
-                                  option.name,
-                                  'batterieKapazitaet',
-                                  e.target.value,
-                                  null
-                                )
-                              }
-                            />
-                          </label>
-                          <label className="flex flex-col">
-                            <span className="text-sm font-medium text-gray-700">Wallbox-Leistung (W)</span>
-                            <input
-                              type="number"
-                              className="mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                              value={erweiterteEinstellungen[option.name]?.wallboxLeistung || ''}
-                              onChange={(e) =>
-                                handleErweiterteEinstellungChange(
-                                  option.name,
-                                  'wallboxLeistung',
-                                  e.target.value,
-                                  null
-                                )
-                              }
-                            />
-                          </label>
-                          <div className="radio-group-settings flex flex-col gap-2">
-                            <label className="flex items-center gap-2">
-                              <input
-                                type="radio"
-                                name={`ladung-${option.name}`}
-                                value="true"
-                                checked={erweiterteEinstellungen[option.name]?.standardLadung === true}
-                                onChange={(e) =>
-                                  handleErweiterteEinstellungChange(
-                                    option.name,
-                                    'standardLadung',
-                                    e.target.value,
-                                    null
-                                  )
-                                }
-                              />
-                              <span className="text-sm text-gray-700">Standardladung</span>
-                            </label>
-                            <label className="flex items-center gap-2">
-                              <input
-                                type="radio"
-                                name={`ladung-${option.name}`}
-                                value="false"
-                                checked={erweiterteEinstellungen[option.name]?.standardLadung === false}
-                                onChange={(e) =>
-                                  handleErweiterteEinstellungChange(
-                                    option.name,
-                                    'standardLadung',
-                                    e.target.value,
-                                    null
-                                  )
-                                }
-                              />
-                              <span className="text-sm text-gray-700">Wallbox-Ladung</span>
-                            </label>
+                          <div className="info-field">
+                            <span className="tooltip">
+                              {option.name}
+                              <span className="tooltip-text">{verbraucherBeschreibungen[option.name]}</span>
+                            </span>
                           </div>
-                          <label className="flex flex-col">
-                            <span className="text-sm font-medium text-gray-700">Ladehäufigkeit (pro Woche)</span>
+                          <div className="checkbox-group-label">
                             <input
-                              type="number"
-                              className="mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                              value={erweiterteEinstellungen[option.name]?.nutzung || ''}
-                              onChange={(e) =>
-                                handleErweiterteEinstellungChange(
-                                  option.name,
-                                  'nutzung',
-                                  e.target.value,
-                                  null
-                                )
-                              }
+                              type="checkbox"
+                              checked={verbraucherDaten[option.name]?.checked || false}
+                              onChange={(e) => onCheckboxChange(option.name, e.target.checked)}
                             />
-                          </label>
-                        </>
-                      )}
-                      {/* Zeiträume direkt im gleichen Container ohne separate Überschrift */}
-                      {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum) => (
-                        <div
-                          key={zeitraum.id}
-                          className="zeitraum-section flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-gray-50 rounded-lg"
-                        >
-                          <label className="flex flex-col flex-1">
-                            <span className="text-sm font-medium text-gray-700">Zeitraum</span>
-                            <select
-                              className="mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                              value={timePeriods.find(
-                                (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-                              )?.label || ''}
-                              onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
+                          </div>
+                          <div className="input-group">
+                            <input
+                              className="watt-input"
+                              type="number"
+                              value={verbraucherDaten[option.name]?.watt || ''}
+                              onChange={(e) => handleWattChange(option.name, e.target.value)}
+                              disabled={!verbraucherDaten[option.name]?.checked}
+                            />
+                          </div>
+                          <span className="price-display">{verbraucherDaten[option.name]?.kosten || '0.00'}</span>
+                          {(menu.id === 'grundlastverbraucher' || menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
+                            <button
+                              className="delete-option-button"
+                              onClick={() => handleDeleteOptionClick(menu.id, option.name)}
                             >
-                              <option value="">Zeitraum wählen</option>
-                              {timePeriods.map((period) => (
-                                <option key={period.label} value={period.label}>
-                                  {period.label} ({period.startzeit} - {period.endzeit})
-                                </option>
-                              ))}
-                            </select>
-                          </label>
-                          <label className="flex flex-col flex-1">
-                            <span className="text-sm font-medium text-gray-700">Dauer (Stunden)</span>
-                            <input
-                              type="number"
-                              step="0.1"
-                              className="mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                              value={zeitraum.dauer || ''}
-                              onChange={(e) =>
-                                handleErweiterteEinstellungChange(
-                                  option.name,
-                                  'dauer',
-                                  e.target.value,
-                                  zeitraum.id
-                                )
-                              }
-                            />
-                          </label>
-                          <button
-                            className="delete-option-button mt-2 sm:mt-0 bg-red-500 text-white rounded px-4 py-2 hover:bg-red-600"
-                            onClick={() => removeZeitraum(option.name, zeitraum.id)}
-                          >
-                            Zeitraum löschen
-                          </button>
-                        </div>
+                              <i className="fas fa-times">x</i>
+                            </button>
+                          )}
+                          {deleteConfirmOption?.menuId === menu.id &&
+                            deleteConfirmOption?.optionName === option.name && (
+                              <div className="confirm-dialog">
+                                <span>{`"${option.name}" löschen?`}</span>
+                                <button
+                                  className="confirm-button"
+                                  onClick={() => confirmDeleteOption(menu.id, option.name)}
+                                >
+                                  Ja
+                                </button>
+                                <button className="cancel-button" onClick={cancelDeleteOption}>
+                                  Nein
+                                </button>
+                              </div>
+                            )}
+                          {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
+                            <div className="settings-container">
+                              <h4 className="text-lg font-semibold text-gray-800 mb-3">Einstellungen für {option.name}</h4>
+                              <div className="combined-settings grid grid-cols-1 gap-4 p-4 bg-white rounded-lg shadow-sm">
+                                {menu.id === 'dynamischeverbraucher' && (
+                                  <div className="dynamic-consumer-layout">
+                                    <div className="dynamic-bar flex items-center justify-between p-3 bg-gray-100 rounded-lg">
+                                      <span className="bar-label text-sm font-medium text-gray-700">Nutzung pro Woche</span>
+                                      <input
+                                        className="bar-input w-24 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                                        type="number"
+                                        value={erweiterteEinstellungen[option.name]?.nutzung || ''}
+                                        onChange={(e) =>
+                                          handleErweiterteEinstellungChange(
+                                            option.name,
+                                            'nutzung',
+                                            e.target.value,
+                                            null
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+                                {menu.id === 'eauto' && (
+                                  <>
+                                    <label className="flex flex-col">
+                                      <span className="text-sm font-medium text-gray-700">Batteriekapazität (kWh)</span>
+                                      <input
+                                        type="number"
+                                        className="mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                                        value={erweiterteEinstellungen[option.name]?.batterieKapazitaet || ''}
+                                        onChange={(e) =>
+                                          handleErweiterteEinstellungChange(
+                                            option.name,
+                                            'batterieKapazitaet',
+                                            e.target.value,
+                                            null
+                                          )
+                                        }
+                                      />
+                                    </label>
+                                    <label className="flex flex-col">
+                                      <span className="text-sm font-medium text-gray-700">Wallbox-Leistung (W)</span>
+                                      <input
+                                        type="number"
+                                        className="mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                                        value={erweiterteEinstellungen[option.name]?.wallboxLeistung || ''}
+                                        onChange={(e) =>
+                                          handleErweiterteEinstellungChange(
+                                            option.name,
+                                            'wallboxLeistung',
+                                            e.target.value,
+                                            null
+                                          )
+                                        }
+                                      />
+                                    </label>
+                                    <div className="radio-group-settings flex flex-col gap-2">
+                                      <label className="flex items-center gap-2">
+                                        <input
+                                          type="radio"
+                                          name={`ladung-${option.name}`}
+                                          value="true"
+                                          checked={erweiterteEinstellungen[option.name]?.standardLadung === true}
+                                          onChange={(e) =>
+                                            handleErweiterteEinstellungChange(
+                                              option.name,
+                                              'standardLadung',
+                                              e.target.value,
+                                              null
+                                            )
+                                          }
+                                        />
+                                        <span className="text-sm text-gray-700">Standardladung</span>
+                                      </label>
+                                      <label className="flex items-center gap-2">
+                                        <input
+                                          type="radio"
+                                          name={`ladung-${option.name}`}
+                                          value="false"
+                                          checked={erweiterteEinstellungen[option.name]?.standardLadung === false}
+                                          onChange={(e) =>
+                                            handleErweiterteEinstellungChange(
+                                              option.name,
+                                              'standardLadung',
+                                              e.target.value,
+                                              null
+                                            )
+                                          }
+                                        />
+                                        <span className="text-sm text-gray-700">Wallbox-Ladung</span>
+                                      </label>
+                                    </div>
+                                    <label className="flex flex-col">
+                                      <span className="text-sm font-medium text-gray-700">Ladehäufigkeit (pro Woche)</span>
+                                      <input
+                                        type="number"
+                                        className="mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                                        value={erweiterteEinstellungen[option.name]?.nutzung || ''}
+                                        onChange={(e) =>
+                                          handleErweiterteEinstellungChange(
+                                            option.name,
+                                            'nutzung',
+                                            e.target.value,
+                                            null
+                                          )
+                                        }
+                                      />
+                                    </label>
+                                  </>
+                                )}
+                                {/* Zeiträume direkt im gleichen Container ohne separate Überschrift */}
+                                {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum) => (
+                                  <div
+                                    key={zeitraum.id}
+                                    className="zeitraum-section flex flex-col sm:flex-row items-start sm:items-center gap-4 p-3 bg-gray-50 rounded-lg"
+                                  >
+                                    <label className="flex flex-col flex-1">
+                                      <span className="text-sm font-medium text-gray-700">Zeitraum</span>
+                                      <select
+                                        className="mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                                        value={timePeriods.find(
+                                          (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+                                        )?.label || ''}
+                                        onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
+                                      >
+                                        <option value="">Zeitraum wählen</option>
+                                        {timePeriods.map((period) => (
+                                          <option key={period.label} value={period.label}>
+                                            {period.label} ({period.startzeit} - {period.endzeit})
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </label>
+                                    <label className="flex flex-col flex-1">
+                                      <span className="text-sm font-medium text-gray-700">Dauer (Stunden)</span>
+                                      <input
+                                        type="number"
+                                        step="0.1"
+                                        className="mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                                        value={zeitraum.dauer || ''}
+                                        onChange={(e) =>
+                                          handleErweiterteEinstellungChange(
+                                            option.name,
+                                            'dauer',
+                                            e.target.value,
+                                            zeitraum.id
+                                          )
+                                        }
+                                      />
+                                    </label>
+                                    <button
+                                      className="delete-option-button mt-2 sm:mt-0 bg-red-500 text-white rounded px-4 py-2 hover:bg-red-600"
+                                      onClick={() => removeZeitraum(option.name, zeitraum.id)}
+                                    >
+                                      Zeitraum löschen
+                                    </button>
+                                  </div>
+                                ))}
+                                <button
+                                  className="add-option-button bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600"
+                                  onClick={() => addZeitraum(option.name)}
+                                >
+                                  Zeitraum hinzufügen
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </li>
                       ))}
-                      <button
-                        className="add-option-button bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600"
-                        onClick={() => addZeitraum(option.name)}
-                      >
-                        Zeitraum hinzufügen
-                      </button>
-                    </div>
+                    </ul>
+                    {(menu.id === 'grundlastverbraucher' ||
+                      menu.id === 'dynamischeverbraucher' ||
+                      menu.id === 'eauto' ||
+                      menu.id === 'stromerzeuger' ||
+                      menu.id === 'strompeicher') && (
+                      <>
+                        <button
+                          className="add-option-button"
+                          onClick={() => toggleNewOptionForm(menu.id)}
+                        >
+                          {showNewOptionForm[menu.id]
+                            ? 'Formular schließen'
+                            : 'Neue Option hinzufügen'}
+                        </button>
+                        {showNewOptionForm[menu.id] && (
+                          <div className="new-option-container">
+                            <label className="flex flex-col">
+                              <span className="text-sm font-medium text-gray-700">Name</span>
+                              <input
+                                className="new-option-input mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                                type="text"
+                                value={newOptionNames[menu.id] || ''}
+                                onChange={(e) => handleNewOptionName(menu.id, e.target.value)}
+                              />
+                            </label>
+                            <label className="flex flex-col mt-2">
+                              <span className="text-sm font-medium text-gray-700">Leistung (W)</span>
+                              <input
+                                className="new-option-watt mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                                type="number"
+                                value={newOptionWatt[menu.id] || ''}
+                                onChange={(e) => handleNewOptionWatt(menu.id, e.target.value)}
+                              />
+                            </label>
+                            {(menu.id === 'dynamischeverbraucher') && (
+                              <label className="flex flex-col mt-2">
+                                <span className="text-sm font-medium text-gray-700">Typ</span>
+                                <select
+                                  className="mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+                                  value={newOptionTypes[menu.id] || 'week'}
+                                  onChange={(e) => handleNewOptionType(menu.id, e.target.value)}
+                                >
+                                  <option value="week">Wöchentlich</option>
+                                  <option value="day">Täglich</option>
+                                </select>
+                              </label>
+                            )}
+                            <button
+                              className="save-option-button mt-3"
+                              onClick={() => addNewOption(menu.id)}
+                            >
+                              Speichern
+                            </button>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
                 )}
-              </li>
+              </div>
             ))}
-          </ul>
-          {(menu.id === 'grundlastverbraucher' ||
-            menu.id === 'dynamischeverbraucher' ||
-            menu.id === 'eauto' ||
-            menu.id === 'stromerzeuger' ||
-            menu.id === 'strompeicher') && (
-            <>
-              <button
-                className="add-option-button"
-                onClick={() => toggleNewOptionForm(menu.id)}
-              >
-                {showNewOptionForm[menu.id]
-                  ? 'Formular schließen'
-                  : 'Neue Option hinzufügen'}
-              </button>
-              {showNewOptionForm[menu.id] && (
-                <div className="new-option-container">
-                  <label className="flex flex-col">
-                    <span className="text-sm font-medium text-gray-700">Name</span>
-                    <input
-                      className="new-option-input mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                      type="text"
-                      value={newOptionNames[menu.id] || ''}
-                      onChange={(e) => handleNewOptionName(menu.id, e.target.value)}
-                    />
-                  </label>
-                  <label className="flex flex-col mt-2">
-                    <span className="text-sm font-medium text-gray-700">Leistung (W)</span>
-                    <input
-                      className="new-option-watt mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                      type="number"
-                      value={newOptionWatt[menu.id] || ''}
-                      onChange={(e) => handleNewOptionWatt(menu.id, e.target.value)}
-                    />
-                  </label>
-                  {(menu.id === 'dynamischeverbraucher') && (
-                    <label className="flex flex-col mt-2">
-                      <span className="text-sm font-medium text-gray-700">Typ</span>
-                      <select
-                        className="mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                        value={newOptionTypes[menu.id] || 'week'}
-                        onChange={(e) => handleNewOptionType(menu.id, e.target.value)}
-                      >
-                        <option value="week">Wöchentlich</option>
-                        <option value="day">Täglich</option>
-                      </select>
-                    </label>
-                  )}
-                  <button
-                    className="save-option-button mt-3"
-                    onClick={() => addNewOption(menu.id)}
-                  >
-                    Speichern
-                  </button>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      )}
-    </div>
-  ))}
-  
-  
-  
   
             {/* Zusammenfassung */}
             <div className="calculation-report">
