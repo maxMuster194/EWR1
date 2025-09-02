@@ -312,7 +312,7 @@ const Energiemanager = () => {
                   zum Beispiel ist Strom nachts oder bei viel Wind und Sonne oft günstiger.
                 </p>
                 <a
-                  href="/Presentation/kontakt"
+                  href="https://www.ewr-energie.com/kontakt/"
                   className="inline-flex items-center justify-center gap-1.5 px-4 py-1.5 mt-4 rounded-lg bg-[#062316] hover:bg-[#409966] text-white text-lg font-medium leading-normal w-fit mx-auto"
                 >
                   <FontAwesomeIcon icon={faUser} style={{ color: '#e5dbc1', fontSize: '19px' }} />

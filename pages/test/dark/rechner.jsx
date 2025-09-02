@@ -295,7 +295,7 @@ const styles = `
       display: flex;
       flex-direction: column;
       flex-grow: 1;
-      background-color: rgb(65, 65, 65);
+      background-color: rgb(0, 0, 0);
     }
     .content-box {
       max-width: 100%;
@@ -313,7 +313,7 @@ const styles = `
       max-width: 100%;
       max-height: none;
       padding: 0.5rem;
-      background-color: rgb(65, 65, 65);
+      background-color: rgb(0, 0, 0);
       border: none; /* Ensure no border on child div */
       flex-grow: 1;
     }
