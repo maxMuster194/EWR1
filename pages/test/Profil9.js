@@ -214,7 +214,7 @@ const styles = {
     transition: 'background-color 0.2s ease',
   },
   discountSwitchSliderActive: {
-    backgroundColor: 'rgb(64 153 102)',
+    backgroundColor: 'rgb(6, 35, 22)',
   },
   discountSwitchSliderBefore: {
     position: 'absolute',
@@ -272,7 +272,7 @@ function StrompreisChart() {
   const [error, setError] = useState(null);
   const [activeProfile, setActiveProfile] = useState(1);
   const [householdType, setHouseholdType] = useState('none');
-  const [selectedDiscount, setSelectedDiscount] = useState(null);
+
 
   const profileFactors = { 1: 2.1, 2: 3.4, 3: 5.4, 4: 7, 5: 8.9 };
   const regionOptions = [
@@ -280,7 +280,7 @@ function StrompreisChart() {
     { label: 'MN', value: 17 },
     { label: 'MOD', value: 13 },
   ];
-
+  const [selectedDiscount, setSelectedDiscount] = useState(regionOptions[0].value);
   const getCurrentDate = () => {
     const today = new Date();
     const day = String(today.getDate()).padStart(2, '0');

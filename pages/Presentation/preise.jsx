@@ -13,23 +13,11 @@ import {
 } from 'chart.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import Statistik from '../Presentation/stk3';
-import Durchschnitt from '../Presentation/durch12';
+import Statistik from '../mobil/stk3';
+import Durchschnitt from '../mobil/durch12';
 
 // Register Chart.js components
 ChartJSInstance.register(LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend, Filler);
-
-const chartOptions = {
-  responsive: true,
-  maintainAspectRatio: false,
-  scales: {
-    x: { grid: { display: false }, ticks: { color: '#202026' } },
-    y: { grid: { color: '#E5E7EB' }, ticks: { color: '#202026' }, beginAtZero: true },
-  },
-  plugins: {
-    legend: { labels: { color: '#202026' } },
-  },
-};
 
 const styles = `
   .layout {
@@ -242,6 +230,8 @@ const styles = `
     margin: 0;
     border-radius: 0;
   }
+
+  /* Tablet-Optimierung */
   @media (max-width: 1024px) {
     .layout {
       padding-top: 4rem;
@@ -283,15 +273,9 @@ const styles = `
     }
     .header {
       padding: 0.75rem 1.5rem;
-      border-radius: 0;
-      border: none;
-      margin: 0;
     }
     .footer {
       padding: 0.75rem 1.5rem;
-      border-radius: 0;
-      border: none;
-      margin: 0;
     }
     .sidebar {
       padding: 0.5rem;
@@ -301,57 +285,82 @@ const styles = `
       font-size: 14px;
     }
   }
+
+  /* Smartphone-Optimierung */
   @media (max-width: 767px) {
     .layout {
-      padding-top: 3rem;
-      padding-bottom: 2rem;
+      padding-top: 3.5rem;
+      padding-bottom: 4rem; /* Mehr Platz für Bottom-Navigation */
     }
     .content-wrapper {
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
-      padding: 1rem 0.5rem 0.5rem 0;
+      padding: 0.5rem;
     }
-    .header, .footer, .sidebar, .main, .top-box, .bottom-boxes, .extra-box-1, .extra-box-2 {
+    .header, .footer, .main, .top-box, .bottom-boxes, .extra-box-1, .extra-box-2 {
       width: 100%;
       max-width: 100%;
       padding: 0.5rem;
       border: 1px solid #D1D5DB;
       border-radius: 8px;
     }
-    .main, .bottom-boxes {
-      max-width: 100%;
-      margin: 0;
-      padding: 0.75rem;
-    }
     .header {
-      padding: 0.5rem;
-      border-radius: 0;
-      border: none;
-      margin: 0;
+      padding: 0.5rem 1rem;
     }
     .footer {
-      padding: 0.5rem;
-      border-radius: 0;
-      border: none;
-      margin: 0;
+      padding: 0.5rem 1rem;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
     }
     .header-logo {
       max-width: 120px;
       max-height: 48px;
     }
-    .extra-box-2 .inner-box {
+    .sidebar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
       max-width: 100%;
-    }
-    .content {
-      max-height: none;
+      padding: 0.5rem;
+      background-color: #202026;
+      border: none;
+      border-radius: 0;
+      z-index: 1000;
       display: flex;
       justify-content: center;
       align-items: center;
+      box-sizing: border-box;
+    }
+    .sidebar .flex {
+      flex-direction: row;
+      justify-content: space-around;
+      gap: 0;
+      width: 100%;
+    }
+    .sidebar a {
+      padding: 0.75rem;
+      flex: 1;
+      text-align: center;
+      border-radius: 8px;
+    }
+    .sidebar a svg {
+      font-size: 1.25rem; /* Größere Icons für Touch */
+    }
+    .sidebar a p {
+      font-size: 0.65rem; /* Kleinere Schrift für bessere Lesbarkeit */
+    }
+    .main, .bottom-boxes {
+      max-width: 100%;
+      margin: 0;
+      padding: 0.75rem;
     }
     .main .content-box, .bottom-boxes .content-box {
       max-width: 100%;
-      max-height: 500px;
+      max-height: 70vh; /* Angepasst für kleinere Bildschirme */
       width: 100%;
       height: 100%;
       display: flex;
@@ -362,7 +371,7 @@ const styles = `
     .main .content-box > div, .bottom-boxes .content-box > div {
       padding: 0.5rem;
       max-width: 100%;
-      max-height: 500px;
+      max-height: 70vh;
       width: 100%;
       height: 100%;
       flex-shrink: 0;
@@ -371,15 +380,34 @@ const styles = `
       justify-content: center;
       align-items: center;
     }
-    .sidebar {
-      padding: 0.5rem;
-      border-radius: 8px 8px 0 0;
+    .extra-box-2 .inner-box {
+      max-width: 100%;
     }
-    .sidebar a svg {
-      font-size: 14px;
+    .content {
+      max-height: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
-`;
+
+  `;
+
+
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  scales: {
+    x: { grid: { display: false }, ticks: { color: '#202026' } },
+    y: { grid: { color: '#E5E7EB' }, ticks: { color: '#202026' }, beginAtZero: true },
+  },
+  plugins: {
+    legend: { labels: { color: '#202026' } },
+  },
+};
+
+
+
 
 const Energiemanager = () => {
   return (
@@ -393,9 +421,6 @@ const Energiemanager = () => {
         </header>
 
         <div className="content-wrapper">
-
-       
-
           <div className="sidebar w-full p-3 bg-[#202026]">
             <div className="flex h-full flex-col justify-between">
               <div className="flex flex-col gap-3">
@@ -409,28 +434,28 @@ const Energiemanager = () => {
                 </div>
                 <div className="flex flex-col gap-1">
                   <a
-                    href="/Presentation/startseite"
+                    href="/mobil/startseite"
                     className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#D9043D] text-white"
                   >
                     <FontAwesomeIcon icon={faHouse} style={{ color: '#e5dbc1' }} />
                     <p className="text-white text-xs font-medium leading-normal">Home</p>
                   </a>
                   <a
-                    href="/Presentation/preise"
+                    href="/mobil/preise"
                     className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-[#D9043D] text-white active"
                   >
                     <FontAwesomeIcon icon={faChartLine} style={{ color: '#e5dbc1' }} />
                     <p className="text-white text-xs font-medium leading-normal">Preis</p>
                   </a>
-                  <a href="/Presentation/rechner" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+                  <a href="/mobil/rechner" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
                     <FontAwesomeIcon icon={faCalculator} style={{ color: '#e5dbc1' }} />
                     <p className="text-white text-xs font-medium leading-normal">Rechner</p>
                   </a>
-                  <a href="/Presentation/details" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+                  <a href="/mobil/details" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
                     <FontAwesomeIcon icon={faFileLines} style={{ color: '#e5dbc1' }} />
                     <p className="text-white text-xs font-medium leading-normal">Detail-Rechner</p>
                   </a>
-                  <a href="/Presentation/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+                  <a href="/mobil/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
                     <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#e5dbc1' }} />
                     <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
                   </a>
@@ -454,7 +479,6 @@ const Energiemanager = () => {
           <div className="bottom-boxes">
             <Durchschnitt />
           </div>
-
         </div>
 
         <footer className="footer">

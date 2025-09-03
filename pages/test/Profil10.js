@@ -227,7 +227,7 @@ const styles = {
     transition: 'background-color 0.2s ease',
   },
   discountSwitchSliderActive: {
-    backgroundColor: 'rgb(5,166,150)',
+    backgroundColor: 'rgb(6, 35, 22)',
   },
   discountSwitchSliderBefore: {
     position: 'absolute',
@@ -286,7 +286,7 @@ function StrompreisChart() {
   const [error, setError] = useState(null);
   const [activeProfile, setActiveProfile] = useState(1);
   const [householdType, setHouseholdType] = useState('none');
-  const [selectedDiscount, setSelectedDiscount] = useState(null);
+ 
 
   const profileFactors = { 1: 2.1, 2: 3.4, 3: 5.4, 4: 7, 5: 8.9 };
   const regionOptions = [
@@ -294,7 +294,8 @@ function StrompreisChart() {
     { label: 'MN', value: 17 },
     { label: 'MOD', value: 13 },
   ];
-
+  const [selectedDiscount, setSelectedDiscount] = useState(regionOptions[0].value);
+  
   const getCurrentDate = () => {
     const today = new Date();
     const day = String(today.getDate()).padStart(2, '0');
@@ -686,7 +687,7 @@ function StrompreisChart() {
           }
           .date-picker:focus {
             outline: none;
-            border-color: rgb(5,166,150);
+            border-color: rgb(5,166,150,0.2);
             box-shadow: 0 0 0 2px rgba(5,166,150,0.2);
           }
           .price-input {
@@ -703,7 +704,7 @@ function StrompreisChart() {
           }
           .price-input:focus {
             outline: none;
-            border-color: rgb(5,166,150);
+            border-color: rgb(5,166,150,0.2);
             box-shadow: 0 0 0 2px rgba(5,166,150,0.2);
           }
           .input-error {
@@ -793,7 +794,7 @@ function StrompreisChart() {
             opacity: 1;
           }
           .discount-switch-container input:checked + .discount-switch-slider {
-            background-color: rgb(6, 35, 22);
+            background-color: rgb(35, 29, 6);
           }
           .discount-switch-container input:checked + .discount-switch-slider:before {
             transform: translateX(18px);

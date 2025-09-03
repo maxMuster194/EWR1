@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import StromverbrauchRechnerDesktop from './details28'; // Für Desktop/Tablet
-import StromverbrauchRechnerMobile from './Mdetails32'; // Für Handy
 
+import Statistik from '../test/stk4';
+import Durchschnitt from '../test/durch14';
 const styles = `
   .layout {
     width: 100%;
@@ -66,7 +66,7 @@ const styles = `
   .sidebar a.active {
     background-color: #062316;
   }
-  .sidebar a.active svg {
+  .sidebar a.active .fa-house {
     color: #FFFFFF !important;
   }
   .sidebar a p {
@@ -123,118 +123,88 @@ const styles = `
   .bottom-nav {
     display: none;
   }
-  @media (max-width: 767px) {
-    .layout {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding-bottom: 60px;
-    }
-    .header, .top-box, .main, .bottom-boxes, .extra-box-1, .extra-box-2, .footer {
-      width: 100%;
-      padding: 12px;
-    }
-    .header {
-      padding: 12px;
-    }
-    .header-logo {
-      width: 150px;
-      height: 57px;
-    }
-    .sidebar {
-      display: none;
-    }
-    .main {
-      flex-direction: column;
-    }
-    .content, .chart {
-      max-height: none;
-    }
-    .extra-box-2 .inner-box {
-      max-width: 100%;
-    }
-    .footer {
-      padding: 12px;
-    }
-    .bottom-nav {
-      display: flex;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background-color: #202026;
-      border-top: 1px solid #D1D5DB;
-      justify-content: space-around;
-      align-items: center;
-      padding: 8px 0;
-      z-index: 1000;
-    }
-    .bottom-nav a {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      padding: 8px;
-      border-radius: 12px;
-      color: #FFFFFF;
-      text-decoration: none;
-      transition: background-color 0.2s;
-      flex: 1;
-      text-align: center;
-    }
-    .bottom-nav a:hover {
-      background-color: #062316;
-    }
-    .bottom-nav a.active {
-      background-color: #062316;
-    }
-    .bottom-nav a.active svg {
-      color: #FFFFFF !important;
-    }
-    .bottom-nav a p {
-      text-align: center;
-      font-size: 10px;
-      font-weight: 500;
-      margin: 0;
-    }
-    .bottom-nav a svg {
-      font-size: 18px;
-      color: #e5dbc1;
-    }
+@media (max-width: 767px) {
+  .layout {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 60px;
   }
-  @media (min-width: 768px) and (max-width: 1023px) {
-    .layout {
-      grid-template-columns: 150px 1fr;
-    }
-    .header-logo {
-      width: 200px;
-      height: 76px;
-    }
-    .sidebar {
-      max-width: 150px;
-    }
+  .header, .top-box, .main, .bottom-boxes, .extra-box-1, .extra-box-2, .footer {
+    width: 100%;
+    padding: 12px;
   }
+  .header {
+    padding: 12px;
+  }
+  .header-logo {
+    width: 150px;
+    height: 57px;
+  }
+  .sidebar {
+    display: none;
+  }
+  .main {
+    flex-direction: column;
+  }
+  .content, .chart {
+    max-height: none;
+  }
+  .extra-box-2 .inner-box {
+    max-width: 100%;
+  }
+  .footer {
+    padding: 12px;
+  }
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #202026;
+    border-top: 1px solid #D1D5DB;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 0;
+    z-index: 1000;
+  }
+  .bottom-nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    border-radius: 12px;
+    color: #FFFFFF;
+    text-decoration: none;
+    transition: background-color 0.2s;
+    flex: 1;
+    text-align: center;
+  }
+  .bottom-nav a:hover {
+    background-color: #062316;
+  }
+  .bottom-nav a.active {
+    background-color: #062316;
+  }
+  .bottom-nav a.active .fa-house {
+    color: #e5dbc1 !important;
+  }
+  .bottom-nav a p {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 500;
+    margin: 0;
+  }
+  .bottom-nav a svg {
+    font-size: 18px;
+    color: #e5dbc1;
+  }
+}
 `;
 
 const Energiemanager = () => {
-  // Use state to handle client-side media query
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Check for mobile device on client side
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const mediaQuery = window.matchMedia("(max-width: 767px)");
-      setIsMobile(mediaQuery.matches);
-
-      // Optional: Add listener for window resize
-      const handleResize = () => setIsMobile(mediaQuery.matches);
-      mediaQuery.addEventListener('change', handleResize);
-
-      // Cleanup listener on component unmount
-      return () => mediaQuery.removeEventListener('change', handleResize);
-    }
-  }, []);
-
   return (
     <>
       <style>{styles}</style>
@@ -257,23 +227,23 @@ const Energiemanager = () => {
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <a href="/test/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#202026] hover:bg-[#062316] text-white">
+                <a href="/test/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#202026] hover:bg-[#D9043D] text-white active">
                   <FontAwesomeIcon icon={faHouse} style={{ color: '#e5dbc1', fontSize: '20px' }} />
                   <p className="text-white text-xs font-medium leading-normal">Home</p>
                 </a>
-                <a href="/test/preise" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#202026] hover:bg-[#062316] text-white">
+                <a href="/test/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
                   <FontAwesomeIcon icon={faChartLine} style={{ color: '#e5dbc1', fontSize: '20px' }} />
                   <p className="text-white text-xs font-medium leading-normal">Preis</p>
                 </a>
-                <a href="/test/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#202026] hover:bg-[#062316] text-white">
+                <a href="/test/rechner" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
                   <FontAwesomeIcon icon={faCalculator} style={{ color: '#e5dbc1', fontSize: '20px' }} />
                   <p className="text-white text-xs font-medium leading-normal">Rechner</p>
                 </a>
-                <a href="/test/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#062316] text-white active">
-                  <FontAwesomeIcon icon={faFileLines} style={{ color: '#FFFFFF', fontSize: '20px' }} />
+                <a href="/test/details" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+                  <FontAwesomeIcon icon={faFileLines} style={{ color: '#e5dbc1', fontSize: '20px' }} />
                   <p className="text-white text-xs font-medium leading-normal">Detail-Rechner</p>
                 </a>
-                <a href="/test/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#062316] text-white">
+                <a href="/test/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
                   <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#e5dbc1', fontSize: '20px' }} />
                   <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
                 </a>
@@ -282,34 +252,33 @@ const Energiemanager = () => {
           </div>
         </div>
 
-        <div className="main">
-          <div className="content flex-1 p-6 rounded-xl bg-white shadow-md flex flex-col">
-            <div className="flex flex-col gap-6 mt-6 flex-1">
-              <div>
-                {isMobile ? <StromverbrauchRechnerMobile /> : <StromverbrauchRechnerDesktop />}
-              </div>
-            </div>
-          </div>
+        <div className="main flex flex-col lg:flex-row gap-6">
+          <div className="content flex-1 p-6 rounded-xl bg-white shadow-md flex flex-col"> <Statistik /></div>
+          <div className="chart flex-1 p-6 rounded-xl bg-white shadow-md flex flex-col"><Durchschnitt /></div>
         </div>
 
+        
+
+        <footer className="footer"></footer>
+
         <nav className="bottom-nav">
-          <a href="/test/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
+          <a href="/test/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#D9043D] text-white active">
             <FontAwesomeIcon icon={faHouse} style={{ color: '#e5dbc1', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Home</p>
           </a>
-          <a href="/test/preise" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
+          <a href="/test/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
             <FontAwesomeIcon icon={faChartLine} style={{ color: '#e5dbc1', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Preis</p>
           </a>
-          <a href="/test/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
+          <a href="/test/rechner" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
             <FontAwesomeIcon icon={faCalculator} style={{ color: '#e5dbc1', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Rechner</p>
           </a>
-          <a href="/test/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#062316] text-white active">
-            <FontAwesomeIcon icon={faFileLines} style={{ color: '#FFFFFF', fontSize: '18px' }} />
+          <a href="/test/details" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+            <FontAwesomeIcon icon={faFileLines} style={{ color: '#e5dbc1', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Detail</p>
           </a>
-          <a href="/test/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#062316] text-white">
+          <a href="/test/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
             <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#e5dbc1', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
           </a>

@@ -264,18 +264,9 @@ const Energiemanager = () => {
         <div className="top-box p-6 rounded-xl bg-white border border-gray-300">
           <div className="flex flex-col gap-3 rounded-xl p-6 bg-gray-50 shadow-sm text-center">
             <div className="flex items-center justify-center gap-4">
-              <p className="text-[#409966] text-2xl font-bold leading-normal">Preisrechner dynamische Tarife</p>
-              <a
-                href="/Presentation/rechner"
-                className="inline-flex items-center justify-center gap-1 px-3 py-1 rounded-lg bg-[#062316] hover:bg-[#409966] text-white text-sm font-medium leading-normal"
-              >
-                <FontAwesomeIcon icon={faCalculator} style={{ color: '#e5dbc1', fontSize: '14px' }} />
-                Zum Rechner
-              </a>
+              <p className="text-[#409966] text-4xl font-bold leading-normal">Dynamischer Stromtarif</p>
             </div>
-            <p className="text-[#202026] text-base font-normal leading-normal">
-              Jetzt in wenigen Schritten herausfinden, ob sich ein dynamischer Stromtarif für Ihren Haushalt lohnt.
-            </p>
+            
           </div>
         </div>
 
@@ -325,6 +316,23 @@ const Energiemanager = () => {
             <p className="text-[#202026] text-lg font-normal leading-relaxed text-center mt-2"></p>
             <div className="flex flex-col gap-6 mt-6 flex-1">
               <div className="flex min-w-[200px] flex-1 flex-col gap-3 rounded-xl p-6 border border-gray-300 bg-gray-50 shadow-sm">
+              <p className="text-[#409966] text-2xl font-bold leading-normal">Preisrechner dynamische Tarife <a
+                href="/Presentation/rechner"
+                className="inline-flex items-center justify-center gap-1 px-3 py-1 rounded-lg bg-[#062316] hover:bg-[#409966] text-white text-sm font-medium leading-normal"
+              >
+                <FontAwesomeIcon icon={faCalculator} style={{ color: '#e5dbc1', fontSize: '14px' }} />
+                Zum Rechner
+              </a></p>
+              
+
+
+                <p className="text-[#202026] text-base font-normal leading-normal">
+                Jetzt in wenigen Schritten herausfinden, ob sich ein dynamischer Stromtarif für Ihren Haushalt lohnt.
+            
+                </p>
+               
+               
+               <p></p>
                 <p className="text-[#409966] text-2xl font-bold leading-normal">Was ist ein dynamischer Stromtarif?</p>
                 <p className="text-[#202026] text-base font-normal leading-normal">
                   Dynamische Stromtarife sind flexible Strompreise, 
@@ -333,7 +341,7 @@ const Energiemanager = () => {
                   zum Beispiel ist Strom nachts oder bei viel Wind und Sonne oft günstiger.
                 </p>
                 <a
-                  href="/Presentation/kontakt"
+                  href=""
                   className="inline-flex items-center justify-center gap-1.5 px-4 py-1.5 mt-4 rounded-xl bg-[#062316] hover:bg-[#409966] text-white text-lg font-medium leading-normal w-fit mx-auto"
                 >
                   <FontAwesomeIcon icon={faUser} style={{ color: '#e5dbc1', fontSize: '19px' }} />
