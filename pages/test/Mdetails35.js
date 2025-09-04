@@ -2274,11 +2274,11 @@ body {
       className="menu-header flex justify-between items-center p-3 bg-gray-100 rounded-t-lg cursor-pointer hover:bg-gray-200"
       onClick={() => toggleMenu(menu.id)}
     >
-      <span className="text-base font-semibold text-gray-800">{menu.label}</span>
+      <span className="text-base font-semibold text-gray-800 text-white">{menu.label}</span>
       <span
         className={`triangle transform transition-transform duration-200 ${
           openMenus[menu.id] ? "rotate-180" : ""
-        } text-gray-600`}
+        } text-white-600`}
       >
         &#9660;
       </span>
