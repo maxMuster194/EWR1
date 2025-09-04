@@ -227,11 +227,11 @@ const Energiemanager = () => {
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <a href="/test/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#202026] hover:bg-[#D9043D] text-white active">
+                <a href="/test/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#202026] hover:bg-[#D9043D] text-white ">
                   <FontAwesomeIcon icon={faHouse} style={{ color: '#e5dbc1', fontSize: '20px' }} />
                   <p className="text-white text-xs font-medium leading-normal">Home</p>
                 </a>
-                <a href="/test/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+                <a href="/test/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white active">
                   <FontAwesomeIcon icon={faChartLine} style={{ color: '#e5dbc1', fontSize: '20px' }} />
                   <p className="text-white text-xs font-medium leading-normal">Preis</p>
                 </a>
@@ -262,11 +262,11 @@ const Energiemanager = () => {
         <footer className="footer"></footer>
 
         <nav className="bottom-nav">
-          <a href="/test/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#D9043D] text-white active">
+          <a href="/test/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#D9043D] text-white ">
             <FontAwesomeIcon icon={faHouse} style={{ color: '#e5dbc1', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Home</p>
           </a>
-          <a href="/test/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+          <a href="/test/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white active">
             <FontAwesomeIcon icon={faChartLine} style={{ color: '#e5dbc1', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Preis</p>
           </a>

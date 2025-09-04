@@ -2398,280 +2398,484 @@ body {
             </div>
   
             {error && <p style={{ color: '#dc2626', fontSize: '0.75rem' }}>{error}</p>}
-  
 
 
-            {/* Menüs und Verbraucher */}
-            {menus.map((menu) => (
-              <div key={menu.id} className="menu">
-                <div className="menu-header" onClick={() => toggleMenu(menu.id)}>
-                  <span>{menu.label}</span>
-                  <span className={`triangle ${openMenus[menu.id] ? 'open' : ''}`}>&#9660;</span>
-                </div>
-                {openMenus[menu.id] && (
-                  <div className="menu-content">
-                    <ul className="checkbox-group">
-                      <li className="checkbox-group-header">
-                        <span>Icon</span>
-                        <span>Info</span>
-                        <span>Aktiv</span>
-                        <span>Leistung (W)</span>
-                        <span>Kosten (€)</span>
-                        <span>Löschen</span>
-                      </li>
-                      {menu.options.map((option) => (
-                        <li key={option.name}>
-                          <div className="icon-field">
-                            <img
-                              src="/bilder/logo.png" // Platzhalterbild, ersetze durch deinen Bildpfad
-                              alt={`${option.name} icon`}
-                              style={{ width: '30px', height: '30px' }}
-                            />
-                          </div>
-                          <div className="info-field">
-                            <span className="tooltip">
-                              {option.name}
-                              <span className="tooltip-text">{verbraucherBeschreibungen[option.name]}</span>
-                            </span>
-                          </div>
-                          <div className="checkbox-group-label">
-                            <input
-                              type="checkbox"
-                              checked={verbraucherDaten[option.name]?.checked || false}
-                              onChange={(e) => onCheckboxChange(option.name, e.target.checked)}
-                            />
-                          </div>
-                          <div className="input-group">
-                            <input
-                              className="watt-input"
-                              type="number"
-                              value={verbraucherDaten[option.name]?.watt || ''}
-                              onChange={(e) => handleWattChange(option.name, e.target.value)}
-                              disabled={!verbraucherDaten[option.name]?.checked}
-                            />
-                          </div>
-                          <span className="price-display">{verbraucherDaten[option.name]?.kosten || '0.00'}</span>
-                          {(menu.id === 'grundlastverbraucher' || menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
-                            <button
-                              className="delete-option-button"
-                              onClick={() => handleDeleteOptionClick(menu.id, option.name)}
-                            >
-                              <i className="fas fa-times">x</i>
-                            </button>
-                          )}
-                          {deleteConfirmOption?.menuId === menu.id &&
-                            deleteConfirmOption?.optionName === option.name && (
-                              <div className="confirm-dialog">
-                                <span>{`"${option.name}" löschen?`}</span>
-                                <button
-                                  className="confirm-button"
-                                  onClick={() => confirmDeleteOption(menu.id, option.name)}
-                                >
-                                  Ja
-                                </button>
-                                <button className="cancel-button" onClick={cancelDeleteOption}>
-                                  Nein
-                                </button>
-                              </div>
-                            )}
-                          {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
-                           <div className="settings-container">
-                           <h4 className="text-lg font-semibold text-gray-800 mb-3">Einstellungen für {option.name}</h4>
-                           <div className="combined-settings flex flex-row gap-2 p-2 bg-white rounded-lg shadow-sm">
-                             {menu.id === 'dynamischeverbraucher' && (
-                               <div className="dynamic-consumer-layout flex flex-row gap-2 items-center">
-                                 <label className="flex flex-col flex-1">
-                                   <span className="text-xs font-medium text-gray-700">Nutzung pro Woche</span>
-                                   <input
-                                     className="bar-input w-16 p-1 border rounded-md focus:ring-1 focus:ring-blue-500 text-sm"
-                                     type="number"
-                                     value={erweiterteEinstellungen[option.name]?.nutzung || ''}
-                                     onChange={(e) =>
-                                       handleErweiterteEinstellungChange(option.name, 'nutzung', e.target.value, null)
-                                     }
-                                   />
-                                 </label>
-                               </div>
-                             )}
-                             {menu.id === 'eauto' && (
-                               <div className="flex flex-row gap-2 items-center flex-wrap">
-                                 <label className="flex flex-col flex-1 min-w-[80px]">
-                                   <span className="text-xs font-medium text-gray-700">Batteriekapazität (kWh)</span>
-                                   <input
-                                     type="number"
-                                     className="p-1 border rounded-md focus:ring-1 focus:ring-blue-500 text-sm"
-                                     value={erweiterteEinstellungen[option.name]?.batterieKapazitaet || ''}
-                                     onChange={(e) =>
-                                       handleErweiterteEinstellungChange(option.name, 'batterieKapazitaet', e.target.value, null)
-                                     }
-                                   />
-                                 </label>
-                                 <label className="flex flex-col flex-1 min-w-[80px]">
-                                   <span className="text-xs font-medium text-gray-700">Wallbox-Leistung (W)</span>
-                                   <input
-                                     type="number"
-                                     className="p-1 border rounded-md focus:ring-1 focus:ring-blue-500 text-sm"
-                                     value={erweiterteEinstellungen[option.name]?.wallboxLeistung || ''}
-                                     onChange={(e) =>
-                                       handleErweiterteEinstellungChange(option.name, 'wallboxLeistung', e.target.value, null)
-                                     }
-                                   />
-                                 </label>
-                                 <div className="radio-group-settings flex flex-col gap-1">
-                                   <label className="flex items-center gap-1">
-                                     <input
-                                       type="radio"
-                                       name={`ladung-${option.name}`}
-                                       value="true"
-                                       checked={erweiterteEinstellungen[option.name]?.standardLadung === true}
-                                       onChange={(e) =>
-                                         handleErweiterteEinstellungChange(option.name, 'standardLadung', e.target.value, null)
-                                       }
-                                     />
-                                     <span className="text-xs text-gray-700">Standardladung</span>
-                                   </label>
-                                   <label className="flex items-center gap-1">
-                                     <input
-                                       type="radio"
-                                       name={`ladung-${option.name}`}
-                                       value="false"
-                                       checked={erweiterteEinstellungen[option.name]?.standardLadung === false}
-                                       onChange={(e) =>
-                                         handleErweiterteEinstellungChange(option.name, 'standardLadung', e.target.value, null)
-                                       }
-                                     />
-                                     <span className="text-xs text-gray-700">Wallbox-Ladung</span>
-                                   </label>
-                                 </div>
-                                 <label className="flex flex-col flex-1 min-w-[80px]">
-                                   <span className="text-xs font-medium text-gray-700">Ladehäufigkeit (pro Woche)</span>
-                                   <input
-                                     type="number"
-                                     className="p-1 border rounded-md focus:ring-1 focus:ring-blue-500 text-sm"
-                                     value={erweiterteEinstellungen[option.name]?.nutzung || ''}
-                                     onChange={(e) =>
-                                       handleErweiterteEinstellungChange(option.name, 'nutzung', e.target.value, null)
-                                     }
-                                   />
-                                 </label>
-                               </div>
-                             )}
-                             {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum) => (
-                               <div
-                                 key={zeitraum.id}
-                                 className="zeitraum-section flex flex-row gap-2 items-center p-2 bg-gray-50 rounded-md"
-                               >
-                                 <label className="flex flex-col flex-1 min-w-[100px]">
-                                   <span className="text-xs font-medium text-gray-700">Zeitraum</span>
-                                   <select
-                                     className="p-1 border rounded-md focus:ring-1 focus:ring-blue-500 text-sm"
-                                     value={timePeriods.find((p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit)?.label || ''}
-                                     onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
-                                   >
-                                     <option value="">Zeitraum wählen</option>
-                                     {timePeriods.map((period) => (
-                                       <option key={period.label} value={period.label}>
-                                         {period.label} ({period.startzeit} - {period.endzeit})
-                                       </option>
-                                     ))}
-                                   </select>
-                                 </label>
-                                 <label className="flex flex-col flex-1 min-w-[60px]">
-                                   <span className="text-xs font-medium text-gray-700">Dauer (Std)</span>
-                                   <input
-                                     type="number"
-                                     step="0.1"
-                                     className="p-1 border rounded-md focus:ring-1 focus:ring-blue-500 text-sm"
-                                     value={zeitraum.dauer || ''}
-                                     onChange={(e) =>
-                                       handleErweiterteEinstellungChange(option.name, 'dauer', e.target.value, zeitraum.id)
-                                     }
-                                   />
-                                 </label>
-                                 <button
-                                   className="delete-option-button bg-red-500 text-white rounded px-2 py-1 hover:bg-red-600 text-sm"
-                                   onClick={() => removeZeitraum(option.name, zeitraum.id)}
-                                 >
-                                   X
-                                 </button>
-                               </div>
-                             ))}
-                             <button
-                               className="add-option-button bg-blue-500 text-white rounded px-2 py-1 hover:bg-blue-600 text-sm"
-                               onClick={() => addZeitraum(option.name)}
-                             >
-                               Zeitraum +
-                             </button>
-                           </div>
-                         </div>
+{/* Menüs und Verbraucher */}
+{menus.map((menu) => (
+  <div key={menu.id} className="menu bg-white rounded-lg shadow-md mb-4">
+    <div
+      className="menu-header flex justify-between items-center p-3 bg-gray-100 rounded-t-lg cursor-pointer hover:bg-gray-200"
+      onClick={() => toggleMenu(menu.id)}
+    >
+      <span className="text-base font-semibold text-gray-800">{menu.label}</span>
+      <span
+        className={`triangle transform transition-transform duration-200 ${
+          openMenus[menu.id] ? "rotate-180" : ""
+        } text-gray-600`}
+      >
+        &#9660;
+      </span>
+    </div>
 
+    {openMenus[menu.id] && (
+      <div className="menu-content p-3">
+        <ul className="checkbox-group space-y-2">
+          <li className="checkbox-group-header grid grid-cols-6 gap-3 text-xs font-medium text-gray-700 bg-gray-50 p-2 rounded-md">
+            <span>Icon</span>
+            <span>Info</span>
+            <span>Aktiv</span>
+            <span>Leistung (W)</span>
+            <span>Kosten (€)</span>
+            <span>Löschen</span>
+          </li>
 
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                    {(menu.id === 'grundlastverbraucher' ||
-                      menu.id === 'dynamischeverbraucher' ||
-                      menu.id === 'eauto' ||
-                      menu.id === 'stromerzeuger' ||
-                      menu.id === 'strompeicher') && (
-                      <>
-                        <button
-                          className="add-option-button"
-                          onClick={() => toggleNewOptionForm(menu.id)}
-                        >
-                          {showNewOptionForm[menu.id]
-                            ? 'Formular schließen'
-                            : 'Neue Option hinzufügen'}
-                        </button>
-                        {showNewOptionForm[menu.id] && (
-                          <div className="new-option-container">
-                            <label className="flex flex-col">
-                              <span className="text-sm font-medium text-gray-700">Name</span>
-                              <input
-                                className="new-option-input mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                                type="text"
-                                value={newOptionNames[menu.id] || ''}
-                                onChange={(e) => handleNewOptionName(menu.id, e.target.value)}
-                              />
-                            </label>
-                            <label className="flex flex-col mt-2">
-                              <span className="text-sm font-medium text-gray-700">Leistung (W)</span>
-                              <input
-                                className="new-option-watt mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                                type="number"
-                                value={newOptionWatt[menu.id] || ''}
-                                onChange={(e) => handleNewOptionWatt(menu.id, e.target.value)}
-                              />
-                            </label>
-                            {(menu.id === 'dynamischeverbraucher') && (
-                              <label className="flex flex-col mt-2">
-                                <span className="text-sm font-medium text-gray-700">Typ</span>
-                                <select
-                                  className="mt-1 p-2 border rounded-md focus:ring-2 focus:ring-blue-500"
-                                  value={newOptionTypes[menu.id] || 'week'}
-                                  onChange={(e) => handleNewOptionType(menu.id, e.target.value)}
-                                >
-                                  <option value="week">Wöchentlich</option>
-                                  <option value="day">Täglich</option>
-                                </select>
-                              </label>
-                            )}
-                            <button
-                              className="save-option-button mt-3"
-                              onClick={() => addNewOption(menu.id)}
-                            >
-                              Speichern
-                            </button>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
+          {menu.options.map((option) => (
+            <li
+              key={option.name}
+              className="grid grid-cols-6 gap-3 items-center p-2 hover:bg-gray-50 rounded-md"
+            >
+              {/* Icon */}
+              <div className="icon-field">
+                <img
+                  src="/bilder/logo.png"
+                  alt={`${option.name} icon`}
+                  className="w-6 h-6 object-contain"
+                />
+              </div>
+
+              {/* Info */}
+              <div className="info-field relative group cursor-pointer">
+                <span className="tooltip">{option.name}</span>
+                {verbraucherBeschreibungen[option.name] && (
+                  <span className="tooltip-text absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded p-1 -mt-8">
+                    {verbraucherBeschreibungen[option.name]}
+                  </span>
                 )}
               </div>
-            ))}
-  
+
+              {/* Checkbox */}
+              <div className="checkbox-group-label">
+                <input
+                  type="checkbox"
+                  checked={verbraucherDaten[option.name]?.checked || false}
+                  onChange={(e) =>
+                    onCheckboxChange(option.name, e.target.checked)
+                  }
+                  className="h-3 w-3 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+              </div>
+
+              {/* Watt Input */}
+              <div className="input-group">
+                <input
+                  type="number"
+                  value={verbraucherDaten[option.name]?.watt || ""}
+                  onChange={(e) => handleWattChange(option.name, e.target.value)}
+                  disabled={!verbraucherDaten[option.name]?.checked}
+                  className="w-full p-1 border rounded-md focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 text-xs"
+                />
+              </div>
+
+              {/* Kosten */}
+              <span className="price-display text-gray-700 text-xs">
+                {verbraucherDaten[option.name]?.kosten || "0.00"}
+              </span>
+
+              {/* Löschen */}
+              {(menu.id === "grundlastverbraucher" ||
+                menu.id === "dynamischeverbraucher" ||
+                menu.id === "eauto") && (
+                <button
+                  className="delete-option-button text-red-500 hover:text-red-700"
+                  onClick={() => handleDeleteOptionClick(menu.id, option.name)}
+                >
+                  x
+                </button>
+              )}
+
+              {/* Bestätigung Löschen */}
+              {deleteConfirmOption?.menuId === menu.id &&
+                deleteConfirmOption?.optionName === option.name && (
+                  <div className="confirm-dialog col-span-6 bg-yellow-50 p-2 rounded-md flex items-center gap-3">
+                    <span className="text-xs text-gray-800">{`"${option.name}" löschen?`}</span>
+                    <button
+                      className="confirm-button bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600 text-xs"
+                      onClick={() => confirmDeleteOption(menu.id, option.name)}
+                    >
+                      Ja
+                    </button>
+                    <button
+                      className="cancel-button bg-gray-300 text-gray-800 px-2 py-1 rounded-md hover:bg-gray-400 text-xs"
+                      onClick={cancelDeleteOption}
+                    >
+                      Nein
+                    </button>
+                  </div>
+                )}
+
+              {/* Erweiterte Einstellungen */}
+              {(menu.id === "dynamischeverbraucher" || menu.id === "eauto") && (
+                <div className="settings-container col-span-6 bg-gray-50 p-3 rounded-lg mt-2">
+                  <h4 className="text-base font-semibold text-gray-800 mb-2">
+                    Einstellungen für {option.name}
+                  </h4>
+
+                  {/* Dynamische Verbraucher */}
+                  {menu.id === "dynamischeverbraucher" && (
+                    <div className="dynamic-consumer-layout flex flex-col gap-2">
+                      {erweiterteEinstellungen[option.name]?.zeitraeume?.map(
+                        (zeitraum) => (
+                          <div
+                            key={zeitraum.id}
+                            className="flex flex-row gap-2 bg-white p-3 rounded-md shadow items-stretch"
+                          >
+                            {/* Nutzung pro Woche als Slider */}
+    <div className="flex flex-col gap-2">
+      <label className="flex flex-col">
+        <span className="text-sm font-medium text-gray-700">Nutzung pro Woche: {erweiterteEinstellungen[option.name]?.nutzung || 0}</span>
+        <input
+          type="range"
+          min="0"
+          max="14"
+          value={erweiterteEinstellungen[option.name]?.nutzung || 0}
+          onChange={(e) =>
+            handleErweiterteEinstellungChange(
+              option.name,
+              "nutzung",
+              Number(e.target.value),
+              null // kein Zeitraum nötig
+            )
+          }
+          className="w-full accent-blue-600"
+        />
+      </label>
+    </div>
+
+                            {/* Zeitraum */}
+                            <div className="flex flex-col items-center justify-center flex-1 border rounded-md p-2">
+                              <span className="text-sm font-semibold">Zeitraum</span>
+                              <span className="text-xs text-gray-600">
+                                {timePeriods.find(
+                                  (p) =>
+                                    p.startzeit === zeitraum.startzeit &&
+                                    p.endzeit === zeitraum.endzeit
+                                )
+                                  ? `${timePeriods.find(
+                                      (p) =>
+                                        p.startzeit === zeitraum.startzeit &&
+                                        p.endzeit === zeitraum.endzeit
+                                    ).label} (${zeitraum.startzeit} - ${zeitraum.endzeit})`
+                                  : "–"}
+                              </span>
+                              <input
+                                type="range"
+                                min="0"
+                                max={timePeriods.length - 1}
+                                value={timePeriods.findIndex(
+                                  (p) =>
+                                    p.startzeit === zeitraum.startzeit &&
+                                    p.endzeit === zeitraum.endzeit
+                                )}
+                                onChange={(e) =>
+                                  handleTimePeriodChange(
+                                    option.name,
+                                    timePeriods[e.target.value].label,
+                                    zeitraum.id
+                                  )
+                                }
+                                className="w-full accent-blue-600"
+                              />
+                            </div>
+
+                            {/* Dauer */}
+                            <div className="flex flex-col items-center justify-center flex-1 border rounded-md p-2">
+                              <span className="text-sm font-semibold">Dauer</span>
+                              <span className="text-lg font-bold text-blue-600">
+                                {zeitraum.dauer || 0}
+                              </span>
+                              <input
+                                type="range"
+                                min="0"
+                                max="10"
+                                step="0.5"
+                                value={zeitraum.dauer || 0}
+                                onChange={(e) =>
+                                  handleErweiterteEinstellungChange(
+                                    option.name,
+                                    "dauer",
+                                    Number(e.target.value),
+                                    zeitraum.id
+                                  )
+                                }
+                                className="w-full accent-blue-600"
+                              />
+                            </div>
+                          </div>
+                        )
+                      )}
+
+                      <div className="flex justify-center mt-2">
+                        <button
+                          className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 text-sm font-semibold"
+                          onClick={() => addZeitraum(option.name)}
+                        >
+                          Zeitraum hinzufügen
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* E-Auto */}
+                  {menu.id === "eauto" && (
+                    <div className="flex flex-col sm:flex-row gap-3 items-start flex-wrap">
+                      <label className="flex flex-col flex-1 min-w-[80px]">
+                        <span className="text-xs font-medium text-gray-700">
+                          Batteriekapazität (kWh)
+                        </span>
+                        <input
+                          type="number"
+                          value={
+                            erweiterteEinstellungen[option.name]?.batterieKapazitaet ||
+                            ""
+                          }
+                          onChange={(e) =>
+                            handleErweiterteEinstellungChange(
+                              option.name,
+                              "batterieKapazitaet",
+                              e.target.value,
+                              null
+                            )
+                          }
+                          className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
+                        />
+                      </label>
+
+                      <label className="flex flex-col flex-1 min-w-[80px]">
+                        <span className="text-xs font-medium text-gray-700">
+                          Wallbox-Leistung (W)
+                        </span>
+                        <input
+                          type="number"
+                          value={erweiterteEinstellungen[option.name]?.wallboxLeistung || ""}
+                          onChange={(e) =>
+                            handleErweiterteEinstellungChange(
+                              option.name,
+                              "wallboxLeistung",
+                              e.target.value,
+                              null
+                            )
+                          }
+                          className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
+                        />
+                      </label>
+
+                      {/* Ladeart */}
+                      <div className="radio-group-settings flex flex-col gap-1">
+                        <label className="flex items-center gap-1">
+                          <input
+                            type="radio"
+                            name={`ladung-${option.name}`}
+                            value="true"
+                            checked={erweiterteEinstellungen[option.name]?.standardLadung === true}
+                            onChange={(e) =>
+                              handleErweiterteEinstellungChange(
+                                option.name,
+                                "standardLadung",
+                                e.target.value,
+                                null
+                              )
+                            }
+                            className="h-3 w-3 text-blue-600 focus:ring-blue-500"
+                          />
+                          <span className="text-xs text-gray-700">Standardladung</span>
+                        </label>
+                        <label className="flex items-center gap-1">
+                          <input
+                            type="radio"
+                            name={`ladung-${option.name}`}
+                            value="false"
+                            checked={erweiterteEinstellungen[option.name]?.standardLadung === false}
+                            onChange={(e) =>
+                              handleErweiterteEinstellungChange(
+                                option.name,
+                                "standardLadung",
+                                e.target.value,
+                                null
+                              )
+                            }
+                            className="h-3 w-3 text-blue-600 focus:ring-blue-500"
+                          />
+                          <span className="text-xs text-gray-700">Wallbox-Ladung</span>
+                        </label>
+                      </div>
+
+                      <label className="flex flex-col flex-1 min-w-[80px]">
+                        <span className="text-xs font-medium text-gray-700">
+                          Ladehäufigkeit (pro Woche)
+                        </span>
+                        <input
+                          type="number"
+                          value={erweiterteEinstellungen[option.name]?.nutzung || ""}
+                          onChange={(e) =>
+                            handleErweiterteEinstellungChange(
+                              option.name,
+                              "nutzung",
+                              e.target.value,
+                              null
+                            )
+                          }
+                          className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
+                        />
+                      </label>
+
+                      {/* Zeiträume */}
+                      {erweiterteEinstellungen[option.name]?.zeitraeume?.map(
+                        (zeitraum) => (
+                          <div
+                            key={zeitraum.id}
+                            className="zeitraum-section flex flex-row gap-2 items-center"
+                          >
+                            <label className="flex flex-col flex-1 min-w-[100px]">
+                              <span className="text-xs font-medium text-gray-700">
+                                Zeitraum
+                              </span>
+                              <select
+                                value={
+                                  timePeriods.find(
+                                    (p) =>
+                                      p.startzeit === zeitraum.startzeit &&
+                                      p.endzeit === zeitraum.endzeit
+                                  )?.label || ""
+                                }
+                                onChange={(e) =>
+                                  handleTimePeriodChange(
+                                    option.name,
+                                    e.target.value,
+                                    zeitraum.id
+                                  )
+                                }
+                                className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
+                              >
+                                <option value="">Zeitraum wählen</option>
+                                {timePeriods.map((period) => (
+                                  <option key={period.label} value={period.label}>
+                                    {period.label} ({period.startzeit} - {period.endzeit})
+                                  </option>
+                                ))}
+                              </select>
+                            </label>
+
+                            <label className="flex flex-col flex-1 min-w-[60px]">
+                              <span className="text-xs font-medium text-gray-700">
+                                Dauer (Std)
+                              </span>
+                              <input
+                                type="number"
+                                step="0.1"
+                                value={zeitraum.dauer || ""}
+                                onChange={(e) =>
+                                  handleErweiterteEinstellungChange(
+                                    option.name,
+                                    "dauer",
+                                    e.target.value,
+                                    zeitraum.id
+                                  )
+                                }
+                                className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
+                              />
+                            </label>
+
+                            <button
+                              className="delete-option-button bg-red-500 text-white rounded-md px-2 py-1 hover:bg-red-600 text-xs"
+                              onClick={() => removeZeitraum(option.name, zeitraum.id)}
+                            >
+                              X
+                            </button>
+                          </div>
+                        )
+                      )}
+
+                      <button
+                        className="add-option-button bg-blue-600 text-white rounded-md px-2 py-1 hover:bg-blue-700 text-xs mt-4"
+                        onClick={() => addZeitraum(option.name)}
+                      >
+                        Zeitraum +
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+
+        {/* Neue Option hinzufügen */}
+        {(menu.id === "grundlastverbraucher" ||
+          menu.id === "dynamischeverbraucher" ||
+          menu.id === "eauto" ||
+          menu.id === "stromerzeuger" ||
+          menu.id === "strompeicher") && (
+          <>
+            <button
+              className="add-option-button bg-blue-600 text-white rounded-md px-3 py-1 hover:bg-blue-700 mt-3 w-full sm:w-auto text-xs"
+              onClick={() => toggleNewOptionForm(menu.id)}
+            >
+              {showNewOptionForm[menu.id]
+                ? "Formular schließen"
+                : "Neue Option hinzufügen"}
+            </button>
+
+            {showNewOptionForm[menu.id] && (
+              <div className="new-option-container bg-gray-50 p-3 rounded-lg mt-3">
+                <label className="flex flex-col">
+                  <span className="text-xs font-medium text-gray-700">Name</span>
+                  <input
+                    type="text"
+                    value={newOptionNames[menu.id] || ""}
+                    onChange={(e) => handleNewOptionName(menu.id, e.target.value)}
+                    className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs mt-1"
+                  />
+                </label>
+
+                <label className="flex flex-col mt-2">
+                  <span className="text-xs font-medium text-gray-700">Leistung (W)</span>
+                  <input
+                    type="number"
+                    value={newOptionWatt[menu.id] || ""}
+                    onChange={(e) => handleNewOptionWatt(menu.id, e.target.value)}
+                    className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs mt-1"
+                  />
+                </label>
+
+                {menu.id === "dynamischeverbraucher" && (
+                  <label className="flex flex-col mt-2">
+                    <span className="text-xs font-medium text-gray-700">Typ</span>
+                    <select
+                      value={newOptionTypes[menu.id] || "week"}
+                      onChange={(e) => handleNewOptionType(menu.id, e.target.value)}
+                      className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs mt-1"
+                    >
+                      <option value="week">Wöchentlich</option>
+                      <option value="day">Täglich</option>
+                    </select>
+                  </label>
+                )}
+
+                <button
+                  className="save-option-button bg-blue-600 text-white rounded-md px-3 py-1 hover:bg-blue-700 mt-3 w-full sm:w-auto text-xs"
+                  onClick={() => addNewOption(menu.id)}
+                >
+                  Speichern
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    )}
+  </div>
+))}
+
 
 
 
