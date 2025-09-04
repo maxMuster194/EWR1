@@ -1614,8 +1614,8 @@ body {
 }
 
 .checkbox-group-label input {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   accent-color: #409966;
   cursor: pointer;
 }
@@ -2114,11 +2114,9 @@ body {
   }
 
   .checkbox-group-label input {
-  width: 15.2px;
-  height: 15.2px;
-  accent-color: #409966;
-  cursor: pointer;
-}
+    width: 12px;
+    height: 12px;
+  }
 
   .input-group input.watt-input {
     padding: 3.6px 4.8px;
