@@ -1614,8 +1614,8 @@ body {
 }
 
 .checkbox-group-label input {
-  width: 14px;
-  height: 14px;
+  width: 24px;
+  height: 24px;
   accent-color: #409966;
   cursor: pointer;
 }
@@ -2114,9 +2114,11 @@ body {
   }
 
   .checkbox-group-label input {
-    width: 12px;
-    height: 12px;
-  }
+  width: 15.2px;
+  height: 15.2px;
+  accent-color: #409966;
+  cursor: pointer;
+}
 
   .input-group input.watt-input {
     padding: 3.6px 4.8px;
@@ -2390,9 +2392,9 @@ body {
                           className="flex flex-row gap-0.5 bg-white p-0.5 rounded-md shadow justify-center"
                         >
                           {/* Nutzung pro Woche */}
-                          <div className="flex flex-col items-center justify-center w-[60px] border rounded-md p-0.5 bg-white shadow-sm sm:w-[70px]">
+                          <div className="flex flex-col items-center justify-center w-[108px] border rounded-md p-1 bg-white shadow-sm sm:w-[90px]">
                             <span className="text-[10px] font-semibold text-gray-700 text-center sm:text-[11px]">Nutzung/Woche</span>
-                            <span className="text-[14px] font-bold text-blue-600 sm:text-[15px]">
+                            <span className="text-[14px] font-bold text-green-600 sm:text-[15px]">
                               {erweiterteEinstellungen[option.name]?.nutzung || 0}
                             </span>
                             <input
@@ -2403,14 +2405,14 @@ body {
                               onChange={(e) =>
                                 handleErweiterteEinstellungChange(option.name, "nutzung", Number(e.target.value), null)
                               }
-                              className="w-full accent-blue-600 mt-0.5"
+                              className="w-full accent-green-600 mt-0.5"
                             />
                           </div>
 
                           {/* Zeitraum */}
-                          <div className="flex flex-col items-center justify-center w-[60px] border rounded-md p-0.5 bg-white shadow-sm sm:w-[70px]">
+                          <div className="flex flex-col items-center justify-center w-[108px] border rounded-md p-1 bg-white shadow-sm sm:w-[90px]">
                             <span className="text-[10px] font-semibold text-gray-700 text-center sm:text-[11px]">Zeitraum</span>
-                            <span className="text-[10px] text-gray-600 text-center sm:text-[11px]">
+                            <span className="text-[10px] text-green-600 text-center sm:text-[11px]">
                               {timePeriods.find(
                                 (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
                               )
@@ -2429,14 +2431,14 @@ body {
                               onChange={(e) =>
                                 handleTimePeriodChange(option.name, timePeriods[e.target.value].label, zeitraum.id)
                               }
-                              className="w-full accent-blue-600 mt-0.5"
+                              className="w-full accent-green-600 mt-0.5"
                             />
                           </div>
 
                           {/* Dauer */}
-                          <div className="flex flex-col items-center justify-center w-[60px] border rounded-md p-0.5 bg-white shadow-sm sm:w-[70px]">
+                          <div className="flex flex-col items-center justify-center w-[108px] border rounded-md p-1 bg-white shadow-sm sm:w-[90px]">
                             <span className="text-[10px] font-semibold text-gray-700 text-center sm:text-[11px]">Dauer (h)</span>
-                            <span className="text-[14px] font-bold text-blue-600 sm:text-[15px]">{zeitraum.dauer || 0}</span>
+                            <span className="text-[14px] font-bold text-green-600 sm:text-[15px]">{zeitraum.dauer || 0}</span>
                             <input
                               type="range"
                               min="0"
@@ -2446,11 +2448,14 @@ body {
                               onChange={(e) =>
                                 handleErweiterteEinstellungChange(option.name, "dauer", Number(e.target.value), zeitraum.id)
                               }
-                              className="w-full accent-blue-600 mt-0.5"
+                              className="w-full accent-green-600 mt-0.5"
                             />
                           </div>
                         </div>
                       ))}
+
+
+                      
                       <div className="flex justify-center mt-1">
                         <button
                           className="bg-green-600 text-white px-1 py-0.5 rounded-md hover:bg-green-700 text-[12px] font-semibold sm:px-[2.2px] sm:py-[0.55px] sm:text-[13px]"
