@@ -2387,71 +2387,84 @@ body {
                       {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum) => (
                         <div
                           key={zeitraum.id}
-                          className="flex flex-row gap-0.5 bg-white p-0.5 rounded-md shadow justify-center"
+                          className="flex flex-row gap-0.5 bg-white p-0.5 rounded-md shadow justify-center">
 
 
-                          
-                        >
-                          {/* Nutzung pro Woche */}
-                          <div className="flex flex-col items-center justify-center w-[108px] border rounded-md p-1 bg-white shadow-sm sm:w-[90px]">
-                            <span className="text-[10px] font-semibold text-gray-700 text-center sm:text-[11px]">Nutzung/Woche</span>
-                            <span className="text-[14px] font-bold text-green-600 sm:text-[15px]">
-                              {erweiterteEinstellungen[option.name]?.nutzung || 0}
-                            </span>
-                            <input
-                              type="range"
-                              min="0"
-                              max="14"
-                              value={erweiterteEinstellungen[option.name]?.nutzung || 0}
-                              onChange={(e) =>
-                                handleErweiterteEinstellungChange(option.name, "nutzung", Number(e.target.value), null)
-                              }
-                              className="w-full accent-green-600 mt-0.5"
-                            />
-                          </div>
 
-                          {/* Zeitraum */}
-                          <div className="flex flex-col items-center justify-center w-[108px] border rounded-md p-1 bg-white shadow-sm sm:w-[90px]">
-                            <span className="text-[10px] font-semibold text-gray-700 text-center sm:text-[11px]">Zeitraum</span>
-                            <span className="text-[10px] text-green-600 text-center sm:text-[11px]">
-                              {timePeriods.find(
-                                (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-                              )
-                                ? `${timePeriods.find(
-                                    (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-                                  ).label} (${zeitraum.startzeit}-${zeitraum.endzeit})`
-                                : "–"}
-                            </span>
-                            <input
-                              type="range"
-                              min="0"
-                              max={timePeriods.length - 1}
-                              value={timePeriods.findIndex(
-                                (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-                              )}
-                              onChange={(e) =>
-                                handleTimePeriodChange(option.name, timePeriods[e.target.value].label, zeitraum.id)
-                              }
-                              className="w-full accent-green-600 mt-0.5"
-                            />
-                          </div>
 
-                          {/* Dauer */}
-                          <div className="flex flex-col items-center justify-center w-[108px] border rounded-md p-1 bg-white shadow-sm sm:w-[90px]">
-                            <span className="text-[10px] font-semibold text-gray-700 text-center sm:text-[11px]">Dauer (h)</span>
-                            <span className="text-[14px] font-bold text-green-600 sm:text-[15px]">{zeitraum.dauer || 0}</span>
-                            <input
-                              type="range"
-                              min="0"
-                              max="10"
-                              step="0.5"
-                              value={zeitraum.dauer || 0}
-                              onChange={(e) =>
-                                handleErweiterteEinstellungChange(option.name, "dauer", Number(e.target.value), zeitraum.id)
-                              }
-                              className="w-full accent-green-600 mt-0.5"
-                            />
-                          </div>
+
+<div className="flex flex-col gap-2 w-full">
+  {/* Nutzung pro Woche */}
+  <div className="flex flex-col items-center justify-center w-full">
+    <span className="text-[11px] font-semibold text-gray-700 text-center">
+      Nutzung/Woche
+    </span>
+    <span className="text-[15px] font-bold text-green-600">
+      {erweiterteEinstellungen[option.name]?.nutzung || 0}
+    </span>
+    <input
+      type="range"
+      min="0"
+      max="14"
+      value={erweiterteEinstellungen[option.name]?.nutzung || 0}
+      onChange={(e) =>
+        handleErweiterteEinstellungChange(option.name, "nutzung", Number(e.target.value), null)
+      }
+      className="w-full accent-green-600 mt-1"
+    />
+  </div>
+
+  {/* Zeitraum */}
+  <div className="flex flex-col items-center justify-center w-full">
+    <span className="text-[11px] font-semibold text-gray-700 text-center">
+      Zeitraum
+    </span>
+    <span className="text-[11px] text-green-600 text-center">
+      {timePeriods.find(
+        (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+      )
+        ? `${timePeriods.find(
+            (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+          ).label} (${zeitraum.startzeit}-${zeitraum.endzeit})`
+        : "–"}
+    </span>
+    <input
+      type="range"
+      min="0"
+      max={timePeriods.length - 1}
+      value={timePeriods.findIndex(
+        (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+      )}
+      onChange={(e) =>
+        handleTimePeriodChange(option.name, timePeriods[e.target.value].label, zeitraum.id)
+      }
+      className="w-full accent-green-600 mt-1"
+    />
+  </div>
+
+  {/* Dauer */}
+  <div className="flex flex-col items-center justify-center w-full">
+    <span className="text-[11px] font-semibold text-gray-700 text-center">
+      Dauer (h)
+    </span>
+    <span className="text-[15px] font-bold text-green-600">
+      {zeitraum.dauer || 0}
+    </span>
+    <input
+      type="range"
+      min="0"
+      max="10"
+      step="0.5"
+      value={zeitraum.dauer || 0}
+      onChange={(e) =>
+        handleErweiterteEinstellungChange(option.name, "dauer", Number(e.target.value), zeitraum.id)
+      }
+      className="w-full accent-green-600 mt-1"
+    />
+  </div>
+</div>
+
+
                         </div>
                       ))}
 
