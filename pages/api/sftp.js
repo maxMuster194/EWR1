@@ -3,23 +3,29 @@ import Papa from 'papaparse';
 import fs from 'fs';
 import path from 'path';
 import mongoose from 'mongoose';
-import { log } from '../utils/logger.js'; // Logger importieren
 
-// MongoDB connection
+// ---------------------------
+// MongoDB-Verbindung
+// ---------------------------
 const mongoURI = 'mongodb+srv://max:Julian1705@strom.vm0dp8f.mongodb.net/?retryWrites=true&w=majority&appName=Strom';
+
 if (mongoose.connection.readyState === 0) {
   mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .catch(err => log(`❌ MongoDB connection error: ${err.message}`));
+    .catch(err => console.error(`[${new Date().toLocaleString()}] ❌ MongoDB connection error:`, err));
 }
 
-// Flexible Schemas
+// ---------------------------
+// Schema und Models
+// ---------------------------
 const germanySchema = new mongoose.Schema({}, { strict: false });
 const austriaSchema = new mongoose.Schema({}, { strict: false });
 
 const GermanyPrice = mongoose.models.GermanyPrice || mongoose.model('GermanyPrice', germanySchema);
 const AustriaPrice = mongoose.models.AustriaPrice || mongoose.model('AustriaPrice', austriaSchema);
 
-// SFTP config
+// ---------------------------
+// SFTP-Konfiguration
+// ---------------------------
 const sftpConfig = {
   host: "ftp.epexspot.com",
   port: 22,
@@ -27,19 +33,21 @@ const sftpConfig = {
   password: "j3zbZNcXo$p52Pkpo"
 };
 
-// CSV abrufen
+// ---------------------------
+// Funktionen
+// ---------------------------
+const logInfo = (message) => console.log(`[INFO] [${new Date().toLocaleString()}] ${message}`);
+const logError = (message) => console.error(`[ERROR] [${new Date().toLocaleString()}] ${message}`);
+
 const fetchCSVData = async (remotePath) => {
   const sftp = new SFTPClient();
   try {
-    log(`🔄 Verbinde zu SFTP: ${remotePath}`);
+    logInfo(`Verbinde zu SFTP: ${remotePath}`);
     await sftp.connect(sftpConfig);
     const fileData = await sftp.get(remotePath);
     await sftp.end();
 
-    if (!fileData) {
-      log(`⚠️ Keine Daten empfangen für ${remotePath}`);
-      return [];
-    }
+    if (!fileData) return [];
 
     return new Promise((resolve, reject) => {
       Papa.parse(fileData.toString(), {
@@ -47,69 +55,77 @@ const fetchCSVData = async (remotePath) => {
         skipEmptyLines: true,
         dynamicTyping: true,
         complete: (result) => {
-          log(`✅ CSV geladen (${remotePath}) → ${result.data.length} Zeilen`);
+          logInfo(`CSV geladen (${remotePath}) → ${result.data.length} Zeilen`);
           resolve(result.data);
         },
-        error: (error) => reject(error),
+        error: (err) => reject(err),
       });
     });
   } catch (err) {
-    log(`❌ Fehler beim Laden von ${remotePath}: ${err.message}`);
+    logError(`Fehler beim Abrufen von ${remotePath}: ${err.message}`);
     return [];
   }
 };
 
-// CSV speichern
 const saveCSVFile = (data, filename) => {
   if (!data || data.length === 0) return null;
   const csv = Papa.unparse(data);
   const filePath = path.join(process.cwd(), 'data', filename);
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, csv);
-  log(`💾 Datei gespeichert: ${filePath}`);
+  logInfo(`Datei gespeichert: ${filePath}`);
   return filePath;
 };
 
-// MongoDB Update
 const updateMongoDB = async (data, model) => {
   if (!data || data.length === 0) return;
   try {
     await model.deleteMany({});
     await model.insertMany(data, { ordered: false });
-    log(`✅ MongoDB aktualisiert: ${model.modelName} (${data.length} Datensätze)`);
+    logInfo(`MongoDB aktualisiert: ${model.modelName} (${data.length} Datensätze)`);
   } catch (err) {
-    log(`❌ Fehler MongoDB Update (${model.modelName}): ${err.message}`);
+    logError(`Fehler beim MongoDB-Update (${model.modelName}): ${err.message}`);
   }
 };
 
-// Daten aktualisieren
-export const updateData = async () => {
-  log('🚀 Datenupdate gestartet');
+const updateData = async () => {
+  logInfo('Datenupdate gestartet');
+
   const germanyPath = '/germany/Day-Ahead Auction/Hourly/Current/Prices_Volumes/auction_spot_prices_germany_luxembourg_2025.csv';
   const austriaPath = '/austria/Day-Ahead Auction/Hourly/Current/Prices_Volumes/auction_spot_prices_austria_2025.csv';
 
   try {
-    const [germanyPrices, austriaPrices] = await Promise.all([
+    const [germany, austria] = await Promise.all([
       fetchCSVData(germanyPath),
       fetchCSVData(austriaPath),
     ]);
 
-    saveCSVFile(germanyPrices, 'germany_prices.csv');
-    saveCSVFile(austriaPrices, 'austria_prices.csv');
+    saveCSVFile(germany, 'germany_prices.csv');
+    saveCSVFile(austria, 'austria_prices.csv');
 
     await Promise.all([
-      updateMongoDB(germanyPrices, GermanyPrice),
-      updateMongoDB(austriaPrices, AustriaPrice),
+      updateMongoDB(germany, GermanyPrice),
+      updateMongoDB(austria, AustriaPrice),
     ]);
 
-    log('✅ Datenupdate erfolgreich abgeschlossen');
-  } catch (error) {
-    log(`❌ Fehler während Datenupdate: ${error.message}`);
+    logInfo('✅ Datenupdate erfolgreich abgeschlossen');
+  } catch (err) {
+    logError(`Fehler während Datenupdate: ${err.message}`);
   }
 };
 
-// Alle 30 Sekunden ausführen
-setInterval(updateData, 30 * 1000);
+// ---------------------------
+// Automatische Ausführung alle 30 Sekunden
+// ---------------------------
+setInterval(updateData, 30 * 1000); // alle 30 Sekunden
 
-// Initial sofort ausführen
-updateData();
+// ---------------------------
+// API-Handler für manuellen Trigger
+// ---------------------------
+export default async function handler(req, res) {
+  if (req.method === 'GET') {
+    await updateData();
+    return res.status(200).json({ message: "Data successfully updated." });
+  }
+  return res.status(405).json({ error: 'Only GET requests allowed' });
+}
