@@ -3,29 +3,22 @@ import Papa from 'papaparse';
 import fs from 'fs';
 import path from 'path';
 import mongoose from 'mongoose';
+import cron from 'node-cron';
 
-// ---------------------------
-// MongoDB-Verbindung
-// ---------------------------
+// MongoDB connection
 const mongoURI = 'mongodb+srv://max:Julian1705@strom.vm0dp8f.mongodb.net/?retryWrites=true&w=majority&appName=Strom';
-
 if (mongoose.connection.readyState === 0) {
   mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .catch(err => console.error(`[${new Date().toLocaleString()}] ❌ MongoDB connection error:`, err));
+    .catch(err => console.error('MongoDB connection error:', err));
 }
 
-// ---------------------------
-// Schema und Models
-// ---------------------------
+// Schemas & Models
 const germanySchema = new mongoose.Schema({}, { strict: false });
 const austriaSchema = new mongoose.Schema({}, { strict: false });
-
 const GermanyPrice = mongoose.models.GermanyPrice || mongoose.model('GermanyPrice', germanySchema);
 const AustriaPrice = mongoose.models.AustriaPrice || mongoose.model('AustriaPrice', austriaSchema);
 
-// ---------------------------
-// SFTP-Konfiguration
-// ---------------------------
+// SFTP config
 const sftpConfig = {
   host: "ftp.epexspot.com",
   port: 22,
@@ -33,16 +26,11 @@ const sftpConfig = {
   password: "j3zbZNcXo$p52Pkpo"
 };
 
-// ---------------------------
-// Funktionen
-// ---------------------------
-const logInfo = (message) => console.log(`[INFO] [${new Date().toLocaleString()}] ${message}`);
-const logError = (message) => console.error(`[ERROR] [${new Date().toLocaleString()}] ${message}`);
-
+// CSV Fetch
 const fetchCSVData = async (remotePath) => {
   const sftp = new SFTPClient();
   try {
-    logInfo(`Verbinde zu SFTP: ${remotePath}`);
+    console.log(`🔄 Verbinde zu SFTP: ${remotePath}`);
     await sftp.connect(sftpConfig);
     const fileData = await sftp.get(remotePath);
     await sftp.end();
@@ -54,78 +42,73 @@ const fetchCSVData = async (remotePath) => {
         header: true,
         skipEmptyLines: true,
         dynamicTyping: true,
-        complete: (result) => {
-          logInfo(`CSV geladen (${remotePath}) → ${result.data.length} Zeilen`);
-          resolve(result.data);
-        },
-        error: (err) => reject(err),
+        complete: (result) => resolve(result.data),
+        error: (err) => reject(err)
       });
     });
   } catch (err) {
-    logError(`Fehler beim Abrufen von ${remotePath}: ${err.message}`);
+    console.error(`❌ Fehler beim Abrufen von ${remotePath}:`, err.message);
     return [];
   }
 };
 
+// CSV speichern
 const saveCSVFile = (data, filename) => {
   if (!data || data.length === 0) return null;
   const csv = Papa.unparse(data);
   const filePath = path.join(process.cwd(), 'data', filename);
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, csv);
-  logInfo(`Datei gespeichert: ${filePath}`);
+  console.log(`💾 Datei gespeichert: ${filePath}`);
   return filePath;
 };
 
+// MongoDB Update
 const updateMongoDB = async (data, model) => {
   if (!data || data.length === 0) return;
   try {
     await model.deleteMany({});
     await model.insertMany(data, { ordered: false });
-    logInfo(`MongoDB aktualisiert: ${model.modelName} (${data.length} Datensätze)`);
+    console.log(`✅ MongoDB aktualisiert: ${model.modelName} (${data.length} Datensätze)`);
   } catch (err) {
-    logError(`Fehler beim MongoDB-Update (${model.modelName}): ${err.message}`);
+    console.error(`❌ Fehler beim MongoDB-Update (${model.modelName}):`, err.message);
   }
 };
 
+// Datenupdate
 const updateData = async () => {
-  logInfo('Datenupdate gestartet');
+  console.log(`[INFO] [${new Date().toLocaleString()}] Datenupdate gestartet`);
+  const fileGermany = '/germany/Day-Ahead Auction/Hourly/Current/Prices_Volumes/auction_spot_prices_germany_luxembourg_2025.csv';
+  const fileAustria = '/austria/Day-Ahead Auction/Hourly/Current/Prices_Volumes/auction_spot_prices_austria_2025.csv';
 
-  const germanyPath = '/germany/Day-Ahead Auction/Hourly/Current/Prices_Volumes/auction_spot_prices_germany_luxembourg_2025.csv';
-  const austriaPath = '/austria/Day-Ahead Auction/Hourly/Current/Prices_Volumes/auction_spot_prices_austria_2025.csv';
+  const [germanyData, austriaData] = await Promise.all([
+    fetchCSVData(fileGermany),
+    fetchCSVData(fileAustria)
+  ]);
 
-  try {
-    const [germany, austria] = await Promise.all([
-      fetchCSVData(germanyPath),
-      fetchCSVData(austriaPath),
-    ]);
+  saveCSVFile(germanyData, 'germany_prices.csv');
+  saveCSVFile(austriaData, 'austria_prices.csv');
 
-    saveCSVFile(germany, 'germany_prices.csv');
-    saveCSVFile(austria, 'austria_prices.csv');
+  await Promise.all([
+    updateMongoDB(germanyData, GermanyPrice),
+    updateMongoDB(austriaData, AustriaPrice)
+  ]);
 
-    await Promise.all([
-      updateMongoDB(germany, GermanyPrice),
-      updateMongoDB(austria, AustriaPrice),
-    ]);
-
-    logInfo('✅ Datenupdate erfolgreich abgeschlossen');
-  } catch (err) {
-    logError(`Fehler während Datenupdate: ${err.message}`);
-  }
+  console.log(`[INFO] [${new Date().toLocaleString()}] ✅ Datenupdate abgeschlossen`);
 };
 
-// ---------------------------
-// Automatische Ausführung alle 30 Sekunden
-// ---------------------------
-setInterval(updateData, 30 * 1000); // alle 30 Sekunden
+// Cronjob: täglich um 14:15
+cron.schedule('15 14 * * *', async () => {
+  await updateData();
+}, { timezone: 'Europe/Berlin' });
 
-// ---------------------------
-// API-Handler für manuellen Trigger
-// ---------------------------
+// Optional: API Trigger für manuelles Update
 export default async function handler(req, res) {
-  if (req.method === 'GET') {
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Only GET allowed' });
+  try {
     await updateData();
-    return res.status(200).json({ message: "Data successfully updated." });
+    res.status(200).json({ message: 'Data successfully updated.' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  return res.status(405).json({ error: 'Only GET requests allowed' });
-}
+};
