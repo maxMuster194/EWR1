@@ -1308,7 +1308,7 @@ body {
   font-family: 'Inter', Arial, sans-serif;
   background: #f3f4f6;
   color: #1f2937;
-  line-height: 1.5;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -1319,44 +1319,44 @@ body {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 12px;
+  gap: 8px;
+  padding: 8px;
   min-height: 100vh;
-  padding-top: 352px;
+  padding-top: 340px;
 }
 
 /* Fixierter Chart-Bereich */
 .fixed-chart {
   position: fixed;
-  top: 40px;
+  top: 32px;
   left: 0;
   right: 0;
   z-index: 10;
   background: #ffffff;
-  padding: 12px;
-  border-radius: 0 0 8px 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 /* Chart-Container */
 .chart-container {
-  height: 300px;
+  height: 280px;
 }
 
 /* Container für den Rechenbericht */
 .calculation-report {
   background: #ffffff;
-  padding: 12px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   flex: 1;
 }
 
 /* Titel des Rechenberichts */
 .report-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 12px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 8px;
   color: #409966;
 }
 
@@ -1364,7 +1364,7 @@ body {
 .report-content {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 /* Eingabefelder */
@@ -1374,61 +1374,60 @@ body {
 }
 
 .input-container-html label {
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 0.8125rem;
+  font-weight: 500;
   color: #1f2937;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .input-container-html input,
 .input-container-html select {
-  padding: 6px;
+  padding: 5px;
   border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font-size: 0.875rem;
+  border-radius: 3px;
+  font-size: 0.8125rem;
   width: 100%;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .input-container-html input:focus,
 .input-container-html select:focus {
   outline: none;
   border-color: #409966;
-  box-shadow: 0 0 0 2px rgba(64, 153, 102, 0.3);
+  box-shadow: 0 0 0 1.5px rgba(64, 153, 102, 0.25);
 }
 
 /* Region-Buttons */
 .region-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 8px;
   justify-content: center;
   align-items: center;
-  margin: 8px 0;
-  padding: 6px;
+  margin: 6px 0;
+  padding: 5px;
 }
 
 .region-switch-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  min-width: 60px;
+  gap: 3px;
+  min-width: 56px;
 }
 
 .region-label {
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 0.8125rem;
+  font-weight: 500;
   color: #1a1a1a;
   text-align: center;
-  margin-bottom: 4px;
   transition: color 0.2s ease;
 }
 
 .discount-switch-container {
   position: relative;
-  width: 36px;
-  height: 20px;
+  width: 32px;
+  height: 18px;
 }
 
 .discount-switch-input {
@@ -1444,22 +1443,22 @@ body {
   right: 0;
   bottom: 0;
   background-color: #d1d5db;
-  border-radius: 10px;
+  border-radius: 9px;
   cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.2s ease;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .discount-switch-slider:before {
   position: absolute;
   content: '';
-  height: 16px;
-  width: 16px;
+  height: 14px;
+  width: 14px;
   left: 2px;
   bottom: 2px;
   background-color: #ffffff;
   border-radius: 50%;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
 }
 
 .discount-switch-input:checked + .discount-switch-slider {
@@ -1467,11 +1466,11 @@ body {
 }
 
 .discount-switch-input:checked + .discount-switch-slider:before {
-  transform: translateX(16px);
+  transform: translateX(14px);
 }
 
 .discount-switch-input:focus + .discount-switch-slider {
-  box-shadow: 0 0 0 2px rgba(4, 120, 87, 0.2);
+  box-shadow: 0 0 0 1.5px rgba(4, 120, 87, 0.25);
 }
 
 .discount-switch-slider:hover {
@@ -1489,68 +1488,68 @@ body {
 /* Menüs */
 .menu {
   background: #f9fafb;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-bottom: 12px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  margin-bottom: 8px;
 }
 
 .menu-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 8px;
   cursor: pointer;
   background: linear-gradient(90deg, #062316, #409966);
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  color: #ffffff;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  color: #ffffff; /* Schriftfarbe für Menü-Header bleibt weiß */
 }
 
 .menu-header span {
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #ffffff; /* Explizit weiß für Menü-Texte wie "Stromerzeuger▼" */
 }
 
 .triangle {
-  transition: transform 0.3s ease;
+  transition: transform 0.2s ease;
 }
 
 .menu-content {
-  padding: 10px;
+  padding: 8px;
   background: #ffffff;
-  border-radius: 0 0 8px 8px;
+  border-radius: 0 0 6px 6px;
 }
 
 /* Checkbox-Gruppe */
 .checkbox-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .checkbox-group-header {
   display: grid;
-  grid-template-columns: 40px 2fr 60px 80px 80px 40px;
-  gap: 8px;
-  font-weight: 600;
+  grid-template-columns: 36px 2fr 56px 72px 72px 36px;
+  gap: 6px;
+  font-weight: 500;
   font-size: 0.75rem;
   color: #409966;
-  padding: 8px 0;
+  padding: 6px 0;
   background: #f0f4f8;
-  border-radius: 4px;
+  border-radius: 3px;
   text-align: center;
 }
 
 .checkbox-group li {
   display: grid;
-  grid-template-columns: 40px 2fr 60px 80px 80px 40px;
-  gap: 8px;
+  grid-template-columns: 36px 2fr 56px 72px 72px 36px;
+  gap: 6px;
   align-items: center;
-  padding: 8px 0;
+  padding: 6px 0;
   background: #ffffff;
-  border-radius: 4px;
+  border-radius: 3px;
   font-size: 0.75rem;
-  position: relative;
 }
 
 .checkbox-group li:hover {
@@ -1564,10 +1563,10 @@ body {
 }
 
 .icon-field img {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   object-fit: cover;
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 .info-field {
@@ -1575,11 +1574,10 @@ body {
   display: flex;
   justify-content: left;
   align-items: center;
-  font-weight: 500;
+  font-weight: 400;
 }
 
 .info-field .tooltip {
-  display: inline-block;
   font-size: 0.75rem;
   color: #1f2937;
 }
@@ -1589,9 +1587,9 @@ body {
   position: absolute;
   background: #409966;
   color: #ffffff;
-  font-size: 0.7rem;
-  padding: 3px 5px;
-  border-radius: 3px;
+  font-size: 0.6875rem;
+  padding: 2px 4px;
+  border-radius: 2px;
   z-index: 10;
   top: 100%;
   left: 50%;
@@ -1614,8 +1612,8 @@ body {
 }
 
 .checkbox-group-label input {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   accent-color: #409966;
   cursor: pointer;
 }
@@ -1626,9 +1624,9 @@ body {
 }
 
 .input-group input.watt-input {
-  padding: 4px 6px;
+  padding: 3px 5px;
   border: 1px solid #d1d5db;
-  border-radius: 3px;
+  border-radius: 2px;
   font-size: 0.75rem;
   width: 100%;
   text-align: center;
@@ -1637,12 +1635,12 @@ body {
 .input-group input.watt-input:focus {
   outline: none;
   border-color: #409966;
-  box-shadow: 0 0 0 2px rgba(64, 153, 102, 0.2);
+  box-shadow: 0 0 0 1.5px rgba(64, 153, 102, 0.25);
 }
 
 .price-display {
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 400;
   color: #1f2937;
   text-align: center;
 }
@@ -1651,14 +1649,14 @@ body {
   background: #dc2626;
   color: #ffffff;
   border: none;
-  border-radius: 4px;
-  padding: 4px;
+  border-radius: 3px;
+  padding: 3px;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   transition: background-color 0.2s ease;
 }
 
@@ -1669,13 +1667,13 @@ body {
 .confirm-dialog {
   grid-column: 1 / -1;
   background: linear-gradient(135deg, #fef9c3, #fef08a);
-  padding: 6px;
-  border-radius: 4px;
-  margin-top: 4px;
+  padding: 5px;
+  border-radius: 3px;
+  margin-top: 3px;
   display: flex;
-  gap: 6px;
+  gap: 5px;
   align-items: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   position: absolute;
   top: 100%;
   left: 0;
@@ -1687,8 +1685,8 @@ body {
 .confirm-button {
   background: linear-gradient(90deg, #dc2626, #ef4444);
   color: #ffffff;
-  padding: 3px 6px;
-  border-radius: 3px;
+  padding: 2px 5px;
+  border-radius: 2px;
   font-size: 0.75rem;
   border: none;
   cursor: pointer;
@@ -1701,8 +1699,8 @@ body {
 .cancel-button {
   background: linear-gradient(90deg, #9ca3af, #d1d5db);
   color: #1f2937;
-  padding: 3px 6px;
-  border-radius: 3px;
+  padding: 2px 5px;
+  border-radius: 2px;
   font-size: 0.75rem;
   border: none;
   cursor: pointer;
@@ -1715,17 +1713,17 @@ body {
 .settings-container {
   grid-column: 1 / -1;
   background: #ffffff;
-  padding: 12px;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  margin-top: 8px;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  margin-top: 6px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .settings-container h4 {
-  font-size: 1rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   color: #409966;
 }
@@ -1734,59 +1732,59 @@ body {
   display: flex;
   flex-direction: column;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 500;
   color: #1f2937;
 }
 
 .settings-container select {
-  padding: 6px;
+  padding: 5px;
   border: 1px solid #d1d5db;
-  border-radius: 4px;
+  border-radius: 3px;
   font-size: 0.75rem;
   width: 100%;
 }
 
 .settings-container select:focus {
-  outline nöne;
+  outline: none;
   border-color: #409966;
-  box-shadow: 0 0 0 2px rgba(64, 153, 102, 0.2);
+  box-shadow: 0 0 0 1.5px rgba(64, 153, 102, 0.25);
 }
 
 .radio-group-settings {
   display: flex;
-  gap: 8px;
-  margin-top: 4px;
+  gap: 6px;
+  margin-top: 3px;
 }
 
 .radio-group-settings label {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .radio-group-settings input {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
   accent-color: #409966;
   cursor: pointer;
 }
 
 .zeitraum-section {
   border-top: 1px solid #e5e7eb;
-  padding-top: 8px;
-  margin-top: 8px;
+  padding-top: 6px;
+  margin-top: 6px;
 }
 
 .add-option-button {
   background: linear-gradient(90deg, #062316, #409966);
   color: #ffffff;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 3px 6px;
+  border-radius: 3px;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 500;
   border: none;
   cursor: pointer;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
 .add-option-button:hover {
@@ -1794,23 +1792,23 @@ body {
 }
 
 .new-option-container {
-  margin-top: 8px;
-  padding: 10px;
+  margin-top: 6px;
+  padding: 8px;
   background: linear-gradient(135deg, #f9fafb, #e5e7eb);
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .save-option-button {
   background: linear-gradient(90deg, #062316, #409966);
   color: #ffffff;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 3px 6px;
+  border-radius: 3px;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 500;
   border: none;
   cursor: pointer;
 }
@@ -1826,32 +1824,32 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
-  Select an optionz-index: 100;
+  z-index: 100;
 }
 
 .modal-content {
   background: #ffffff;
-  padding: 20px;
-  border-radius: 8px;
+  padding: 16px;
+  border-radius: 6px;
   width: 90%;
-  max-width: 400px;
+  max-width: 360px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   position: relative;
 }
 
 .close-modal-button {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 8px;
+  right: 8px;
   background: none;
   border: none;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   cursor: pointer;
   color: #1f2937;
 }
@@ -1861,41 +1859,41 @@ body {
 }
 
 .modal-content h2 {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 600;
   color: #409966;
 }
 
 .modal-content p {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   color: #1f2937;
 }
 
 .modal-content input {
-  padding: 6px;
+  padding: 5px;
   border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font-size: 0.875rem;
+  border-radius: 3px;
+  font-size: 0.8125rem;
   width: 100%;
 }
 
 .modal-content input:focus {
   outline: none;
   border-color: #409966;
-  box-shadow: 0 0 0 2px rgba(64, 153, 102, 0.2);
+  box-shadow: 0 0 0 1.5px rgba(64, 153, 102, 0.25);
 }
 
 .modal-content label {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   font-size: 0.75rem;
   color: #1f2937;
 }
 
 .modal-content input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
   accent-color: #409966;
 }
 
@@ -1903,21 +1901,21 @@ body {
 .dynamic-consumer-layout {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 12px;
+  gap: 6px;
+  margin-top: 8px;
 }
 
 /* Eingaben-Wrapper für Strompreis und Datum */
 .inputs-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 @media (min-width: 769px) {
   .inputs-wrapper {
     flex-direction: row;
-    gap: 16px;
+    gap: 12px;
     justify-content: space-between;
   }
   .input-container-html,
@@ -1933,41 +1931,32 @@ body {
 /* Media Query für Mobile */
 @media (max-width: 768px) {
   html {
-    font-size: 10.8px;
+    font-size: 12px;
   }
 
   .app-container {
-    padding: 4.8px;
-    gap: 4.8px;
-    padding-top: 292.8px;
+    padding: 6px;
+    gap: 6px;
+    padding-top: 300px;
   }
 
   .fixed-chart {
-    position: fixed;
-    top: 80px;
-    left: 0;
-    right: 0;
-    padding: 4.8px;
-    border-radius: 0 0 7.2px 7.2px;
-    z-index: 10;
+    top: 64px;
+    padding: 6px;
+    border-radius: 0 0 5px 5px;
   }
 
   .chart-container {
-    height: 240px;
+    height: 220px;
   }
 
-  /* Region-Buttons direkt unter dem Chart */
   .region-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 9.6px;
-    justify-content: center;
-    align-items: center;
-    margin: 4.8px 0;
-    padding: 4.8px;
+    gap: 6px;
+    margin: 4px 0;
+    padding: 4px;
     background: #ffffff;
-    border-radius: 7.2px;
-    box-shadow: 0 1.2px 4.8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   }
 
   .region-switch-wrapper {
@@ -1975,214 +1964,164 @@ body {
   }
 
   .region-label {
-    font-size: 0.84rem;
+    font-size: 0.75rem;
   }
 
   .discount-switch-container {
-    width: 33.6px;
-    height: 16.8px;
+    width: 30px;
+    height: 16px;
   }
 
   .discount-switch-slider:before {
     height: 12px;
     width: 12px;
-    left: 2.4px;
-    bottom: 2.4px;
+    left: 2px;
+    bottom: 2px;
   }
 
   .discount-switch-input:checked + .discount-switch-slider:before {
-    transform: translateX(16.8px);
+    transform: translateX(14px);
   }
 
-  .region-switch-wrapper:hover .region-label {
-    color: #047857;
-  }
-
-  .discount-switch-slider:hover {
-    background-color: #9ca3af;
-  }
-
-  .discount-switch-input:checked + .discount-switch-slider:hover {
-    background-color: #065f46;
-  }
-
-  /* Eingaben-Wrapper für Mobile: Neben- statt untereinander */
   .inputs-wrapper {
-    display: flex;
     flex-direction: row;
-    gap: 9.6px;
-    justify-content: space-between;
-    align-items: stretch;
-    background: #ffffff;
-    padding: 7.2px;
-    border-radius: 9.6px;
-    box-shadow: 0 2.4px 9.6px rgba(0, 0, 0, 0.1);
-    margin-bottom: 4.8px;
-  }
-
-  .inputs-wrapper > div {
-    flex: 1;
-  }
-
-  .date-picker-container {
-    padding: 0;
-    margin-bottom: 0;
-    box-shadow: none;
-    max-width: none;
-    margin-left: 0;
-    margin-right: 0;
-    background: transparent;
+    gap: 6px;
+    padding: 6px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    margin-bottom: 6px;
   }
 
   .date-picker-container input,
-  .date-picker-container select {
-    padding: 4.8px;
-    font-size: 0.78rem;
-    width: 100%;
-    max-width: none;
-    border-radius: 3.6px;
-  }
-
-  .input-container-html {
-    max-width: none appropriately;
-    margin-left: 0;
-    margin-right: 0;
-    padding: 0;
+  .date-picker-container select,
+  .input-container-html input,
+  .input-container-html select {
+    padding: 4px;
+    font-size: 0.75rem;
+    border-radius: 2px;
   }
 
   .input-container-html label {
-    font-size: 0.78rem;
-    margin-bottom: 2.4px;
-  }
-
-  .input-container-html input,
-  .input-container-html select {
-    padding: 4.8px;
-    font-size: 0.78rem;
-    width: 100%;
-    max-width: none;
-    border-radius: 3.6px;
+    font-size: 0.75rem;
+    margin-bottom: 2px;
   }
 
   .menu {
-    margin-bottom: 4.8px;
+    margin-bottom: 6px;
   }
 
   .menu-header {
-    padding: 7.2px;
+    padding: 6px;
   }
 
   .menu-header span {
-    font-size: 0.9rem;
+    font-size: 0.75rem;
+    color: #ffffff; /* Explizit weiß für Mobile */
   }
 
   .menu-content {
-    padding: 7.2px;
-    font-size: 0.84rem;
+    padding: 6px;
+    font-size: 0.75rem;
   }
 
   .checkbox-group {
-    gap: 4.8px;
+    gap: 4px;
   }
 
   .checkbox-group-header {
-    font-size: 0.78rem;
-    padding: 4.8px 0;
-    gap: 4.8px;
-    grid-template-columns: 30px 1fr 48px 60px 60px 30px;
+    font-size: 0.6875rem;
+    padding: 4px 0;
+    gap: 4px;
+    grid-template-columns: 32px 1fr 48px 64px 64px 32px;
   }
 
   .checkbox-group li {
-    font-size: 0.78rem;
-    padding: 4.8px 0;
-    gap: 4.8px;
-    grid-template-columns: 30px 1fr 48px 60px 60px 30px;
+    font-size: 0.6875rem;
+    padding: 4px 0;
+    gap: 4px;
+    grid-template-columns: 32px 1fr 48px 64px 64px 32px;
   }
 
   .icon-field img {
-    width: 19.2px;
-    height: 19.2px;
+    width: 24px;
+    height: 24px;
   }
 
   .info-field .tooltip {
-    font-size: 0.78rem;
+    font-size: 0.6875rem;
   }
 
   .info-field .tooltip-text {
-    font-size: 0.72rem;
-    padding: 2.4px 3.6px;
+    font-size: 0.625rem;
+    padding: 2px 3px;
   }
 
   .checkbox-group-label input {
-    width: 12px;
-    height: 12px;
+    width: 16px;
+    height: 16px;
   }
 
   .input-group input.watt-input {
-    padding: 3.6px 4.8px;
-    font-size: 0.78rem;
+    padding: 3px 4px;
+    font-size: 0.6875rem;
   }
 
   .price-display {
-    font-size: 0.78rem;
+    font-size: 0.6875rem;
   }
 
   .delete-option-button {
-    width: 19.2px;
-    height: 19.2px;
-    padding: 3.6px;
+    width: 20px;
+    height: 20px;
+    padding: 2px;
   }
 
   .confirm-dialog {
-    font-size: 0.78rem;
-    padding: 3.6px;
-    gap: 3.6px;
+    font-size: 0.6875rem;
+    padding: 4px;
+    gap: 4px;
   }
 
   .confirm-button,
   .cancel-button {
-    padding: 3.6px 4.8px;
-    font-size: 0.78rem;
+    padding: 2px 4px;
+    font-size: 0.6875rem;
   }
 
   .settings-container {
-    padding: 7.2px;
-    margin-top: 4.8px;
-    gap: 7.2px;
+    padding: 6px;
+    margin-top: 4px;
+    gap: 6px;
   }
 
   .settings-container h4 {
-    font-size: 0.9rem;
+    font-size: 0.875rem;
   }
 
-  .settings-container label {
-    font-size: 0.78rem;
-  }
-
+  .settings-container label,
   .settings-container select {
-    padding: 4.8px;
-    font-size: 0.78rem;
+    font-size: 0.6875rem;
   }
 
   .add-option-button,
   .save-option-button {
-    padding: 3.6px 7.2px;
-    font-size: 0.78rem;
+    padding: 3px 6px;
+    font-size: 0.6875rem;
   }
 
   .modal-content {
     padding: 12px;
-    max-width: 336px;
+    max-width: 320px;
   }
 
   .modal-content h2 {
-    font-size: 1.02rem;
+    font-size: 1rem;
   }
 
   .modal-content p,
   .modal-content input,
   .modal-content label {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
   }
 
   .modal-content input[type="checkbox"] {
@@ -2191,574 +2130,583 @@ body {
   }
 
   .close-modal-button {
-    font-size: 1.14rem;
+    font-size: 1rem;
   }
 
   .dynamic-consumer-layout {
-    gap: 4.8px;
-    margin-top: 7.2px;
+    gap: 4px;
+    margin-top: 6px;
+  }
+
+  .delete-zeitraum-button {
+    background-color: #ef4444;
+    color: #ffffff;
+    border-radius: 3px;
+    padding: 3px 6px;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+  }
+
+  .delete-zeitraum-button:hover {
+    background-color: #dc2626;
   }
 }`}</style>
       <div className="app-container">
-        {/* Fixierter Chart-Bereich */}
-        <div className="fixed-chart">
-          <div className="chart-container">
-            <Line data={chartData} options={chartOptions} />
+  {/* Fixierter Chart-Bereich */}
+  <div className="fixed-chart">
+    <div className="chart-container">
+      <Line data={chartData} options={chartOptions} />
+    </div>
+  </div>
+
+  {/* Rechenbericht */}
+  <div className="calculation-report">
+    <h2 className="report-title">Rechenbericht</h2>
+    <div className="report-content">
+      {/* Eingaben: Datum und Strompreis nebeneinander */}
+      <div className="inputs-wrapper">
+        <div className="date-picker-container">
+          <div className="input-container-html">
+            <label htmlFor="date-picker">Datum dynamische Preise</label>
+            <select
+              id="date-picker"
+              value={toInputDate(selectedDate)}
+              onChange={(e) => setSelectedDate(fromInputDate(e.target.value))}
+              disabled={apiLoading}
+            >
+              <option value="">Datum auswählen</option>
+              {availableDates.map((date) => (
+                <option key={date} value={toInputDate(date)}>
+                  {date}
+                </option>
+              ))}
+            </select>
+            {apiLoading && <p>Lade dynamische Preise...</p>}
+            {error && <p style={{ color: '#dc2626', fontSize: '0.75rem' }}>{error}</p>}
           </div>
         </div>
-  
-        {/* Rechenbericht */}
-        <div className="calculation-report">
-          <h2 className="report-title">Rechenbericht</h2>
-          <div className="report-content">
-            {/* Eingaben: Datum und Strompreis nebeneinander */}
-            <div className="inputs-wrapper">
-              <div className="date-picker-container">
-                <div className="input-container-html">
-                  <label htmlFor="date-picker">Datum dynamische Preise</label>
-                  <select
-                    id="date-picker"
-                    value={toInputDate(selectedDate)}
-                    onChange={(e) => setSelectedDate(fromInputDate(e.target.value))}
-                    disabled={apiLoading}
-                  >
-                    <option value="">Datum auswählen</option>
-                    {availableDates.map((date) => (
-                      <option key={date} value={toInputDate(date)}>
-                        {date}
-                      </option>
-                    ))}
-                  </select>
-                  {apiLoading && <p>Lade dynamische Preise...</p>}
-                  {error && <p style={{ color: '#dc2626', fontSize: '0.75rem' }}>{error}</p>}
-                </div>
-              </div>
-  
-              <div className="input-container-html">
-                <label htmlFor="strompreis">Strompreis (€/kWh)</label>
-                <input
-                  id="strompreis"
-                  type="number"
-                  step="0.01"
-                  value={strompreis}
-                  onChange={(e) => handleStrompreisChange(e.target.value)}
-                />
-              </div>
+
+        <div className="input-container-html">
+          <label htmlFor="strompreis">Strompreis (€/kWh)</label>
+          <input
+            id="strompreis"
+            type="number"
+            step="0.01"
+            value={strompreis}
+            onChange={(e) => handleStrompreisChange(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="region-buttons">
+        {['KF', 'MN', 'MOD'].map((region) => (
+          <div key={region} className="region-switch-wrapper">
+            <label className="region-label">{region}</label>
+            <div className="discount-switch-container">
+              <input
+                type="checkbox"
+                className="discount-switch-input"
+                id={`region-${region}`}
+                checked={selectedRegion === region}
+                onChange={() => handleRegionChange(region)}
+              />
+              <label htmlFor={`region-${region}`} className="discount-switch-slider" />
             </div>
-  
-            <div className="region-buttons">
-              {['KF', 'MN', 'MOD'].map((region) => (
-                <div key={region} className="region-switch-wrapper">
-                  <label className="region-label">{region}</label>
-                  <div className="discount-switch-container">
-                    <input
-                      type="checkbox"
-                      className="discount-switch-input"
-                      id={`region-${region}`}
-                      checked={selectedRegion === region}
-                      onChange={() => handleRegionChange(region)}
-                    />
-                    <label htmlFor={`region-${region}`} className="discount-switch-slider" />
-                  </div>
-                </div>
-              ))}
-            </div>
-  
-            {error && <p style={{ color: '#dc2626', fontSize: '0.75rem' }}>{error}</p>}
+          </div>
+        ))}
+      </div>
 
+      {error && <p style={{ color: '#dc2626', fontSize: '0.75rem' }}>{error}</p>}
 
-{/* Menüs und Verbraucher */}
-{menus.map((menu) => (
-  <div key={menu.id} className="menu bg-white rounded-lg shadow-md mb-4">
-    <div
-      className="menu-header flex justify-between items-center p-3 bg-gray-100 rounded-t-lg cursor-pointer hover:bg-gray-200"
-      onClick={() => toggleMenu(menu.id)}
-    >
-      <span className="text-base font-semibold text-gray-800 text-white">{menu.label}</span>
-      <span
-        className={`triangle transform transition-transform duration-200 ${
-          openMenus[menu.id] ? "rotate-180" : ""
-        } text-white-600`}
-      >
-        &#9660;
-      </span>
-    </div>
-
-    {openMenus[menu.id] && (
-      <div className="menu-content p-3">
-        <ul className="checkbox-group space-y-2">
-          <li className="checkbox-group-header grid grid-cols-4 gap-2 text-xs font-medium text-gray-700 bg-gray-50 p-2 rounded-md sm:grid-cols-6 sm:gap-3">
-            <span className="col-span-2 sm:col-span-1">Icon</span>
-            <span className="hidden sm:block">Info</span>
-            <span>Aktiv</span>
-            <span>Leistung (W)</span>
-            <span>Kosten (€)</span>
-            <span className="hidden sm:block">Löschen</span>
-          </li>
-
-          {menu.options.map((option) => (
-            <li
-              key={option.name}
-              className="grid grid-cols-4 gap-2 items-center p-2 hover:bg-gray-50 rounded-md relative sm:grid-cols-6 sm:gap-3"
+      {/* Menüs und Verbraucher */}
+      {menus.map((menu) => (
+        <div key={menu.id} className="menu bg-white rounded-lg shadow-md mb-4">
+          <div
+            className="menu-header flex justify-between items-center p-3 bg-gray-100 rounded-t-lg cursor-pointer hover:bg-gray-200"
+            onClick={() => toggleMenu(menu.id)}
+          >
+            <span className="text-base font-semibold text-gray-800">{menu.label}</span>
+            <span
+              className={`triangle transform transition-transform duration-200 ${
+                openMenus[menu.id] ? "rotate-180" : ""
+              } text-gray-600`}
             >
-              {/* Icon + Info */}
-              <div className="icon-field col-span-2 flex items-center gap-2">
-                <img
-                  src="/bilder/logo.png"
-                  alt={`${option.name} icon`}
-                  className="w-5 h-5 object-contain sm:w-6 sm:h-6"
-                />
-                <div className="info-field relative group cursor-pointer">
-                  <span className="tooltip text-xs">{option.name}</span>
-                  {verbraucherBeschreibungen[option.name] && (
-                    <span className="tooltip-text absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded p-1 -mt-8 sm:-mt-6">
-                      {verbraucherBeschreibungen[option.name]}
-                    </span>
-                  )}
-                </div>
-              </div>
+              &#9660;
+            </span>
+          </div>
 
-              {/* Checkbox */}
-              <div className="checkbox-group-label flex justify-center">
-                <input
-                  type="checkbox"
-                  checked={verbraucherDaten[option.name]?.checked || false}
-                  onChange={(e) => onCheckboxChange(option.name, e.target.checked)}
-                  className="h-3 w-3 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                />
-              </div>
+          {openMenus[menu.id] && (
+            <div className="menu-content p-3">
+              <ul className="checkbox-group space-y-2">
+                <li className="checkbox-group-header grid grid-cols-4 gap-2 text-xs font-medium text-gray-700 bg-gray-50 p-2 rounded-md sm:grid-cols-6 sm:gap-3">
+                  <span className="col-span-2 sm:col-span-1">Icon</span>
+                  <span className="hidden sm:block">Info</span>
+                  <span>Aktiv</span>
+                  <span>Leistung (W)</span>
+                  <span>Kosten (€)</span>
+                  <span className="hidden sm:block">Löschen</span>
+                </li>
 
-              {/* Watt Input */}
-              <div className="input-group">
-                <input
-                  type="number"
-                  value={verbraucherDaten[option.name]?.watt || ""}
-                  onChange={(e) => handleWattChange(option.name, e.target.value)}
-                  disabled={!verbraucherDaten[option.name]?.checked}
-                  className="w-full p-1 border rounded-md focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 text-xs"
-                />
-              </div>
-
-              {/* Kosten */}
-              <span className="price-display text-gray-700 text-xs text-center">
-                {verbraucherDaten[option.name]?.kosten || "0.00"}
-              </span>
-
-              {/* Löschen */}
-              {(menu.id === "grundlastverbraucher" ||
-                menu.id === "dynamischeverbraucher" ||
-                menu.id === "eauto") && (
-                <button
-                  className="delete-option-button text-red-500 hover:text-red-700 absolute right-1 top-1 text-xs sm:static sm:text-base"
-                  onClick={() => handleDeleteOptionClick(menu.id, option.name)}
-                >
-                  x
-                </button>
-              )}
-
-              {/* Bestätigung Löschen */}
-              {deleteConfirmOption?.menuId === menu.id &&
-                deleteConfirmOption?.optionName === option.name && (
-                  <div className="confirm-dialog col-span-4 bg-yellow-50 p-2 rounded-md flex items-center gap-2 sm:col-span-6">
-                    <span className="text-xs text-gray-800">{`"${option.name}" löschen?`}</span>
-                    <button
-                      className="confirm-button bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600 text-xs"
-                      onClick={() => confirmDeleteOption(menu.id, option.name)}
-                    >
-                      Ja
-                    </button>
-                    <button
-                      className="cancel-button bg-gray-300 text-gray-800 px-2 py-1 rounded-md hover:bg-gray-400 text-xs"
-                      onClick={cancelDeleteOption}
-                    >
-                      Nein
-                    </button>
-                  </div>
-                )}
-
-              {/* Erweiterte Einstellungen */}
-              {(menu.id === "dynamischeverbraucher" || menu.id === "eauto") && (
-                <div className="settings-container col-span-4 bg-gray-50 p-0.5 rounded-lg mt-1 max-w-full sm:col-span-6 sm:max-w-xs">
-                  <h4 className="text-sm font-semibold text-gray-800 mb-1 text-center">
-                    Einstellungen für {option.name}
-                  </h4>
-                  {menu.id === "dynamischeverbraucher" && (
-                    <div className="dynamic-consumer-layout flex flex-col gap-0.5">
-                      {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum) => (
-                        <div
-                          key={zeitraum.id}
-                          className="flex flex-row gap-0.5 bg-white p-0.5 rounded-md shadow justify-center">
-
-
-
-
-
-<div className="flex flex-col gap-2 w-full">
-  {/* Nutzung pro Woche */}
-  <div className="flex flex-col items-center justify-center w-full">
-    <span className="text-[11px] font-semibold text-gray-700 text-center">
-      Nutzung/Woche
-    </span>
-    <span className="text-[15px] font-bold text-green-600">
-      {erweiterteEinstellungen[option.name]?.nutzung || 0}
-    </span>
-    <input
-      type="range"
-      min="0"
-      max="14"
-      value={erweiterteEinstellungen[option.name]?.nutzung || 0}
-      onChange={(e) =>
-        handleErweiterteEinstellungChange(option.name, "nutzung", Number(e.target.value), null)
-      }
-      className="w-full accent-green-600 mt-1"
-    />
-  </div>
-
-  {/* Zeitraum */}
-  <div className="flex flex-col items-center justify-center w-full">
-    <span className="text-[11px] font-semibold text-gray-700 text-center">
-      Zeitraum
-    </span>
-    <span className="text-[11px] text-green-600 text-center">
-      {timePeriods.find(
-        (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-      )
-        ? `${timePeriods.find(
-            (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-          ).label} (${zeitraum.startzeit}-${zeitraum.endzeit})`
-        : "–"}
-    </span>
-    <input
-      type="range"
-      min="0"
-      max={timePeriods.length - 1}
-      value={timePeriods.findIndex(
-        (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-      )}
-      onChange={(e) =>
-        handleTimePeriodChange(option.name, timePeriods[e.target.value].label, zeitraum.id)
-      }
-      className="w-full accent-green-600 mt-1"
-    />
-  </div>
-
-  {/* Dauer */}
-  <div className="flex flex-col items-center justify-center w-full">
-    <span className="text-[11px] font-semibold text-gray-700 text-center">
-      Dauer (h)
-    </span>
-    <span className="text-[15px] font-bold text-green-600">
-      {zeitraum.dauer || 0}
-    </span>
-    <input
-      type="range"
-      min="0"
-      max="10"
-      step="0.5"
-      value={zeitraum.dauer || 0}
-      onChange={(e) =>
-        handleErweiterteEinstellungChange(option.name, "dauer", Number(e.target.value), zeitraum.id)
-      }
-      className="w-full accent-green-600 mt-1"
-    />
-  </div>
-</div>
-
-
-                        </div>
-                      ))}
-
-
-
-
-
-                      
-                      <div className="flex justify-center mt-1">
-                        <button
-                          className="bg-green-600 text-white px-1 py-0.5 rounded-md hover:bg-green-700 text-[12px] font-semibold sm:px-[2.2px] sm:py-[0.55px] sm:text-[13px]"
-                          onClick={() => addZeitraum(option.name)}
-                        >
-                          Zeitraum hinzufügen
-                        </button>
+                {menu.options.map((option) => (
+                  <li
+                    key={option.name}
+                    className="grid grid-cols-4 gap-2 items-center p-2 hover:bg-gray-50 rounded-md relative sm:grid-cols-6 sm:gap-3"
+                  >
+                    {/* Icon + Info */}
+                    <div className="icon-field col-span-2 flex items-center gap-2">
+                      <img
+                        src="/bilder/logo.png"
+                        alt={`${option.name} icon`}
+                        className="w-5 h-5 object-contain sm:w-6 sm:h-6"
+                      />
+                      <div className="info-field relative group cursor-pointer">
+                        <span className="tooltip text-xs">{option.name}</span>
+                        {verbraucherBeschreibungen[option.name] && (
+                          <span className="tooltip-text absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded p-1 -mt-8 sm:-mt-6">
+                            {verbraucherBeschreibungen[option.name]}
+                          </span>
+                        )}
                       </div>
                     </div>
-                  )}
 
-                  {/* E-Auto */}
-                  {menu.id === "eauto" && (
-                    <div className="flex flex-col sm:flex-row gap-2 items-start flex-wrap sm:gap-3">
-                      <label className="flex flex-col flex-1 min-w-[70px] sm:min-w-[80px]">
-                        <span className="text-xs font-medium text-gray-700">Batteriekapazität (kWh)</span>
-                        <input
-                          type="number"
-                          value={erweiterteEinstellungen[option.name]?.batterieKapazitaet || ""}
-                          onChange={(e) =>
-                            handleErweiterteEinstellungChange(option.name, "batterieKapazitaet", e.target.value, null)
-                          }
-                          className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
-                        />
-                      </label>
+                    {/* Checkbox */}
+                    <div className="checkbox-group-label flex justify-center">
+                      <input
+                        type="checkbox"
+                        checked={verbraucherDaten[option.name]?.checked || false}
+                        onChange={(e) => onCheckboxChange(option.name, e.target.checked)}
+                        className="h-3 w-3 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                    </div>
 
-                      <label className="flex flex-col flex-1 min-w-[70px] sm:min-w-[80px]">
-                        <span className="text-xs font-medium text-gray-700">Wallbox-Leistung (W)</span>
-                        <input
-                          type="number"
-                          value={erweiterteEinstellungen[option.name]?.wallboxLeistung || ""}
-                          onChange={(e) =>
-                            handleErweiterteEinstellungChange(option.name, "wallboxLeistung", e.target.value, null)
-                          }
-                          className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
-                        />
-                      </label>
+                    {/* Watt Input */}
+                    <div className="input-group">
+                      <input
+                        type="number"
+                        value={verbraucherDaten[option.name]?.watt || ""}
+                        onChange={(e) => handleWattChange(option.name, e.target.value)}
+                        disabled={!verbraucherDaten[option.name]?.checked}
+                        className="w-full p-1 border rounded-md focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 text-xs"
+                      />
+                    </div>
 
-                      <div className="radio-group-settings flex flex-col gap-1">
-                        <label className="flex items-center gap-1">
-                          <input
-                            type="radio"
-                            name={`ladung-${option.name}`}
-                            value="true"
-                            checked={erweiterteEinstellungen[option.name]?.standardLadung === true}
-                            onChange={(e) =>
-                              handleErweiterteEinstellungChange(option.name, "standardLadung", e.target.value, null)
-                            }
-                            className="h-3 w-3 text-blue-600 focus:ring-blue-500"
-                          />
-                          <span className="text-xs text-gray-700">Standardladung</span>
-                        </label>
-                        <label className="flex items-center gap-1">
-                          <input
-                            type="radio"
-                            name={`ladung-${option.name}`}
-                            value="false"
-                            checked={erweiterteEinstellungen[option.name]?.standardLadung === false}
-                            onChange={(e) =>
-                              handleErweiterteEinstellungChange(option.name, "standardLadung", e.target.value, null)
-                            }
-                            className="h-3 w-3 text-blue-600 focus:ring-blue-500"
-                          />
-                          <span className="text-xs text-gray-700">Wallbox-Ladung</span>
-                        </label>
-                      </div>
+                    {/* Kosten */}
+                    <span className="price-display text-gray-700 text-xs text-center">
+                      {verbraucherDaten[option.name]?.kosten || "0.00"}
+                    </span>
 
-                      <label className="flex flex-col flex-1 min-w-[70px] sm:min-w-[80px]">
-                        <span className="text-xs font-medium text-gray-700">Ladehäufigkeit (pro Woche)</span>
-                        <input
-                          type="number"
-                          value={erweiterteEinstellungen[option.name]?.nutzung || ""}
-                          onChange={(e) =>
-                            handleErweiterteEinstellungChange(option.name, "nutzung", e.target.value, null)
-                          }
-                          className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
-                        />
-                      </label>
+                    {/* Löschen */}
+                    {(menu.id === "grundlastverbraucher" ||
+                      menu.id === "dynamischeverbraucher" ||
+                      menu.id === "eauto") && (
+                      <button
+                        className="delete-option-button text-red-500 hover:text-red-700 absolute right-1 top-1 text-xs sm:static sm:text-base"
+                        onClick={() => handleDeleteOptionClick(menu.id, option.name)}
+                      >
+                        x
+                      </button>
+                    )}
 
-                      {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum) => (
-                        <div key={zeitraum.id} className="zeitraum-section flex flex-row gap-1 items-center sm:gap-2">
-                          <label className="flex flex-col flex-1 min-w-[90px] sm:min-w-[100px]">
-                            <span className="text-xs font-medium text-gray-700">Zeitraum</span>
-                            <select
-                              value={
-                                timePeriods.find(
-                                  (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-                                )?.label || ""
-                              }
-                              onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
-                              className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
-                            >
-                              <option value="">Zeitraum wählen</option>
-                              {timePeriods.map((period) => (
-                                <option key={period.label} value={period.label}>
-                                  {period.label} ({period.startzeit} - {period.endzeit})
-                                </option>
-                              ))}
-                            </select>
-                          </label>
-
-                          <label className="flex flex-col flex-1 min-w-[50px] sm:min-w-[60px]">
-                            <span className="text-xs font-medium text-gray-700">Dauer (Std)</span>
-                            <input
-                              type="number"
-                              step="0.1"
-                              value={zeitraum.dauer || ""}
-                              onChange={(e) =>
-                                handleErweiterteEinstellungChange(option.name, "dauer", e.target.value, zeitraum.id)
-                              }
-                              className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
-                            />
-                          </label>
-
+                    {/* Bestätigung Löschen */}
+                    {deleteConfirmOption?.menuId === menu.id &&
+                      deleteConfirmOption?.optionName === option.name && (
+                        <div className="confirm-dialog col-span-4 bg-yellow-50 p-2 rounded-md flex items-center gap-2 sm:col-span-6">
+                          <span className="text-xs text-gray-800">{`"${option.name}" löschen?`}</span>
                           <button
-                            className="delete-option-button bg-red-500 text-white rounded-md px-1 py-0.5 hover:bg-red-600 text-xs sm:px-2 sm:py-1"
-                            onClick={() => removeZeitraum(option.name, zeitraum.id)}
+                            className="confirm-button bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600 text-xs"
+                            onClick={() => confirmDeleteOption(menu.id, option.name)}
                           >
-                            X
+                            Ja
+                          </button>
+                          <button
+                            className="cancel-button bg-gray-300 text-gray-800 px-2 py-1 rounded-md hover:bg-gray-400 text-xs"
+                            onClick={cancelDeleteOption}
+                          >
+                            Nein
                           </button>
                         </div>
-                      ))}
+                      )}
+
+                    {/* Erweiterte Einstellungen */}
+                    {(menu.id === "dynamischeverbraucher" || menu.id === "eauto") && (
+                      <div className="settings-container col-span-4 bg-gray-50 p-0.5 rounded-lg mt-1 max-w-full sm:col-span-6 sm:max-w-xs">
+                        <h4 className="text-sm font-semibold text-gray-800 mb-1 text-center">
+                          Einstellungen für {option.name}
+                        </h4>
+                        {menu.id === "dynamischeverbraucher" && (
+                          <div className="dynamic-consumer-layout flex flex-col gap-0.5">
+                            {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum, index) => (
+                              <div
+                                key={zeitraum.id}
+                                className="flex flex-row gap-0.5 bg-white p-0.5 rounded-md shadow justify-center"
+                              >
+                                <div className="flex flex-col gap-2 w-full">
+                                  {/* Nutzung pro Woche */}
+                                  <div className="flex flex-col items-center justify-center w-full">
+                                    <span className="text-[11px] font-semibold text-gray-700 text-center">
+                                      Nutzung/Woche
+                                    </span>
+                                    <span className="text-[15px] font-bold text-green-600">
+                                      {erweiterteEinstellungen[option.name]?.nutzung || 0}
+                                    </span>
+                                    <input
+                                      type="range"
+                                      min="0"
+                                      max="14"
+                                      value={erweiterteEinstellungen[option.name]?.nutzung || 0}
+                                      onChange={(e) =>
+                                        handleErweiterteEinstellungChange(option.name, "nutzung", Number(e.target.value), null)
+                                      }
+                                      className="w-full accent-green-600 mt-1"
+                                    />
+                                  </div>
+
+                                  {/* Zeitraum */}
+                                  <div className="flex flex-col items-center justify-center w-full">
+                                    <span className="text-[11px] font-semibold text-gray-700 text-center">
+                                      Zeitraum
+                                    </span>
+                                    <span className="text-[11px] text-green-600 text-center">
+                                      {timePeriods.find(
+                                        (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+                                      )
+                                        ? `${timePeriods.find(
+                                            (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+                                          ).label} (${zeitraum.startzeit}-${zeitraum.endzeit})`
+                                        : "–"}
+                                    </span>
+                                    <input
+                                      type="range"
+                                      min="0"
+                                      max={timePeriods.length - 1}
+                                      value={timePeriods.findIndex(
+                                        (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+                                      )}
+                                      onChange={(e) =>
+                                        handleTimePeriodChange(option.name, timePeriods[e.target.value].label, zeitraum.id)
+                                      }
+                                      className="w-full accent-green-600 mt-1"
+                                    />
+                                  </div>
+
+                                  {/* Dauer */}
+                                  <div className="flex flex-col items-center justify-center w-full">
+                                    <span className="text-[11px] font-semibold text-gray-700 text-center">
+                                      Dauer (h)
+                                    </span>
+                                    <span className="text-[15px] font-bold text-green-600">
+                                      {zeitraum.dauer || 0}
+                                    </span>
+                                    <input
+                                      type="range"
+                                      min="0"
+                                      max="10"
+                                      step="0.5"
+                                      value={zeitraum.dauer || 0}
+                                      onChange={(e) =>
+                                        handleErweiterteEinstellungChange(option.name, "dauer", Number(e.target.value), zeitraum.id)
+                                      }
+                                      className="w-full accent-green-600 mt-1"
+                                    />
+                                  </div>
+
+                                  {/* Zeitraum löschen */}
+                                  {index > 0 && (
+  <div className="flex justify-center mt-1">
+    <button
+      className="delete-zeitraum-button"
+      onClick={() => removeZeitraum(option.name, zeitraum.id)}
+    >
+      X
+    </button>
+  </div>
+)}
+                                </div>
+                              </div>
+                            ))}
+                            <div className="flex justify-center mt-1">
+                              <button
+                                className="bg-green-600 text-white px-1 py-0.5 rounded-md hover:bg-green-700 text-[12px] font-semibold sm:px-[2.2px] sm:py-[0.55px] sm:text-[13px]"
+                                onClick={() => addZeitraum(option.name)}
+                              >
+                                Zeitraum hinzufügen
+                              </button>
+                            </div>
+                          </div>
+                        )}
+
+                        {menu.id === "eauto" && (
+                          <div className="flex flex-col sm:flex-row gap-2 items-start flex-wrap sm:gap-3">
+                            <label className="flex flex-col flex-1 min-w-[70px] sm:min-w-[80px]">
+                              <span className="text-xs font-medium text-gray-700">Batteriekapazität (kWh)</span>
+                              <input
+                                type="number"
+                                value={erweiterteEinstellungen[option.name]?.batterieKapazitaet || ""}
+                                onChange={(e) =>
+                                  handleErweiterteEinstellungChange(option.name, "batterieKapazitaet", e.target.value, null)
+                                }
+                                className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
+                              />
+                            </label>
+
+                            <label className="flex flex-col flex-1 min-w-[70px] sm:min-w-[80px]">
+                              <span className="text-xs font-medium text-gray-700">Wallbox-Leistung (W)</span>
+                              <input
+                                type="number"
+                                value={erweiterteEinstellungen[option.name]?.wallboxLeistung || ""}
+                                onChange={(e) =>
+                                  handleErweiterteEinstellungChange(option.name, "wallboxLeistung", e.target.value, null)
+                                }
+                                className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
+                              />
+                            </label>
+
+                            <div className="radio-group-settings flex flex-col gap-1">
+                              <label className="flex items-center gap-1">
+                                <input
+                                  type="radio"
+                                  name={`ladung-${option.name}`}
+                                  value="true"
+                                  checked={erweiterteEinstellungen[option.name]?.standardLadung === true}
+                                  onChange={(e) =>
+                                    handleErweiterteEinstellungChange(option.name, "standardLadung", e.target.value, null)
+                                  }
+                                  className="h-3 w-3 text-blue-600 focus:ring-blue-500"
+                                />
+                                <span className="text-xs text-gray-700">Standardladung</span>
+                              </label>
+                              <label className="flex items-center gap-1">
+                                <input
+                                  type="radio"
+                                  name={`ladung-${option.name}`}
+                                  value="false"
+                                  checked={erweiterteEinstellungen[option.name]?.standardLadung === false}
+                                  onChange={(e) =>
+                                    handleErweiterteEinstellungChange(option.name, "standardLadung", e.target.value, null)
+                                  }
+                                  className="h-3 w-3 text-blue-600 focus:ring-blue-500"
+                                />
+                                <span className="text-xs text-gray-700">Wallbox-Ladung</span>
+                              </label>
+                            </div>
+
+                            <label className="flex flex-col flex-1 min-w-[70px] sm:min-w-[80px]">
+                              <span className="text-xs font-medium text-gray-700">Ladehäufigkeit (pro Woche)</span>
+                              <input
+                                type="number"
+                                value={erweiterteEinstellungen[option.name]?.nutzung || ""}
+                                onChange={(e) =>
+                                  handleErweiterteEinstellungChange(option.name, "nutzung", e.target.value, null)
+                                }
+                                className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
+                              />
+                            </label>
+
+                            {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum) => (
+                              <div key={zeitraum.id} className="zeitraum-section flex flex-row gap-1 items-center sm:gap-2">
+                                <label className="flex flex-col flex-1 min-w-[90px] sm:min-w-[100px]">
+                                  <span className="text-xs font-medium text-gray-700">Zeitraum</span>
+                                  <select
+                                    value={
+                                      timePeriods.find(
+                                        (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+                                      )?.label || ""
+                                    }
+                                    onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
+                                    className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
+                                  >
+                                    <option value="">Zeitraum wählen</option>
+                                    {timePeriods.map((period) => (
+                                      <option key={period.label} value={period.label}>
+                                        {period.label} ({period.startzeit} - {period.endzeit})
+                                      </option>
+                                    ))}
+                                  </select>
+                                </label>
+
+                                <label className="flex flex-col flex-1 min-w-[50px] sm:min-w-[60px]">
+                                  <span className="text-xs font-medium text-gray-700">Dauer (Std)</span>
+                                  <input
+                                    type="number"
+                                    step="0.1"
+                                    value={zeitraum.dauer || ""}
+                                    onChange={(e) =>
+                                      handleErweiterteEinstellungChange(option.name, "dauer", e.target.value, zeitraum.id)
+                                    }
+                                    className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
+                                  />
+                                </label>
+
+                                <button
+                                  className="delete-option-button bg-red-500 text-white rounded-md px-1 py-0.5 hover:bg-red-600 text-xs sm:px-2 sm:py-1"
+                                  onClick={() => removeZeitraum(option.name, zeitraum.id)}
+                                >
+                                  X
+                                </button>
+                              </div>
+                            ))}
+
+                            <button
+                              className="add-option-button bg-blue-600 text-white rounded-md px-1 py-0.5 hover:bg-blue-700 text-xs mt-1 sm:px-2 sm:py-1 sm:mt-2"
+                              onClick={() => addZeitraum(option.name)}
+                            >
+                              Zeitraum +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+
+              {/* Neue Option hinzufügen */}
+              {(menu.id === "grundlastverbraucher" ||
+                menu.id === "dynamischeverbraucher" ||
+                menu.id === "eauto" ||
+                menu.id === "stromerzeuger" ||
+                menu.id === "strompeicher") && (
+                <>
+                  <button
+                    className="add-option-button bg-blue-600 text-white rounded-md px-2 py-1 hover:bg-blue-700 mt-2 w-full sm:px-3 sm:py-1 sm:mt-3 sm:w-auto text-xs"
+                    onClick={() => toggleNewOptionForm(menu.id)}
+                  >
+                    {showNewOptionForm[menu.id] ? "Formular schließen" : "Neue Option hinzufügen"}
+                  </button>
+
+                  {showNewOptionForm[menu.id] && (
+                    <div className="new-option-container bg-gray-50 p-2 rounded-lg mt-2 sm:p-3 sm:mt-3">
+                      <label className="flex flex-col">
+                        <span className="text-xs font-medium text-gray-700">Name</span>
+                        <input
+                          type="text"
+                          value={newOptionNames[menu.id] || ""}
+                          onChange={(e) => handleNewOptionName(menu.id, e.target.value)}
+                          className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs mt-1"
+                        />
+                      </label>
+
+                      <label className="flex flex-col mt-1 sm:mt-2">
+                        <span className="text-xs font-medium text-gray-700">Leistung (W)</span>
+                        <input
+                          type="number"
+                          value={newOptionWatt[menu.id] || ""}
+                          onChange={(e) => handleNewOptionWatt(menu.id, e.target.value)}
+                          className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs mt-1"
+                        />
+                      </label>
+
+                      {menu.id === "dynamischeverbraucher" && (
+                        <label className="flex flex-col mt-1 sm:mt-2">
+                          <span className="text-xs font-medium text-gray-700">Typ</span>
+                          <select
+                            value={newOptionTypes[menu.id] || "week"}
+                            onChange={(e) => handleNewOptionType(menu.id, e.target.value)}
+                            className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs mt-1"
+                          >
+                            <option value="week">Wöchentlich</option>
+                            <option value="day">Täglich</option>
+                          </select>
+                        </label>
+                      )}
 
                       <button
-                        className="add-option-button bg-blue-600 text-white rounded-md px-1 py-0.5 hover:bg-blue-700 text-xs mt-1 sm:px-2 sm:py-1 sm:mt-2"
-                        onClick={() => addZeitraum(option.name)}
+                        className="save-option-button bg-blue-600 text-white rounded-md px-2 py-1 hover:bg-blue-700 mt-2 w-full sm:px-3 sm:py-1 sm:mt-3 sm:w-auto text-xs"
+                        onClick={() => addNewOption(menu.id)}
                       >
-                        Zeitraum +
+                        Speichern
                       </button>
                     </div>
                   )}
-                </div>
+                </>
               )}
-            </li>
-          ))}
-        </ul>
-
-        {/* Neue Option hinzufügen */}
-        {(menu.id === "grundlastverbraucher" ||
-          menu.id === "dynamischeverbraucher" ||
-          menu.id === "eauto" ||
-          menu.id === "stromerzeuger" ||
-          menu.id === "strompeicher") && (
-          <>
-            <button
-              className="add-option-button bg-blue-600 text-white rounded-md px-2 py-1 hover:bg-blue-700 mt-2 w-full sm:px-3 sm:py-1 sm:mt-3 sm:w-auto text-xs"
-              onClick={() => toggleNewOptionForm(menu.id)}
-            >
-              {showNewOptionForm[menu.id] ? "Formular schließen" : "Neue Option hinzufügen"}
-            </button>
-
-            {showNewOptionForm[menu.id] && (
-              <div className="new-option-container bg-gray-50 p-2 rounded-lg mt-2 sm:p-3 sm:mt-3">
-                <label className="flex flex-col">
-                  <span className="text-xs font-medium text-gray-700">Name</span>
-                  <input
-                    type="text"
-                    value={newOptionNames[menu.id] || ""}
-                    onChange={(e) => handleNewOptionName(menu.id, e.target.value)}
-                    className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs mt-1"
-                  />
-                </label>
-
-                <label className="flex flex-col mt-1 sm:mt-2">
-                  <span className="text-xs font-medium text-gray-700">Leistung (W)</span>
-                  <input
-                    type="number"
-                    value={newOptionWatt[menu.id] || ""}
-                    onChange={(e) => handleNewOptionWatt(menu.id, e.target.value)}
-                    className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs mt-1"
-                  />
-                </label>
-
-                {menu.id === "dynamischeverbraucher" && (
-                  <label className="flex flex-col mt-1 sm:mt-2">
-                    <span className="text-xs font-medium text-gray-700">Typ</span>
-                    <select
-                      value={newOptionTypes[menu.id] || "week"}
-                      onChange={(e) => handleNewOptionType(menu.id, e.target.value)}
-                      className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs mt-1"
-                    >
-                      <option value="week">Wöchentlich</option>
-                      <option value="day">Täglich</option>
-                    </select>
-                  </label>
-                )}
-
-                <button
-                  className="save-option-button bg-blue-600 text-white rounded-md px-2 py-1 hover:bg-blue-700 mt-2 w-full sm:px-3 sm:py-1 sm:mt-3 sm:w-auto text-xs"
-                  onClick={() => addNewOption(menu.id)}
-                >
-                  Speichern
-                </button>
-              </div>
-            )}
-          </>
-        )}
-      </div>
-    )}
-  </div>
-))}
-
-
-
-
-
-
-  
-            {/* Zusammenfassung */}
-            <div className="calculation-report">
-              <h2 className="report-title">Zusammenfassung</h2>
-              <p>Grundlast Ersparnis: {zusammenfassung.grundlast} €</p>
-              <p>Dynamische Ersparnis: {zusammenfassung.dynamisch} €</p>
-              <p>Gesamtersparnis: {zusammenfassung.gesamt} €</p>
-              <p>Gesamtwattage: {zusammenfassung.totalWattage} W</p>
             </div>
-  
-            {/* Download-Button */}
-            <button className="add-option-button" onClick={handleDownloadClick}>
-              Rechenbericht herunterladen
+          )}
+        </div>
+      ))}
+
+      {/* Zusammenfassung */}
+      <div className="calculation-report">
+        <h2 className="report-title">Zusammenfassung</h2>
+        <p>Grundlast Ersparnis: {zusammenfassung.grundlast} €</p>
+        <p>Dynamische Ersparnis: {zusammenfassung.dynamisch} €</p>
+        <p>Gesamtersparnis: {zusammenfassung.gesamt} €</p>
+        <p>Gesamtwattage: {zusammenfassung.totalWattage} W</p>
+      </div>
+
+      {/* Download-Button */}
+      <button className="add-option-button" onClick={handleDownloadClick}>
+        Rechenbericht herunterladen
+      </button>
+
+      {/* Modal für Verifizierung */}
+      {showModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <button className="close-modal-button" onClick={closeModal}>
+              &times;
             </button>
-  
-            {/* Modal für Verifizierung */}
-            {showModal && (
-              <div className="modal">
-                <div className="modal-content">
-                  <button className="close-modal-button" onClick={closeModal}>
-                    &times;
-                  </button>
-                  {step === 1 ? (
-                    <>
-                      <h2>E-Mail-Verifizierung</h2>
-                      <p>Bitte gib deine E-Mail-Adresse ein, um einen Verifizierungscode zu erhalten.</p>
-                      <input
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="E-Mail-Adresse"
-                      />
-                      <label>
-                        <input
-                          type="checkbox"
-                          checked={agb}
-                          onChange={(e) => setAgb(e.target.checked)}
-                        />
-                        Ich akzeptiere die AGB.
-                      </label>
-                      <label>
-                        <input
-                          type="checkbox"
-                          checked={werbung}
-                          onChange={(e) => setWerbung(e.target.checked)}
-                        />
-                        Ich möchte Werbung erhalten.
-                      </label>
-                      <button
-                        className="add-option-button"
-                        onClick={requestCode}
-                        disabled={cooldown > 0}
-                      >
-                        Code anfordern {cooldown > 0 ? `(${cooldown}s)` : ''}
-                      </button>
-                      {message && <p>{message}</p>}
-                    </>
-                  ) : (
-                    <>
-                      <h2>Code eingeben</h2>
-                      <p>Bitte gib den erhaltenen Verifizierungscode ein.</p>
-                      <input
-                        type="text"
-                        value={code}
-                        onChange={(e) => setCode(e.target.value)}
-                        placeholder="6-stelliger Code"
-                      />
-                      <button className="add-option-button" onClick={verifyCode}>
-                        Code verifizieren
-                      </button>
-                      {message && <p>{message}</p>}
-                    </>
-                  )}
-                </div>
-              </div>
+            {step === 1 ? (
+              <>
+                <h2>E-Mail-Verifizierung</h2>
+                <p>Bitte gib deine E-Mail-Adresse ein, um einen Verifizierungscode zu erhalten.</p>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="E-Mail-Adresse"
+                />
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={agb}
+                    onChange={(e) => setAgb(e.target.checked)}
+                  />
+                  Ich akzeptiere die AGB.
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={werbung}
+                    onChange={(e) => setWerbung(e.target.checked)}
+                  />
+                  Ich möchte Werbung erhalten.
+                </label>
+                <button
+                  className="add-option-button"
+                  onClick={requestCode}
+                  disabled={cooldown > 0}
+                >
+                  Code anfordern {cooldown > 0 ? `(${cooldown}s)` : ''}
+                </button>
+                {message && <p>{message}</p>}
+              </>
+            ) : (
+              <>
+                <h2>Code eingeben</h2>
+                <p>Bitte gib den erhaltenen Verifizierungscode ein.</p>
+                <input
+                  type="text"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder="6-stelliger Code"
+                />
+                <button className="add-option-button" onClick={verifyCode}>
+                  Code verifizieren
+                </button>
+                {message && <p>{message}</p>}
+              </>
             )}
           </div>
         </div>
-      </div>
+      )}
+    </div>
+  </div>
+</div>
     </>
   );
 }
