@@ -957,7 +957,7 @@ export default function Home() {
     doc.setFontSize(12);
 
     addNewPageIfNeeded();
-    doc.text(`Strompreis: ${strompreis} €/kWh`, 15, yPosition);
+    doc.text(`Strompreis: ${strompreis} Ct/kWh`, 15, yPosition);
     yPosition += lineHeight;
     addNewPageIfNeeded();
     doc.text(`Region: ${selectedRegion || 'Keine ausgewählt'}`, 15, yPosition);
@@ -1151,7 +1151,7 @@ export default function Home() {
       },
       y1: {
         beginAtZero: true,
-        title: { display: true, text: 'Preis (€/kWh)', color: '#333' },
+        title: { display: true, text: 'Preis (Ct/kWh)', color: '#333' },
         ticks: { color: '#333' },
         position: 'right',
         grid: { drawOnChartArea: false },
@@ -1962,7 +1962,7 @@ export default function Home() {
           <h2 className="report-title">Rechenbericht</h2>
           <div className="report-content">
             <div className="input-container-html">
-              <label htmlFor="strompreis">Strompreis (€/kWh):</label>
+              <label htmlFor="strompreis">Strompreis (Ct/kWh):</label>
               <input
                 type="number"
                 id="strompreis"
@@ -2020,7 +2020,7 @@ export default function Home() {
               </div>
             </div>
             <div className="input-container-html">
-              <label>Berechneter Preis (€/kWh):</label>
+              <label>Berechneter Preis (Ct/kWh):</label>
               <span>{getPreisDifferenz(strompreis, selectedRegion)}</span>
             </div>
             <div className="input-container-html date-picker-container">

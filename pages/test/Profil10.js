@@ -71,7 +71,7 @@ const styles = {
     padding: '4px',
     backgroundColor: '#fff',
     borderRadius: '4px',
-    pointerEvents: 'none', // Make legend non-interactive
+    pointerEvents: 'none',
   },
   legendItem: {
     display: 'flex',
@@ -158,23 +158,24 @@ const styles = {
     borderRadius: '8px',
   },
   consumptionSummary: {
-    padding: '12px',
-    backgroundColor: '#fff',
+    marginTop: '24px',
+    padding: '16px',
+    backgroundColor: '#f9f9f9',
     borderRadius: '8px',
-    fontSize: '13px',
+    fontSize: '14px',
     color: '#333',
   },
   summaryTitle: {
     fontSize: '16px',
     fontWeight: '600',
-    marginBottom: '8px',
+    marginBottom: '12px',
     textAlign: 'center',
     color: 'rgb(5,166,150)',
   },
   summaryTable: {
     width: '100%',
     borderCollapse: 'collapse',
-    fontSize: '13px',
+    fontSize: '14px',
   },
   summaryTableHeader: {
     backgroundColor: 'rgb(64 153 102)',
@@ -399,7 +400,7 @@ function StrompreisChart() {
     } else {
       const parsedValue = parseFloat(value);
       if (isNaN(parsedValue) || parsedValue < 0) {
-        setInputError('Bitte geben Sie einen gültigen positiven Preis in Cent/kWh ein.');
+        setInputError('Bitte geben Sie einen gültigen positiven Preis in Ct/kWh ein.');
       } else {
         setInputError(null);
       }
@@ -451,46 +452,46 @@ function StrompreisChart() {
   const calculateConsumptionAndCosts = (profile) => {
     const factor = profileFactors[profile];
     const h25Consumption = selectedH25Data?.__parsed_extra
-      ? Object.values(selectedH25Data.__parsed_extra).reduce((sum, value) => sum + (value * factor || 0), 0)
+      ? Object.values(selectedH25Data.__parsed_extra).reduce((sum, value) => sum + ((value * factor) / 10 || 0), 0)
       : 0;
     const p25Consumption = selectedP25Data?.__parsed_extra
-      ? Object.values(selectedP25Data.__parsed_extra).reduce((sum, value) => sum + (value * factor || 0), 0)
+      ? Object.values(selectedP25Data.__parsed_extra).reduce((sum, value) => sum + ((value * factor) / 10 || 0), 0)
       : 0;
     const s25Consumption = selectedS25Data?.__parsed_extra
-      ? Object.values(selectedS25Data.__parsed_extra).reduce((sum, value) => sum + (value * factor || 0), 0)
+      ? Object.values(selectedS25Data.__parsed_extra).reduce((sum, value) => sum + ((value * factor) / 10 || 0), 0)
       : 0;
 
     const h25Cost = selectedH25Data?.__parsed_extra && strompreisChartValues.length > 0
       ? Object.values(selectedH25Data.__parsed_extra).reduce((sum, value, index) => {
           const price = strompreisChartValues[index] || 0;
-          return sum + ((value * factor) * price || 0);
+          return sum + (((value * factor) / 10) * price || 0);
         }, 0)
       : 0;
 
     const p25Cost = selectedP25Data?.__parsed_extra && strompreisChartValues.length > 0
       ? Object.values(selectedP25Data.__parsed_extra).reduce((sum, value, index) => {
           const price = strompreisChartValues[index] || 0;
-          return sum + ((value * factor) * price || 0);
+          return sum + (((value * factor) / 10) * price || 0);
         }, 0)
       : 0;
 
     const s25Cost = selectedS25Data?.__parsed_extra && strompreisChartValues.length > 0
       ? Object.values(selectedS25Data.__parsed_extra).reduce((sum, value, index) => {
           const price = strompreisChartValues[index] || 0;
-          return sum + ((value * factor) * price || 0);
+          return sum + (((value * factor) / 10) * price || 0);
         }, 0)
       : 0;
 
     const h25CustomCost = selectedH25Data?.__parsed_extra && !isNaN(adjustedCustomPrice) && adjustedCustomPrice >= 0
-      ? Object.values(selectedH25Data.__parsed_extra).reduce((sum, value) => sum + ((value * factor) * adjustedCustomPrice || 0), 0)
+      ? Object.values(selectedH25Data.__parsed_extra).reduce((sum, value) => sum + (((value * factor) / 10) * adjustedCustomPrice || 0), 0)
       : 0;
 
     const p25CustomCost = selectedP25Data?.__parsed_extra && !isNaN(adjustedCustomPrice) && adjustedCustomPrice >= 0
-      ? Object.values(selectedP25Data.__parsed_extra).reduce((sum, value) => sum + ((value * factor) * adjustedCustomPrice || 0), 0)
+      ? Object.values(selectedP25Data.__parsed_extra).reduce((sum, value) => sum + (((value * factor) / 10) * adjustedCustomPrice || 0), 0)
       : 0;
 
     const s25CustomCost = selectedS25Data?.__parsed_extra && !isNaN(adjustedCustomPrice) && adjustedCustomPrice >= 0
-      ? Object.values(selectedS25Data.__parsed_extra).reduce((sum, value) => sum + ((value * factor) * adjustedCustomPrice || 0), 0)
+      ? Object.values(selectedS25Data.__parsed_extra).reduce((sum, value) => sum + (((value * factor) / 10) * adjustedCustomPrice || 0), 0)
       : 0;
 
     return {
@@ -531,34 +532,34 @@ function StrompreisChart() {
       const h25AdjustedValues = selectedH25Data?.__parsed_extra && strompreisChartValues.length > 0
         ? Object.values(selectedH25Data.__parsed_extra).map((h25Value, index) => {
             const strompreisValue = strompreisChartValues[index];
-            return strompreisValue != null && h25Value != null ? ((h25Value * factor) * strompreisValue) / 100 : null;
+            return strompreisValue != null && h25Value != null ? (((h25Value * factor) / 10) * strompreisValue) : null;
           })
         : Array(96).fill(null);
 
       const p25AdjustedValues = selectedP25Data?.__parsed_extra && strompreisChartValues.length > 0
         ? Object.values(selectedP25Data.__parsed_extra).map((p25Value, index) => {
             const strompreisValue = strompreisChartValues[index];
-            return strompreisValue != null && p25Value != null ? ((p25Value * factor) * strompreisValue) / 100 : null;
+            return strompreisValue != null && p25Value != null ? (((p25Value * factor) / 10) * strompreisValue) : null;
           })
         : Array(96).fill(null);
 
       const s25AdjustedValues = selectedS25Data?.__parsed_extra && strompreisChartValues.length > 0
         ? Object.values(selectedS25Data.__parsed_extra).map((s25Value, index) => {
             const strompreisValue = strompreisChartValues[index];
-            return strompreisValue != null && s25Value != null ? ((s25Value * factor) * strompreisValue) / 100 : null;
+            return strompreisValue != null && s25Value != null ? (((s25Value * factor) / 10) * strompreisValue) : null;
           })
         : Array(96).fill(null);
 
       const customPriceValues = !isNaN(adjustedCustomPrice) && adjustedCustomPrice >= 0 && selectedH25Data?.__parsed_extra
-        ? Object.values(selectedH25Data.__parsed_extra).map((value) => ((value * factor) * adjustedCustomPrice) / 100)
+        ? Object.values(selectedH25Data.__parsed_extra).map((value) => ((value * factor) / 10) * adjustedCustomPrice)
         : Array(96).fill(null);
 
       const customP25PriceValues = !isNaN(adjustedCustomPrice) && adjustedCustomPrice >= 0 && selectedP25Data?.__parsed_extra
-        ? Object.values(selectedP25Data.__parsed_extra).map((value) => ((value * factor) * adjustedCustomPrice) / 100)
+        ? Object.values(selectedP25Data.__parsed_extra).map((value) => ((value * factor) / 10) * adjustedCustomPrice)
         : Array(96).fill(null);
 
       const customS25PriceValues = !isNaN(adjustedCustomPrice) && adjustedCustomPrice >= 0 && selectedS25Data?.__parsed_extra
-        ? Object.values(selectedS25Data.__parsed_extra).map((value) => ((value * factor) * adjustedCustomPrice) / 100)
+        ? Object.values(selectedS25Data.__parsed_extra).map((value) => ((value * factor) / 10) * adjustedCustomPrice)
         : Array(96).fill(null);
 
       const datasetsForProfile = [];
@@ -575,7 +576,7 @@ function StrompreisChart() {
             pointHoverRadius: 0,
           },
           {
-            label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Cent/kWh, Profil ${profile}, Faktor ${factor})`,
+            label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh, Profil ${profile}, Faktor ${factor})`,
             data: customPriceValues,
             borderColor: 'rgb(64, 153, 102)',
             backgroundColor: 'rgba(251, 140, 0, 0.1)',
@@ -599,7 +600,7 @@ function StrompreisChart() {
             pointHoverRadius: 0,
           },
           {
-            label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Cent/kWh, Profil ${profile}, Faktor ${factor})`,
+            label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh, Profil ${profile}, Faktor ${factor})`,
             data: customP25PriceValues,
             borderColor: 'rgb(64, 153, 102)',
             backgroundColor: 'rgba(251, 140, 0, 0.1)',
@@ -623,7 +624,7 @@ function StrompreisChart() {
             pointHoverRadius: 0,
           },
           {
-            label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Cent/kWh, Profil ${profile}, Faktor ${factor})`,
+            label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh, Profil ${profile}, Faktor ${factor})`,
             data: customS25PriceValues,
             borderColor: 'rgb(64, 153, 102)',
             backgroundColor: 'rgba(251, 140, 0, 0.1)',
@@ -665,7 +666,7 @@ function StrompreisChart() {
           label: function (context) {
             const label = context.dataset.label || '';
             const value = context.raw != null ? context.raw.toFixed(3) : 'N/A';
-            return `${label}: ${value} €`;
+            return `${label}: ${value} Ct`;
           },
         },
       },
@@ -673,8 +674,8 @@ function StrompreisChart() {
     scales: {
       y: {
         beginAtZero: false,
-        title: { display: true, text: 'Stromkosten in €', font: { size: 14, family: "'Inter', sans-serif" }, color: '#333' },
-        ticks: { callback: (value) => `${value.toFixed(2)} €` },
+        title: { display: true, text: 'Stromkosten in Ct', font: { size: 14, family: "'Inter', sans-serif" }, color: '#333' },
+        ticks: { callback: (value) => `${value.toFixed(2)} Ct` },
         grid: {
           display: true,
           color: 'rgba(0, 0, 0, 0.1)',
@@ -682,7 +683,15 @@ function StrompreisChart() {
         },
       },
       x: {
-        title: { display: true, text: 'Uhrzeit', font: { size: 14, family: "'Inter', sans-serif" }, color: '#333' },
+        title: { display: true, text: '', font: { size: 14, family: "'Inter', sans-serif" }, color: '#333' },
+        ticks: {
+          font: { size: 9, family: "'Inter', sans-serif" },
+          maxRotation: 45,
+          minRotation: 45,
+          autoSkip: true,
+          maxTicksLimit: 24,
+          padding: 5,
+        },
         grid: {
           display: true,
           color: 'rgba(0, 0, 0, 0.1)',
@@ -968,6 +977,56 @@ function StrompreisChart() {
             </div>
           )}
         </div>
+        {householdType !== 'none' && activeProfile && (
+          <div style={styles.consumptionSummary}>
+            <div style={styles.tooltipContainer} className="tooltip-container">
+              <h3 style={styles.summaryTitle}>Täglicher Verbrauch und Kosten</h3>
+              <svg style={styles.infoIcon} viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+              </svg>
+              <span className="tooltip">Preise sind auf zwei Nachkommastellen gerundet</span>
+            </div>
+            <table style={styles.summaryTable}>
+              <thead>
+                <tr style={styles.summaryTableHeader}>
+                  <th style={styles.summaryTableCell}>Verbrauch (kWh)</th>
+                  <th style={styles.summaryTableCell}>Kosten (Euro)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(() => {
+                  const profile = activeProfile;
+                  const { h25Consumption, p25Consumption, s25Consumption, h25Cost, p25Cost, s25Cost, h25CustomCost, p25CustomCost, s25CustomCost } = calculateConsumptionAndCosts(profile);
+                  return (
+                    <tr key={profile} style={styles.summaryTableRow}>
+                      <td style={styles.summaryTableCell}>
+                        {householdType === 'standard' ? `${h25Consumption} kWh` : householdType === 'pv' ? `${p25Consumption} kWh` : `${s25Consumption} kWh`}
+                      </td>
+                      <td style={styles.summaryTableCell}>
+                        {householdType === 'standard' ? (
+                          <>
+                            Dynamischer Tarif: {h25Cost.euro} €<br />
+                            Normaltarif: {h25CustomCost.euro} €
+                          </>
+                        ) : householdType === 'pv' ? (
+                          <>
+                            Dynamischer Tarif: {p25Cost.euro} €<br />
+                            Normaltarif: {p25CustomCost.euro} €
+                          </>
+                        ) : (
+                          <>
+                            Dynamischer Tarif: {s25Cost.euro} €<br />
+                            Normaltarif: {s25CustomCost.euro} €
+                          </>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })()}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       <div style={styles.controlsContainer} className="controls-container">
@@ -1046,7 +1105,7 @@ function StrompreisChart() {
             </div>
 
             <div style={styles.controlGroup}>
-              <label style={styles.inputLabel} htmlFor="priceInput">Preis (Cent/kWh):</label>
+              <label style={styles.inputLabel} htmlFor="priceInput">Preis (Ct/kWh):</label>
               <div style={styles.tooltipContainer} className="tooltip-container">
                 <input
                   id="priceInput"
@@ -1101,10 +1160,10 @@ function StrompreisChart() {
               </div>
               <p style={{ fontSize: '12px', color: '#333', marginTop: '8px', textAlign: 'center' }}>
                 {selectedDiscount === null
-                  ? `Keine Region ausgewählt, Preis: ${parseFloat(customPrice).toFixed(2) || 'N/A'} Cent/kWh`
+                  ? `Keine Region ausgewählt, Preis: ${parseFloat(customPrice).toFixed(2) || 'N/A'} Ct/kWh`
                   : `Ausgewählte Region: ${
                       regionOptions.find((r) => r.value === selectedDiscount)?.label
-                    }, Angepasster Preis: ${adjustedCustomPrice.toFixed(2)} Cent/kWh`}
+                    }, Angepasster Preis: ${adjustedCustomPrice.toFixed(2)} Ct/kWh`}
               </p>
             </div>
 
@@ -1128,57 +1187,6 @@ function StrompreisChart() {
                 popperPlacement="bottom-start"
               />
             </div>
-
-            {householdType !== 'none' && activeProfile && (
-              <div style={styles.consumptionSummary}>
-                <div style={styles.tooltipContainer} className="tooltip-container">
-                  <h3 style={styles.summaryTitle}>Täglicher Verbrauch und Kosten</h3>
-                  <svg style={styles.infoIcon} viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-                  </svg>
-                  <span className="tooltip">Preise sind auf zwei Nachkommastellen gerundet</span>
-                </div>
-                <table style={styles.summaryTable}>
-                  <thead>
-                    <tr style={styles.summaryTableHeader}>
-                      <th style={styles.summaryTableCell}>Verbrauch (kWh)</th>
-                      <th style={styles.summaryTableCell}>Kosten (Euro)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {(() => {
-                      const profile = activeProfile;
-                      const { h25Consumption, p25Consumption, s25Consumption, h25Cost, p25Cost, s25Cost, h25CustomCost, p25CustomCost, s25CustomCost } = calculateConsumptionAndCosts(profile);
-                      return (
-                        <tr key={profile} style={styles.summaryTableRow}>
-                          <td style={styles.summaryTableCell}>
-                            {householdType === 'standard' ? `H25: ${h25Consumption} kWh` : householdType === 'pv' ? `P25: ${p25Consumption} kWh` : `S25: ${s25Consumption} kWh`}
-                          </td>
-                          <td style={styles.summaryTableCell}>
-                            {householdType === 'standard' ? (
-                              <>
-                                Dynamischer Tarif: {h25Cost.euro} €<br />
-                                Normaltarif: {h25CustomCost.euro} €
-                              </>
-                            ) : householdType === 'pv' ? (
-                              <>
-                                Dynamischer Tarif: {p25Cost.euro} €<br />
-                                Normaltarif: {p25CustomCost.euro} €
-                              </>
-                            ) : (
-                              <>
-                                Dynamischer Tarif: {s25Cost.euro} €<br />
-                                Normaltarif: {s25CustomCost.euro} €
-                              </>
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })()}
-                  </tbody>
-                </table>
-              </div>
-            )}
 
             <p style={styles.noteText}>
               *Hinweis: Bei den gezeigten Daten handelt es sich um Vergleichswerte, die für 1 bis zu 5 Personen in einem Haushalt

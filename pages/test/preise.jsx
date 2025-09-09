@@ -1,9 +1,9 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-
 import Statistik from '../test/stk5';
-import Durchschnitt from '../test/durch15';
+import Durchschnitt from '../test/durch16';
+
 const styles = `
   .layout {
     width: 100%;
@@ -106,10 +106,33 @@ const styles = `
     max-width: 400px;
     margin: 0 auto;
   }
-  .content, .chart {
+  .content {
     flex: 1;
     overflow: auto;
     max-height: 100vh;
+    padding: 8px; /* Noch weiter reduziertes Padding */
+    border-radius: 12px;
+    background-color: #FFFFFF;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+  }
+  .content > * {
+    width: 100%;
+    height: 100%;
+    flex: 1; /* Stellt sicher, dass der Inhalt der Statistik-Komponente den verfügbaren Platz ausnutzt */
+  }
+  .content * {
+    font-size: 1.1em; /* Vergrößert die Schriftgröße für alle Elemente in der content-Box */
+  }
+  .chart {
+    flex: 1;
+    overflow: auto;
+    max-height: 100vh;
+    padding: 24px; /* Unverändertes Padding für die chart-Box */
+    border-radius: 12px;
+    background-color: #FFFFFF;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   .footer {
     grid-area: footer;
@@ -147,8 +170,16 @@ const styles = `
   .main {
     flex-direction: column;
   }
-  .content, .chart {
+  .content {
     max-height: none;
+    padding: 8px; /* Reduziertes Padding auch für mobile Ansicht */
+  }
+  .content * {
+    font-size: 1em; /* Etwas kleinere Schriftgröße für mobile Ansicht */
+  }
+  .chart {
+    max-height: none;
+    padding: 12px;
   }
   .extra-box-2 .inner-box {
     max-width: 100%;
@@ -215,8 +246,6 @@ const Energiemanager = () => {
           </div>
         </header>
 
-        
-
         <div className="sidebar w-full p-3 bg-[#202026] border-r border-gray-300">
           <div className="flex h-full flex-col justify-between">
             <div className="flex flex-col gap-3">
@@ -253,11 +282,13 @@ const Energiemanager = () => {
         </div>
 
         <div className="main flex flex-col lg:flex-row gap-6">
-          <div className="content flex-1 p-6 rounded-xl bg-white shadow-md flex flex-col"> <Statistik /></div>
-          <div className="chart flex-1 p-6 rounded-xl bg-white shadow-md flex flex-col"><Durchschnitt /></div>
+          <div className="content flex-1 rounded-xl bg-white shadow-md flex flex-col">
+            <Statistik />
+          </div>
+          <div className="chart flex-1 p-6 rounded-xl bg-white shadow-md flex flex-col">
+            <Durchschnitt />
+          </div>
         </div>
-
-        
 
         <footer className="footer"></footer>
 
