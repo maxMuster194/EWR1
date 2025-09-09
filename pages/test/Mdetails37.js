@@ -25,13 +25,13 @@ ChartJS.register(
 
 // Default consumer data and descriptions
 const standardVerbrauch = {
-  Kühlschrank: 120,
-  Gefrierschrank: 200,
-  Aquarium: 50,
-  Waschmaschine: 1200,
+  Kühlschrank: 35,
+  Gefrierschrank: 38,
+  Wärmepumpe: 460,
+  Waschmaschine: 300,
   Geschirrspüler: 600,
-  Trockner: 3500,
-  Herd: 700,
+  Trockner: 1200,
+  Herd: 600,
   Multimedia: 350,
   Licht: 175,
   EAuto: 11000,
@@ -41,7 +41,7 @@ const standardVerbrauch = {
 const verbraucherBeschreibungen = {
   Kühlschrank: 'Der Kühlschrank läuft kontinuierlich und verbraucht typischerweise 120 W.',
   Gefrierschrank: 'Der Gefrierschrank benötigt etwa 200 W für Langzeitlagerung.',
-  Aquarium: 'Ein Aquarium verbraucht ca. 50 W, abhängig von Größe und Ausstattung.',
+  Wärmepumpe: 'Ein Wärmepumpe verbraucht ca. 460 W.',
   Waschmaschine: 'Die Waschmaschine verbraucht ca. 1200 W pro Waschgang (1,37h/Woche).',
   Geschirrspüler: 'Der Geschirrspüler benötigt ca. 600 W pro Spülgang (1,27h/Woche).',
   Trockner: 'Der Wäschetrockner verbraucht ca. 3500 W pro Trocknung (1,37h/Woche).',
@@ -68,7 +68,7 @@ const timePeriods = [
 const verbraucherTypes = {
   Kühlschrank: 'grundlast',
   Gefrierschrank: 'grundlast',
-  Aquarium: 'grundlast',
+  Wärmepumpe: 'grundlast',
   Waschmaschine: 'week',
   Geschirrspüler: 'week',
   Trockner: 'week',
@@ -299,7 +299,7 @@ export default function StromverbrauchRechnerMobile(){
   const [cooldown, setCooldown] = useState(0);
 
   const [menus, setMenus] = useState([
-    {
+    /*{
       id: 'stromerzeuger',
       label: 'Stromerzeuger',
       options: [
@@ -307,14 +307,14 @@ export default function StromverbrauchRechnerMobile(){
         { name: 'Windrad', specifications: 'Leistung: 2-10 kW, Windgeschwindigkeit: 3-25 m/s' },
         { name: 'Sonstige', specifications: 'Individuelle Stromerzeugung, z.B. Wasserkraft' },
       ],
-    },
+    },*/
     {
       id: 'grundlastverbraucher',
       label: 'Grundlastverbraucher',
       options: [
         { name: 'Kühlschrank', specifications: 'Leistung: 100-200 W, Energieeffizienz: A+++, Betrieb: 24/7' },
         { name: 'Gefrierschrank', specifications: 'Leistung: 150-300 W, Energieeffizienz: A++, Betrieb: 24/7' },
-        { name: 'Aquarium', specifications: 'Leistung: 50 W, Betrieb: 24/7' },
+        { name: 'Wärmepumpe', specifications: 'Leistung: 460 W, Betrieb: 24/7' },
       ],
     },
     {
@@ -337,6 +337,7 @@ export default function StromverbrauchRechnerMobile(){
         { name: 'ZweitesEAuto', specifications: 'Leistung: 7.4 kW, Betrieb: variabel, z.B. langsamere Wallbox' },
       ],
     },
+    /*
     {
       id: 'strompeicher',
       label: 'Strompeicher',
@@ -344,7 +345,7 @@ export default function StromverbrauchRechnerMobile(){
         { name: 'Lithium-Ionen', specifications: 'Leistung: 500 W, Kapazität: 5 kWh' },
         { name: 'Blei-Säure', specifications: 'Leistung: 300 W, Kapazität: 3 kWh' },
       ],
-    },
+    },*/
   ]);
 
   // Temporäres Speichern in localStorage
@@ -2678,7 +2679,7 @@ body {
         <p>Gesamtwattage: {zusammenfassung.totalWattage} W</p>
       </div>
 
-      {/* Download-Button und Hinweis */}
+      {/* Download-Button und Hinweis 
       <div className="flex flex-col items-center">
         <button className="download-button" onClick={handleDownloadClick}>
           <svg
@@ -2700,9 +2701,9 @@ body {
         <p className="download-hint hidden sm:block">
           Bitte verwenden Sie die Desktop-Variante für den Download.
         </p>
-      </div>
+      </div>*/}
 
-      {/* Modal für Verifizierung */}
+      {/* Modal für Verifizierung 
       {showModal && (
         <div className="modal">
           <div className="modal-content">
@@ -2762,7 +2763,7 @@ body {
             )}
           </div>
         </div>
-      )}
+      )}*/}
     </div>
   </div>
 </div>

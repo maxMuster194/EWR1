@@ -25,15 +25,15 @@ ChartJS.register(
 
 // Default consumer data and descriptions
 const standardVerbrauch = {
-  Kühlschrank: 120,
-  Gefrierschrank: 200,
-  Aquarium: 50,
-  Waschmaschine: 1200,
+  Kühlschrank: 35,
+  Gefrierschrank: 38,
+  Wärmepumpe: 460,
+  Waschmaschine: 300,
   Geschirrspüler: 600,
-  Trockner: 3500,
-  Herd: 700,
+  Trockner: 1200,
+  Herd: 900,
   Multimedia: 350,
-  Licht: 175,
+  Licht: 300,
   EAuto: 11000,
   ZweitesEAuto: 7400,
 };
@@ -41,7 +41,7 @@ const standardVerbrauch = {
 const verbraucherBeschreibungen = {
   Kühlschrank: 'Der Kühlschrank läuft kontinuierlich und verbraucht typischerweise 120 W.',
   Gefrierschrank: 'Der Gefrierschrank benötigt etwa 200 W für Langzeitlagerung.',
-  Aquarium: 'Ein Aquarium verbraucht ca. 50 W, abhängig von Größe und Ausstattung.',
+  Wärmepumpe: 'Eine Wärmepumpe verbraucht ca. 460 W.',
   Waschmaschine: 'Die Waschmaschine verbraucht ca. 1200 W pro Waschgang (1,37h/Woche).',
   Geschirrspüler: 'Der Geschirrspüler benötigt ca. 600 W pro Spülgang (1,27h/Woche).',
   Trockner: 'Der Wäschetrockner verbraucht ca. 3500 W pro Trocknung (1,37h/Woche).',
@@ -68,7 +68,7 @@ const timePeriods = [
 const verbraucherTypes = {
   Kühlschrank: 'grundlast',
   Gefrierschrank: 'grundlast',
-  Aquarium: 'grundlast',
+  Wärmepumpe: 'grundlast',
   Waschmaschine: 'week',
   Geschirrspüler: 'week',
   Trockner: 'week',
@@ -300,7 +300,7 @@ export default function Home() {
   const [cooldown, setCooldown] = useState(0);
  
   const [menus, setMenus] = useState([
-    {
+    /*{
       id: 'stromerzeuger',
       label: 'Stromerzeuger',
       options: [
@@ -308,14 +308,14 @@ export default function Home() {
         { name: 'Windrad', specifications: 'Leistung: 2-10 kW, Windgeschwindigkeit: 3-25 m/s' },
         { name: 'Sonstige', specifications: 'Individuelle Stromerzeugung, z.B. Wasserkraft' },
       ],
-    },
+    },*/
     {
       id: 'grundlastverbraucher',
       label: 'Grundlastverbraucher',
       options: [
         { name: 'Kühlschrank', specifications: 'Leistung: 100-200 W, Energieeffizienz: A+++, Betrieb: 24/7' },
         { name: 'Gefrierschrank', specifications: 'Leistung: 150-300 W, Energieeffizienz: A++, Betrieb: 24/7' },
-        { name: 'Aquarium', specifications: 'Leistung: 50 W, Betrieb: 24/7' },
+        { name: 'Wärmepumpe', specifications: 'Leistung: 50 W, Betrieb: 24/7' },
       ],
     },
     {
@@ -338,6 +338,7 @@ export default function Home() {
         { name: 'ZweitesEAuto', specifications: 'Leistung: 7.4 kW, Betrieb: variabel, z.B. langsamere Wallbox' },
       ],
     },
+    /*
     {
       id: 'strompeicher',
       label: 'Strompeicher',
@@ -345,7 +346,7 @@ export default function Home() {
         { name: 'Lithium-Ionen', specifications: 'Leistung: 500 W, Kapazität: 5 kWh' },
         { name: 'Blei-Säure', specifications: 'Leistung: 300 W, Kapazität: 3 kWh' },
       ],
-    },
+    },*/
   ]);
 
   // Temporäres Speichern in localStorage
@@ -1097,7 +1098,7 @@ export default function Home() {
     .map((label, i) => ({ label, value: rawValuesAll[i], index: i }))
     .filter((entry) => entry.value != null);
   const chartConvertedValues = chartDataApi.map((entry) => 
-    typeof entry.value === 'number' ? entry.value * 0.1 / 100 : parseFloat(entry.value) * 0.1 / 100 || strompreis
+    typeof entry.value === 'number' ? entry.value * 0.1 /100 : parseFloat(entry.value) * 0.1 / 100 || strompreis
   );
 
   const chartData = {
@@ -1113,7 +1114,7 @@ export default function Home() {
         yAxisID: 'y',
       },
       {
-        label: `Dynamischer Preis am ${selectedDate || 'N/A'} (€/kWh)`,
+        label: `Dynamischer Preis am ${selectedDate || 'N/A'} (Ct/kWh)`,
         data: chartConvertedValues,
         fill: false,
         borderColor: '#062316',
@@ -1135,7 +1136,7 @@ export default function Home() {
           label: function(context) {
             const index = context.dataIndex;
             if (context.dataset.label.includes('Dynamischer Preis')) {
-              return `Preis: ${context.raw.toFixed(2)} €/kWh`;
+              return `Preis: ${context.raw.toFixed(2)} Ct/kWh`;
             }
             const verbraucherList = hourlyData[index].verbraucher.join(', ');
             return `Verbrauch: ${context.raw.toFixed(2)} kW\nAktive Verbraucher: ${verbraucherList || 'Keine'}`;
@@ -1165,7 +1166,7 @@ export default function Home() {
     labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
     datasets: [
       {
-        label: `Ersparnis (Dynamischer Tarif) am ${selectedDate || 'N/A'} (€)`,
+        label: `Ersparnis (Dynamischer Tarif) am ${selectedDate || 'N/A'} (Ct)`,
         data: hourlyData.map((_, index) => {
           const price = chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
           return (hourlyData[index].total * price).toFixed(2);
@@ -1176,7 +1177,7 @@ export default function Home() {
         tension: 0.1,
       },
       {
-        label: `Ersparnis (Fester Tarif) am ${selectedDate || 'N/A'} (€)`,
+        label: `Ersparnis (Fester Tarif) am ${selectedDate || 'N/A'} (Ct)`,
         data: hourlyData.map((_, index) => {
           const price = parseFloat(getPreisDifferenz(strompreis, selectedRegion));
           return (hourlyData[index].total * price).toFixed(2);
@@ -1208,7 +1209,7 @@ export default function Home() {
             const isDynamic = datasetLabel.includes('Dynamischer Tarif');
             const price = isDynamic ? (chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion))) : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
             const verbraucherList = hourlyData[index].verbraucher.join(', ');
-            return `${datasetLabel.split(' am')[0]}: ${context.raw} €\nPreis: ${(price * 100).toFixed(2)} ct/kWh\nAktive Verbraucher: ${verbraucherList || 'Keine'}`;
+            return `${datasetLabel.split(' am')[0]}: ${context.raw} Ct\nPreis: ${(price * 100).toFixed(2)} ct/kWh\nAktive Verbraucher: ${verbraucherList || 'Keine'}`;
           },
         },
       },
@@ -1216,7 +1217,7 @@ export default function Home() {
     scales: {
       y: { 
         beginAtZero: true, 
-        title: { display: true, text: 'Ersparnis (€)', color: '#333' }, 
+        title: { display: true, text: 'Ersparnis (Ct)', color: '#333' }, 
         ticks: { color: '#333' } 
       },
       x: { 
@@ -2053,7 +2054,7 @@ export default function Home() {
                       <li className="checkbox-group-header">
                         <span>{menu.id === 'stromerzeuger' ? 'Erzeuger' : 'Verbraucher'}</span>
                         <span>Info</span>
-                        <span>Watt</span>
+                        <span>Watt / h</span>
                         <span>Kosten/Jahr</span>
                         {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && <span></span>}
                       </li>
