@@ -81,19 +81,19 @@ const verbraucherTypes = {
 
 // Functions
 const getRegionPreis = (selectedRegion) => {
-  if (selectedRegion === 'KF') return 0.10;
-  if (selectedRegion === 'MN') return 0.17;
-  if (selectedRegion === 'MOD') return 0.20;
+  if (selectedRegion === 'KF') return 10;
+  if (selectedRegion === 'MN') return 17;
+  if (selectedRegion === 'MOD') return 20;
   return 0;
 };
 
 const getPreisDifferenz = (strompreis, selectedRegion) => {
   const regionPreis = getRegionPreis(selectedRegion);
-  return ((strompreis / 100) - regionPreis).toFixed(2);
+  return (strompreis - regionPreis).toFixed(2);
 };
 
 const updateKosten = (watt, verbraucher, strompreis, selectedRegion, setVerbraucherDaten, erweiterteEinstellungen) => {
-  const preisDifferenz = parseFloat(getPreisDifferenz(strompreis, selectedRegion));
+  const preisDifferenz = parseFloat(getPreisDifferenz(strompreis, selectedRegion)) / 100;
   let kosten = 0;
   const einstellung = erweiterteEinstellungen[verbraucher] || {};
   const totalDauer = einstellung.zeitraeume?.reduce((sum, z) => sum + (parseFloat(z.dauer) || 0), 0) || 0;
@@ -126,7 +126,7 @@ const updateKosten = (watt, verbraucher, strompreis, selectedRegion, setVerbrauc
 };
 
 const berechneDynamischenVerbrauch = (watt, verbraucher, strompreis, selectedRegion, erweiterteEinstellungen) => {
-  const preisDifferenz = parseFloat(getPreisDifferenz(strompreis, selectedRegion));
+  const preisDifferenz = parseFloat(getPreisDifferenz(strompreis, selectedRegion)) / 100;
   const einstellung = erweiterteEinstellungen[verbraucher] || {};
   if (!einstellung.zeitraeume || einstellung.zeitraeume.length === 0 || watt === 0) return 0;
   let totalDauer = einstellung.zeitraeume.reduce((sum, z) => sum + (parseFloat(z.dauer) || 0), 0) || 0;
@@ -218,7 +218,7 @@ const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => 
 
 // Home Component
 export default function Home() {
-  const [strompreis, setStrompreis] = useState(31);  // Ct/kWh
+  const [strompreis, setStrompreis] = useState(31); // Ct/kWh
   const [selectedRegion, setSelectedRegion] = useState('KF');
   const [verbraucherDaten, setVerbraucherDaten] = useState(
     Object.keys(standardVerbrauch).reduce((acc, key) => ({
@@ -279,7 +279,7 @@ export default function Home() {
     eauto: false,
     strompeicher: false,
   });
-  
+
   const [newOptionNames, setNewOptionNames] = useState({});
   const [newOptionWatt, setNewOptionWatt] = useState({});
   const [newOptionTypes, setNewOptionTypes] = useState({});
@@ -298,17 +298,8 @@ export default function Home() {
   const [agb, setAgb] = useState(false);
   const [werbung, setWerbung] = useState(false);
   const [cooldown, setCooldown] = useState(0);
- 
+
   const [menus, setMenus] = useState([
-    /*{
-      id: 'stromerzeuger',
-      label: 'Stromerzeuger',
-      options: [
-        { name: 'Photovoltaik', specifications: 'Leistung: 5-20 kWp, Effizienz: ~20%, Lebensdauer: ~25 Jahre' },
-        { name: 'Windrad', specifications: 'Leistung: 2-10 kW, Windgeschwindigkeit: 3-25 m/s' },
-        { name: 'Sonstige', specifications: 'Individuelle Stromerzeugung, z.B. Wasserkraft' },
-      ],
-    },*/
     {
       id: 'grundlastverbraucher',
       label: 'Grundlastverbraucher',
@@ -338,15 +329,6 @@ export default function Home() {
         { name: 'ZweitesEAuto', specifications: 'Leistung: 7.4 kW, Betrieb: variabel, z.B. langsamere Wallbox' },
       ],
     },
-    /*
-    {
-      id: 'strompeicher',
-      label: 'Strompeicher',
-      options: [
-        { name: 'Lithium-Ionen', specifications: 'Leistung: 500 W, Kapazität: 5 kWh' },
-        { name: 'Blei-Säure', specifications: 'Leistung: 300 W, Kapazität: 3 kWh' },
-      ],
-    },*/
   ]);
 
   // Temporäres Speichern in localStorage
@@ -486,7 +468,7 @@ export default function Home() {
         if (type !== 'grundlast') {
           kosten = berechneDynamischenVerbrauch(watt, verbraucher, strompreis, selectedRegion, erweiterteEinstellungen);
         } else {
-          kosten = (watt * parseFloat(getPreisDifferenz(strompreis, selectedRegion)) * 24 * 365) / 1000;
+          kosten = (watt * (parseFloat(getPreisDifferenz(strompreis, selectedRegion)) / 100) * 24 * 365) / 1000;
           if (kosten < 0) kosten = 0;
         }
       }
@@ -515,7 +497,7 @@ export default function Home() {
         if (type !== 'grundlast') {
           kosten = berechneDynamischenVerbrauch(watt, verbraucher, strompreis, selectedRegion, erweiterteEinstellungen);
         } else {
-          kosten = (watt * parseFloat(getPreisDifferenz(strompreis, selectedRegion)) * 24 * 365) / 1000;
+          kosten = (watt * (parseFloat(getPreisDifferenz(strompreis, selectedRegion)) / 100) * 24 * 365) / 1000;
           if (kosten < 0) kosten = 0;
         }
       }
@@ -965,7 +947,7 @@ export default function Home() {
     doc.text(`Region: ${selectedRegion || 'Keine ausgewählt'}`, 15, yPosition);
     yPosition += lineHeight;
     addNewPageIfNeeded();
-    doc.text(`Berechneter Preis: ${getPreisDifferenz(strompreis, selectedRegion)} €/kWh`, 15, yPosition);
+    doc.text(`Berechneter Preis: ${getPreisDifferenz(strompreis, selectedRegion)} Ct/kWh`, 15, yPosition);
     yPosition += lineHeight;
     addNewPageIfNeeded();
 
@@ -1097,8 +1079,8 @@ export default function Home() {
   const chartDataApi = labelsAll
     .map((label, i) => ({ label, value: rawValuesAll[i], index: i }))
     .filter((entry) => entry.value != null);
-  const chartConvertedValues = chartDataApi.map((entry) => 
-    typeof entry.value === 'number' ? entry.value / 1000 : parseFloat(entry.value) / 1000 || (strompreis / 100)
+  const chartConvertedValues = chartDataApi.map((entry) =>
+    typeof entry.value === 'number' ? entry.value / 10 : parseFloat(entry.value) / 10 || strompreis
   );
 
   const chartData = {
@@ -1114,7 +1096,7 @@ export default function Home() {
         yAxisID: 'y',
       },
       {
-        label: `Dynamischer Preis am ${selectedDate || 'N/A'} (€/kWh)`,
+        label: `Dynamischer Preis am ${selectedDate || 'N/A'} (Ct/kWh)`,
         data: chartConvertedValues,
         fill: false,
         borderColor: '#062316',
@@ -1136,7 +1118,7 @@ export default function Home() {
           label: function(context) {
             const index = context.dataIndex;
             if (context.dataset.label.includes('Dynamischer Preis')) {
-              return `Preis: ${context.raw.toFixed(2)} €/kWh`;
+              return `Preis: ${context.raw.toFixed(2)} Ct/kWh`;
             }
             const verbraucherList = hourlyData[index].verbraucher.join(', ');
             return `Verbrauch: ${context.raw.toFixed(2)} kW\nAktive Verbraucher: ${verbraucherList || 'Keine'}`;
@@ -1153,7 +1135,7 @@ export default function Home() {
       },
       y1: {
         beginAtZero: true,
-        title: { display: true, text: 'Preis (€/kWh)', color: '#333' },
+        title: { display: true, text: 'Preis (Ct/kWh)', color: '#333' },
         ticks: { color: '#333' },
         position: 'right',
         grid: { drawOnChartArea: false },
@@ -1166,10 +1148,10 @@ export default function Home() {
     labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
     datasets: [
       {
-        label: `Ersparnis (Dynamischer Tarif) am ${selectedDate || 'N/A'} (€)`,
+        label: `Ersparnis (Dynamischer Tarif) am ${selectedDate || 'N/A'} (Ct)`,
         data: hourlyData.map((_, index) => {
           const price = chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
-          return hourlyData[index].total * price;
+          return (hourlyData[index].total * price).toFixed(2);
         }),
         fill: false,
         borderColor: '#062316',
@@ -1177,10 +1159,10 @@ export default function Home() {
         tension: 0.1,
       },
       {
-        label: `Ersparnis (Fester Tarif) am ${selectedDate || 'N/A'} (€)`,
+        label: `Ersparnis (Fester Tarif) am ${selectedDate || 'N/A'} (Ct)`,
         data: hourlyData.map((_, index) => {
           const price = parseFloat(getPreisDifferenz(strompreis, selectedRegion));
-          return hourlyData[index].total * price;
+          return (hourlyData[index].total * price).toFixed(2);
         }),
         fill: false,
         borderColor: '#409966',
@@ -1195,11 +1177,11 @@ export default function Home() {
     maintainAspectRatio: false,
     plugins: {
       legend: { position: 'top', labels: { color: '#333' } },
-      title: { 
-        display: true, 
-        text: `Stündliche Stromersparnis (${selectedDate || 'Fallback-Preis'})`, 
-        color: '#333', 
-        font: { size: 11.2 } 
+      title: {
+        display: true,
+        text: `Stündliche Stromersparnis (${selectedDate || 'Fallback-Preis'})`,
+        color: '#333',
+        font: { size: 11.2 },
       },
       tooltip: {
         callbacks: {
@@ -1209,23 +1191,24 @@ export default function Home() {
             const isDynamic = datasetLabel.includes('Dynamischer Tarif');
             const price = isDynamic ? (chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion))) : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
             const verbraucherList = hourlyData[index].verbraucher.join(', ');
-            return `${datasetLabel.split(' am')[0]}: ${context.raw.toFixed(2)} €\nPreis: ${price.toFixed(2)} €/kWh\nAktive Verbraucher: ${verbraucherList || 'Keine'}`;
+            return `${datasetLabel.split(' am')[0]}: ${context.raw} Ct\nPreis: ${price.toFixed(2)} Ct/kWh\nAktive Verbraucher: ${verbraucherList || 'Keine'}`;
           },
         },
       },
     },
     scales: {
-      y: { 
-        beginAtZero: true, 
-        title: { display: true, text: 'Ersparnis (€)', color: '#333' }, 
-        ticks: { color: '#333' } 
+      y: {
+        beginAtZero: true,
+        title: { display: true, text: 'Ersparnis (Ct)', color: '#333' },
+        ticks: { color: '#333' },
       },
-      x: { 
-        title: { display: true, text: 'Uhrzeit', color: '#333' }, 
-        ticks: { color: '#333' } 
+      x: {
+        title: { display: true, text: 'Uhrzeit', color: '#333' },
+        ticks: { color: '#333' },
       },
     },
   };
+
 
 
 
