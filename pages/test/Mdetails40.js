@@ -152,6 +152,65 @@ const berechneDynamischenVerbrauch = (watt, verbraucher, strompreis, selectedReg
   return kosten < 0 ? 0 : kosten;
 };
 
+const berechneDynamischeErsparnis = (verbraucher, strompreis, prices, verbraucherDaten, erweiterteEinstellungen) => {
+  const watt = verbraucherDaten[verbraucher]?.watt || 0;
+  if (watt === 0) return 0;
+  const type = verbraucherTypes[verbraucher];
+  const einstellung = erweiterteEinstellungen[verbraucher] || {};
+  let totalKWh = 0;
+  let multiplier = 0;
+  let useWatt = watt;
+  if (type === 'auto' && einstellung.standardLadung) {
+    totalKWh = (einstellung.batterieKapazitaet || 0) * (einstellung.nutzung || 0) * 52;
+  } else {
+    const totalDauer = einstellung.zeitraeume?.reduce((sum, z) => sum + (parseFloat(z.dauer) || 0), 0) || 0;
+    if (type === 'week') {
+      multiplier = (einstellung.nutzung || 0) * 52;
+    } else if (type === 'day') {
+      multiplier = (einstellung.nutzung || 0) * 365;
+    } else if (type === 'auto') {
+      multiplier = (einstellung.nutzung || 0) * 52;
+      useWatt = einstellung.wallboxLeistung || watt;
+    } else if (type === 'grundlast') {
+      multiplier = 365 * 24;
+    }
+    totalKWh = (useWatt * totalDauer * multiplier) / 1000;
+  }
+  if (type === 'grundlast') {
+    totalKWh = (watt * 24 * 365) / 1000;
+  }
+  if (totalKWh === 0) return 0;
+
+  let totalWeightedPrice = 0;
+  let totalWeight = 0;
+  if (type === 'grundlast') {
+    prices.forEach((p) => {
+      totalWeightedPrice += p;
+    });
+    totalWeight = 24;
+  } else {
+    einstellung.zeitraeume?.forEach((z) => {
+      let currentTime = parseInt(z.startzeit.split(':')[0]) + parseInt(z.startzeit.split(':')[1]) / 60;
+      let remaining = parseFloat(z.dauer) || 0;
+      while (remaining > 0) {
+        const hour = Math.floor(currentTime);
+        const frac = Math.min(1.0, remaining, hour + 1 - currentTime);
+        totalWeightedPrice += (prices[hour % 24] || strompreis) * frac;
+        totalWeight += frac;
+        remaining -= frac;
+        currentTime += frac;
+        if (currentTime >= 24) currentTime -= 24;
+      }
+    });
+  }
+  const averagePrice = totalWeight > 0 ? totalWeightedPrice / totalWeight : strompreis;
+  const dynamicCost = totalKWh * (averagePrice / 100);
+  const fixedCost = totalKWh * (strompreis / 100);
+  let ersparnis = fixedCost - dynamicCost;
+  if (ersparnis < 0) ersparnis = 0;
+  return ersparnis;
+};
+
 const calculateTotalWattage = (verbraucherDaten) => {
   return Object.keys(verbraucherDaten).reduce((total, verbraucher) => {
     const watt = parseFloat(verbraucherDaten[verbraucher].watt) || 0;
@@ -175,12 +234,13 @@ const updateZusammenfassung = (verbraucherDaten, setZusammenfassung) => {
 
   const totalWattage = calculateTotalWattage(verbraucherDaten);
 
-  setZusammenfassung({
+  setZusammenfassung((prev) => ({
+    ...prev,
     grundlast: grundlast.toFixed(2),
     dynamisch: dynamisch.toFixed(2),
     gesamt: (grundlast + dynamisch).toFixed(2),
     totalWattage,
-  });
+  }));
 };
 
 const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => {
@@ -270,6 +330,9 @@ export default function Home() {
     dynamisch: 0,
     gesamt: 0,
     totalWattage: 0,
+    grundlastDyn: 0,
+    dynamischDyn: 0,
+    gesamtDyn: 0,
   });
   const [error, setError] = useState('');
   const [openMenus, setOpenMenus] = useState({
@@ -1033,13 +1096,13 @@ export default function Home() {
     doc.setFontSize(12);
 
     addNewPageIfNeeded();
-    doc.text(`Grundlast Ersparnis: ${zusammenfassung.grundlast} €`, 15, yPosition);
+    doc.text(`Grundlast Kosten: ${zusammenfassung.grundlast} €`, 15, yPosition);
     yPosition += lineHeight;
     addNewPageIfNeeded();
-    doc.text(`Dynamische Ersparnis: ${zusammenfassung.dynamisch} €`, 15, yPosition);
+    doc.text(`Dynamische Kosten: ${zusammenfassung.dynamisch} €`, 15, yPosition);
     yPosition += lineHeight;
     addNewPageIfNeeded();
-    doc.text(`Gesamtersparnis: ${zusammenfassung.gesamt} €`, 15, yPosition);
+    doc.text(`Gesamtkosten: ${zusammenfassung.gesamt} €`, 15, yPosition);
     yPosition += lineHeight;
     addNewPageIfNeeded();
     doc.text(`Gesamtwattage: ${zusammenfassung.totalWattage} W`, 15, yPosition);
@@ -1073,6 +1136,41 @@ export default function Home() {
   const chartConvertedValues = chartDataApi.map((entry) =>
     typeof entry.value === 'number' ? entry.value / 10 : parseFloat(entry.value) / 10 || strompreis
   );
+
+  const updateZusammenfassungDyn = () => {
+    if (!selectedDate) {
+      setZusammenfassung((prev) => ({
+        ...prev,
+        grundlastDyn: '0.00',
+        dynamischDyn: '0.00',
+        gesamtDyn: '0.00',
+      }));
+      return;
+    }
+    let grundlastDyn = 0;
+    let dynamischDyn = 0;
+    const prices = chartConvertedValues;
+    Object.keys(standardVerbrauch).forEach((key) => {
+      if (verbraucherDaten[key]?.watt > 0 || verbraucherDaten[key]?.checked) {
+        const costDyn = berechneDynamischeErsparnis(key, strompreis, prices, verbraucherDaten, erweiterteEinstellungen);
+        if (verbraucherTypes[key] === 'grundlast') {
+          grundlastDyn += costDyn;
+        } else {
+          dynamischDyn += costDyn;
+        }
+      }
+    });
+    setZusammenfassung((prev) => ({
+      ...prev,
+      grundlastDyn: grundlastDyn.toFixed(2),
+      dynamischDyn: dynamischDyn.toFixed(2),
+      gesamtDyn: (grundlastDyn + dynamischDyn).toFixed(2),
+    }));
+  };
+
+  useEffect(() => {
+    updateZusammenfassungDyn();
+  }, [verbraucherDaten, erweiterteEinstellungen, selectedDate, apiData, strompreis]);
 
   const chartData = {
     labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
@@ -1199,7 +1297,6 @@ export default function Home() {
       },
     },
   };
-
  
   return (
     <>
@@ -1231,13 +1328,13 @@ body {
   gap: 8px;
   padding: 8px;
   min-height: 100vh;
-  padding-top: 340px;
+  padding-top: 296px; /* Angepasst, um Platz für den fixierten Chart zu lassen (280px Chart + 8px Padding oben + 8px Padding unten) */
 }
 
 /* Fixierter Chart-Bereich */
 .fixed-chart {
   position: fixed;
-  top: 32px;
+  top: 0;
   left: 0;
   right: 0;
   z-index: 10;
@@ -1258,7 +1355,10 @@ body {
   padding: 10px;
   border-radius: 6px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-  flex: 1;
+  flex: 0 0 auto; /* Verhindert Strecken des Containers */
+  max-height: calc(100vh - 296px); /* Höhe bis zur Unterkante des Charts */
+  overflow-y: auto; /* Scrollbalken bei Überlauf */
+  -webkit-overflow-scrolling: touch; /* Sanftes Scrollen auf Touch-Geräten */
 }
 
 /* Titel des Rechenberichts */
@@ -1456,13 +1556,13 @@ body {
   gap: 6px;
   align-items: center;
   padding: 6px 0;
-  background:rgb(163, 162, 162);
+  background: rgb(163, 162, 162);
   border-radius: 3px;
   font-size: 0.75rem;
 }
 
 .checkbox-group li:hover {
-  background:rgb(163, 162, 162);
+  background: rgb(163, 162, 162);
 }
 
 .icon-field {
@@ -1624,7 +1724,7 @@ body {
 
 .settings-container {
   grid-column: 1 / -1;
-  background:rgb(255, 255, 255);
+  background: rgb(255, 255, 255);
   padding: 10px;
   border-radius: 5px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
@@ -1874,7 +1974,7 @@ body {
   .app-container {
     padding: 6px;
     gap: 6px;
-    padding-top: 300px;
+    padding-top: 232px; /* Angepasst für mobile Geräte (220px Chart + 6px Padding oben + 6px Padding unten) */
   }
 
   .fixed-chart {
@@ -1885,6 +1985,11 @@ body {
 
   .chart-container {
     height: 220px;
+  }
+
+  .calculation-report {
+    max-height: calc(100vh - 232px); /* Angepasst für mobile Geräte */
+    overflow-y: auto; /* Scrollbalken für mobilen Rechenbericht */
   }
 
   .region-buttons {
@@ -2103,9 +2208,20 @@ body {
   .delete-zeitraum-button:hover {
     background-color: #dc2626;
   }
+
+  .chart-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 50;
+    transition: opacity 0.3s ease;
+  }
 }`}</style>
 <div className="app-container">
   {/* Fixierter Chart-Bereich */}
+
+  
   <div className="fixed-chart">
     <div className="chart-container">
       <Line data={chartData} options={chartOptions} />
@@ -2170,6 +2286,9 @@ body {
       </div>
 
       {error && <p style={{ color: '#dc2626', fontSize: '0.75rem' }}>{error}</p>}
+
+
+
 
       {/* Menüs und Verbraucher */}
       {menus.map((menu) => (
@@ -2581,10 +2700,15 @@ body {
       {/* Zusammenfassung */}
       <div className="calculation-report">
         <h2 className="report-title">Zusammenfassung</h2>
-        <p>Grundlast Ersparnis: {zusammenfassung.grundlast} €</p>
-        <p>Dynamische Ersparnis: {zusammenfassung.dynamisch} €</p>
-        <p>Gesamtersparnis: {zusammenfassung.gesamt} €</p>
+        <p>Grundlast Kosten: {zusammenfassung.grundlast} €</p>
+        <p>Dynamische Kosten: {zusammenfassung.dynamisch} €</p>
+        <p>GesamtKosten: {zusammenfassung.gesamt} €</p>
         <p>Gesamtwattage: {zusammenfassung.totalWattage} W</p>
+        <p>Grundlast Ersparnis (dynamischer Tarif):{zusammenfassung.grundlastDyn} €</p>
+        <p>Dynamische Ersparnis (dynamischer Tarif): {zusammenfassung.dynamischDyn} €</p>
+        <p>Gesamt Ersparnis (dynamischer Tarif): {zusammenfassung.gesamtDyn} €</p>
+        <p>Vergleich (fester vs. dynamischer Tarif): {(parseFloat(zusammenfassung.gesamt) - parseFloat(zusammenfassung.gesamtDyn)).toFixed(2)} €</p>
+    
       </div>
 
       {/* Download-Button und Hinweis 

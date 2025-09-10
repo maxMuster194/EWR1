@@ -26,12 +26,12 @@ const styles = `
     align-items: flex-start;
     justify-content: flex-start;
     border-bottom: 1px solid #D1D5DB;
-    padding: 12px 48px;
+    padding: 6px 24px;
     background: linear-gradient(90deg, #062316, #409966);
   }
   .header-logo {
-    width: 250px;
-    height: 95px;
+    width: 125px;
+    height: 47.5px;
     object-fit: contain;
   }
   .top-box { 
@@ -151,7 +151,7 @@ const styles = `
       padding: 12px;
     }
     .header {
-      padding: 12px;
+      padding: 6px;
       order: 1;
     }
     .top-box {
@@ -266,7 +266,6 @@ const Energiemanager = () => {
             <div className="flex items-center justify-center gap-4">
               <p className="text-[#409966] text-4xl font-bold leading-normal">Dynamischer Stromtarif</p>
             </div>
-            
           </div>
         </div>
 
@@ -316,23 +315,17 @@ const Energiemanager = () => {
             <p className="text-[#202026] text-lg font-normal leading-relaxed text-center mt-2"></p>
             <div className="flex flex-col gap-6 mt-6 flex-1">
               <div className="flex min-w-[200px] flex-1 flex-col gap-3 rounded-xl p-6 border border-gray-300 bg-gray-50 shadow-sm">
-              <p className="text-[#409966] text-2xl font-bold leading-normal">Preisrechner dynamische Tarife <a
-                href="/Presentation/rechner"
-                className="inline-flex items-center justify-center gap-1 px-3 py-1 rounded-lg bg-[#062316] hover:bg-[#409966] text-white text-sm font-medium leading-normal"
-              >
-                <FontAwesomeIcon icon={faCalculator} style={{ color: '#e5dbc1', fontSize: '14px' }} />
-                Zum Rechner
-              </a></p>
-              
-
-
+                <p className="text-[#409966] text-2xl font-bold leading-normal">Preisrechner dynamische Tarife <a
+                  href="/Presentation/rechner"
+                  className="inline-flex items-center justify-center gap-1 px-3 py-1 rounded-lg bg-[#062316] hover:bg-[#409966] text-white text-sm font-medium leading-normal"
+                >
+                  <FontAwesomeIcon icon={faCalculator} style={{ color: '#e5dbc1', fontSize: '14px' }} />
+                  Zum Rechner
+                </a></p>
                 <p className="text-[#202026] text-base font-normal leading-normal">
-                Jetzt in wenigen Schritten herausfinden, ob sich ein dynamischer Stromtarif für Ihren Haushalt lohnt.
-            
+                  Jetzt in wenigen Schritten herausfinden, ob sich ein dynamischer Stromtarif für Ihren Haushalt lohnt.
                 </p>
-               
-               
-               <p></p>
+                <p></p>
                 <p className="text-[#409966] text-2xl font-bold leading-normal">Was ist ein dynamischer Stromtarif?</p>
                 <p className="text-[#202026] text-base font-normal leading-normal">
                   Dynamische Stromtarife sind flexible Strompreise, 
@@ -351,15 +344,14 @@ const Energiemanager = () => {
             </div>
           </div>
           <div className="chart flex-1 p-2 rounded-xl flex flex-col"> 
-  <div className="flex flex-col gap-2 mt-2 flex-1">
-    <div className="flex min-w-[220px] flex-1 flex-col gap-2 rounded-xl p-2">
-      <div className="flex min-h-[220px] flex-1 flex-col gap-2 py-2">
-        <Dypreis0 />
-      </div>
-    </div>
-  </div>
-</div>
-
+            <div className="flex flex-col gap-2 mt-2 flex-1">
+              <div className="flex min-w-[220px] flex-1 flex-col gap-2 rounded-xl p-2">
+                <div className="flex min-h-[220px] flex-1 flex-col gap-2 py-2">
+                  <Dypreis0 />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="bottom-boxes">

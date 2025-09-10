@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import StromverbrauchRechnerDesktop from './details30'; // Für Desktop/Tablet
-import StromverbrauchRechnerMobile from './Mdetails38'; // Für Handy
+import StromverbrauchRechnerMobile from './Mdetails40'; // Für Handy
 
 const styles = `
   .layout {
@@ -26,12 +26,12 @@ const styles = `
     align-items: flex-start;
     justify-content: flex-start;
     border-bottom: 1px solid #D1D5DB;
-    padding: 12px 48px;
+    padding: 6px 24px;
     background: linear-gradient(90deg, #062316, #409966);
   }
   .header-logo {
-    width: 250px;
-    height: 95px;
+    width: 125px;
+    height: 47.5px;
     object-fit: contain;
   }
   .top-box { grid-area: top-box; }
@@ -132,14 +132,14 @@ const styles = `
     }
     .header, .top-box, .main, .bottom-boxes, .extra-box-1, .extra-box-2, .footer {
       width: 100%;
-      padding: 12px;
+      padding: 6px;
     }
     .header {
-      padding: 12px;
+      padding: 6px;
     }
     .header-logo {
-      width: 150px;
-      height: 57px;
+      width: 75px;
+      height: 28.5px;
     }
     .sidebar {
       display: none;
@@ -207,8 +207,8 @@ const styles = `
       grid-template-columns: 150px 1fr;
     }
     .header-logo {
-      width: 200px;
-      height: 76px;
+      width: 100px;
+      height: 38px;
     }
     .sidebar {
       max-width: 150px;
@@ -226,7 +226,7 @@ const Energiemanager = () => {
       const mediaQuery = window.matchMedia("(max-width: 767px)");
       setIsMobile(mediaQuery.matches);
 
-      // Optional: Add listener for window resize
+      // Add listener for window resize
       const handleResize = () => setIsMobile(mediaQuery.matches);
       mediaQuery.addEventListener('change', handleResize);
 
@@ -244,8 +244,6 @@ const Energiemanager = () => {
             <img src="/bilder/ilumylogo2.png" alt="Logo" className="header-logo" />
           </div>
         </header>
-
-        
 
         <div className="sidebar w-full p-3 bg-[#202026] border-r border-gray-300">
           <div className="flex h-full flex-col justify-between">

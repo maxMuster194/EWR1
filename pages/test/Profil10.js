@@ -977,56 +977,6 @@ function StrompreisChart() {
             </div>
           )}
         </div>
-        {householdType !== 'none' && activeProfile && (
-          <div style={styles.consumptionSummary}>
-            <div style={styles.tooltipContainer} className="tooltip-container">
-              <h3 style={styles.summaryTitle}>Täglicher Verbrauch und Kosten</h3>
-              <svg style={styles.infoIcon} viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-              </svg>
-              <span className="tooltip">Preise sind auf zwei Nachkommastellen gerundet</span>
-            </div>
-            <table style={styles.summaryTable}>
-              <thead>
-                <tr style={styles.summaryTableHeader}>
-                  <th style={styles.summaryTableCell}>Verbrauch (kWh)</th>
-                  <th style={styles.summaryTableCell}>Kosten (Euro)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(() => {
-                  const profile = activeProfile;
-                  const { h25Consumption, p25Consumption, s25Consumption, h25Cost, p25Cost, s25Cost, h25CustomCost, p25CustomCost, s25CustomCost } = calculateConsumptionAndCosts(profile);
-                  return (
-                    <tr key={profile} style={styles.summaryTableRow}>
-                      <td style={styles.summaryTableCell}>
-                        {householdType === 'standard' ? `${h25Consumption} kWh` : householdType === 'pv' ? `${p25Consumption} kWh` : `${s25Consumption} kWh`}
-                      </td>
-                      <td style={styles.summaryTableCell}>
-                        {householdType === 'standard' ? (
-                          <>
-                            Dynamischer Tarif: {h25Cost.euro} €<br />
-                            Normaltarif: {h25CustomCost.euro} €
-                          </>
-                        ) : householdType === 'pv' ? (
-                          <>
-                            Dynamischer Tarif: {p25Cost.euro} €<br />
-                            Normaltarif: {p25CustomCost.euro} €
-                          </>
-                        ) : (
-                          <>
-                            Dynamischer Tarif: {s25Cost.euro} €<br />
-                            Normaltarif: {s25CustomCost.euro} €
-                          </>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })()}
-              </tbody>
-            </table>
-          </div>
-        )}
       </div>
 
       <div style={styles.controlsContainer} className="controls-container">
@@ -1187,6 +1137,57 @@ function StrompreisChart() {
                 popperPlacement="bottom-start"
               />
             </div>
+
+            {householdType !== 'none' && activeProfile && (
+              <div style={styles.consumptionSummary}>
+                <div style={styles.tooltipContainer} className="tooltip-container">
+                  <h3 style={styles.summaryTitle}>Täglicher Verbrauch und Kosten</h3>
+                  <svg style={styles.infoIcon} viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                  </svg>
+                  <span className="tooltip">Preise sind auf zwei Nachkommastellen gerundet</span>
+                </div>
+                <table style={styles.summaryTable}>
+                  <thead>
+                    <tr style={styles.summaryTableHeader}>
+                      <th style={styles.summaryTableCell}>Verbrauch (kWh)</th>
+                      <th style={styles.summaryTableCell}>Kosten (Euro)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(() => {
+                      const profile = activeProfile;
+                      const { h25Consumption, p25Consumption, s25Consumption, h25Cost, p25Cost, s25Cost, h25CustomCost, p25CustomCost, s25CustomCost } = calculateConsumptionAndCosts(profile);
+                      return (
+                        <tr key={profile} style={styles.summaryTableRow}>
+                          <td style={styles.summaryTableCell}>
+                            {householdType === 'standard' ? `${h25Consumption} kWh` : householdType === 'pv' ? `${p25Consumption} kWh` : `${s25Consumption} kWh`}
+                          </td>
+                          <td style={styles.summaryTableCell}>
+                            {householdType === 'standard' ? (
+                              <>
+                                Dynamischer Tarif: {h25Cost.euro} €<br />
+                                Normaltarif: {h25CustomCost.euro} €
+                              </>
+                            ) : householdType === 'pv' ? (
+                              <>
+                                Dynamischer Tarif: {p25Cost.euro} €<br />
+                                Normaltarif: {p25CustomCost.euro} €
+                              </>
+                            ) : (
+                              <>
+                                Dynamischer Tarif: {s25Cost.euro} €<br />
+                                Normaltarif: {s25CustomCost.euro} €
+                              </>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })()}
+                  </tbody>
+                </table>
+              </div>
+            )}
 
             <p style={styles.noteText}>
               *Hinweis: Bei den gezeigten Daten handelt es sich um Vergleichswerte, die für 1 bis zu 5 Personen in einem Haushalt

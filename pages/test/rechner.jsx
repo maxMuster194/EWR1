@@ -47,7 +47,7 @@ const styles = `
       "footer footer" auto
       / minmax(100px, 120px) 1fr;
     gap: 12px;
-    padding-top: 5rem;
+    padding-top: 2.5rem;
     padding-bottom: 3rem;
     background-color: #F3F4F6;
     box-sizing: border-box;
@@ -62,15 +62,15 @@ const styles = `
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 1rem 2rem;
+    padding: 0.5rem 1rem;
     background: linear-gradient(90deg, #062316, #409966);
     border: none;
     margin: 0;
     border-radius: 0;
   }
   .header-logo {
-    max-width: 200px;
-    max-height: 80px;
+    max-width: 100px;
+    max-height: 40px;
     width: 100%;
     height: auto;
     object-fit: contain;
@@ -235,7 +235,7 @@ const styles = `
   }
   @media (max-width: 1024px) {
     .layout {
-      padding-top: 4rem;
+      padding-top: 2rem;
       padding-bottom: 2.5rem;
     }
     .main, .bottom-boxes {
@@ -252,8 +252,8 @@ const styles = `
       max-height: 600px;
     }
     .header-logo {
-      max-width: 160px;
-      max-height: 64px;
+      max-width: 80px;
+      max-height: 32px;
     }
   }
   @media (max-width: 767px) {
@@ -261,14 +261,14 @@ const styles = `
       display: flex;
       flex-direction: column;
       gap: 0.5rem;
-      padding-top: 3rem;
+      padding-top: 1.5rem;
       padding-bottom: 4rem;
       min-height: 100vh;
     }
     .header, .footer {
       width: 100%;
       max-width: 100%;
-      padding: 0.5rem;
+      padding: 0.25rem 0.5rem;
       border: none;
       border-radius: 0;
       position: fixed;
@@ -290,7 +290,7 @@ const styles = `
       padding: 0.75rem;
       border: none;
       border-radius: 0;
-      min-height: calc(100vh - 3rem - 4rem - 4rem);
+      min-height: calc(100vh - 1.5rem - 4rem - 4rem);
       display: flex;
       flex-direction: column;
       flex-grow: 1;
@@ -317,8 +317,8 @@ const styles = `
       flex-grow: 1;
     }
     .header-logo {
-      max-width: 120px;
-      max-height: 48px;
+      max-width: 60px;
+      max-height: 24px;
     }
     .bottom-nav {
       display: flex;

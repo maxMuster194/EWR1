@@ -1,7 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import Statistik from '../test/stk5';
+import Statistik from '../test/stk6';
 import Durchschnitt from '../test/durch16';
 
 const styles = `
@@ -26,12 +26,12 @@ const styles = `
     align-items: flex-start;
     justify-content: flex-start;
     border-bottom: 1px solid #D1D5DB;
-    padding: 12px 48px;
+    padding: 6px 24px; /* Reduced from 12px 48px */
     background: linear-gradient(90deg, #062316, #409966);
   }
   .header-logo {
-    width: 250px;
-    height: 95px;
+    width: 125px; /* Reduced from 250px */
+    height: 47.5px; /* Reduced from 95px */
     object-fit: contain;
   }
   .top-box { grid-area: top-box; }
@@ -110,7 +110,7 @@ const styles = `
     flex: 1;
     overflow: auto;
     max-height: 100vh;
-    padding: 8px; /* Noch weiter reduziertes Padding */
+    padding: 8px;
     border-radius: 12px;
     background-color: #FFFFFF;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -120,16 +120,16 @@ const styles = `
   .content > * {
     width: 100%;
     height: 100%;
-    flex: 1; /* Stellt sicher, dass der Inhalt der Statistik-Komponente den verfügbaren Platz ausnutzt */
+    flex: 1;
   }
   .content * {
-    font-size: 1.1em; /* Vergrößert die Schriftgröße für alle Elemente in der content-Box */
+    font-size: 1.1em;
   }
   .chart {
     flex: 1;
     overflow: auto;
     max-height: 100vh;
-    padding: 24px; /* Unverändertes Padding für die chart-Box */
+    padding: 24px;
     border-radius: 12px;
     background-color: #FFFFFF;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -158,11 +158,11 @@ const styles = `
     padding: 12px;
   }
   .header {
-    padding: 12px;
+    padding: 6px; /* Reduced from 12px */
   }
   .header-logo {
-    width: 150px;
-    height: 57px;
+    width: 75px; /* Reduced from 150px */
+    height: 28.5px; /* Reduced from 57px */
   }
   .sidebar {
     display: none;
@@ -172,10 +172,10 @@ const styles = `
   }
   .content {
     max-height: none;
-    padding: 8px; /* Reduziertes Padding auch für mobile Ansicht */
+    padding: 8px;
   }
   .content * {
-    font-size: 1em; /* Etwas kleinere Schriftgröße für mobile Ansicht */
+    font-size: 1em;
   }
   .chart {
     max-height: none;

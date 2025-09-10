@@ -1033,13 +1033,13 @@ export default function Home() {
     doc.setFontSize(12);
 
     addNewPageIfNeeded();
-    doc.text(`Grundlast Ersparnis: ${zusammenfassung.grundlast} €`, 15, yPosition);
+    doc.text(`Grundlast Kosten: ${zusammenfassung.grundlast} €`, 15, yPosition);
     yPosition += lineHeight;
     addNewPageIfNeeded();
-    doc.text(`Dynamische Ersparnis: ${zusammenfassung.dynamisch} €`, 15, yPosition);
+    doc.text(`Dynamische Kosten: ${zusammenfassung.dynamisch} €`, 15, yPosition);
     yPosition += lineHeight;
     addNewPageIfNeeded();
-    doc.text(`Gesamtersparnis: ${zusammenfassung.gesamt} €`, 15, yPosition);
+    doc.text(`Gesamtkosten: ${zusammenfassung.gesamt} €`, 15, yPosition);
     yPosition += lineHeight;
     addNewPageIfNeeded();
     doc.text(`Gesamtwattage: ${zusammenfassung.totalWattage} W`, 15, yPosition);
@@ -2581,9 +2581,9 @@ body {
       {/* Zusammenfassung */}
       <div className="calculation-report">
         <h2 className="report-title">Zusammenfassung</h2>
-        <p>Grundlast Ersparnis: {zusammenfassung.grundlast} €</p>
-        <p>Dynamische Ersparnis: {zusammenfassung.dynamisch} €</p>
-        <p>Gesamtersparnis: {zusammenfassung.gesamt} €</p>
+        <p>Grundlast Kosten: {zusammenfassung.grundlast} €</p>
+        <p>Dynamische Kosten: {zusammenfassung.dynamisch} €</p>
+        <p>GesamtKosten: {zusammenfassung.gesamt} €</p>
         <p>Gesamtwattage: {zusammenfassung.totalWattage} W</p>
       </div>
 

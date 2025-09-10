@@ -152,6 +152,65 @@ const berechneDynamischenVerbrauch = (watt, verbraucher, strompreis, selectedReg
   return kosten < 0 ? 0 : kosten;
 };
 
+const berechneDynamischeErsparnis = (verbraucher, strompreis, prices, verbraucherDaten, erweiterteEinstellungen) => {
+  const watt = verbraucherDaten[verbraucher]?.watt || 0;
+  if (watt === 0) return 0;
+  const type = verbraucherTypes[verbraucher];
+  const einstellung = erweiterteEinstellungen[verbraucher] || {};
+  let totalKWh = 0;
+  let multiplier = 0;
+  let useWatt = watt;
+  if (type === 'auto' && einstellung.standardLadung) {
+    totalKWh = (einstellung.batterieKapazitaet || 0) * (einstellung.nutzung || 0) * 52;
+  } else {
+    const totalDauer = einstellung.zeitraeume?.reduce((sum, z) => sum + (parseFloat(z.dauer) || 0), 0) || 0;
+    if (type === 'week') {
+      multiplier = (einstellung.nutzung || 0) * 52;
+    } else if (type === 'day') {
+      multiplier = (einstellung.nutzung || 0) * 365;
+    } else if (type === 'auto') {
+      multiplier = (einstellung.nutzung || 0) * 52;
+      useWatt = einstellung.wallboxLeistung || watt;
+    } else if (type === 'grundlast') {
+      multiplier = 365 * 24;
+    }
+    totalKWh = (useWatt * totalDauer * multiplier) / 1000;
+  }
+  if (type === 'grundlast') {
+    totalKWh = (watt * 24 * 365) / 1000;
+  }
+  if (totalKWh === 0) return 0;
+
+  let totalWeightedPrice = 0;
+  let totalWeight = 0;
+  if (type === 'grundlast') {
+    prices.forEach((p) => {
+      totalWeightedPrice += p;
+    });
+    totalWeight = 24;
+  } else {
+    einstellung.zeitraeume?.forEach((z) => {
+      let currentTime = parseInt(z.startzeit.split(':')[0]) + parseInt(z.startzeit.split(':')[1]) / 60;
+      let remaining = parseFloat(z.dauer) || 0;
+      while (remaining > 0) {
+        const hour = Math.floor(currentTime);
+        const frac = Math.min(1.0, remaining, hour + 1 - currentTime);
+        totalWeightedPrice += (prices[hour % 24] || strompreis) * frac;
+        totalWeight += frac;
+        remaining -= frac;
+        currentTime += frac;
+        if (currentTime >= 24) currentTime -= 24;
+      }
+    });
+  }
+  const averagePrice = totalWeight > 0 ? totalWeightedPrice / totalWeight : strompreis;
+  const dynamicCost = totalKWh * (averagePrice / 100);
+  const fixedCost = totalKWh * (strompreis / 100);
+  let ersparnis = fixedCost - dynamicCost;
+  if (ersparnis < 0) ersparnis = 0;
+  return ersparnis;
+};
+
 const calculateTotalWattage = (verbraucherDaten) => {
   return Object.keys(verbraucherDaten).reduce((total, verbraucher) => {
     const watt = parseFloat(verbraucherDaten[verbraucher].watt) || 0;
@@ -175,12 +234,13 @@ const updateZusammenfassung = (verbraucherDaten, setZusammenfassung) => {
 
   const totalWattage = calculateTotalWattage(verbraucherDaten);
 
-  setZusammenfassung({
+  setZusammenfassung((prev) => ({
+    ...prev,
     grundlast: grundlast.toFixed(2),
     dynamisch: dynamisch.toFixed(2),
     gesamt: (grundlast + dynamisch).toFixed(2),
     totalWattage,
-  });
+  }));
 };
 
 const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => {
@@ -270,6 +330,9 @@ export default function Home() {
     dynamisch: 0,
     gesamt: 0,
     totalWattage: 0,
+    grundlastDyn: 0,
+    dynamischDyn: 0,
+    gesamtDyn: 0,
   });
   const [error, setError] = useState('');
   const [openMenus, setOpenMenus] = useState({
@@ -521,18 +584,9 @@ export default function Home() {
       setError(`Wert für ${field} bei ${verbraucher} darf nicht negativ sein.`);
       return;
     }
-    if (field === 'dauer') {
-      const zeitraum = erweiterteEinstellungen[verbraucher]?.zeitraeume.find(z => z.id === zeitraumId);
-      const period = timePeriods.find(p => p.startzeit === zeitraum?.startzeit && p.endzeit === zeitraum?.endzeit);
-      if (period) {
-        const [startHour, startMin] = period.startzeit.split(':').map(Number);
-        const [endHour, endMin] = period.endzeit.split(':').map(Number);
-        const periodHours = (endHour + endMin / 60) - (startHour + startMin / 60);
-        if (parsedValue > periodHours) {
-          setError(`Dauer für ${verbraucher} darf ${periodHours} Stunden nicht überschreiten.`);
-          return;
-        }
-      }
+    if (field === 'dauer' && parsedValue > 7) {
+      setError(`Dauer für ${verbraucher} darf 7 Stunden nicht überschreiten.`);
+      return;
     }
     setError('');
     setErweiterteEinstellungen((prev) => {
@@ -1042,13 +1096,13 @@ export default function Home() {
     doc.setFontSize(12);
 
     addNewPageIfNeeded();
-    doc.text(`Grundlast Ersparnis: ${zusammenfassung.grundlast} €`, 15, yPosition);
+    doc.text(`Grundlast Kosten: ${zusammenfassung.grundlast} €`, 15, yPosition);
     yPosition += lineHeight;
     addNewPageIfNeeded();
-    doc.text(`Dynamische Ersparnis: ${zusammenfassung.dynamisch} €`, 15, yPosition);
+    doc.text(`Dynamische Kosten: ${zusammenfassung.dynamisch} €`, 15, yPosition);
     yPosition += lineHeight;
     addNewPageIfNeeded();
-    doc.text(`Gesamtersparnis: ${zusammenfassung.gesamt} €`, 15, yPosition);
+    doc.text(`Gesamtkosten: ${zusammenfassung.gesamt} €`, 15, yPosition);
     yPosition += lineHeight;
     addNewPageIfNeeded();
     doc.text(`Gesamtwattage: ${zusammenfassung.totalWattage} W`, 15, yPosition);
@@ -1082,6 +1136,41 @@ export default function Home() {
   const chartConvertedValues = chartDataApi.map((entry) =>
     typeof entry.value === 'number' ? entry.value / 10 : parseFloat(entry.value) / 10 || strompreis
   );
+
+  const updateZusammenfassungDyn = () => {
+    if (!selectedDate) {
+      setZusammenfassung((prev) => ({
+        ...prev,
+        grundlastDyn: '0.00',
+        dynamischDyn: '0.00',
+        gesamtDyn: '0.00',
+      }));
+      return;
+    }
+    let grundlastDyn = 0;
+    let dynamischDyn = 0;
+    const prices = chartConvertedValues;
+    Object.keys(standardVerbrauch).forEach((key) => {
+      if (verbraucherDaten[key]?.watt > 0 || verbraucherDaten[key]?.checked) {
+        const costDyn = berechneDynamischeErsparnis(key, strompreis, prices, verbraucherDaten, erweiterteEinstellungen);
+        if (verbraucherTypes[key] === 'grundlast') {
+          grundlastDyn += costDyn;
+        } else {
+          dynamischDyn += costDyn;
+        }
+      }
+    });
+    setZusammenfassung((prev) => ({
+      ...prev,
+      grundlastDyn: grundlastDyn.toFixed(2),
+      dynamischDyn: dynamischDyn.toFixed(2),
+      gesamtDyn: (grundlastDyn + dynamischDyn).toFixed(2),
+    }));
+  };
+
+  useEffect(() => {
+    updateZusammenfassungDyn();
+  }, [verbraucherDaten, erweiterteEinstellungen, selectedDate, apiData, strompreis]);
 
   const chartData = {
     labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
@@ -1208,10 +1297,6 @@ export default function Home() {
       },
     },
   };
-
-
-
-
 
 
 
@@ -2340,6 +2425,14 @@ export default function Home() {
                                                    <div className="summary-item">Dynamische Ersparnis: {zusammenfassung.dynamisch} €</div>
                                                    <div className="summary-item">Gesamtersparnis: {zusammenfassung.gesamt} €</div>
                                                    <div className="summary-item">Gesamtwattage: {zusammenfassung.totalWattage} W</div>
+                                                   <div className="summary-item">Grundlast Ersparnis (dynamischer Tarif):{zusammenfassung.grundlastDyn} €</div>
+                                                   <div className="summary-item">Dynamische Ersparnis (dynamischer Tarif): {zusammenfassung.dynamischDyn} €</div>
+                                                   <div className="summary-item">Gesamt Ersparnis (dynamischer Tarif): {zusammenfassung.gesamtDyn} €</div>
+                                                   <div className="summary-item">Vergleich (fester vs. dynamischer Tarif): {(parseFloat(zusammenfassung.gesamt) - parseFloat(zusammenfassung.gesamtDyn)).toFixed(2)} €</div>
+
+
+
+
                                                    <button className="download-button bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700" onClick={handleDownloadClick}>
                                                      Download PDF
                                                    </button>
