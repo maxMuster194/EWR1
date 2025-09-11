@@ -16,10 +16,13 @@
     "@fortawesome/react-fontawesome": "^0.2.6",
     "@mui/icons-material": "^7.3.2",
     "@mui/material": "^7.3.2",
+    "@react-three/drei": "^10.7.5",
+    "@react-three/fiber": "^9.3.0",
     "chart.js": "^4.5.0",
     "csv-parse": "^5.6.0",
     "date-fns": "^4.1.0",
     "dotenv": "^16.6.1",
+    "framer-motion": "^12.23.12",
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.511.0",
@@ -40,7 +43,8 @@
     "react-time-picker": "^7.0.0",
     "ssh2-sftp-client": "^12.0.1",
     "styled-jsx": "^5.1.7",
-    "tailwind": "^2.3.1"
+    "tailwind": "^2.3.1",
+    "three": "^0.180.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
