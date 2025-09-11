@@ -11,7 +11,14 @@ import {
   Legend,
 } from 'chart.js';
 import jsPDF from 'jspdf';
-
+import AcUnitIcon from '@mui/icons-material/AcUnit';
+import AirIcon from '@mui/icons-material/Air';
+import LocalLaundryServiceIcon from '@mui/icons-material/LocalLaundryService';
+import KitchenIcon from '@mui/icons-material/Kitchen';
+import TvIcon from '@mui/icons-material/Tv';
+import LightbulbIcon from '@mui/icons-material/Lightbulb';
+import DescriptionIcon from '@mui/icons-material/Description';
+import ElectricCarIcon from '@mui/icons-material/ElectricCar'; // Add this for E-Auto
 
 // Register Chart.js components
 ChartJS.register(
@@ -23,18 +30,20 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+//Icons nicht fontawesome
 const iconMapping = {
-  Kühlschrank: 'AcUnit',
-  Gefrierschrank: 'AcUnit',
-  Wärmepumpe: 'Air',
-  Waschmaschine: 'LocalLaundryService',
-  Trockner: 'LocalLaundryService',
-  Herd: 'Kitchen',
-  Geschirrspüler: 'Kitchen',
-  Multimedia: 'Tv',
-  Licht: 'Lightbulb',
-  default: 'Description', // For newly added options
-};
+    Kühlschrank: 'AcUnit',
+    Gefrierschrank: 'AcUnit',
+    Wärmepumpe: 'Air',
+    Waschmaschine: 'LocalLaundryService',
+    Trockner: 'LocalLaundryService',
+    Herd: 'Kitchen',
+    Geschirrspüler: 'Kitchen',
+    Multimedia: 'Tv',
+    Licht: 'Lightbulb',
+    'E-Auto': 'ElectricCar', // Add this for electric car
+    default: 'Description', // For newly added options
+  };
 // Default consumer data and descriptions
 const standardVerbrauch = {
   Kühlschrank: 35,
@@ -400,8 +409,8 @@ export default function Home() {
       id: 'eauto',
       label: 'E-Auto',
       options: [
-        { name: 'EAuto', specifications: 'Leistung: 11 kW, Betrieb: variabel, z.B. Laden über Wallbox' },
-        { name: 'ZweitesEAuto', specifications: 'Leistung: 7.4 kW, Betrieb: variabel, z.B. langsamere Wallbox' },
+        { name: 'E-Auto', specifications: 'Leistung: 11 kW, Betrieb: variabel, z.B. Laden über Wallbox' },
+        
       ],
     },
   ]);
@@ -2042,7 +2051,18 @@ export default function Home() {
         table, th, td {
         border: none;
         } 
+.option-icon {
+  font-size: 1.2rem;
+  color:rgb(6, 35, 22); /* Adjust to match your theme */
+  vertical-align: middle;
+  margin-right: 8px;
+}
 
+.checkbox-group-label {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Ensures consistent spacing between checkbox, icon, and text */
+}
       `}</style>
       <div className="app-container">
         <div className="calculation-report">
@@ -2143,47 +2163,59 @@ export default function Home() {
                         <span>Kosten/Jahr</span>
                         {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && <span></span>}
                       </li>
+
+
+                      
                       {menu.options.map((option) => (
-                        <li key={option.name}>
-                          <label className="checkbox-group-label">
-                            <input
-                              type="checkbox"
-                              checked={verbraucherDaten[option.name]?.checked || false}
-                              onChange={(e) => onCheckboxChange(option.name, e.target.checked)}
-                            />
-                            <span>{option.name}</span>
-                          </label>
-                          <div className="info-field">
-                            <span className="tooltip">{verbraucherBeschreibungen[option.name] || option.specifications}</span>
-                            <span>ℹ️</span>
-                          </div>
-                          <div className="input-group">
-                            <input
-                              type="number"
-                              className="watt-input"
-                              value={verbraucherDaten[option.name]?.watt || ''}
-                              onChange={(e) => handleWattChange(option.name, e.target.value)}
-                              min="0"
-                              placeholder="Watt"
-                            />
-                          </div>
-                          <div className="price-display">
-                            {verbraucherDaten[option.name]?.kosten || '0.00'} €
-                          </div>
-                          {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
-                            <button
-                              className="settings-field"
-                              onClick={() => toggleErweiterteOptionen(menu.id, option.name)}
-                            >
-                              Einstellungen
-                            </button>
-                          )}
-                          <button
-                            className="delete-option-button"
-                            onClick={() => handleDeleteOptionClick(menu.id, option.name)}
-                          >
-                            Löschen
-                          </button>
+  <li key={option.name}>
+    <label className="checkbox-group-label">
+      <input
+        type="checkbox"
+        checked={verbraucherDaten[option.name]?.checked || false}
+        onChange={(e) => onCheckboxChange(option.name, e.target.checked)}
+      />
+      {iconMapping[option.name] === 'AcUnit' && <AcUnitIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
+{iconMapping[option.name] === 'Air' && <AirIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
+{iconMapping[option.name] === 'LocalLaundryService' && <LocalLaundryServiceIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
+{iconMapping[option.name] === 'Kitchen' && <KitchenIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
+{iconMapping[option.name] === 'Tv' && <TvIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
+{iconMapping[option.name] === 'Lightbulb' && <LightbulbIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
+{iconMapping[option.name] === 'ElectricCar' && <ElectricCarIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
+{!iconMapping[option.name] && <DescriptionIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}<span>{option.name}</span>
+    </label>
+    <div className="info-field">
+      <span className="tooltip">{verbraucherBeschreibungen[option.name] || option.specifications}</span>
+      <span>ℹ️</span>
+    </div>
+    <div className="input-group">
+      <input
+        type="number"
+        className="watt-input"
+        value={verbraucherDaten[option.name]?.watt || ''}
+        onChange={(e) => handleWattChange(option.name, e.target.value)}
+        min="0"
+        placeholder="Watt"
+      />
+    </div>
+    <div className="price-display">
+      {verbraucherDaten[option.name]?.kosten || '0.00'} €
+    </div>
+    {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
+      <button
+        className="settings-field"
+        onClick={() => toggleErweiterteOptionen(menu.id, option.name)}
+      >
+        Einstellungen
+      </button>
+    )}
+    <button
+      className="delete-option-button"
+      onClick={() => handleDeleteOptionClick(menu.id, option.name)}
+    >
+      Löschen
+    </button>
+
+
                           {deleteConfirmOption?.menuId === menu.id && deleteConfirmOption?.optionName === option.name && (
                             <div className="confirm-dialog">
                               <span>{`Möchten Sie "${option.name}" wirklich löschen?`}</span>
