@@ -1581,13 +1581,13 @@ body {
   gap: 6px;
   align-items: center;
   padding: 6px 0;
-  background: rgb(163, 162, 162);
+  background: rgb(188, 188, 188);
   border-radius: 3px;
   font-size: 0.75rem;
 }
 
 .checkbox-group li:hover {
-  background: rgb(163, 162, 162);
+  background: rgb(188, 188, 188);
 }
 
 .icon-field {
@@ -2741,7 +2741,7 @@ body {
 
       {/* Zusammenfassung */}
       <div className="calculation-report">
-        <h2 className="report-title">Zusammenfassung</h2>
+        <h2 className="report-title">Jahreszusammenfassung</h2>
         <p>Grundlast Kosten: {zusammenfassung.grundlast} €</p>
         <p>Dynamische Kosten: {zusammenfassung.dynamisch} €</p>
         <p>GesamtKosten: {zusammenfassung.gesamt} €</p>
