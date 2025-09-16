@@ -18,8 +18,7 @@ import KitchenIcon from '@mui/icons-material/Kitchen';
 import TvIcon from '@mui/icons-material/Tv';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import DescriptionIcon from '@mui/icons-material/Description';
-import ElectricCarIcon from '@mui/icons-material/ElectricCar'; // Add this for E-Auto
-
+import ElectricCarIcon from '@mui/icons-material/ElectricCar';
 
 // Register Chart.js components
 ChartJS.register(
@@ -32,21 +31,21 @@ ChartJS.register(
   Legend
 );
 
-//Icons nicht fontawesome
+// Icon mapping
 const iconMapping = {
-    Kühlschrank: 'AcUnit',
-    Gefrierschrank: 'AcUnit',
-    Wärmepumpe: 'Air',
-    Waschmaschine: 'LocalLaundryService',
-    Trockner: 'LocalLaundryService',
-    Herd: 'Kitchen',
-    Geschirrspüler: 'Kitchen',
-    Multimedia: 'Tv',
-    Licht: 'Lightbulb',
-    'E-Auto': 'ElectricCar', // Add this for electric car
-    default: 'Description', // For newly added options
-  };
-
+  Kühlschrank: 'AcUnit',
+  Gefrierschrank: 'AcUnit',
+  Wärmepumpe: 'Air',
+  Waschmaschine: 'LocalLaundryService',
+  Trockner: 'LocalLaundryService',
+  Herd: 'Kitchen',
+  Geschirrspüler: 'Kitchen',
+  Multimedia: 'Tv',
+  Licht: 'Lightbulb',
+  'E-Auto': 'ElectricCar',
+  'Zweites E-Auto': 'ElectricCar',
+  default: 'Description',
+};
 
 // Default consumer data and descriptions
 const standardVerbrauch = {
@@ -59,8 +58,8 @@ const standardVerbrauch = {
   Herd: 900,
   Multimedia: 350,
   Licht: 300,
-  EAuto: 11000,
-  ZweitesEAuto: 7400,
+  'E-Auto': 11000,
+  'Zweites E-Auto': 7400,
 };
 
 const verbraucherBeschreibungen = {
@@ -73,8 +72,8 @@ const verbraucherBeschreibungen = {
   Herd: 'Der Herd benötigt etwa 700 W bei 1 Stunde täglicher Nutzung.',
   Multimedia: 'Multimedia-Geräte verbrauchen ca. 350 W bei 3 Stunden täglicher Nutzung.',
   Licht: 'Beleuchtung verbraucht etwa 175 W bei 5 Stunden täglicher Nutzung.',
-  EAuto: 'Das E-Auto verbraucht ca. 11 kW pro Ladevorgang (z.B. 4h/Woche).',
-  ZweitesEAuto: 'Das zweite E-Auto verbraucht ca. 7.4 kW pro Ladevorgang (z.B. 3h/Woche).',
+  'E-Auto': 'Das E-Auto verbraucht ca. 11 kW pro Ladevorgang (z.B. 4h/Woche).',
+  'Zweites E-Auto': 'Das zweite E-Auto verbraucht ca. 7.4 kW pro Ladevorgang (z.B. 3h/Woche).',
 };
 
 const timePeriods = [
@@ -89,7 +88,6 @@ const timePeriods = [
   { label: 'Nachts 2', startzeit: '03:00', endzeit: '06:00' },
 ];
 
-// Neue Struktur für Verbrauchertypen (grundlast, week, day, auto)
 const verbraucherTypes = {
   Kühlschrank: 'grundlast',
   Gefrierschrank: 'grundlast',
@@ -100,8 +98,8 @@ const verbraucherTypes = {
   Herd: 'day',
   Multimedia: 'day',
   Licht: 'day',
-  EAuto: 'auto',
-  ZweitesEAuto: 'auto',
+  'E-Auto': 'auto',
+  'Zweites E-Auto': 'auto',
 };
 
 // Functions
@@ -132,7 +130,7 @@ const updateKosten = (watt, verbraucher, strompreis, selectedRegion, setVerbrauc
     kosten = (watt * totalDauer * nutzung * 52) / 1000 * preisDifferenz;
   } else if (type === 'auto') {
     if (standardLadung) {
-      kosten = (batterieKapazitaet * nutzung * 52) / 1000 * preisDifferenz;
+      kosten = (batterieKapazitaet * nutzung * 52) * preisDifferenz;
     } else {
       kosten = (wallboxLeistung * totalDauer * nutzung * 52) / 1000 * preisDifferenz;
     }
@@ -151,11 +149,19 @@ const updateKosten = (watt, verbraucher, strompreis, selectedRegion, setVerbrauc
 };
 
 const berechneDynamischenVerbrauch = (watt, verbraucher, strompreis, selectedRegion, erweiterteEinstellungen) => {
+  console.log('berechneDynamischenVerbrauch:', { watt, verbraucher, strompreis, selectedRegion });
+  console.log('einstellung:', erweiterteEinstellungen[verbraucher]);
   const preisDifferenz = parseFloat(getPreisDifferenz(strompreis, selectedRegion)) / 100;
   const einstellung = erweiterteEinstellungen[verbraucher] || {};
-  if (!einstellung.zeitraeume || einstellung.zeitraeume.length === 0 || watt === 0) return 0;
+  if (!einstellung.zeitraeume || einstellung.zeitraeume.length === 0 || watt === 0) {
+    console.log('Abbruch: Keine Zeiträume oder watt = 0');
+    return 0;
+  }
   let totalDauer = einstellung.zeitraeume.reduce((sum, z) => sum + (parseFloat(z.dauer) || 0), 0) || 0;
-  if (totalDauer === 0) return 0;
+  if (totalDauer === 0) {
+    console.log('Abbruch: totalDauer = 0');
+    return 0;
+  }
   let kosten = 0;
   const batterieKapazitaet = einstellung.batterieKapazitaet || 0;
   const wallboxLeistung = einstellung.wallboxLeistung || watt;
@@ -166,7 +172,7 @@ const berechneDynamischenVerbrauch = (watt, verbraucher, strompreis, selectedReg
     kosten = (watt * totalDauer * einstellung.nutzung * 52) / 1000 * preisDifferenz;
   } else if (type === 'auto') {
     if (standardLadung) {
-      kosten = (batterieKapazitaet * einstellung.nutzung * 52) / 1000 * preisDifferenz;
+      kosten = (batterieKapazitaet * einstellung.nutzung * 52) * preisDifferenz;
     } else {
       kosten = (wallboxLeistung * totalDauer * einstellung.nutzung * 52) / 1000 * preisDifferenz;
     }
@@ -174,6 +180,7 @@ const berechneDynamischenVerbrauch = (watt, verbraucher, strompreis, selectedReg
     kosten = (watt * totalDauer * einstellung.nutzung * 365) / 1000 * preisDifferenz;
   }
 
+  console.log('Berechnete Kosten:', kosten);
   return kosten < 0 ? 0 : kosten;
 };
 
@@ -274,8 +281,9 @@ const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => 
     const einstellung = erweiterteEinstellungen[verbraucher] || {};
     const type = verbraucherTypes[verbraucher] || 'grundlast';
     const watt = (type === 'auto' && einstellung.standardLadung)
-      ? (einstellung.batterieKapazitaet || 0) / (einstellung.zeitraeume?.reduce((sum, z) => sum + (parseFloat(z.dauer) || 0), 0) || 1)
+      ? ((einstellung.batterieKapazitaet || 0) / (einstellung.zeitraeume?.reduce((sum, z) => sum + (parseFloat(z.dauer) || 0), 0) || 1)) * 1000
       : verbraucherDaten[verbraucher]?.watt || 0;
+    console.log('berechneStundenVerbrauch:', { verbraucher, watt, type, standardLadung: einstellung.standardLadung });
     if (watt <= 0) return;
     const isGrundlast = type === 'grundlast';
     if (isGrundlast) {
@@ -298,12 +306,13 @@ const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => 
       });
     }
   });
+  console.log('Stundenverbrauch:', stunden);
   return stunden;
 };
 
 // Home Component
 export default function Home() {
-  const [strompreis, setStrompreis] = useState(31); // Ct/kWh
+  const [strompreis, setStrompreis] = useState(31);
   const [selectedRegion, setSelectedRegion] = useState('KF');
   const [verbraucherDaten, setVerbraucherDaten] = useState(
     Object.keys(standardVerbrauch).reduce((acc, key) => ({
@@ -414,22 +423,72 @@ export default function Home() {
       label: 'E-Auto',
       options: [
         { name: 'E-Auto', specifications: 'Leistung: 11 kW, Betrieb: variabel, z.B. Laden über Wallbox' },
-        { name: 'ZweitesEAuto', specifications: 'Leistung: 7.4 kW, Betrieb: variabel, z.B. langsamere Wallbox' },
+        { name: 'Zweites E-Auto', specifications: 'Leistung: 7.4 kW, Betrieb: variabel, z.B. Laden über Wallbox' },
       ],
     },
   ]);
 
-  // Temporäres Speichern in localStorage
+  // localStorage migration and loading
   useEffect(() => {
     const savedData = localStorage.getItem('appData');
     if (savedData) {
       const parsed = JSON.parse(savedData);
-      setVerbraucherDaten(parsed.verbraucherDaten || verbraucherDaten);
-      setErweiterteEinstellungen(parsed.erweiterteEinstellungen || erweiterteEinstellungen);
-      Object.assign(verbraucherTypes, parsed.verbraucherTypes || {});
-      Object.assign(standardVerbrauch, parsed.standardVerbrauch || {});
-      Object.assign(verbraucherBeschreibungen, parsed.verbraucherBeschreibungen || {});
-      updateZusammenfassung(parsed.verbraucherDaten || verbraucherDaten, setZusammenfassung);
+      const migratedVerbraucherDaten = { ...parsed.verbraucherDaten };
+      const migratedErweiterteEinstellungen = { ...parsed.erweiterteEinstellungen };
+      const migratedStandardVerbrauch = { ...parsed.standardVerbrauch };
+      const migratedVerbraucherTypes = { ...parsed.verbraucherTypes };
+      const migratedVerbraucherBeschreibungen = { ...parsed.verbraucherBeschreibungen };
+
+      // Migrate old EAuto keys to E-Auto
+      if (migratedVerbraucherDaten['EAuto']) {
+        migratedVerbraucherDaten['E-Auto'] = migratedVerbraucherDaten['EAuto'];
+        delete migratedVerbraucherDaten['EAuto'];
+      }
+      if (migratedErweiterteEinstellungen['EAuto']) {
+        migratedErweiterteEinstellungen['E-Auto'] = migratedErweiterteEinstellungen['EAuto'];
+        delete migratedErweiterteEinstellungen['EAuto'];
+      }
+      if (migratedStandardVerbrauch['EAuto']) {
+        migratedStandardVerbrauch['E-Auto'] = migratedStandardVerbrauch['EAuto'];
+        delete migratedStandardVerbrauch['EAuto'];
+      }
+      if (migratedVerbraucherTypes['EAuto']) {
+        migratedVerbraucherTypes['E-Auto'] = migratedVerbraucherTypes['EAuto'];
+        delete migratedVerbraucherTypes['EAuto'];
+      }
+      if (migratedVerbraucherBeschreibungen['EAuto']) {
+        migratedVerbraucherBeschreibungen['E-Auto'] = migratedVerbraucherBeschreibungen['EAuto'];
+        delete migratedVerbraucherBeschreibungen['EAuto'];
+      }
+
+      // Migrate old ZweitesEAuto keys to Zweites E-Auto
+      if (migratedVerbraucherDaten['ZweitesEAuto']) {
+        migratedVerbraucherDaten['Zweites E-Auto'] = migratedVerbraucherDaten['ZweitesEAuto'];
+        delete migratedVerbraucherDaten['ZweitesEAuto'];
+      }
+      if (migratedErweiterteEinstellungen['ZweitesEAuto']) {
+        migratedErweiterteEinstellungen['Zweites E-Auto'] = migratedErweiterteEinstellungen['ZweitesEAuto'];
+        delete migratedErweiterteEinstellungen['ZweitesEAuto'];
+      }
+      if (migratedStandardVerbrauch['ZweitesEAuto']) {
+        migratedStandardVerbrauch['Zweites E-Auto'] = migratedStandardVerbrauch['ZweitesEAuto'];
+        delete migratedStandardVerbrauch['ZweitesEAuto'];
+      }
+      if (migratedVerbraucherTypes['ZweitesEAuto']) {
+        migratedVerbraucherTypes['Zweites E-Auto'] = migratedVerbraucherTypes['ZweitesEAuto'];
+        delete migratedVerbraucherTypes['ZweitesEAuto'];
+      }
+      if (migratedVerbraucherBeschreibungen['ZweitesEAuto']) {
+        migratedVerbraucherBeschreibungen['Zweites E-Auto'] = migratedVerbraucherBeschreibungen['ZweitesEAuto'];
+        delete migratedVerbraucherBeschreibungen['ZweitesEAuto'];
+      }
+
+      setVerbraucherDaten(migratedVerbraucherDaten || verbraucherDaten);
+      setErweiterteEinstellungen(migratedErweiterteEinstellungen || erweiterteEinstellungen);
+      Object.assign(standardVerbrauch, migratedStandardVerbrauch || {});
+      Object.assign(verbraucherTypes, migratedVerbraucherTypes || {});
+      Object.assign(verbraucherBeschreibungen, migratedVerbraucherBeschreibungen || {});
+      updateZusammenfassung(migratedVerbraucherDaten || verbraucherDaten, setZusammenfassung);
     }
   }, []);
 
@@ -547,6 +606,7 @@ export default function Home() {
   };
 
   const onCheckboxChange = (verbraucher, checked) => {
+    console.log('onCheckboxChange:', { verbraucher, checked });
     setVerbraucherDaten((prev) => {
       const watt = checked ? standardVerbrauch[verbraucher] || 0 : 0;
       const type = verbraucherTypes[verbraucher] || 'grundlast';
@@ -565,7 +625,7 @@ export default function Home() {
         ...prev,
         [verbraucher]: { ...prev[verbraucher], watt, checked, kosten: kosten.toFixed(2) },
       };
-
+      console.log('updated verbraucherDaten:', updatedData);
       updateZusammenfassung(updatedData, setZusammenfassung);
       return updatedData;
     });
@@ -599,6 +659,8 @@ export default function Home() {
   };
 
   const handleErweiterteEinstellungChange = (verbraucher, field, value, zeitraumId) => {
+    console.log('handleErweiterteEinstellungChange:', { verbraucher, field, value, zeitraumId });
+    console.log('Aktuelle erweiterteEinstellungen:', erweiterteEinstellungen[verbraucher]);
     const parsedValue = field === 'nutzung' || field === 'dauer' || field === 'batterieKapazitaet' || field === 'wallboxLeistung'
       ? parseFloat(value) || 0
       : field === 'standardLadung'
@@ -628,6 +690,7 @@ export default function Home() {
               ),
         },
       };
+      console.log('Updated erweiterteEinstellungen:', updatedSettings[verbraucher]);
 
       const type = verbraucherTypes[verbraucher];
       if (type !== 'grundlast') {
@@ -643,6 +706,7 @@ export default function Home() {
             ...prev,
             [verbraucher]: { ...prev[verbraucher], kosten: kosten.toFixed(2) },
           };
+          console.log('Updated verbraucherDaten:', updatedData);
           updateZusammenfassung(updatedData, setZusammenfassung);
           return updatedData;
         });
@@ -1322,7 +1386,6 @@ export default function Home() {
       },
     },
   };
- 
   return (
     <>
 <style>{`* {
