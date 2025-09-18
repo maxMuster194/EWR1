@@ -189,6 +189,7 @@ const berechneDynamischeErsparnis = (verbraucher, strompreis, prices, verbrauche
   if (watt === 0) return 0;
   const type = verbraucherTypes[verbraucher];
   const einstellung = erweiterteEinstellungen[verbraucher] || {};
+  if (!einstellung.nutzung || einstellung.nutzung <= 0) return 0;  // FIX: Validierung für nutzung > 0
   let totalKWh = 0;
   let multiplier = 0;
   let useWatt = watt;
@@ -196,6 +197,7 @@ const berechneDynamischeErsparnis = (verbraucher, strompreis, prices, verbrauche
     totalKWh = (einstellung.batterieKapazitaet || 0) * (einstellung.nutzung || 0) * 52;
   } else {
     const totalDauer = einstellung.zeitraeume?.reduce((sum, z) => sum + (parseFloat(z.dauer) || 0), 0) || 0;
+    if (totalDauer === 0) return 0;  // FIX: Expliziter Abbruch
     if (type === 'week') {
       multiplier = (einstellung.nutzung || 0) * 52;
     } else if (type === 'day') {
@@ -216,9 +218,10 @@ const berechneDynamischeErsparnis = (verbraucher, strompreis, prices, verbrauche
   let totalWeightedPrice = 0;
   let totalWeight = 0;
   const fixedPrice = parseFloat(getPreisDifferenz(strompreis, selectedRegion));
+  const fallbackPrice = fixedPrice;  // FIX: Fallback auf Differenz, nicht strompreis
   if (type === 'grundlast') {
     prices.forEach((p) => {
-      totalWeightedPrice += p;
+      totalWeightedPrice += p || fallbackPrice;
     });
     totalWeight = 24;
   } else {
@@ -228,7 +231,7 @@ const berechneDynamischeErsparnis = (verbraucher, strompreis, prices, verbrauche
       while (remaining > 0) {
         const hour = Math.floor(currentTime);
         const frac = Math.min(1.0, remaining, hour + 1 - currentTime);
-        totalWeightedPrice += (prices[hour % 24] || strompreis) * frac;
+        totalWeightedPrice += (prices[hour % 24] || fallbackPrice) * frac;  // FIX: Fallback
         totalWeight += frac;
         remaining -= frac;
         currentTime += frac;
@@ -236,7 +239,7 @@ const berechneDynamischeErsparnis = (verbraucher, strompreis, prices, verbrauche
       }
     });
   }
-  const averagePrice = totalWeight > 0 ? totalWeightedPrice / totalWeight : strompreis;
+  const averagePrice = totalWeight > 0 ? totalWeightedPrice / totalWeight : fixedPrice;  // FIX: Fallback auf fixed
   const dynamicCost = totalKWh * (averagePrice / 100);
   const fixedCost = totalKWh * (fixedPrice / 100);
   let ersparnis = fixedCost - dynamicCost;
@@ -282,19 +285,22 @@ const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => 
     const einstellung = erweiterteEinstellungen[verbraucher] || {};
     const type = verbraucherTypes[verbraucher] || 'grundlast';
     const nutzung = einstellung.nutzung || 0;
-    const dailyMultiplier = type === 'week' || type === 'auto' ? nutzung / 7 : 1;
+    // FIX: dailyMultiplier konsistent machen – für 'day': nutzung (pro Tag), für 'week'/'auto': /7 (durchschn. pro Tag)
+    const dailyMultiplier = type === 'day' 
+      ? (nutzung || 1)  // Anzahl Zyklen pro Tag
+      : (type === 'week' || type === 'auto' ? (nutzung || 0) / 7 : 1);  // Durchschnitt pro Tag
     let useWatt = verbraucherDaten[verbraucher]?.watt || 0;
     const standardLadung = einstellung.standardLadung || false;
     const totalDauer = einstellung.zeitraeume?.reduce((sum, z) => sum + (parseFloat(z.dauer) || 0), 0) || 1;
     if (type === 'auto' && standardLadung) {
       useWatt = ((einstellung.batterieKapazitaet || 0) / totalDauer) * 1000;
     }
-    console.log('berechneStundenVerbrauch:', { verbraucher, useWatt, type, standardLadung, dailyMultiplier });
+    // console.log('berechneStundenVerbrauch:', { verbraucher, useWatt, type, standardLadung, dailyMultiplier, nutzung });  // Optional: Log behalten für Debug
     if (useWatt <= 0) return;
     const isGrundlast = type === 'grundlast';
     if (isGrundlast) {
       for (let i = 0; i < 24; i++) {
-        stunden[i].total += (useWatt / 1000) * dailyMultiplier;
+        stunden[i].total += (useWatt / 1000) * dailyMultiplier;  // FIX: * dailyMultiplier auch hier (obwohl für grundlast=1)
         if (!stunden[i].verbraucher.includes(verbraucher)) {
           stunden[i].verbraucher.push(verbraucher);
         }
@@ -309,7 +315,7 @@ const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => 
         while (remaining > 0) {
           const hour = Math.floor(currentTime);
           const frac = Math.min(1.0, remaining, hour + 1 - currentTime);
-          const add = (useWatt / 1000) * frac * dailyMultiplier;
+          const add = (useWatt / 1000) * frac * dailyMultiplier;  // FIX: * dailyMultiplier für Konsistenz
           stunden[hour % 24].total += add;
           if (!stunden[hour % 24].verbraucher.includes(verbraucher)) {
             stunden[hour % 24].verbraucher.push(verbraucher);
@@ -321,7 +327,7 @@ const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => 
       });
     }
   });
-  console.log('Stundenverbrauch:', stunden);
+  // console.log('Stundenverbrauch:', stunden);  // Optional
   return stunden;
 };
 
@@ -1227,6 +1233,9 @@ export default function Home() {
     setWerbung(false);
   };
 
+
+  
+
   const hourlyData = berechneStundenVerbrauch(verbraucherDaten, erweiterteEinstellungen);
   const selectedIndex = apiData.findIndex((entry) => {
     const dateKey = Object.keys(entry).find((key) => key.includes('Prices - EPEX'));
@@ -1343,7 +1352,7 @@ export default function Home() {
       {
         label: `Ersparnis (Dynamischer Tarif) am ${selectedDate || 'N/A'} (Ct)`,
         data: hourlyData.map((_, index) => {
-          const price = chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
+          const price = chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion));  // FIX: Fallback auf Differenz
           return (hourlyData[index].total * price).toFixed(2);
         }),
         fill: false,
