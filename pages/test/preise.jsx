@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import Statistik from '../test/stk7';
-import Durchschnitt from '../test/durch16';
+import Durchschnitt from '../test/durch17';
 
 const styles = `
   .layout {
