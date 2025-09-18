@@ -2804,7 +2804,7 @@ body {
 
       {/* Zusammenfassung */}
       <div className="calculation-report">
-        <h2 className="report-title">Jahreszusammenfassung</h2>
+        <h2 className="report-title">Jahreszusammenfassung pro Jahr</h2>
         <p>Kosten Grundlast : {zusammenfassung.grundlast} €</p>
         <p>Kosten Schaltbere Verbraucher: {zusammenfassung.dynamisch} €</p>
         <p>Kosten Gesamt: {zusammenfassung.gesamt} €</p>

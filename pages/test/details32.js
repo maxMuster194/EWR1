@@ -2530,7 +2530,7 @@ export default function Home() {
                                                  ))}
                                      
                                                  <div className="summary-container">
-                                                   <h3 className="summary-title">Zusammenfassung</h3>
+                                                   <h3 className="summary-title">Zusammenfassung pro Jahr</h3>
                                                    <div className="summary-item"> Kosten Grundlast : {zusammenfassung.grundlast} €</div>
                                                    <div className="summary-item"> Kosten Schaltbere Verbraucher : {zusammenfassung.dynamisch} €</div>
                                                    <div className="summary-item">Kosten Gesamt: {zusammenfassung.gesamt} €</div>
