@@ -184,7 +184,7 @@ const berechneDynamischenVerbrauch = (watt, verbraucher, strompreis, selectedReg
   return kosten < 0 ? 0 : kosten;
 };
 
-const berechneDynamischeErsparnis = (verbraucher, strompreis, prices, verbraucherDaten, erweiterteEinstellungen) => {
+const berechneDynamischeErsparnis = (verbraucher, strompreis, prices, verbraucherDaten, erweiterteEinstellungen, selectedRegion) => {
   const watt = verbraucherDaten[verbraucher]?.watt || 0;
   if (watt === 0) return 0;
   const type = verbraucherTypes[verbraucher];
@@ -215,6 +215,7 @@ const berechneDynamischeErsparnis = (verbraucher, strompreis, prices, verbrauche
 
   let totalWeightedPrice = 0;
   let totalWeight = 0;
+  const fixedPrice = parseFloat(getPreisDifferenz(strompreis, selectedRegion));
   if (type === 'grundlast') {
     prices.forEach((p) => {
       totalWeightedPrice += p;
@@ -237,7 +238,7 @@ const berechneDynamischeErsparnis = (verbraucher, strompreis, prices, verbrauche
   }
   const averagePrice = totalWeight > 0 ? totalWeightedPrice / totalWeight : strompreis;
   const dynamicCost = totalKWh * (averagePrice / 100);
-  const fixedCost = totalKWh * (strompreis / 100);
+  const fixedCost = totalKWh * (fixedPrice / 100);
   let ersparnis = fixedCost - dynamicCost;
   if (ersparnis < 0) ersparnis = 0;
   return ersparnis;
@@ -280,28 +281,42 @@ const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => 
   Object.keys(standardVerbrauch).forEach((verbraucher) => {
     const einstellung = erweiterteEinstellungen[verbraucher] || {};
     const type = verbraucherTypes[verbraucher] || 'grundlast';
-    const watt = (type === 'auto' && einstellung.standardLadung)
-      ? ((einstellung.batterieKapazitaet || 0) / (einstellung.zeitraeume?.reduce((sum, z) => sum + (parseFloat(z.dauer) || 0), 0) || 1)) * 1000
-      : verbraucherDaten[verbraucher]?.watt || 0;
-    console.log('berechneStundenVerbrauch:', { verbraucher, watt, type, standardLadung: einstellung.standardLadung });
-    if (watt <= 0) return;
+    const nutzung = einstellung.nutzung || 0;
+    const dailyMultiplier = type === 'week' || type === 'auto' ? nutzung / 7 : 1;
+    let useWatt = verbraucherDaten[verbraucher]?.watt || 0;
+    const standardLadung = einstellung.standardLadung || false;
+    const totalDauer = einstellung.zeitraeume?.reduce((sum, z) => sum + (parseFloat(z.dauer) || 0), 0) || 1;
+    if (type === 'auto' && standardLadung) {
+      useWatt = ((einstellung.batterieKapazitaet || 0) / totalDauer) * 1000;
+    }
+    console.log('berechneStundenVerbrauch:', { verbraucher, useWatt, type, standardLadung, dailyMultiplier });
+    if (useWatt <= 0) return;
     const isGrundlast = type === 'grundlast';
     if (isGrundlast) {
       for (let i = 0; i < 24; i++) {
-        stunden[i].total += watt / 1000;
-        stunden[i].verbraucher.push(verbraucher);
+        stunden[i].total += (useWatt / 1000) * dailyMultiplier;
+        if (!stunden[i].verbraucher.includes(verbraucher)) {
+          stunden[i].verbraucher.push(verbraucher);
+        }
       }
     } else {
       einstellung.zeitraeume?.forEach(zeitraum => {
         const startzeit = zeitraum.startzeit;
         const dauer = parseFloat(zeitraum.dauer) || 0;
         if (!startzeit || dauer <= 0) return;
-        let startStunde = parseInt(startzeit.split(':')[0]);
-        let endStunde = startStunde + Math.ceil(dauer);
-        if (endStunde > 24) endStunde = 24;
-        for (let i = startStunde; i < endStunde; i++) {
-          stunden[i % 24].total += watt / 1000;
-          stunden[i % 24].verbraucher.push(verbraucher);
+        let currentTime = parseInt(startzeit.split(':')[0]) + parseInt(startzeit.split(':')[1]) / 60;
+        let remaining = dauer;
+        while (remaining > 0) {
+          const hour = Math.floor(currentTime);
+          const frac = Math.min(1.0, remaining, hour + 1 - currentTime);
+          const add = (useWatt / 1000) * frac * dailyMultiplier;
+          stunden[hour % 24].total += add;
+          if (!stunden[hour % 24].verbraucher.includes(verbraucher)) {
+            stunden[hour % 24].verbraucher.push(verbraucher);
+          }
+          remaining -= frac;
+          currentTime += frac;
+          if (currentTime >= 24) currentTime -= 24;
         }
       });
     }
@@ -1241,7 +1256,7 @@ export default function Home() {
     const prices = chartConvertedValues;
     Object.keys(standardVerbrauch).forEach((key) => {
       if (verbraucherDaten[key]?.watt > 0 || verbraucherDaten[key]?.checked) {
-        const costDyn = berechneDynamischeErsparnis(key, strompreis, prices, verbraucherDaten, erweiterteEinstellungen);
+        const costDyn = berechneDynamischeErsparnis(key, strompreis, prices, verbraucherDaten, erweiterteEinstellungen, selectedRegion);
         if (verbraucherTypes[key] === 'grundlast') {
           grundlastDyn += costDyn;
         } else {
@@ -1259,7 +1274,7 @@ export default function Home() {
 
   useEffect(() => {
     updateZusammenfassungDyn();
-  }, [verbraucherDaten, erweiterteEinstellungen, selectedDate, apiData, strompreis]);
+  }, [verbraucherDaten, erweiterteEinstellungen, selectedDate, apiData, strompreis, selectedRegion]);
 
   const chartData = {
     labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
@@ -1376,7 +1391,7 @@ export default function Home() {
     },
     scales: {
       y: {
-        beginAtZero: true,
+        beginAtZero: true, 
         title: { display: true, text: 'Ersparnis (Ct)', color: '#333' },
         ticks: { color: '#333' },
       },
