@@ -43,7 +43,7 @@ const styles = {
   chartTitle: {
     fontSize: '18px',
     fontWeight: '700',
-    color: '#333',
+    color: '#063d37',
     margin: '24px 0 12px',
     textAlign: 'center',
   },
@@ -54,7 +54,7 @@ const styles = {
     justifyContent: 'center',
     marginBottom: '16px',
     padding: '12px',
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#fafafa',
     borderRadius: '8px',
   },
   legendItem: {
@@ -149,7 +149,7 @@ const styles = {
     fontWeight: '600',
     marginBottom: '12px',
     textAlign: 'center',
-    color: 'rgb(5,166,150)',
+    color: '#063d37',
   },
   summaryTable: {
     width: '100%',
@@ -157,7 +157,8 @@ const styles = {
     fontSize: '14px',
   },
   summaryTableHeader: {
-    backgroundColor: 'rgb(64 153 102)',
+    backgroundColor: '#063d37',
+    color: '#fafafa',
     fontWeight: '600',
     padding: '8px',
     borderBottom: '1px solid #ccc',
@@ -180,7 +181,7 @@ const styles = {
     width: '16px',
     height: '16px',
     cursor: 'pointer',
-    color: 'rgb(64 153 102)',
+    color: '#063d37',
   },
   noteText: {
     fontSize: '12px',
@@ -214,7 +215,7 @@ const styles = {
     transition: 'background-color 0.2s ease',
   },
   discountSwitchSliderActive: {
-    backgroundColor: 'rgb(5,166,150)',
+    backgroundColor: '#063d37',
   },
   discountSwitchSliderBefore: {
     position: 'absolute',
@@ -272,7 +273,7 @@ function StrompreisChart() {
   const [error, setError] = useState(null);
   const [activeProfile, setActiveProfile] = useState(1);
   const [householdType, setHouseholdType] = useState('none');
-  const [selectedDiscount, setSelectedDiscount] = useState(15); // KF standardmäßig ausgewählt
+  const [selectedDiscount, setSelectedDiscount] = useState(15);
 
   const profileFactors = { 1: 2.1, 2: 3.4, 3: 5.4, 4: 7, 5: 8.9 };
   const regionOptions = [
@@ -504,119 +505,131 @@ function StrompreisChart() {
   };
 
   const datasets = (householdType === 'none' || activeProfile === null) ? [] : [
-    (() => {
-      const profile = activeProfile;
-      const factor = profileFactors[profile];
-      const h25AdjustedValues = selectedH25Data?.__parsed_extra && strompreisChartValues.length > 0
-        ? Object.values(selectedH25Data.__parsed_extra).map((h25Value, index) => {
-            const strompreisValue = strompreisChartValues[index];
-            return strompreisValue != null && h25Value != null ? ((h25Value / 10) * factor) * strompreisValue : null;
-          })
-        : Array(96).fill(null);
+  (() => {
+    const profile = activeProfile;
+    const factor = profileFactors[profile];
+    const h25AdjustedValues = selectedH25Data?.__parsed_extra && strompreisChartValues.length > 0
+      ? Object.values(selectedH25Data.__parsed_extra).map((h25Value, index) => {
+          const strompreisValue = strompreisChartValues[index];
+          return strompreisValue != null && h25Value != null ? ((h25Value / 10) * factor) * strompreisValue : null;
+        })
+      : Array(96).fill(null);
 
-      const p25AdjustedValues = selectedP25Data?.__parsed_extra && strompreisChartValues.length > 0
-        ? Object.values(selectedP25Data.__parsed_extra).map((p25Value, index) => {
-            const strompreisValue = strompreisChartValues[index];
-            return strompreisValue != null && p25Value != null ? ((p25Value / 10) * factor) * strompreisValue : null;
-          })
-        : Array(96).fill(null);
+    const p25AdjustedValues = selectedP25Data?.__parsed_extra && strompreisChartValues.length > 0
+      ? Object.values(selectedP25Data.__parsed_extra).map((p25Value, index) => {
+          const strompreisValue = strompreisChartValues[index];
+          return strompreisValue != null && p25Value != null ? ((p25Value / 10) * factor) * strompreisValue : null;
+        })
+      : Array(96).fill(null);
 
-      const s25AdjustedValues = selectedS25Data?.__parsed_extra && strompreisChartValues.length > 0
-        ? Object.values(selectedS25Data.__parsed_extra).map((s25Value, index) => {
-            const strompreisValue = strompreisChartValues[index];
-            return strompreisValue != null && s25Value != null ? ((s25Value / 10) * factor) * strompreisValue : null;
-          })
-        : Array(96).fill(null);
+    const s25AdjustedValues = selectedS25Data?.__parsed_extra && strompreisChartValues.length > 0
+      ? Object.values(selectedS25Data.__parsed_extra).map((s25Value, index) => {
+          const strompreisValue = strompreisChartValues[index];
+          return strompreisValue != null && s25Value != null ? ((s25Value / 10) * factor) * strompreisValue : null;
+        })
+      : Array(96).fill(null);
 
-      const customPriceValues = !isNaN(adjustedCustomPrice) && adjustedCustomPrice >= 0 && selectedH25Data?.__parsed_extra
-        ? Object.values(selectedH25Data.__parsed_extra).map((value) => ((value / 10) * factor) * adjustedCustomPrice)
-        : Array(96).fill(null);
+    const customPriceValues = !isNaN(adjustedCustomPrice) && adjustedCustomPrice >= 0 && selectedH25Data?.__parsed_extra
+      ? Object.values(selectedH25Data.__parsed_extra).map((value) => ((value / 10) * factor) * adjustedCustomPrice)
+      : Array(96).fill(null);
 
-      const customP25PriceValues = !isNaN(adjustedCustomPrice) && adjustedCustomPrice >= 0 && selectedP25Data?.__parsed_extra
-        ? Object.values(selectedP25Data.__parsed_extra).map((value) => ((value / 10) * factor) * adjustedCustomPrice)
-        : Array(96).fill(null);
+    const customP25PriceValues = !isNaN(adjustedCustomPrice) && adjustedCustomPrice >= 0 && selectedP25Data?.__parsed_extra
+      ? Object.values(selectedP25Data.__parsed_extra).map((value) => ((value / 10) * factor) * adjustedCustomPrice)
+      : Array(96).fill(null);
 
-      const customS25PriceValues = !isNaN(adjustedCustomPrice) && adjustedCustomPrice >= 0 && selectedS25Data?.__parsed_extra
-        ? Object.values(selectedS25Data.__parsed_extra).map((value) => ((value / 10) * factor) * adjustedCustomPrice)
-        : Array(96).fill(null);
+    const customS25PriceValues = !isNaN(adjustedCustomPrice) && adjustedCustomPrice >= 0 && selectedS25Data?.__parsed_extra
+      ? Object.values(selectedS25Data.__parsed_extra).map((value) => ((value / 10) * factor) * adjustedCustomPrice)
+      : Array(96).fill(null);
 
-      const datasetsForProfile = [];
-      if (householdType === 'standard') {
-        datasetsForProfile.push(
-          {
-            label: `Dynamischer Tarif (Profil ${profile}, Faktor ${factor})`,
-            data: h25AdjustedValues,
-            borderColor: 'rgb(6, 35, 22)',
-            backgroundColor: 'rgba(3, 160, 129, 0.1)',
-            fill: false,
-            tension: 0.4,
-            pointRadius: 0,
-            pointHoverRadius: 0,
-          },
-          {
-            label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh, Profil ${profile}, Faktor ${factor})`,
-            data: customPriceValues,
-            borderColor: 'rgb(64, 153, 102)',
-            backgroundColor: 'rgba(251, 140, 0, 0.1)',
-            fill: false,
-            tension: 0.4,
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            hidden: isNaN(adjustedCustomPrice) || adjustedCustomPrice < 0,
-          }
-        );
-      } else if (householdType === 'pv') {
-        datasetsForProfile.push(
-          {
-            label: `Dynamischer Tarif (Profil ${profile}, Faktor ${factor})`,
-            data: p25AdjustedValues,
-            borderColor: 'rgb(6, 35, 22)',
-            backgroundColor: 'rgba(3, 160, 129, 0.1)',
-            fill: false,
-            tension: 0.4,
-            pointRadius: 0,
-            pointHoverRadius: 0,
-          },
-          {
-            label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh, Profil ${profile}, Faktor ${factor})`,
-            data: customP25PriceValues,
-            borderColor: 'rgb(64, 153, 102)',
-            backgroundColor: 'rgba(251, 140, 0, 0.1)',
-            fill: false,
-            tension: 0.4,
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            hidden: isNaN(adjustedCustomPrice) || adjustedCustomPrice < 0,
-          }
-        );
-      } else if (householdType === 'pvStorage') {
-        datasetsForProfile.push(
-          {
-            label: `Dynamischer Tarif (Profil ${profile}, Faktor ${factor})`,
-            data: s25AdjustedValues,
-            borderColor: 'rgb(6, 35, 22)',
-            backgroundColor: 'rgba(3, 160, 129, 0.1)',
-            fill: false,
-            tension: 0.4,
-            pointRadius: 0,
-            pointHoverRadius: 0,
-          },
-          {
-            label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh, Profil ${profile}, Faktor ${factor})`,
-            data: customS25PriceValues,
-            borderColor: 'rgb(64, 153, 102)',
-            backgroundColor: 'rgba(251, 140, 0, 0.1)',
-            fill: false,
-            tension: 0.4,
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            hidden: isNaN(adjustedCustomPrice) || adjustedCustomPrice < 0,
-          }
-        );
-      }
-      return datasetsForProfile;
-    })(),
-  ].flat();
+    const datasetsForProfile = [];
+    if (householdType === 'standard') {
+      datasetsForProfile.push(
+        {
+          label: `Dynamischer Tarif (Profil ${profile}, Faktor ${factor})`,
+          data: h25AdjustedValues,
+          borderColor: '#88bf50',
+          backgroundColor: 'rgba(136, 191, 80, 0.1)',
+          fill: false,
+          tension: 0.4,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: '#333333', // Dunkelgrau für Hover
+          pointHoverBorderColor: '#333333', // Dunkelgrau für Hover
+        },
+        {
+          label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh, Profil ${profile}, Faktor ${factor})`,
+          data: customPriceValues,
+          borderColor: '#063d37',
+          backgroundColor: 'rgba(6, 61, 55, 0.1)',
+          fill: false,
+          tension: 0.4,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: '#333333', // Dunkelgrau für Hover
+          pointHoverBorderColor: '#333333', // Dunkelgrau für Hover
+          hidden: isNaN(adjustedCustomPrice) || adjustedCustomPrice < 0,
+        }
+      );
+    } else if (householdType === 'pv') {
+      datasetsForProfile.push(
+        {
+          label: `Dynamischer Tarif (Profil ${profile}, Faktor ${factor})`,
+          data: p25AdjustedValues,
+          borderColor: '#88bf50',
+          backgroundColor: 'rgba(136, 191, 80, 0.1)',
+          fill: false,
+          tension: 0.4,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: '#333333', // Dunkelgrau für Hover
+          pointHoverBorderColor: '#333333', // Dunkelgrau für Hover
+        },
+        {
+          label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh, Profil ${profile}, Faktor ${factor})`,
+          data: customP25PriceValues,
+          borderColor: '#063d37',
+          backgroundColor: 'rgba(6, 61, 55, 0.1)',
+          fill: false,
+          tension: 0.4,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: '#333333', // Dunkelgrau für Hover
+          pointHoverBorderColor: '#333333', // Dunkelgrau für Hover
+          hidden: isNaN(adjustedCustomPrice) || adjustedCustomPrice < 0,
+        }
+      );
+    } else if (householdType === 'pvStorage') {
+      datasetsForProfile.push(
+        {
+          label: `Dynamischer Tarif (Profil ${profile}, Faktor ${factor})`,
+          data: s25AdjustedValues,
+          borderColor: '#88bf50',
+          backgroundColor: 'rgba(136, 191, 80, 0.1)',
+          fill: false,
+          tension: 0.4,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: '#333333', // Dunkelgrau für Hover
+          pointHoverBorderColor: '#333333', // Dunkelgrau für Hover
+        },
+        {
+          label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh, Profil ${profile}, Faktor ${factor})`,
+          data: customS25PriceValues,
+          borderColor: '#063d37',
+          backgroundColor: 'rgba(6, 61, 55, 0.1)',
+          fill: false,
+          tension: 0.4,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: '#333333', // Dunkelgrau für Hover
+          pointHoverBorderColor: '#333333', // Dunkelgrau für Hover
+          hidden: isNaN(adjustedCustomPrice) || adjustedCustomPrice < 0,
+        }
+      );
+    }
+    return datasetsForProfile;
+  })(),
+].flat();
 
   const combinedChart = {
     labels: labelsAll,
@@ -679,7 +692,7 @@ function StrompreisChart() {
             font-size: 14px;
             border: 1px solid #e0e0e0;
             borderRadius: 8px;
-            background-color: #f9f9f9;
+            background-color: #fafafa;
             width: 100%;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
             color: #000000;
@@ -689,8 +702,8 @@ function StrompreisChart() {
           }
           .date-picker:focus {
             outline: none;
-            border-color: rgb(64, 153, 102);
-            box-shadow: 0 0 0 3px rgba(3, 160, 129, 0.1);
+            border-color: #88bf50;
+            box-shadow: 0 0 0 3px rgba(136, 191, 80, 0.1);
           }
           .price-input {
             padding: 10px 12px;
@@ -707,8 +720,8 @@ function StrompreisChart() {
           }
           .price-input:focus {
             outline: none;
-            border-color: rgb(64, 153, 102);
-            box-shadow: 0 0 0 3px rgba(3, 160, 129, 0.1);
+            border-color: #063d37;
+            box-shadow: 0 0 0 3px rgba(6, 61, 55, 0.1);
           }
           .input-error {
             color: rgb(218, 17, 17);
@@ -728,24 +741,24 @@ function StrompreisChart() {
             -webkit-appearance: none;
             width: 20px;
             height: 20px;
-            background: rgb(64, 153, 102);
+            background: #063d37;
             border-radius: 50%;
             cursor: pointer;
             transition: background 0.2s ease;
           }
           .slider::-webkit-slider-thumb:hover {
-            background: rgb(64, 153, 102);
+            background: #88bf50;
           }
           .slider::-moz-range-thumb {
             width: 20px;
             height: 20px;
-            background: rgb(64, 153, 102);
+            background: #063d37;
             border-radius: 50%;
             cursor: pointer;
             transition: background 0.2s ease;
           }
           .slider::-moz-range-thumb:hover {
-            background: rgb(64, 153, 102);
+            background: #88bf50;
           }
           .radio-input {
             -webkit-appearance: none;
@@ -760,7 +773,7 @@ function StrompreisChart() {
             transition: border-color 0.2s ease, background-color 0.2s ease;
           }
           .radio-input:checked {
-            border: 2px solid rgb(64, 153, 102);
+            border: 2px solid #063d37;
             background-color: #fff;
           }
           .radio-input:checked::before {
@@ -771,14 +784,14 @@ function StrompreisChart() {
             transform: translate(-50%, -50%);
             width: 8px;
             height: 8px;
-            background-color: rgb(64, 153, 102);
+            background-color: #063d37;
             border-radius: 50%;
           }
           .radio-input:hover {
-            border-color: rgb(64, 153, 102);
+            border-color: #88bf50;
           }
           .radio-input:checked:hover::before {
-            background-color: rgb(64, 153, 102);
+            background-color: #88bf50;
           }
           .tooltip {
             position: absolute;
@@ -798,17 +811,17 @@ function StrompreisChart() {
           .tooltip-container:hover .tooltip {
             visibility: visible;
             opacity: 1;
+            background-color: #063d37;
           }
           .discount-switch-container input:checked + .discount-switch-slider {
-            background-color: rgb(5,166,150);
+            background-color: #063d37;
           }
           .discount-switch-container input:checked + .discount-switch-slider:before {
             transform: translateX(20px);
           }
           .discount-switch-container input:focus + .discount-switch-slider {
-            box-shadow: 0 0 0 3px rgba(3, 160, 129, 0.1);
+            box-shadow: 0 0 0 3px rgba(6, 61, 55, 0.1);
           }
-          /* CSS für individuelle Bildpositionierung */
           .menschen1 {
             transform: translate(0px, 0px);
           }
@@ -853,6 +866,7 @@ function StrompreisChart() {
             .region-switch-wrapper {
               flex: 1;
               min-width: 60px;
+              background-color: #063d37;
             }
             .image-container {
               flex-wrap: wrap;
@@ -868,240 +882,242 @@ function StrompreisChart() {
         `}
       </style>
 
-      <div style={styles.controlsContainer}>
-        {loading && <p style={styles.loading}>⏳ Daten werden geladen...</p>}
-        {error && <p style={styles.error}>{error}</p>}
+      <div style={styles.mainContainer}>
+        <div style={styles.controlsContainer}>
+          {loading && <p style={styles.loading}>⏳ Daten werden geladen...</p>}
+          {error && <p style={styles.error}>{error}</p>}
 
-        {!loading && !error && (
-          <>
-            <div style={styles.controlGroup}>
-              <label style={styles.sliderLabel}>Wie viele Personen leben in Ihrem Haushalt?</label>
-              {activeProfile >= 1 && (
-                <div style={styles.imageContainer} className="image-container">
-                  {['menschen1', 'menschen2', 'menschen3', 'menschen4', 'menschen5'].map((id) => (
-                    <img
-                      key={id}
-                      src={`/bilder/${id}.jpg`}
-                      alt={`Haushaltsmitglied ${id.replace('menschen', '')}`}
-                      style={styles.image}
-                      className={id}
+          {!loading && !error && (
+            <>
+              <div style={styles.controlGroup}>
+                <label style={styles.sliderLabel}>Wie viele Personen leben in Ihrem Haushalt?</label>
+                {activeProfile >= 1 && (
+                  <div style={styles.imageContainer} className="image-container">
+                    {['menschen1', 'menschen2', 'menschen3', 'menschen4', 'menschen5'].map((id) => (
+                      <img
+                        key={id}
+                        src={`/bilder/${id}.jpg`}
+                        alt={`Haushaltsmitglied ${id.replace('menschen', '')}`}
+                        style={styles.image}
+                        className={id}
+                      />
+                    ))}
+                  </div>
+                )}
+                <input
+                  type="range"
+                  min="1"
+                  max="5"
+                  step="1"
+                  value={activeProfile || 1}
+                  onChange={handleProfileChange}
+                  style={{ ...styles.slider }}
+                  className="slider"
+                />
+                <div style={{ fontSize: '14px', color: '#333' }}>
+                  {activeProfile ? `${activeProfile} Person${activeProfile === 1 ? '' : 'en'}` : '1 Person'}
+                </div>
+              </div>
+              <div style={styles.controlGroup}>
+                <label style={styles.inputLabel}>Haben Sie eine PV-Anlage?</label>
+                <div style={styles.householdSelector}>
+                  <label style={styles.radioLabel}>
+                    Bitte wählen
+                  </label>
+                  <label style={styles.radioLabel}>
+                    <input
+                      type="radio"
+                      value="pv"
+                      name="householdType"
+                      checked={householdType === 'pv'}
+                      onChange={handleHouseholdTypeChange}
+                      style={styles.radioInput}
+                      className="radio-input"
                     />
+                    Ja
+                  </label>
+                  <label style={styles.radioLabel}>
+                    <input
+                      type="radio"
+                      value="pvStorage"
+                      name="householdType"
+                      checked={householdType === 'pvStorage'}
+                      onChange={handleHouseholdTypeChange}
+                      style={styles.radioInput}
+                      className="radio-input"
+                    />
+                    Ja, mit Speicher
+                  </label>
+                  <label style={styles.radioLabel}>
+                    <input
+                      type="radio"
+                      value="standard"
+                      name="householdType"
+                      checked={householdType === 'standard'}
+                      onChange={handleHouseholdTypeChange}
+                      style={styles.radioInput}
+                      className="radio-input"
+                    />
+                    Nein
+                  </label>
+                </div>
+              </div>
+
+              <div style={styles.controlGroup}>
+                <label style={styles.inputLabel} htmlFor="priceInput">Preis (Ct/kWh):</label>
+                <div style={styles.tooltipContainer} className="tooltip-container">
+                  <input
+                    id="priceInput"
+                    type="number"
+                    value={customPrice}
+                    onChange={handlePriceChange}
+                    placeholder="z.B. 32"
+                    className="price-input"
+                    step="0.01"
+                    min="0"
+                  />
+                  <svg style={styles.infoIcon} viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                  </svg>
+                  <span className="tooltip">Ihren aktuellen Strompreis entnehmen Sie z.B. Ihrer letzten Stromrechnung</span>
+                </div>
+                {inputError && <p className="input-error">{inputError}</p>}
+              </div>
+
+              <div style={styles.controlGroup}>
+                <label style={styles.inputLabel}>Region auswählen:</label>
+                <div style={{ display: 'flex', gap: '16px', justifyContent: 'space-between' }}>
+                  {regionOptions.map((region) => (
+                    <div key={region.value} style={styles.regionSwitchWrapper} className="region-switch-wrapper">
+                      <span style={styles.regionLabel}>{region.label}</span>
+                      <label style={{ display: 'block', cursor: 'pointer' }}>
+                        <div style={styles.discountSwitchContainer} className="discount-switch-container">
+                          <input
+                            type="checkbox"
+                            id={`region-${region.value}`}
+                            checked={selectedDiscount === region.value}
+                            onChange={() => handleDiscountToggle(region.value)}
+                            style={styles.discountSwitchInput}
+                          />
+                          <span
+                            style={{
+                              ...styles.discountSwitchSlider,
+                              ...(selectedDiscount === region.value ? styles.discountSwitchSliderActive : {}),
+                            }}
+                          >
+                            <span
+                              style={{
+                                ...styles.discountSwitchSliderBefore,
+                                ...(selectedDiscount === region.value ? styles.discountSwitchSliderBeforeActive : {}),
+                              }}
+                            />
+                          </span>
+                        </div>
+                      </label>
+                    </div>
                   ))}
                 </div>
-              )}
-              <input
-                type="range"
-                min="1"
-                max="5"
-                step="1"
-                value={activeProfile || 1}
-                onChange={handleProfileChange}
-                style={{ ...styles.slider }}
-                className="slider"
-              />
-              <div style={{ fontSize: '14px', color: '#333' }}>
-                {activeProfile ? `${activeProfile} Person${activeProfile === 1 ? '' : 'en'}` : '1 Person'}
+                <p style={{ fontSize: '12px', color: '#333', marginTop: '8px' }}>
+                  {selectedDiscount === null
+                    ? `Keine Region ausgewählt, Preis: ${parseFloat(customPrice).toFixed(2) || 'N/A'} Ct/kWh`
+                    : `Ausgewählte Region: ${
+                        regionOptions.find((r) => r.value === selectedDiscount)?.label
+                      }, Angepasster Preis: ${adjustedCustomPrice.toFixed(2)} Ct/kWh`}
+                </p>
               </div>
-            </div>
-            <div style={styles.controlGroup}>
-              <label style={styles.inputLabel}>Haben Sie eine PV-Anlage?</label>
-              <div style={styles.householdSelector}>
-                <label style={styles.radioLabel}>
-                  Bitte wählen
-                </label>
-                <label style={styles.radioLabel}>
-                  <input
-                    type="radio"
-                    value="pv"
-                    name="householdType"
-                    checked={householdType === 'pv'}
-                    onChange={handleHouseholdTypeChange}
-                    style={styles.radioInput}
-                    className="radio-input"
-                  />
-                  Ja
-                </label>
-                <label style={styles.radioLabel}>
-                  <input
-                    type="radio"
-                    value="pvStorage"
-                    name="householdType"
-                    checked={householdType === 'pvStorage'}
-                    onChange={handleHouseholdTypeChange}
-                    style={styles.radioInput}
-                    className="radio-input"
-                  />
-                  Ja, mit Speicher
-                </label>
-                <label style={styles.radioLabel}>
-                  <input
-                    type="radio"
-                    value="standard"
-                    name="householdType"
-                    checked={householdType === 'standard'}
-                    onChange={handleHouseholdTypeChange}
-                    style={styles.radioInput}
-                    className="radio-input"
-                  />
-                  Nein
-                </label>
-              </div>
-            </div>
 
-            <div style={styles.controlGroup}>
-              <label style={styles.inputLabel} htmlFor="priceInput">Preis (Ct/kWh):</label>
-              <div style={styles.tooltipContainer} className="tooltip-container">
-                <input
-                  id="priceInput"
-                  type="number"
-                  value={customPrice}
-                  onChange={handlePriceChange}
-                  placeholder="z.B. 32"
-                  className="price-input"
-                  step="0.01"
-                  min="0"
+              <div style={styles.controlGroup}>
+                <label style={styles.inputLabel} htmlFor="datePicker">Datum auswählen:</label>
+                <DatePicker
+                  id="datePicker"
+                  selected={selectedDate}
+                  onChange={(date) => setSelectedDate(date)}
+                  dateFormat="dd/MM/yyyy"
+                  placeholderText="Datum auswählen"
+                  className="date-picker"
+                  disabled={availableDates.length === 0 && h25Data.length === 0 && p25Data.length === 0 && s25Data.length === 0}
                 />
+              </div>
+            </>
+          )}
+        </div>
+
+        <div style={styles.chartContainer}>
+          <h2 style={styles.chartTitle}>Vergleich Normaltarif zu dynamischem Tarif</h2>
+          <div style={styles.legendContainer}>
+            <div style={styles.legendItem}>
+              <div style={{ ...styles.legendColor, backgroundColor: '#88bf50' }} />
+              <span style={styles.legendLabel}>Dynamischer Tarif</span>
+            </div>
+            <div style={styles.legendItem}>
+              <div style={{ ...styles.legendColor, backgroundColor: '#063d37' }} />
+              <span style={styles.legendLabel}>Normaltarif</span>
+            </div>
+          </div>
+          <Line data={combinedChart} options={combinedChartOptions} />
+          {datasets.length === 0 && (
+            <p style={styles.noData}>Bitte wählen Sie einen Haushaltstyp und ein Profil aus, um die Grafik zu sehen.</p>
+          )}
+          {strompreisChartData.length === 0 && !selectedH25Data && !selectedP25Data && !selectedS25Data && (
+            <p style={styles.noData}>⚠️ Keine Daten für das ausgewählte Datum.</p>
+          )}
+          {householdType !== 'none' && activeProfile && (
+            <div style={styles.consumptionSummary}>
+              <div style={styles.tooltipContainer} className="tooltip-container">
+                <h3 style={styles.summaryTitle}>Täglicher Verbrauch und Kosten</h3>
                 <svg style={styles.infoIcon} viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
                 </svg>
-                <span className="tooltip">Ihren aktuellen Strompreis entnehmen Sie z.B. Ihrer letzten Stromrechnung</span>
+                <span className="tooltip">Preise sind auf zwei Nachkommastellen gerundet</span>
               </div>
-              {inputError && <p className="input-error">{inputError}</p>}
+              <table style={styles.summaryTable}>
+                <thead>
+                  <tr style={styles.summaryTableHeader}>
+                    <th style={styles.summaryTableCell}>Verbrauch (kWh)</th>
+                    <th style={styles.summaryTableCell}>Kosten (Euro)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(() => {
+                    const profile = activeProfile;
+                    const { h25Consumption, p25Consumption, s25Consumption, h25Cost, p25Cost, s25Cost, h25CustomCost, p25CustomCost, s25CustomCost } = calculateConsumptionAndCosts(profile);
+                    return (
+                      <tr key={profile} style={styles.summaryTableRow}>
+                        <td style={styles.summaryTableCell}>
+                          {householdType === 'standard' ? `${h25Consumption} kWh` : householdType === 'pv' ? `${p25Consumption} kWh` : `${s25Consumption} kWh`}
+                        </td>
+                        <td style={styles.summaryTableCell}>
+                          {householdType === 'standard' ? (
+                            <>
+                              Dynamischer Tarif: {h25Cost.euro} €<br />
+                              Normaltarif: {h25CustomCost.euro} €
+                            </>
+                          ) : householdType === 'pv' ? (
+                            <>
+                              Dynamischer Tarif: {p25Cost.euro} €<br />
+                              Normaltarif: {p25CustomCost.euro} €
+                            </>
+                          ) : (
+                            <>
+                              Dynamischer Tarif: {s25Cost.euro} €<br />
+                              Normaltarif: {s25CustomCost.euro} €
+                            </>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })()}
+                </tbody>
+              </table>
             </div>
-
-            <div style={styles.controlGroup}>
-              <label style={styles.inputLabel}>Region auswählen:</label>
-              <div style={{ display: 'flex', gap: '16px', justifyContent: 'space-between' }}>
-                {regionOptions.map((region) => (
-                  <div key={region.value} style={styles.regionSwitchWrapper} className="region-switch-wrapper">
-                    <span style={styles.regionLabel}>{region.label}</span>
-                    <label style={{ display: 'block', cursor: 'pointer' }}>
-                      <div style={styles.discountSwitchContainer} className="discount-switch-container">
-                        <input
-                          type="checkbox"
-                          id={`region-${region.value}`}
-                          checked={selectedDiscount === region.value}
-                          onChange={() => handleDiscountToggle(region.value)}
-                          style={styles.discountSwitchInput}
-                        />
-                        <span
-                          style={{
-                            ...styles.discountSwitchSlider,
-                            ...(selectedDiscount === region.value ? styles.discountSwitchSliderActive : {}),
-                          }}
-                        >
-                          <span
-                            style={{
-                              ...styles.discountSwitchSliderBefore,
-                              ...(selectedDiscount === region.value ? styles.discountSwitchSliderBeforeActive : {}),
-                            }}
-                          />
-                        </span>
-                      </div>
-                    </label>
-                  </div>
-                ))}
-              </div>
-              <p style={{ fontSize: '12px', color: '#333', marginTop: '8px' }}>
-                {selectedDiscount === null
-                  ? `Keine Region ausgewählt, Preis: ${parseFloat(customPrice).toFixed(2) || 'N/A'} Ct/kWh`
-                  : `Ausgewählte Region: ${
-                      regionOptions.find((r) => r.value === selectedDiscount)?.label
-                    }, Angepasster Preis: ${adjustedCustomPrice.toFixed(2)} Ct/kWh`}
-              </p>
-            </div>
-
-            <div style={styles.controlGroup}>
-              <label style={styles.inputLabel} htmlFor="datePicker">Datum auswählen:</label>
-              <DatePicker
-                id="datePicker"
-                selected={selectedDate}
-                onChange={(date) => setSelectedDate(date)}
-                dateFormat="dd/MM/yyyy"
-                placeholderText="Datum auswählen"
-                className="date-picker"
-                disabled={availableDates.length === 0 && h25Data.length === 0 && p25Data.length === 0 && s25Data.length === 0}
-              />
-            </div>
-          </>
-        )}
-      </div>
-
-      <div style={styles.chartContainer}>
-        <h2 style={styles.chartTitle}>Vergleich Normaltarif zu dynamischem Tarif</h2>
-        <div style={styles.legendContainer}>
-          <div style={styles.legendItem}>
-            <div style={{ ...styles.legendColor, backgroundColor: 'rgb(6, 35, 22)' }} />
-            <span style={styles.legendLabel}>Dynamischer Tarif</span>
-          </div>
-          <div style={styles.legendItem}>
-            <div style={{ ...styles.legendColor, backgroundColor: 'rgb(64, 153, 102)' }} />
-            <span style={styles.legendLabel}>Normaltarif</span>
-          </div>
+          )}
+          <p style={styles.noteText}>
+            *Hinweis: Bei den gezeigten Daten handelt es sich um Vergleichswerte, die für 1 bis zu 5 Personen in einem Haushalt
+            durchschnittlich ermittelt werden. Diese Daten sind nur als grober Richtwert zu verstehen und bieten keine genaue
+            Auskunft über die zu erwartende Ersparnis gegenüber einem gewöhnlichen Stromvertrag. Für genauere Daten, die
+            genau auf Ihren Haushalt abgestimmt sind, bitte zum Detailrechner wechseln.
+          </p>
         </div>
-        <Line data={combinedChart} options={combinedChartOptions} />
-        {datasets.length === 0 && (
-          <p style={styles.noData}>Bitte wählen Sie einen Haushaltstyp und ein Profil aus, um die Grafik zu sehen.</p>
-        )}
-        {strompreisChartData.length === 0 && !selectedH25Data && !selectedP25Data && !selectedS25Data && (
-          <p style={styles.noData}>⚠️ Keine Daten für das ausgewählte Datum.</p>
-        )}
-        {householdType !== 'none' && activeProfile && (
-          <div style={styles.consumptionSummary}>
-            <div style={styles.tooltipContainer} className="tooltip-container">
-              <h3 style={styles.summaryTitle}>Täglicher Verbrauch und Kosten</h3>
-              <svg style={styles.infoIcon} viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-              </svg>
-              <span className="tooltip">Preise sind auf zwei Nachkommastellen gerundet</span>
-            </div>
-            <table style={styles.summaryTable}>
-              <thead>
-                <tr style={styles.summaryTableHeader}>
-                  <th style={styles.summaryTableCell}>Verbrauch (kWh)</th>
-                  <th style={styles.summaryTableCell}>Kosten (Euro)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(() => {
-                  const profile = activeProfile;
-                  const { h25Consumption, p25Consumption, s25Consumption, h25Cost, p25Cost, s25Cost, h25CustomCost, p25CustomCost, s25CustomCost } = calculateConsumptionAndCosts(profile);
-                  return (
-                    <tr key={profile} style={styles.summaryTableRow}>
-                      <td style={styles.summaryTableCell}>
-                        {householdType === 'standard' ? `${h25Consumption} kWh` : householdType === 'pv' ? `${p25Consumption} kWh` : `${s25Consumption} kWh`}
-                      </td>
-                      <td style={styles.summaryTableCell}>
-                        {householdType === 'standard' ? (
-                          <>
-                            Dynamischer Tarif: {h25Cost.euro} €<br />
-                            Normaltarif: {h25CustomCost.euro} €
-                          </>
-                        ) : householdType === 'pv' ? (
-                          <>
-                            Dynamischer Tarif: {p25Cost.euro} €<br />
-                            Normaltarif: {p25CustomCost.euro} €
-                          </>
-                        ) : (
-                          <>
-                            Dynamischer Tarif: {s25Cost.euro} €<br />
-                            Normaltarif: {s25CustomCost.euro} €
-                          </>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })()}
-              </tbody>
-            </table>
-          </div>
-        )}
-        <p style={styles.noteText}>
-          *Hinweis: Bei den gezeigten Daten handelt es sich um Vergleichswerte, die für 1 bis zu 5 Personen in einem Haushalt
-          durchschnittlich ermittelt werden. Diese Daten sind nur als grober Richtwert zu verstehen und bieten keine genaue
-          Auskunft über die zu erwartende Ersparnis gegenüber einem gewöhnlichen Stromvertrag. Für genauere Daten, die
-          genau auf Ihren Haushalt abgestimmt sind, bitte zum Detailrechner wechseln.
-        </p>
       </div>
     </div>
   );

@@ -317,7 +317,7 @@ const Energiemanager = () => {
     <p className="text-[#D9043D] tracking-tight text-3xl font-bold leading-tight text-center"></p>
     <p className="text-[#202026] text-lg font-normal leading-relaxed text-center mt-2"></p>
     <div className="flex flex-col gap-6 mt-6 flex-1">
-      <div className="flex min-w-[200px] flex-1 flex-col gap-3 rounded-xl p-6 border border-gray-300 bg-[#fafafa] shadow-sm">
+      <div className="flex min-w-[200px] flex-1 flex-col gap-3 rounded-xl p-6  bg-[#fafafa]">
         <p className="text-[#3c6055] text-2xl font-bold leading-normal">Preisrechner dynamische Tarife <a
           href="test/rechner"
           className="inline-flex items-center justify-center gap-1 px-4 py-1.5 rounded-xl bg-[#063d37] hover:bg-[#3c6055] text-white text-lg font-medium leading-normal"

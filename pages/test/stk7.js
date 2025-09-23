@@ -28,7 +28,7 @@ const styles = {
     maxWidth: '100%',
     margin: '0 auto',
     fontFamily: "'Inter', 'Roboto', sans-serif",
-    backgroundColor: '#f5f5f5', // Neutraler Hintergrund
+    backgroundColor: '#fafafa', // Neutraler Hintergrund
     borderRadius: '4px', // Schlichterer Radius
     overflow: 'hidden',
     boxSizing: 'border-box',
@@ -44,8 +44,8 @@ const styles = {
   chartContainer: {
     marginTop: '1rem',
     padding: '1rem',
-    backgroundColor: '#ffffff',
-    borderRadius: '4px', // Schlichterer Radius
+    backgroundColor: '#fafafa',
+    borderRadius: '0px', // Schlichterer Radius
     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)', // Dezentere Schatten
     overflow: 'hidden',
   },
@@ -63,7 +63,7 @@ const styles = {
     color: '#333333',
     textAlign: 'center',
     padding: '1.5rem',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#fafafa',
     borderRadius: '4px',
   },
   noData: {
@@ -192,7 +192,7 @@ function Statistik() {
         <title>MongoDB Weekly Prices - Line Chart</title>
       </Head>
       <div style={styles.container}>
-        {!isMobile && <h1 style={styles.title}>BÖRSENPREIS ENERGIE</h1>}
+        {!isMobile && <h1 style={styles.title}></h1>}
         <div style={styles.chartContainer}>
           <h2 style={styles.chartTitle}>Wöchentliche Durchschnittspreise 2025</h2>
           <div style={{ width: '100%', height: isMobile ? '250px' : '350px' }}>
@@ -203,9 +203,9 @@ function Statistik() {
                   {
                     label: 'Durchschnittspreis (ct/kWh)',
                     data: chartData,
-                    borderColor: '#75ff2b', // Ursprüngliches helles Grün
-                    backgroundColor: 'rgba(64, 153, 102, 0.2)', // Ursprünglicher grünlicher Hintergrund
-                    pointBackgroundColor: '#062316', // Ursprüngliches dunkelgrün
+                    borderColor: '#063d37', // Ursprüngliches helles Grün
+                    backgroundColor: 'rgba(6 61 55)', // Ursprünglicher grünlicher Hintergrund
+                    pointBackgroundColor: '#063d37', // Ursprüngliches dunkelgrün
                     pointRadius: 3,
                     pointHoverRadius: 5,
                     fill: true,
@@ -222,9 +222,9 @@ function Statistik() {
                     labels: { font: { size: 12, weight: '500' }, color: '#333333' }, // Neutrale Farbe für Legende
                   },
                   tooltip: {
-                    backgroundColor: '#409966', // Ursprüngliche Tooltip-Farbe
-                    titleColor: '#e6e6bf',
-                    bodyColor: '#e6e6bf',
+                    backgroundColor: '#063d37', // Ursprüngliche Tooltip-Farbe
+                    titleColor: '#fafafa',
+                    bodyColor: '#fafafa',
                     callbacks: {
                       label: (context) => `${context.raw} Cent/kWh`,
                     },

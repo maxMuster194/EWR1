@@ -10,15 +10,12 @@ const styles = `
     display: grid;
     grid:
       "header header" auto
-      "sidebar top-box" auto
       "sidebar main" 1fr
-      "sidebar bottom-boxes" auto
-      "sidebar extra-box-1" auto
-      "sidebar extra-box-2" auto
       "footer footer" auto
       / 200px 1fr;
     gap: 12px;
     min-height: 100vh;
+    background-color: #fafafa;
   }
   .header {
     grid-area: header;
@@ -27,21 +24,19 @@ const styles = `
     justify-content: flex-start;
     border-bottom: 1px solid #D1D5DB;
     padding: 6px 24px;
-    background: linear-gradient(90deg, #063d37, #063d37); /* Updated dark green */
+    background: linear-gradient(90deg, #063d37, #063d37);
   }
   .header-logo {
     width: 125px;
     height: 47.5px;
     object-fit: contain;
   }
-  .top-box { grid-area: top-box; }
   .sidebar {
     grid-area: sidebar;
     width: 100%;
-    max-width: 200px;
+    max-width: 120px;
     padding: 12px;
     background-color: #202026;
-    border-right: 1px solid #D1D5DB;
   }
   .sidebar .flex {
     display: flex;
@@ -61,13 +56,13 @@ const styles = `
     transition: background-color 0.2s;
   }
   .sidebar a:hover {
-    background-color: #063d37; /* Updated dark green */
+    background-color: #063d37;
   }
   .sidebar a.active {
-    background-color: #063d37; /* Updated dark green */
+    background-color: #063d37;
   }
   .sidebar a.active .fa-house {
-    color: #fafafa !important; /* Updated to off-white */
+    color: #fafafa !important;
   }
   .sidebar a p {
     text-align: center;
@@ -80,59 +75,31 @@ const styles = `
     display: flex;
     flex-direction: row;
     gap: 12px;
-    padding: 24px;
-    background-color: #F3F4F6;
-    border-radius: 12px;
+    padding: 12px;
+    background-color: #fafafa;
+    align-items: flex-start;
   }
-  .bottom-boxes {
-    grid-area: bottom-boxes;
-    padding: 24px;
-    background-color: #F3F4F6;
-    border-radius: 12px;
-  }
-  .extra-box-1 {
-    grid-area: extra-box-1;
-    padding: 24px;
-    background-color: #F3F4F6;
-    border-radius: 12px;
-  }
-  .extra-box-2 {
-    grid-area: extra-box-2;
-    padding: 16px;
-    background-color: #F3F4F6;
-    border-radius: 12px;
-  }
-  .extra-box-2 .inner-box {
-    max-width: 400px;
-    margin: 0 auto;
-  }
-  .content {
+  .content, .chart {
     flex: 1;
-    overflow: auto;
-    max-height: 100vh;
-    padding: 8px;
-    border-radius: 12px;
-    background-color: #FFFFFF;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
+    background-color: #fafafa;
+    align-items: flex-start;
   }
-  .content > * {
+  .content > *, .chart > * {
     width: 100%;
-    height: 100%;
-    flex: 1;
+    margin: 0;
+    padding: 0;
+  }
+  .content h2, .chart h2 {
+    font-size: 1.8em;
+    margin: 0 0 8px 0;
+    padding: 0;
+    color: #063d37;
+    font-weight: 700; /* Fett für Überschriften */
   }
   .content * {
     font-size: 1.1em;
-  }
-  .chart {
-    flex: 1;
-    overflow: auto;
-    max-height: 100vh;
-    padding: 24px;
-    border-radius: 12px;
-    background-color: #FFFFFF;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   .footer {
     grid-area: footer;
@@ -141,105 +108,100 @@ const styles = `
     justify-content: center;
     border-top: 1px solid #D1D5DB;
     padding: 12px 48px;
-    background: linear-gradient(90deg, #063d37, #409966); /* Updated dark green */
+    background: linear-gradient(90deg, #063d37, #063d37);
   }
   .bottom-nav {
     display: none;
   }
-@media (max-width: 767px) {
-  .layout {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding-bottom: 60px;
+  @media (max-width: 767px) {
+    .layout {
+      grid:
+        "header header" auto
+        "sidebar main" 1fr
+        "footer footer" auto
+        / 100px 1fr;
+      gap: 8px;
+      padding-bottom: 60px;
+      background-color: #fafafa;
+    }
+    .header {
+      padding: 4px 12px;
+    }
+    .header-logo {
+      width: 80px;
+      height: 30px;
+    }
+    .sidebar {
+      max-width: 100px;
+      padding: 8px;
+    }
+    .sidebar a {
+      padding: 6px;
+    }
+    .sidebar a p {
+      font-size: 10px;
+    }
+    .sidebar a svg {
+      font-size: 16px;
+    }
+    .main {
+      flex-direction: column;
+      padding: 8px;
+      align-items: flex-start;
+    }
+    .content, .chart {
+      max-height: none;
+      background-color: #fafafa;
+      align-items: flex-start;
+    }
+    .content h2, .chart h2 {
+      font-size: 1.5em;
+      margin: 0 0 6px 0;
+      color: #063d37;
+      font-weight: 700; /* Fett für Überschriften */
+    }
+    .content > *, .chart > * {
+      margin: 0;
+      padding: 0;
+    }
+    .content * {
+      font-size: 1em;
+    }
+    .bottom-nav {
+      display: flex;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #202026;
+      border-top: 1px solid #D1D5DB;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 0;
+      z-index: 1000;
+    }
+    .bottom-nav a {
+      padding: 6px;
+      flex: 1;
+      text-align: center;
+    }
+    .bottom-nav a p {
+      font-size: 10px;
+    }
+    .bottom-nav a svg {
+      font-size: 16px;
+    }
+    .footer {
+      padding: 12px;
+    }
   }
-  .header, .top-box, .main, .bottom-boxes, .extra-box-1, .extra-box-2, .footer {
-    width: 100%;
-    padding: 12px;
-  }
-  .header {
-    padding: 6px;
-  }
-  .header-logo {
-    width: 75px;
-    height: 28.5px;
-  }
-  .sidebar {
-    display: none;
-  }
-  .main {
-    flex-direction: column;
-  }
-  .content {
-    max-height: none;
-    padding: 8px;
-  }
-  .content * {
-    font-size: 1em;
-  }
-  .chart {
-    max-height: none;
-    padding: 12px;
-  }
-  .extra-box-2 .inner-box {
-    max-width: 100%;
-  }
-  .footer {
-    padding: 12px;
-  }
-  .bottom-nav {
-    display: flex;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: #202026;
-    border-top: 1px solid #D1D5DB;
-    justify-content: space-around;
-    align-items: center;
-    padding: 8px 0;
-    z-index: 1000;
-  }
-  .bottom-nav a {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 8px;
-    border-radius: 12px;
-    color: #FFFFFF;
-    text-decoration: none;
-    transition: background-color 0.2s;
-    flex: 1;
-    text-align: center;
-  }
-  .bottom-nav a:hover {
-    background-color: #063d37; /* Updated dark green */
-  }
-  .bottom-nav a.active {
-    background-color: #063d37; /* Updated dark green */
-  }
-  .bottom-nav a.active .fa-house {
-    color: #fafafa !important; /* Updated to off-white */
-  }
-  .bottom-nav a p {
-    text-align: center;
-    font-size: 10px;
-    font-weight: 500;
-    margin: 0;
-  }
-  .bottom-nav a svg {
-    font-size: 18px;
-    color: #fafafa; /* Updated to off-white */
-  }
-}
 `;
 
 const Energiemanager = () => {
   return (
     <>
       <style>{styles}</style>
-      <div className="layout relative bg-gray-100" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
+      <div className="layout relative" style={{ backgroundColor: '#fafafa', fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
         <header className="header">
           <div className="flex items-start">
             <img src="/bilder/ilumylogo2.png" alt="Logo" className="header-logo" />
@@ -281,11 +243,13 @@ const Energiemanager = () => {
           </div>
         </div>
 
-        <div className="main flex flex-col lg:flex-row gap-6">
-          <div className="content flex-1 rounded-xl bg-white shadow-md flex flex-col">
+        <div className="main flex flex-col gap-6" style={{ backgroundColor: '#fafafa' }}>
+          <div className="content flex-1" style={{ backgroundColor: '#fafafa' }}>
+            <h2 className="section-title">BÖRSENPREIS ENERGIE</h2>
             <Statistik />
           </div>
-          <div className="chart flex-1 p-6 rounded-xl bg-white shadow-md flex flex-col">
+          <div className="chart flex-1" style={{ backgroundColor: '#fafafa' }}>
+            <h2 className="section-title">Kalkulation Ihrer Einsparmöglichkeiten</h2>
             <Durchschnitt />
           </div>
         </div>
@@ -312,6 +276,10 @@ const Energiemanager = () => {
             <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
           </a>
         </nav>
+
+        <footer className="footer">
+          <p className="text-white text-sm">© 2025 Energiemanager</p>
+        </footer>
       </div>
     </>
   );
