@@ -474,9 +474,9 @@ function StrompreisChart() {
       : 0;
 
     return {
-      h25Consumption: h25Consumption.toFixed(3),
-      p25Consumption: p25Consumption.toFixed(3),
-      s25Consumption: s25Consumption.toFixed(3),
+      h25Consumption: h25Consumption.toFixed(0),
+      p25Consumption: p25Consumption.toFixed(0),
+      s25Consumption: s25Consumption.toFixed(0),
       h25Cost: {
         cent: h25Cost.toFixed(2),
         euro: (h25Cost / 100).toFixed(2),

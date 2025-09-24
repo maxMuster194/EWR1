@@ -417,6 +417,13 @@ export default function Home() {
       ],
     },
     {
+      id: 'wärmepumpe',
+      label: 'Wärmepumpe',
+      options: [
+        { name: 'Wärmepumpe', specifications: 'Leistung: 5-15 kW, Betrieb: variabel, Energieeffizienz: A+++' },
+      ],
+    },
+    {
       id: 'dynamischeverbraucher',
       label: 'Schaltbare Verbraucher',
       options: [
@@ -2271,7 +2278,7 @@ table, th, td {
                       <span>{menu.id === 'stromerzeuger' ? 'Erzeuger' : 'Verbraucher'}</span>
                       <span>Info</span>
                       <span>Watt / h</span>
-                      <span>Kosten/Jahr</span>
+                      <span>Kosten/Normaltarif</span>
                       {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && <span></span>}
                     </li>
 
