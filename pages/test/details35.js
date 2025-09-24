@@ -69,9 +69,9 @@ const verbraucherBeschreibungen = {
   Waschmaschine: 'Die Waschmaschine verbraucht ca. 1200 W pro Waschgang (1,37h/Woche).',
   Geschirrspüler: 'Der Geschirrspüler benötigt ca. 600 W pro Spülgang (1,27h/Woche).',
   Trockner: 'Der Wäschetrockner verbraucht ca. 3500 W pro Trocknung (1,37h/Woche).',
-  Herd: 'Der Herd benötigt etwa 700 W bei 1 Stunde täglicher Nutzung.',
-  Multimedia: 'Multimedia-Geräte verbrauchen ca. 350 W bei 3 Stunden täglicher Nutzung.',
-  Licht: 'Beleuchtung verbraucht etwa 175 W bei 5 Stunden täglicher Nutzung.',
+  Herd: 'Der Herd benötigt etwa 700 W bei 1 Stunde täglicher Nutzung (umgestellt auf Wochenbasis: ca. 7 Nutzungen pro Woche).',
+  Multimedia: 'Multimedia-Geräte verbrauchen ca. 350 W bei 3 Stunden täglicher Nutzung (umgestellt auf Wochenbasis: ca. 7 Nutzungen pro Woche).',
+  Licht: 'Beleuchtung verbraucht etwa 175 W bei 5 Stunden täglicher Nutzung (umgestellt auf Wochenbasis: ca. 7 Nutzungen pro Woche).',
   'E-Auto': 'Das E-Auto verbraucht ca. 11 kW pro Ladevorgang (z.B. 4h/Woche).',
   'Zweites E-Auto': 'Das zweite E-Auto verbraucht ca. 7.4 kW pro Ladevorgang (z.B. 3h/Woche).',
 };
@@ -95,9 +95,9 @@ const verbraucherTypes = {
   Waschmaschine: 'week',
   Geschirrspüler: 'week',
   Trockner: 'week',
-  Herd: 'day',
-  Multimedia: 'day',
-  Licht: 'day',
+  Herd: 'week', // Geändert zu 'week'
+  Multimedia: 'week', // Geändert zu 'week'
+  Licht: 'week', // Geändert zu 'week'
   'E-Auto': 'auto',
   'Zweites E-Auto': 'auto',
 };
@@ -134,9 +134,7 @@ const updateKosten = (watt, verbraucher, strompreis, selectedRegion, setVerbrauc
     } else {
       kosten = (wallboxLeistung * totalDauer * nutzung * 52) / 1000 * preisDifferenz;
     }
-  } else if (type === 'day') {
-    kosten = (watt * totalDauer * nutzung * 365) / 1000 * preisDifferenz;
-  } else {
+  } else if (type === 'grundlast') {
     kosten = (watt * preisDifferenz * 24 * 365) / 1000;
   }
 
@@ -176,122 +174,104 @@ const berechneDynamischenVerbrauch = (watt, verbraucher, strompreis, selectedReg
     } else {
       kosten = (wallboxLeistung * totalDauer * einstellung.nutzung * 52) / 1000 * preisDifferenz;
     }
-  } else if (type === 'day') {
-    kosten = (watt * totalDauer * einstellung.nutzung * 365) / 1000 * preisDifferenz;
   }
 
   console.log('Berechnete Kosten:', kosten);
   return kosten < 0 ? 0 : kosten;
 };
 
-
-
-
-
 const berechneDynamischeErsparnis = (verbraucher, strompreis, prices, verbraucherDaten, erweiterteEinstellungen, selectedRegion) => {
-    // Wattleistung des Verbrauchers (z. B. 1200 Watt für Waschmaschine)
-    const watt = verbraucherDaten[verbraucher]?.watt || 0;
-    if (watt === 0) return 0; // Abbruch, wenn keine Leistung angegeben ist
-  
-    // Verbrauchertyp (z. B. 'grundlast', 'week', 'day', 'auto')
-    const type = verbraucherTypes[verbraucher];
-    // Einstellungen für den Verbraucher (z. B. Nutzung, Zeiträume, Batteriekapazität)
-    const einstellung = erweiterteEinstellungen[verbraucher] || {};
-  
-    const fixedPrice = parseFloat(getPreisDifferenz(strompreis, selectedRegion)); // Fester Preis (z. B. 31 - 10 = 21 Cent/kWh)
-    const fallbackPrice = fixedPrice; // Fallback, falls kein API-Preis verfügbar
-  
-    if (type === 'grundlast') {
-      const totalKWh = (watt * 24 * 365) / 1000;
-      if (totalKWh === 0) return 0;
-      let totalWeightedPrice = 0;
-      let totalWeight = 0;
-      // Für grundlast: alle 24 Stunden gleichmäßig gewichten
-      for (let hour = 0; hour < 24; hour++) {
-        const frac = 1.0;
-        totalWeightedPrice += (prices[hour] || fallbackPrice) * frac;
-        totalWeight += frac;
-      }
-      const averagePrice = totalWeight > 0 ? totalWeightedPrice / totalWeight : fixedPrice;
-      const dynamicCost = totalKWh * (averagePrice / 100); // Dynamische Kosten (in €)
-      const fixedCost = totalKWh * (fixedPrice / 100); // Feste Kosten (in €)
-      let ersparnis = fixedCost - dynamicCost;
-      return ersparnis < 0 ? 0 : ersparnis;
-    }
-  
-    // Prüfen, ob Nutzung und Zeiträume vorhanden sind (nur für non-grundlast)
-    if (!einstellung.nutzung || einstellung.nutzung <= 0 || !einstellung.zeitraeume || einstellung.zeitraeume.length === 0) return 0;
-  
-    // Gesamtverbrauch in kWh berechnen
-    let totalKWh = 0;
-    let multiplier = 0;
-    let useWatt = watt;
-  
-    // Gesamtdauer der Betriebszeiten (Summe der Stunden pro Zyklus)
-    const totalDauer = einstellung.zeitraeume.reduce((sum, z) => sum + (parseFloat(z.dauer) || 0), 0) || 0;
-    if (totalDauer === 0) return 0; // Abbruch, wenn keine Betriebszeit angegeben ist
-  
-    // Für E-Autos mit Standardladung: Batteriekapazität verwenden
-    if (type === 'auto' && einstellung.standardLadung) {
-      totalKWh = (einstellung.batterieKapazitaet || 0) * (einstellung.nutzung || 0) * 52;
-    } else {
-      // Multiplier basierend auf Verbrauchertyp
-      if (type === 'week' || type === 'auto') {
-        multiplier = (einstellung.nutzung || 0) * 52; // Nutzung pro Woche * 52 Wochen
-      } else if (type === 'day') {
-        multiplier = (einstellung.nutzung || 0) * 365; // Nutzung pro Tag * 365 Tage
-      }
-      // Für E-Autos ohne Standardladung: Wallbox-Leistung verwenden
-      if (type === 'auto') {
-        useWatt = einstellung.wallboxLeistung || watt;
-      }
-      // Gesamtverbrauch: Wattleistung * Dauer * Häufigkeit / 1000 (für kWh)
-      totalKWh = (useWatt * totalDauer * multiplier) / 1000;
-    }
-    if (totalKWh === 0) return 0; // Abbruch, wenn kein Verbrauch berechnet wurde
-  
-    // Gewichteten Durchschnittspreis berechnen
+  // Wattleistung des Verbrauchers (z. B. 1200 Watt für Waschmaschine)
+  const watt = verbraucherDaten[verbraucher]?.watt || 0;
+  if (watt === 0) return 0; // Abbruch, wenn keine Leistung angegeben ist
+
+  // Verbrauchertyp (z. B. 'grundlast', 'week', 'auto')
+  const type = verbraucherTypes[verbraucher];
+  // Einstellungen für den Verbraucher (z. B. Nutzung, Zeiträume, Batteriekapazität)
+  const einstellung = erweiterteEinstellungen[verbraucher] || {};
+
+  const fixedPrice = parseFloat(getPreisDifferenz(strompreis, selectedRegion)); // Fester Preis (z. B. 31 - 10 = 21 Cent/kWh)
+  const fallbackPrice = fixedPrice; // Fallback, falls kein API-Preis verfügbar
+
+  if (type === 'grundlast') {
+    const totalKWh = (watt * 24 * 365) / 1000;
+    if (totalKWh === 0) return 0;
     let totalWeightedPrice = 0;
     let totalWeight = 0;
-  
-    // Für alle Verbraucher: Nur die angegebenen Zeiträume verwenden
-    einstellung.zeitraeume.forEach((z) => {
-      let currentTime = parseInt(z.startzeit.split(':')[0]) + parseInt(z.startzeit.split(':')[1]) / 60; // Startzeit in Stunden (z. B. 9:00 → 9.0)
-      let remaining = parseFloat(z.dauer) || 0; // Verbleibende Dauer des Zeitraums
-      while (remaining > 0) {
-        const hour = Math.floor(currentTime); // Aktuelle Stunde
-        const frac = Math.min(1.0, remaining, hour + 1 - currentTime); // Anteil der Stunde (max. 1 Stunde)
-        totalWeightedPrice += (prices[hour % 24] || fallbackPrice) * frac; // Preis * Stundenanteil
-        totalWeight += frac; // Gewichtung der Stunde
-        remaining -= frac; // Verbleibende Dauer reduzieren
-        currentTime += frac; // Zeit voranschreiten
-        if (currentTime >= 24) currentTime -= 24; // Tageswechsel
-      }
-    });
-  
-    // Durchschnittspreis: Gesamtpreis / Gesamtgewichtung
+    // Für grundlast: alle 24 Stunden gleichmäßig gewichten
+    for (let hour = 0; hour < 24; hour++) {
+      const frac = 1.0;
+      totalWeightedPrice += (prices[hour] || fallbackPrice) * frac;
+      totalWeight += frac;
+    }
     const averagePrice = totalWeight > 0 ? totalWeightedPrice / totalWeight : fixedPrice;
-  
-    // Kosten berechnen
     const dynamicCost = totalKWh * (averagePrice / 100); // Dynamische Kosten (in €)
     const fixedCost = totalKWh * (fixedPrice / 100); // Feste Kosten (in €)
-  
-    // Ersparnis: Feste Kosten - Dynamische Kosten
     let ersparnis = fixedCost - dynamicCost;
-    if (ersparnis < 0) ersparnis = 0; // Keine negativen Ersparnisse
-  
-    return ersparnis;
-  };
+    return ersparnis < 0 ? 0 : ersparnis;
+  }
 
+  // Prüfen, ob Nutzung und Zeiträume vorhanden sind (nur für non-grundlast)
+  if (!einstellung.nutzung || einstellung.nutzung <= 0 || !einstellung.zeitraeume || einstellung.zeitraeume.length === 0) return 0;
 
+  // Gesamtverbrauch in kWh berechnen
+  let totalKWh = 0;
+  let multiplier = 0;
+  let useWatt = watt;
 
+  // Gesamtdauer der Betriebszeiten (Summe der Stunden pro Zyklus)
+  const totalDauer = einstellung.zeitraeume.reduce((sum, z) => sum + (parseFloat(z.dauer) || 0), 0) || 0;
+  if (totalDauer === 0) return 0; // Abbruch, wenn keine Betriebszeit angegeben ist
 
+  // Für E-Autos mit Standardladung: Batteriekapazität verwenden
+  if (type === 'auto' && einstellung.standardLadung) {
+    totalKWh = (einstellung.batterieKapazitaet || 0) * (einstellung.nutzung || 0) * 52;
+  } else {
+    // Multiplier basierend auf Verbrauchertyp
+    if (type === 'week' || type === 'auto') {
+      multiplier = (einstellung.nutzung || 0) * 52; // Nutzung pro Woche * 52 Wochen
+    }
+    // Für E-Autos ohne Standardladung: Wallbox-Leistung verwenden
+    if (type === 'auto') {
+      useWatt = einstellung.wallboxLeistung || watt;
+    }
+    // Gesamtverbrauch: Wattleistung * Dauer * Häufigkeit / 1000 (für kWh)
+    totalKWh = (useWatt * totalDauer * multiplier) / 1000;
+  }
+  if (totalKWh === 0) return 0; // Abbruch, wenn kein Verbrauch berechnet wurde
 
+  // Gewichteten Durchschnittspreis berechnen
+  let totalWeightedPrice = 0;
+  let totalWeight = 0;
 
+  // Für alle Verbraucher: Nur die angegebenen Zeiträume verwenden
+  einstellung.zeitraeume.forEach((z) => {
+    let currentTime = parseInt(z.startzeit.split(':')[0]) + parseInt(z.startzeit.split(':')[1]) / 60; // Startzeit in Stunden (z. B. 9:00 → 9.0)
+    let remaining = parseFloat(z.dauer) || 0; // Verbleibende Dauer des Zeitraums
+    while (remaining > 0) {
+      const hour = Math.floor(currentTime); // Aktuelle Stunde
+      const frac = Math.min(1.0, remaining, hour + 1 - currentTime); // Anteil der Stunde (max. 1 Stunde)
+      totalWeightedPrice += (prices[hour % 24] || fallbackPrice) * frac; // Preis * Stundenanteil
+      totalWeight += frac; // Gewichtung der Stunde
+      remaining -= frac; // Verbleibende Dauer reduzieren
+      currentTime += frac; // Zeit voranschreiten
+      if (currentTime >= 24) currentTime -= 24; // Tageswechsel
+    }
+  });
 
+  // Durchschnittspreis: Gesamtpreis / Gesamtgewichtung
+  const averagePrice = totalWeight > 0 ? totalWeightedPrice / totalWeight : fixedPrice;
 
+  // Kosten berechnen
+  const dynamicCost = totalKWh * (averagePrice / 100); // Dynamische Kosten (in €)
+  const fixedCost = totalKWh * (fixedPrice / 100); // Feste Kosten (in €)
 
+  // Ersparnis: Feste Kosten - Dynamische Kosten
+  let ersparnis = fixedCost - dynamicCost;
+  if (ersparnis < 0) ersparnis = 0; // Keine negativen Ersparnisse
 
+  return ersparnis;
+};
 
 const calculateTotalWattage = (verbraucherDaten) => {
   return Object.keys(verbraucherDaten).reduce((total, verbraucher) => {
@@ -331,10 +311,8 @@ const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => 
     const einstellung = erweiterteEinstellungen[verbraucher] || {};
     const type = verbraucherTypes[verbraucher] || 'grundlast';
     const nutzung = einstellung.nutzung || 0;
-    // FIX: dailyMultiplier konsistent machen – für 'day': nutzung (pro Tag), für 'week'/'auto': /7 (durchschn. pro Tag)
-    const dailyMultiplier = type === 'day' 
-      ? (nutzung || 1)  // Anzahl Zyklen pro Tag
-      : (type === 'week' || type === 'auto' ? (nutzung || 0) / 7 : 1);  // Durchschnitt pro Tag
+    // dailyMultiplier: für 'week' und 'auto': nutzung /7 (durchschn. pro Tag), für 'grundlast': 1
+    const dailyMultiplier = (type === 'week' || type === 'auto') ? (nutzung / 7) : 1;
     let useWatt = verbraucherDaten[verbraucher]?.watt || 0;
     const standardLadung = einstellung.standardLadung || false;
     const totalDauer = einstellung.zeitraeume?.reduce((sum, z) => sum + (parseFloat(z.dauer) || 0), 0) || 1;
@@ -346,7 +324,7 @@ const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => 
     const isGrundlast = type === 'grundlast';
     if (isGrundlast) {
       for (let i = 0; i < 24; i++) {
-        stunden[i].total += (useWatt / 1000) * dailyMultiplier;  // FIX: * dailyMultiplier auch hier (obwohl für grundlast=1)
+        stunden[i].total += (useWatt / 1000) * dailyMultiplier;  // * dailyMultiplier (für grundlast=1)
         if (!stunden[i].verbraucher.includes(verbraucher)) {
           stunden[i].verbraucher.push(verbraucher);
         }
@@ -361,7 +339,7 @@ const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => 
         while (remaining > 0) {
           const hour = Math.floor(currentTime);
           const frac = Math.min(1.0, remaining, hour + 1 - currentTime);
-          const add = (useWatt / 1000) * frac * dailyMultiplier;  // FIX: * dailyMultiplier für Konsistenz
+          const add = (useWatt / 1000) * frac * dailyMultiplier;  // * dailyMultiplier für Konsistenz
           stunden[hour % 24].total += add;
           if (!stunden[hour % 24].verbraucher.includes(verbraucher)) {
             stunden[hour % 24].verbraucher.push(verbraucher);
@@ -399,17 +377,15 @@ export default function Home() {
       } else if (type === 'week') {
         startzeit = '09:00';
         endzeit = '12:00';
-        dauer = 3.0;
-        nutzung = 2;
-      } else if (type === 'day') {
-        startzeit = '18:00';
-        endzeit = '21:00';
-        dauer = 3.0;
-        nutzung = 3;
+        dauer = 7;
+        nutzung = 2; // Für ehemalige 'day': Passe zu 7 (täglich), für week: 2
+        if (['Herd', 'Multimedia', 'Licht'].includes(key)) {
+          nutzung = 7; // Täglich → 7x pro Woche
+        }
       } else if (type === 'auto') {
         startzeit = '21:00';
         endzeit = '00:00';
-        dauer = 3.0;
+        dauer = 3;
         nutzung = 3;
         batterieKapazitaet = 60;
         wallboxLeistung = standardVerbrauch[key];
@@ -650,6 +626,28 @@ export default function Home() {
     fetchData();
   }, []);
 
+  // Zentrale Aktualisierung der Kosten bei Änderungen (Hintergrund-Update)
+  useEffect(() => {
+    Object.keys(verbraucherDaten).forEach((verbraucher) => {
+      const { watt, checked } = verbraucherDaten[verbraucher];
+      if (checked || watt > 0) {
+        const type = verbraucherTypes[verbraucher];
+        let kosten = 0;
+        if (type !== 'grundlast') {
+          kosten = berechneDynamischenVerbrauch(watt, verbraucher, strompreis, selectedRegion, erweiterteEinstellungen);
+        } else {
+          kosten = (watt * (parseFloat(getPreisDifferenz(strompreis, selectedRegion)) / 100) * 24 * 365) / 1000;
+          if (kosten < 0) kosten = 0;
+        }
+        setVerbraucherDaten((prev) => ({
+          ...prev,
+          [verbraucher]: { ...prev[verbraucher], kosten: kosten.toFixed(2) },
+        }));
+      }
+    });
+    updateZusammenfassung(verbraucherDaten, setZusammenfassung);
+  }, [strompreis, selectedRegion, erweiterteEinstellungen]);
+
   const handleRegionChange = (region) => {
     const newRegion = selectedRegion === region ? null : region;
     setSelectedRegion(newRegion);
@@ -728,20 +726,31 @@ export default function Home() {
   const handleErweiterteEinstellungChange = (verbraucher, field, value, zeitraumId) => {
     console.log('handleErweiterteEinstellungChange:', { verbraucher, field, value, zeitraumId });
     console.log('Aktuelle erweiterteEinstellungen:', erweiterteEinstellungen[verbraucher]);
+    
     const parsedValue = field === 'nutzung' || field === 'dauer' || field === 'batterieKapazitaet' || field === 'wallboxLeistung'
       ? parseFloat(value) || 0
       : field === 'standardLadung'
       ? value === 'true'
       : value;
-
+  
+    // Validierung für negative Werte
     if ((field === 'nutzung' || field === 'dauer' || field === 'batterieKapazitaet' || field === 'wallboxLeistung') && parsedValue < 0) {
       setError(`Wert für ${field} bei ${verbraucher} darf nicht negativ sein.`);
       return;
     }
-    if (field === 'dauer' && parsedValue > 7) {
-      setError(`Dauer für ${verbraucher} darf 7 Stunden nicht überschreiten.`);
+  
+    // Validierung für maximale Nutzungen pro Woche (20)
+    if (field === 'nutzung' && parsedValue > 20) {
+      setError(`Nutzungen pro Woche für ${verbraucher} dürfen 20 nicht überschreiten.`);
       return;
     }
+  
+    // Validierung für maximale Dauer pro Zeitraum (23 Stunden)
+    if (field === 'dauer' && parsedValue > 23) {
+      setError(`Dauer für ${verbraucher} darf 23 Stunden nicht überschreiten.`);
+      return;
+    }
+  
     setError('');
     setErweiterteEinstellungen((prev) => {
       const updatedSettings = {
@@ -758,7 +767,7 @@ export default function Home() {
         },
       };
       console.log('Updated erweiterteEinstellungen:', updatedSettings[verbraucher]);
-
+  
       const type = verbraucherTypes[verbraucher];
       if (type !== 'grundlast') {
         setVerbraucherDaten((prev) => {
@@ -854,20 +863,19 @@ export default function Home() {
       return;
     }
     setStrompreis(newStrompreis);
-    setSelectedRegion(null);
     setError('');
     Object.keys(verbraucherDaten).forEach((verbraucher) => {
       const { watt, checked } = verbraucherDaten[verbraucher];
       if (checked || watt > 0) {
         const type = verbraucherTypes[verbraucher];
         if (type !== 'grundlast') {
-          const kosten = berechneDynamischenVerbrauch(watt, verbraucher, newStrompreis, null, erweiterteEinstellungen);
+          const kosten = berechneDynamischenVerbrauch(watt, verbraucher, newStrompreis, selectedRegion, erweiterteEinstellungen);
           setVerbraucherDaten((prev) => ({
             ...prev,
             [verbraucher]: { ...prev[verbraucher], kosten: kosten.toFixed(2) },
           }));
         } else {
-          updateKosten(watt, verbraucher, newStrompreis, null, setVerbraucherDaten, erweiterteEinstellungen);
+          updateKosten(watt, verbraucher, newStrompreis, selectedRegion, setVerbraucherDaten, erweiterteEinstellungen);
         }
       }
     });
@@ -915,18 +923,11 @@ export default function Home() {
         nutzung = 0;
         dauer = 0;
       } else if (menuId === 'dynamischeverbraucher') {
-        vType = selectedType === 'week' ? 'week' : 'day';
-        if (vType === 'week') {
-          startzeit = '09:00';
-          endzeit = '12:00';
-          dauer = 3.0;
-          nutzung = 2;
-        } else {
-          startzeit = '18:00';
-          endzeit = '21:00';
-          dauer = 3.0;
-          nutzung = 3;
-        }
+        vType = 'week'; // Immer 'week' für dynamische Verbraucher, wie gewünscht
+        startzeit = '09:00';
+        endzeit = '12:00';
+        dauer = 3.0;
+        nutzung = 2; // Default wöchentlich
       } else if (menuId === 'eauto') {
         vType = 'auto';
         startzeit = '21:00';
@@ -1280,8 +1281,6 @@ export default function Home() {
   };
 
 
-  
-
   const hourlyData = berechneStundenVerbrauch(verbraucherDaten, erweiterteEinstellungen);
   const selectedIndex = apiData.findIndex((entry) => {
     const dateKey = Object.keys(entry).find((key) => key.includes('Prices - EPEX'));
@@ -1396,7 +1395,7 @@ export default function Home() {
     labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
     datasets: [
       {
-        label: `Ersparnis (Dynamischer Tarif) am ${selectedDate || 'N/A'} (Ct)`,
+        label: `Kosten (Dynamischer Tarif) am ${selectedDate || 'N/A'} (Ct)`,
         data: hourlyData.map((_, index) => {
           const price = chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion));  // FIX: Fallback auf Differenz
           return (hourlyData[index].total * price).toFixed(2);
@@ -1447,7 +1446,7 @@ export default function Home() {
     scales: {
       y: {
         beginAtZero: true, 
-        title: { display: true, text: 'Kosten (Ct)', color: '#333' },
+        title: { display: true, text: 'Ersparnis (Ct)', color: '#333' },
         ticks: { color: '#333' },
       },
       x: {
@@ -1456,9 +1455,11 @@ export default function Home() {
       },
     },
   };
+
+
   return (
     <>
-         <style>{`.region-buttons {
+      <style>{`.region-buttons {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
@@ -1690,7 +1691,7 @@ export default function Home() {
     align-items: center;
     padding: 16px; /* Reduzierter Padding */
     cursor: pointer;
-    background: linear-gradient(90deg, #063d37, #063d37); /* Updated color */
+    background: linear-gradient(90deg, #062316, #063d37); /* Updated color */
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
     color: #ffffff;
@@ -1698,7 +1699,7 @@ export default function Home() {
   }
   
   .menu-header:hover {
-    background: linear-gradient(90deg, #063d37, #063d37); /* Updated color */
+    background: linear-gradient(90deg, #062316, #063d37); /* Updated color */
   }
   
   .menu-header span {
@@ -2264,7 +2265,7 @@ export default function Home() {
               </div>
             </div>
             <div className="input-container-html">
-              <label>Berechneter Preis (Ct/kWh):</label>
+              <label>Energiepreis(Ct/kWh):</label>
               <span>{getPreisDifferenz(strompreis, selectedRegion)}</span>
             </div>
             <div className="input-container-html date-picker-container">
@@ -2301,75 +2302,80 @@ export default function Home() {
                         {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && <span></span>}
                       </li>
 
-
-                      
                       {menu.options.map((option) => (
-  <li key={option.name}>
-    <label className="checkbox-group-label">
-      <input
-        type="checkbox"
-        checked={verbraucherDaten[option.name]?.checked || false}
-        onChange={(e) => onCheckboxChange(option.name, e.target.checked)}
-      />
-      {iconMapping[option.name] === 'AcUnit' && <AcUnitIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
-{iconMapping[option.name] === 'Air' && <AirIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
-{iconMapping[option.name] === 'LocalLaundryService' && <LocalLaundryServiceIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
-{iconMapping[option.name] === 'Kitchen' && <KitchenIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
-{iconMapping[option.name] === 'Tv' && <TvIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
-{iconMapping[option.name] === 'Lightbulb' && <LightbulbIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
-{iconMapping[option.name] === 'ElectricCar' && <ElectricCarIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
-{!iconMapping[option.name] && <DescriptionIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}<span>{option.name}</span>
-    </label>
-    <div className="info-field">
-      <span className="tooltip">{verbraucherBeschreibungen[option.name] || option.specifications}</span>
-      <span>ℹ️</span>
-    </div>
-    <div className="input-group">
-      <input
-        type="number"
-        className="watt-input"
-        value={verbraucherDaten[option.name]?.watt || ''}
-        onChange={(e) => handleWattChange(option.name, e.target.value)}
-        min="0"
-        placeholder="Watt"
-      />
-    </div>
-    <div className="price-display">
-      {verbraucherDaten[option.name]?.kosten || '0.00'} €
-    </div>
-    {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
-      <button
-        className="settings-field"
-        onClick={() => toggleErweiterteOptionen(menu.id, option.name)}
-      >
-        Einstellungen
-      </button>
-    )}
-    <button
-      className="delete-option-button"
-      onClick={() => handleDeleteOptionClick(menu.id, option.name)}
-    >
-      Löschen
-    </button>
-
-
-                          {deleteConfirmOption?.menuId === menu.id && deleteConfirmOption?.optionName === option.name && (
-                            <div className="confirm-dialog">
-                              <span>{`Möchten Sie "${option.name}" wirklich löschen?`}</span>
-                              <button
-                                className="confirm-button"
-                                onClick={() => confirmDeleteOption(menu.id, option.name)}
-                              >
-                                Ja
-                              </button>
-                              <button
-                                className="cancel-button"
-                                onClick={cancelDeleteOption}
-                              >
-                                Nein
-                              </button>
-                            </div>
+                        <li key={option.name}>
+                          <label className="checkbox-group-label">
+                            <input
+                              type="checkbox"
+                              checked={verbraucherDaten[option.name]?.checked || false}
+                              onChange={(e) => onCheckboxChange(option.name, e.target.checked)}
+                            />
+                            {iconMapping[option.name] === 'AcUnit' && <AcUnitIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
+                            {iconMapping[option.name] === 'Air' && <AirIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
+                            {iconMapping[option.name] === 'LocalLaundryService' && <LocalLaundryServiceIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
+                            {iconMapping[option.name] === 'Kitchen' && <KitchenIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
+                            {iconMapping[option.name] === 'Tv' && <TvIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
+                            {iconMapping[option.name] === 'Lightbulb' && <LightbulbIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
+                            {iconMapping[option.name] === 'ElectricCar' && <ElectricCarIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
+                            {!iconMapping[option.name] && <DescriptionIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
+                            <span>{option.name}</span>
+                          </label>
+                          <div className="info-field">
+                            <span className="tooltip">{verbraucherBeschreibungen[option.name] || option.specifications}</span>
+                            <span>ℹ️</span>
+                          </div>
+                          <div className="input-group">
+                            <input
+                              type="number"
+                              className="watt-input"
+                              value={verbraucherDaten[option.name]?.watt || ''}
+                              onChange={(e) => handleWattChange(option.name, e.target.value)}
+                              min="0"
+                              placeholder="Watt"
+                            />
+                          </div>
+                          <div className="price-display">
+                            {verbraucherDaten[option.name]?.kosten || '0.00'} €
+                          </div>
+                          {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
+                            <button
+                              className="settings-field"
+                              onClick={() => toggleErweiterteOptionen(menu.id, option.name)}
+                            >
+                              Einstellungen
+                            </button>
                           )}
+                          <button
+                            className="delete-option-button"
+                            onClick={() => handleDeleteOptionClick(menu.id, option.name)}
+                          >
+                            Löschen
+                          </button>
+
+                          {deleteConfirmOption?.menuId === menu.id &&
+ deleteConfirmOption?.optionName === option.name && (
+  <div className="col-span-4 sm:col-span-6 bg-red-50 border border-red-200 p-4 rounded-lg flex flex-col sm:flex-row sm:items-center gap-3 shadow-sm">
+    <span className="text-sm sm:text-base text-red-800 font-medium">
+      Möchten Sie <strong>"{option.name}"</strong> wirklich löschen?
+    </span>
+
+    <div className="flex gap-2 sm:ml-auto">
+      <button
+        className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1.5 rounded-md transition-colors duration-150"
+        onClick={() => confirmDeleteOption(menu.id, option.name)}
+      >
+        Ja, löschen
+      </button>
+      <button
+        className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm px-3 py-1.5 rounded-md transition-colors duration-150"
+        onClick={cancelDeleteOption}
+      >
+        Abbrechen
+      </button>
+    </div>
+  </div>
+)}
+
                           {showErweiterteOptionen[menu.id]?.[option.name] && (menu.id === 'dynamischeverbraucher' || menu.id === 'eauto') && (
                             <div className="settings-container">
                               {menu.id === 'eauto' ? (
@@ -2406,6 +2412,7 @@ export default function Home() {
                                         value={erweiterteEinstellungen[option.name]?.nutzung || 0}
                                         onChange={(e) => handleErweiterteEinstellungChange(option.name, 'nutzung', e.target.value, null)}
                                         min="0"
+                                        max="20"
                                         step="1"
                                       />
                                     </label>
@@ -2457,10 +2464,10 @@ export default function Home() {
                                             Dauer (h):
                                             <input
                                               type="number"
-                                              className="settings-input"
-                                              value={zeitraum.dauer}
+                                              value={zeitraum.dauer || ''}
                                               onChange={(e) => handleErweiterteEinstellungChange(option.name, 'dauer', e.target.value, zeitraum.id)}
                                               min="0"
+                                              max="23"
                                               step="0.1"
                                             />
                                           </label>
@@ -2476,293 +2483,286 @@ export default function Home() {
                                           )}
                                         </div>
                                       ))}
-                                                                           <button
-                                                                             className="add-option-button"
-                                                                             onClick={() => addZeitraum(option.name)}
-                                                                           >
-                                                                             Zeitraum hinzufügen
-                                                                           </button>
-                                                                         </div>
-                                                                       )}
-                                                                     </div>
-                                                                   ) : (
-                                                                     <div>
-                                                                       <h4>Verbraucher Einstellungen</h4>
-                                                                       <div className="grid">
-                                                                         <label>
-                                                                           Nutzung (pro Woche):
-                                                                           <input
-                                                                             type="number"
-                                                                             className="settings-input"
-                                                                             value={erweiterteEinstellungen[option.name].nutzung}
-                                                                             onChange={(e) => handleErweiterteEinstellungChange(option.name, 'nutzung', e.target.value, null)}
-                                                                             min="0"
-                                                                             step="1"
-                                                                           />
-                                                                         </label>
-                                                                       </div>
-                                                                       <div className="zeitraum-section">
-                                                                         <h5>Zeiträume</h5>
-                                                                         {erweiterteEinstellungen[option.name].zeitraeume.map((zeitraum, index) => (
-                                                                           <div key={zeitraum.id} className="zeitraum-grid">
-                                                                             <label>
-                                                                               Zeitraum:
-                                                                               <select
-                                                                                 value={timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit)?.label || ''}
-                                                                                 onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
-                                                                               >
-                                                                                 {timePeriods.map((period) => (
-                                                                                   <option key={period.label} value={period.label}>
-                                                                                     {period.label} ({period.startzeit} - {period.endzeit})
-                                                                                   </option>
-                                                                                 ))}
-                                                                               </select>
-                                                                             </label>
-                                                                             <label>
-                                                                               Dauer (h):
-                                                                               <input
-                                                                                 type="number"
-                                                                                 className="settings-input"
-                                                                                 value={zeitraum.dauer}
-                                                                                 onChange={(e) => handleErweiterteEinstellungChange(option.name, 'dauer', e.target.value, zeitraum.id)}
-                                                                                 min="0"
-                                                                                 step="0.1"
-                                                                               />
-                                                                             </label>
-                                                                             {index > 0 && (
-                                                                               <div>
-                                                                                 <button
-                                                                                   className="delete-option-button"
-                                                                                   onClick={() => removeZeitraum(option.name, zeitraum.id)}
-                                                                                 >
-                                                                                   Zeitraum löschen
-                                                                                 </button>
-                                                                               </div>
-                                                                             )}
-                                                                           </div>
-                                                                         ))}
-                                                                         <button
-                                                                           className="add-option-button"
-                                                                           onClick={() => addZeitraum(option.name)}
-                                                                         >
-                                                                           Zeitraum hinzufügen
-                                                                         </button>
-                                                                       </div>
-                                                                     </div>
-                                                                   )}
-                                                                 </div>
-                                                               )}
-                                                             </li>
-                                                           ))}
-                                                         </ul>
-                                                         <button
-                                                           className="add-option-button"
-                                                           onClick={() => toggleNewOptionForm(menu.id)}
-                                                         >
-                                                           Neue Option hinzufügen
-                                                         </button>
-                                                         {showNewOptionForm[menu.id] && (
-                                                           <div className="new-option-container">
-                                                             <input
-                                                               type="text"
-                                                               className="new-option-input"
-                                                               placeholder="Name der neuen Option"
-                                                               value={newOptionNames[menu.id] || ''}
-                                                               onChange={(e) => handleNewOptionName(menu.id, e.target.value)}
-                                                             />
-                                                             <input
-                                                               type="number"
-                                                               className="new-option-watt"
-                                                               placeholder="Wattleistung"
-                                                               value={newOptionWatt[menu.id] || ''}
-                                                               onChange={(e) => handleNewOptionWatt(menu.id, e.target.value)}
-                                                               min="0"
-                                                             />
-                                                             {menu.id ==='dynamischeverbraucher' && (
-                                                               <select
-                                                                 value={newOptionTypes[menu.id] || 'week'}
-                                                                 onChange={(e) => handleNewOptionType(menu.id, e.target.value)}
-                                                               >
-                                                                 <option value="week">Wöchentlich (z.B. Waschmaschine)</option>
-                                                                 <option value="day">Täglich (z.B. Herd)</option>
-                                                               </select>
-                                                             )}
-                                                             <button
-                                                               className="save-option-button"
-                                                               onClick={() => addNewOption(menu.id)}
-                                                             >
-                                                               Speichern
-                                                             </button>
-                                                           </div>
-                                                         )}
-                                                       </div>
-                                                     )}
-                                                   </div>
-                                                 ))}
-                                     
-                                                 <div className="summary-container">
-                                                   <h3 className="summary-title">Zusammenfassung pro Jahr</h3>
-                                                   <div className="summary-item"> Kosten Grundlast : {zusammenfassung.grundlast} €</div>
-                                                   <div className="summary-item"> Kosten Schaltbere Verbraucher : {zusammenfassung.dynamisch} €</div>
-                                                   <div className="summary-item">Kosten Gesamt: {zusammenfassung.gesamt} €</div>
-                                                   <div className="summary-item">Gesamtwatt: {zusammenfassung.totalWattage} W/h</div>
-                                                   <div className="summary-item">Kosten Grundlast  (dynamischer Tarif):{zusammenfassung.grundlastDyn} €</div>
-                                                   <div className="summary-item"> Kosten Schaltbare Verbaucher (dynamischer Tarif): {zusammenfassung.dynamischDyn} €</div>
-                                                   <div className="summary-item">Kosten Gesamt (dynamischer Tarif): {zusammenfassung.gesamtDyn} €</div>
-                                                   <div className="summary-item">Vergleich (fester vs. dynamischer Tarif): {(parseFloat(zusammenfassung.gesamt) - parseFloat(zusammenfassung.gesamtDyn)).toFixed(2)} €</div>
-
-
-
-
-                                                   <button className="download-button bg-green-800 text-white py-2 px-4 rounded hover:bg-blue-700" onClick={handleDownloadClick}>
-                                                     Download PDF
-                                                   </button>
-                                                 </div>
-                                               </div>
-                                             </div>
-                                     
-                                             <div className="diagrams-container">
-                                               <div className="diagram">
-                                                 <h3 className="diagram-title">Stromverbrauch pro Stunde</h3>
-                                                 <div className="chart-container">
-                                                   <Line data={chartData} options={chartOptions} />
-                                                 </div>
-                                               </div>
-                                               <div className="diagram">
-                                                 <h3 className="diagram-title">Stromersparnis pro Stunde</h3>
-                                                 <div className="chart-container">
-                                                   <Line data={chartDataKosten} options={chartOptionsKosten} />
-                                                 </div>
-                                               </div>
-                                             </div>
-                                     
-                                             {showModal && (
-                                               <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                                                 <div className="modal-content relative bg-white rounded-lg p-6 w-full max-w-md">
-                                                   <button
-                                                     className="absolute top-3 right-3 text-red-500 hover:text-red-700 text-3xl font-extrabold"
-                                                     onClick={closeModal}
-                                                   >
-                                                     ✕
-                                                   </button>
-                                                   <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
-                                                     Download mit E-Mail-Verifizierung
-                                                   </h1>
-                                                   {step === 1 && (
-                                                     <div className="space-y-4">
-                                                       <div className="relative">
-                                                         <input
-                                                           type="email"
-                                                           placeholder="Deine E-Mail"
-                                                           value={email}
-                                                           onChange={(e) => setEmail(e.target.value)}
-                                                           className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 pr-10"
-                                                         />
-                                                         {email && (
-                                                           <button
-                                                             type="button"
-                                                             onClick={() => setEmail('')}
-                                                             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-700 hover:text-gray-900 text-lg"
-                                                           >
-                                                             ✕
-                                                           </button>
-                                                         )}
-                                                       </div>
-                                                       <div className="text-sm">
-                                                         <label className="flex items-center space-x-2">
-                                                           <input
-                                                             type="checkbox"
-                                                             checked={agb}
-                                                             onChange={(e) => setAgb(e.target.checked)}
-                                                             className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                                           />
-                                                           <span className="text-red-500">
-                                                             AGB akzeptieren <span className="text-red-500">*</span>
-                                                           </span>
-                                                         </label>
-                                                       </div>
-                                                       <div className="text-sm">
-                                                         <label className="flex items-center space-x-2">
-                                                           <input
-                                                             type="checkbox"
-                                                             checked={werbung}
-                                                             onChange={(e) => setWerbung(e.target.checked)}
-                                                             className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                                           />
-                                                           <span className="text-green-500">
-                                                             Einwilligung zur Verwendung für Werbung (optional)
-                                                           </span>
-                                                         </label>
-                                                       </div>
-                                                       <button
-                                                         onClick={requestCode}
-                                                         disabled={cooldown > 0}
-                                                         className={`w-full py-3 rounded-md transition-colors ${
-                                                           cooldown > 0
-                                                             ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                                                             : 'bg-blue-600 text-white hover:bg-blue-700'
-                                                         }`}
-                                                       >
-                                                         {cooldown > 0 ? `Erneut anfordern in ${cooldown}s` : 'Code anfordern'}
-                                                       </button>
-                                                     </div>
-                                                   )}
-                                                   {step === 2 && !verified && (
-                                                     <div className="space-y-4">
-                                                       <p className="text-gray-600">
-                                                         Code wurde an <span className="font-semibold">{email}</span> gesendet. Bitte gib ihn ein:
-                                                       </p>
-                                                       <input
-                                                         type="text"
-                                                         placeholder="6-stelliger Code"
-                                                         value={code}
-                                                         onChange={(e) => setCode(e.target.value)}
-                                                         className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
-                                                       />
-                                                       <button
-                                                         onClick={verifyCode}
-                                                         className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition-colors"
-                                                       >
-                                                         Code prüfen
-                                                       </button>
-                                                       {cooldown > 0 && (
-                                                         <p className="text-sm text-gray-500 text-center">
-                                                           Du kannst den Code in {cooldown} Sekunden erneut anfordern.
-                                                         </p>
-                                                       )}
-                                                     </div>
-                                                   )}
-                                                   {verified && (
-                                                     <div className="space-y-4 text-center">
-                                                       <p className="text-green-500 text-lg font-semibold">
-                                                         Verifiziert!
-                                                       </p>
-                                                       <button
-                                                         onClick={() => {
-                                                           handleDownloadPDF();
-                                                           closeModal();
-                                                         }}
-                                                         className="w-full bg-green-500 text-white py-3 rounded-md hover:bg-green-600 transition-colors"
-                                                       >
-                                                         Hier klicken für Download
-                                                       </button>
-                                                     </div>
-                                                   )}
-                                                   {message && (
-                                                     <p
-                                                       className={`mt-4 text-center ${
-                                                         message.includes('Fehler') || message.includes('Falscher') || message.includes('Bitte')
-                                                           ? 'text-red-500'
-                                                           : 'text-green-500'
-                                                       }`}
-                                                     >
-                                                       {message}
-                                                     </p>
-                                                   )}
-                                                 </div>
-                                               </div>
-                                             )}
-                                           </div>
+                                      <button
+                                        className="add-option-button"
+                                        onClick={() => addZeitraum(option.name)}
+                                      >
+                                        Zeitraum hinzufügen
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              ) : (
+                                <div>
+                                  <h4>Verbraucher Einstellungen</h4>
+                                  <div className="grid">
+                                    <label>
+                                      Nutzung (pro Woche):
+                                      <input
+                                        type="number"
+                                        value={erweiterteEinstellungen[option.name]?.nutzung || ''}
+                                        onChange={(e) => handleErweiterteEinstellungChange(option.name, 'nutzung', e.target.value)}
+                                        min="0"
+                                        max="20"
+                                        step="1"
+                                      />
+                                    </label>
+                                  </div>
+                                  <div className="zeitraum-section">
+                                    <h5>Zeiträume</h5>
+                                    {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum, index) => (
+                                      <div key={zeitraum.id} className="zeitraum-grid">
+                                        <label>
+                                          Zeitraum:
+                                          <select
+                                            value={timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit)?.label || ''}
+                                            onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
+                                          >
+                                            {timePeriods.map((period) => (
+                                              <option key={period.label} value={period.label}>
+                                                {period.label} ({period.startzeit} - {period.endzeit})
+                                              </option>
+                                            ))}
+                                          </select>
+                                        </label>
+                                        <label>
+                                          Dauer (h):
+                                          <input
+                                            type="number"
+                                            className="settings-input"
+                                            value={zeitraum.dauer}
+                                            onChange={(e) => handleErweiterteEinstellungChange(option.name, 'dauer', e.target.value, zeitraum.id)}
+                                            min="0"
+                                            max="23"
+                                            step="1"
+                                          />
+                                        </label>
+                                        {index > 0 && (
+                                          <div>
+                                            <button
+                                              className="delete-option-button"
+                                              onClick={() => removeZeitraum(option.name, zeitraum.id)}
+                                            >
+                                              Zeitraum löschen
+                                            </button>
+                                          </div>
+                                        )}
+                                      </div>
+                                    ))}
+                                    <button
+                                      className="add-option-button"
+                                      onClick={() => addZeitraum(option.name)}
+                                    >
+                                      Zeitraum hinzufügen
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                    <button
+                      className="add-option-button"
+                      onClick={() => toggleNewOptionForm(menu.id)}
+                    >
+                      Neue Option hinzufügen
+                    </button>
+                    {showNewOptionForm[menu.id] && (
+                      <div className="new-option-container">
+                        <input
+                          type="text"
+                          className="new-option-input"
+                          placeholder="Name der neuen Option"
+                          value={newOptionNames[menu.id] || ''}
+                          onChange={(e) => handleNewOptionName(menu.id, e.target.value)}
+                        />
+                        <input
+                          type="number"
+                          className="new-option-watt"
+                          placeholder="Wattleistung"
+                          value={newOptionWatt[menu.id] || ''}
+                          onChange={(e) => handleNewOptionWatt(menu.id, e.target.value)}
+                          min="0"
+                        />
+                        {menu.id === 'dynamischeverbraucher' && (
+                          <select
+                            value={newOptionTypes[menu.id] || 'week'}
+                            onChange={(e) => handleNewOptionType(menu.id, e.target.value)}
+                          >
+                            <option value="week">Wöchentlich (z.B. Waschmaschine)</option>
+                          </select>
+                        )}
+                        <button
+                          className="save-option-button"
+                          onClick={() => addNewOption(menu.id)}
+                        >
+                          Speichern
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+            <div className="summary-container">
+              <h3 className="summary-title">Zusammenfassung pro Jahr</h3>
+              <div className="summary-item"> Kosten Grundlast : {zusammenfassung.grundlast} €</div>
+              <div className="summary-item"> Kosten Schaltbere Verbraucher : {zusammenfassung.dynamisch} €</div>
+              <div className="summary-item">Kosten Gesamt: {zusammenfassung.gesamt} €</div>
+              <div className="summary-item">Gesamtwatt: {zusammenfassung.totalWattage} W/h</div>
+              <div className="summary-item">Kosten Grundlast  (dynamischer Tarif):{zusammenfassung.grundlastDyn} €</div>
+              <div className="summary-item"> Kosten Schaltbare Verbaucher (dynamischer Tarif): {zusammenfassung.dynamischDyn} €</div>
+              <div className="summary-item">Kosten Gesamt (dynamischer Tarif): {zusammenfassung.gesamtDyn} €</div>
+              <div className="summary-item">Vergleich (fester vs. dynamischer Tarif): {(parseFloat(zusammenfassung.gesamt) - parseFloat(zusammenfassung.gesamtDyn)).toFixed(2)} €</div>
+              <button className="download-button bg-[#063d37] text-white py-2 px-4 rounded hover:bg-blue-700" onClick={handleDownloadClick}>
+                Download PDF
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="diagrams-container">
+          <div className="diagram">
+            <h3 className="diagram-title">Stromverbrauch pro Stunde</h3>
+            <div className="chart-container">
+              <Line data={chartData} options={chartOptions} />
+            </div>
+          </div>
+          <div className="diagram">
+            <h3 className="diagram-title">Stromersparnis pro Stunde</h3>
+            <div className="chart-container">
+              <Line data={chartDataKosten} options={chartOptionsKosten} />
+            </div>
+          </div>
+        </div>
+        {showModal && (
+          <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="modal-content relative bg-white rounded-lg p-6 w-full max-w-md">
+              <button
+                className="absolute top-3 right-3 text-red-500 hover:text-red-700 text-3xl font-extrabold"
+                onClick={closeModal}
+              >
+                ✕
+              </button>
+              <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
+                Download mit E-Mail-Verifizierung
+              </h1>
+              {step === 1 && (
+                <div className="space-y-4">
+                  <div className="relative">
+                    <input
+                      type="email"
+                      placeholder="Deine E-Mail"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 pr-10"
+                    />
+                    {email && (
+                      <button
+                        type="button"
+                        onClick={() => setEmail('')}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-700 hover:text-gray-900 text-lg"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                  <div className="text-sm">
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={agb}
+                        onChange={(e) => setAgb(e.target.checked)}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <span className="text-red-500">
+                        AGB akzeptieren <span className="text-red-500">*</span>
+                      </span>
+                    </label>
+                  </div>
+                  <div className="text-sm">
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={werbung}
+                        onChange={(e) => setWerbung(e.target.checked)}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <span className="text-green-500">
+                        Einwilligung zur Verwendung für Werbung (optional)
+                      </span>
+                    </label>
+                  </div>
+                  <button
+                    onClick={requestCode}
+                    disabled={cooldown > 0}
+                    className={`w-full py-3 rounded-md transition-colors ${
+                      cooldown > 0
+                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                        : 'bg-blue-600 text-white hover:bg-blue-700'
+                    }`}
+                  >
+                    {cooldown > 0 ? `Erneut anfordern in ${cooldown}s` : 'Code anfordern'}
+                  </button>
+                </div>
+              )}
+              {step === 2 && !verified && (
+                <div className="space-y-4">
+                  <p className="text-gray-600">
+                    Code wurde an <span className="font-semibold">{email}</span> gesendet. Bitte gib ihn ein:
+                  </p>
+                  <input
+                    type="text"
+                    placeholder="6-stelliger Code"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+                  />
+                  <button
+                    onClick={verifyCode}
+                    className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition-colors"
+                  >
+                    Code prüfen
+                  </button>
+                  {cooldown > 0 && (
+                    <p className="text-sm text-gray-500 text-center">
+                      Du kannst den Code in {cooldown} Sekunden erneut anfordern.
+                    </p>
+                  )}
+                </div>
+              )}
+              {verified && (
+                <div className="space-y-4 text-center">
+                  <p className="text-green-500 text-lg font-semibold">
+                    Verifiziert!
+                  </p>
+                  <button
+                    onClick={() => {
+                      handleDownloadPDF();
+                      closeModal();
+                    }}
+                    className="w-full bg-[#063d37] text-white py-3 rounded-md hover:bg-green-600 transition-colors"
+                  >
+                    Hier klicken für Download
+                  </button>
+                </div>
+              )}
+              {message && (
+                <p
+                  className={`mt-4 text-center ${
+                    message.includes('Fehler') || message.includes('Falscher') || message.includes('Bitte')
+                      ? 'text-red-500'
+                      : 'text-green-500'
+                  }`}
+                >
+                  {message}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
                                          </>
                                        );
                                      }
