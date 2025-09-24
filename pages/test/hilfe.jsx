@@ -1,7 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faVideo } from '@fortawesome/free-solid-svg-icons';
-
+import VideosPage from '../test/video1';
 
 const Energiemanager = () => {
   return (
@@ -18,7 +18,7 @@ const Energiemanager = () => {
               / 200px 1fr;
             gap: 12px;
             min-height: 100vh;
-            background-color: #F3F4F6;
+            background-color: #fafafa;
             font-family: 'Manrope', 'Noto Sans', sans-serif;
           }
           .header {
@@ -96,7 +96,7 @@ const Energiemanager = () => {
             background-color: #fafafa;
             border-radius: 12px;
             padding: 24px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+           
             flex: 1;
           }
           .footer {
@@ -222,11 +222,9 @@ const Energiemanager = () => {
         </div>
 
         <div className="main">
-          <div className="overview-box">
-            <p>Hilfe </p>
-          </div>
+          
           <div className="content-box">
-            
+          <VideosPage />
           </div>
         </div>
 

@@ -81,7 +81,7 @@ const styles = `
     flex-direction: row;
     gap: 12px;
     padding: 24px;
-    background-color: #F3F4F6;
+    background-color: #fafafa;
     border-radius: 12px;
   }
   .bottom-boxes {
@@ -238,7 +238,7 @@ const Energiemanager = () => {
   return (
     <>
       <style>{styles}</style>
-      <div className="layout relative bg-gray-100" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
+      <div className="layout relative  bg-[#fafafa]" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
         <header className="header">
           <div className="flex items-start">
             <img src="/bilder/ilumylogo2.png" alt="Logo" className="header-logo" />
@@ -280,9 +280,9 @@ const Energiemanager = () => {
           </div>
         </div>
 
-        <div className="main">
-          <div className="content flex-1 p-6 rounded-xl bg-white shadow-md flex flex-col">
-            <div className="flex flex-col gap-6 mt-6 flex-1">
+        <div className="main  bg-[#fafafa] ">
+          <div className="content flex-1 p-6 rounded-xl bg-[#fafafa]  flex flex-col">
+            <div className="flex flex-col gap-6 mt-6 flex-1  bg-[#fafafa]">
               <div>
                 {isMobile ? <StromverbrauchRechnerMobile /> : <StromverbrauchRechnerDesktop />}
               </div>
