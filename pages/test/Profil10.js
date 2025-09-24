@@ -160,7 +160,7 @@ const styles = {
   consumptionSummary: {
     marginTop: '24px',
     padding: '16px',
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#fafafa',
     borderRadius: '8px',
     fontSize: '14px',
     color: '#333',
@@ -170,7 +170,7 @@ const styles = {
     fontWeight: '600',
     marginBottom: '12px',
     textAlign: 'center',
-    color: 'rgb(5,166,150)',
+    color: 'rgb(6 61 55)',
   },
   summaryTable: {
     width: '100%',
@@ -178,7 +178,7 @@ const styles = {
     fontSize: '14px',
   },
   summaryTableHeader: {
-    backgroundColor: 'rgb(64 153 102)',
+    backgroundColor: 'rgb(6 61 55)',
     fontWeight: '600',
     padding: '8px',
     borderBottom: '1px solid #ccc',
@@ -202,7 +202,7 @@ const styles = {
     width: '14px',
     height: '14px',
     cursor: 'pointer',
-    color: 'rgb(64 153 102)',
+    color: 'rgb(6 61 55)',
   },
   noteText: {
     fontSize: '12px',
@@ -568,8 +568,8 @@ function StrompreisChart() {
           {
             label: `Dynamischer Tarif (Profil ${profile}, Faktor ${factor})`,
             data: h25AdjustedValues,
-            borderColor: 'rgb(6, 35, 22)',
-            backgroundColor: 'rgba(3, 160, 129, 0.1)',
+            borderColor: '#88bf50',
+            backgroundColor: '#88bf50',
             fill: false,
             tension: 0.4,
             pointRadius: 0,
@@ -578,8 +578,8 @@ function StrompreisChart() {
           {
             label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh, Profil ${profile}, Faktor ${factor})`,
             data: customPriceValues,
-            borderColor: 'rgb(64, 153, 102)',
-            backgroundColor: 'rgba(251, 140, 0, 0.1)',
+            borderColor: '#063d37',
+            backgroundColor: '#063d37',
             fill: false,
             tension: 0.4,
             pointRadius: 0,
@@ -592,8 +592,8 @@ function StrompreisChart() {
           {
             label: `Dynamischer Tarif (Profil ${profile}, Faktor ${factor})`,
             data: p25AdjustedValues,
-            borderColor: 'rgb(6, 35, 22)',
-            backgroundColor: 'rgba(3, 160, 129, 0.1)',
+            borderColor: '#88bf50',
+            backgroundColor: '#88bf50',
             fill: false,
             tension: 0.4,
             pointRadius: 0,
@@ -602,8 +602,8 @@ function StrompreisChart() {
           {
             label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh, Profil ${profile}, Faktor ${factor})`,
             data: customP25PriceValues,
-            borderColor: 'rgb(64, 153, 102)',
-            backgroundColor: 'rgba(251, 140, 0, 0.1)',
+            borderColor: '#063d37',
+            backgroundColor: '#063d37',
             fill: false,
             tension: 0.4,
             pointRadius: 0,
@@ -616,8 +616,8 @@ function StrompreisChart() {
           {
             label: `Dynamischer Tarif (Profil ${profile}, Faktor ${factor})`,
             data: s25AdjustedValues,
-            borderColor: 'rgb(6, 35, 22)',
-            backgroundColor: 'rgba(3, 160, 129, 0.1)',
+            borderColor: '#88bf50',
+            backgroundColor: '#88bf50',
             fill: false,
             tension: 0.4,
             pointRadius: 0,
@@ -626,8 +626,8 @@ function StrompreisChart() {
           {
             label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh, Profil ${profile}, Faktor ${factor})`,
             data: customS25PriceValues,
-            borderColor: 'rgb(64, 153, 102)',
-            backgroundColor: 'rgba(251, 140, 0, 0.1)',
+            borderColor: '#063d37',
+            backgroundColor: '#063d37',
             fill: false,
             tension: 0.4,
             pointRadius: 0,
@@ -928,11 +928,11 @@ function StrompreisChart() {
       <div style={styles.chartContainer} className="chart-container">
         <div style={styles.legendContainer}>
           <div style={styles.legendItem}>
-            <div style={{ ...styles.legendColor, backgroundColor: 'rgb(6, 35, 22)' }} />
+            <div style={{ ...styles.legendColor, backgroundColor: '#88bf50' }} />
             <span style={styles.legendLabel}>Dynamischer Tarif</span>
           </div>
           <div style={styles.legendItem}>
-            <div style={{ ...styles.legendColor, backgroundColor: 'rgb(64, 153, 102)' }} />
+            <div style={{ ...styles.legendColor, backgroundColor: '#063d37' }} />
             <span style={styles.legendLabel}>Normaltarif</span>
           </div>
         </div>

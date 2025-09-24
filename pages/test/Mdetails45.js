@@ -1337,8 +1337,8 @@ export default function Home() {
         label: 'Stromverbrauch (kW)',
         data: hourlyData.map(d => d.total),
         fill: false,
-        borderColor: '#409966',
-        backgroundColor: '#409966',
+        borderColor: '#063d37',
+        backgroundColor: '#063d37',
         tension: 0.1,
         yAxisID: 'y',
       },
@@ -1346,8 +1346,8 @@ export default function Home() {
         label: `Dynamischer Preis am ${selectedDate || 'N/A'} (Ct/kWh)`,
         data: chartConvertedValues,
         fill: false,
-        borderColor: '#062316',
-        backgroundColor: '#062316',
+        borderColor: '#88bf50',
+        backgroundColor: '#88bf50',
         tension: 0.1,
         yAxisID: 'y1',
       },
@@ -1401,8 +1401,8 @@ export default function Home() {
           return (hourlyData[index].total * price).toFixed(2);
         }),
         fill: false,
-        borderColor: '#062316',
-        backgroundColor: '#062316',
+        borderColor: '#88bf50',
+        backgroundColor: '#88bf50',
         tension: 0.1,
       },
       {
@@ -1412,8 +1412,8 @@ export default function Home() {
           return (hourlyData[index].total * price).toFixed(2);
         }),
         fill: false,
-        borderColor: '#409966',
-        backgroundColor: '#409966',
+        borderColor: '#063d37',
+        backgroundColor: '#063d37',
         tension: 0.1,
       },
     ],
@@ -1523,7 +1523,7 @@ body {
   font-size: 1.125rem;
   font-weight: 600;
   margin-bottom: 8px;
-  color: #409966;
+  color: #063d37; /* Updated color */
 }
 
 /* Inhalt des Rechenberichts */
@@ -1559,8 +1559,8 @@ body {
 .input-container-html input:focus,
 .input-container-html select:focus {
   outline: none;
-  border-color: #409966;
-  box-shadow: 0 0 0 1.5px rgba(64, 153, 102, 0.25);
+  border-color: #063d37; /* Updated color */
+  box-shadow: 0 0 0 1.5px rgba(6, 61, 55, 0.25); /* Updated color */
 }
 
 /* Region-Buttons */
@@ -1628,7 +1628,7 @@ body {
 }
 
 .discount-switch-input:checked + .discount-switch-slider {
-  background-color: #047857;
+  background-color: #063d37; /* Updated color */
 }
 
 .discount-switch-input:checked + .discount-switch-slider:before {
@@ -1636,7 +1636,7 @@ body {
 }
 
 .discount-switch-input:focus + .discount-switch-slider {
-  box-shadow: 0 0 0 1.5px rgba(4, 120, 87, 0.25);
+  box-shadow: 0 0 0 1.5px rgba(6, 61, 55, 0.25); /* Updated color */
 }
 
 .discount-switch-slider:hover {
@@ -1644,11 +1644,11 @@ body {
 }
 
 .discount-switch-input:checked + .discount-switch-slider:hover {
-  background-color: #065f46;
+  background-color: #052f2b; /* Darker shade of new color */
 }
 
 .region-switch-wrapper:hover .region-label {
-  color: #047857;
+  color: #063d37; /* Updated color */
 }
 
 /* Menüs */
@@ -1665,7 +1665,7 @@ body {
   align-items: center;
   padding: 8px;
   cursor: pointer;
-  background: linear-gradient(90deg, #062316, #409966);
+  background: linear-gradient(90deg, #062316, #063d37); /* Updated color */
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
   color: #ffffff;
@@ -1700,7 +1700,7 @@ body {
   gap: 6px;
   font-weight: 500;
   font-size: 0.75rem;
-  color: #409966;
+  color: #063d37; /* Updated color */
   padding: 6px 0;
   background: #f0f4f8;
   border-radius: 3px;
@@ -1752,7 +1752,7 @@ body {
 .info-field .tooltip-text {
   visibility: hidden;
   position: absolute;
-  background: #409966;
+  background: #063d37; /* Updated color */
   color: #ffffff;
   font-size: 0.6875rem;
   padding: 2px 4px;
@@ -1781,7 +1781,7 @@ body {
 .checkbox-group-label input {
   width: 18px;
   height: 18px;
-  accent-color: #409966;
+  accent-color: #063d37; /* Updated color */
   cursor: pointer;
 }
 
@@ -1803,8 +1803,8 @@ body {
 
 .input-group input.watt-input:focus {
   outline: none;
-  border-color: #409966;
-  box-shadow: 0 0 0 1.5px rgba(64, 153, 102, 0.25);
+  border-color: #063d37; /* Updated color */
+  box-shadow: 0 0 0 1.5px rgba(6, 61, 55, 0.25); /* Updated color */
 }
 
 .price-display {
@@ -1894,7 +1894,7 @@ body {
 .settings-container h4 {
   font-size: 0.9375rem;
   font-weight: 600;
-  color: #409966;
+  color: #063d37; /* Updated color */
 }
 
 .settings-container label {
@@ -1915,8 +1915,8 @@ body {
 
 .settings-container select:focus {
   outline: none;
-  border-color: #409966;
-  box-shadow: 0 0 0 1.5px rgba(64, 153, 102, 0.25);
+  border-color: #063d37; /* Updated color */
+  box-shadow: 0 0 0 1.5px rgba(6, 61, 55, 0.25); /* Updated color */
 }
 
 .radio-group-settings {
@@ -1934,7 +1934,7 @@ body {
 .radio-group-settings input {
   width: 13px;
   height: 13px;
-  accent-color: #409966;
+  accent-color: #063d37; /* Updated color */
   cursor: pointer;
 }
 
@@ -1945,7 +1945,7 @@ body {
 }
 
 .add-option-button {
-  background: linear-gradient(90deg, #062316, #409966);
+  background: linear-gradient(90deg, #062316, #063d37); /* Updated color */
   color: #ffffff;
   padding: 3px 6px;
   border-radius: 3px;
@@ -1957,7 +1957,7 @@ body {
 }
 
 .add-option-button:hover {
-  background: linear-gradient(90deg, #062316, #4caf50);
+  background: linear-gradient(90deg, #062316, #052f2b); /* Updated hover color */
 }
 
 .download-button {
@@ -1997,7 +1997,7 @@ body {
 }
 
 .save-option-button {
-  background: linear-gradient(90deg, #062316, #409966);
+  background: linear-gradient(90deg, #062316, #063d37); /* Updated color */
   color: #ffffff;
   padding: 3px 6px;
   border-radius: 3px;
@@ -2008,7 +2008,7 @@ body {
 }
 
 .save-option-button:hover {
-  background: linear-gradient(90deg, #062316, #4caf50);
+  background: linear-gradient(90deg, #062316, #052f2b); /* Updated hover color */
 }
 
 /* Modal-Styling */
@@ -2055,7 +2055,7 @@ body {
 .modal-content h2 {
   font-size: 1.125rem;
   font-weight: 600;
-  color: #409966;
+  color: #063d37; /* Updated color */
 }
 
 .modal-content p {
@@ -2073,8 +2073,8 @@ body {
 
 .modal-content input:focus {
   outline: none;
-  border-color: #409966;
-  box-shadow: 0 0 0 1.5px rgba(64, 153, 102, 0.25);
+  border-color: #063d37; /* Updated color */
+  box-shadow: 0 0 0 1.5px rgba(6, 61, 55, 0.25); /* Updated color */
 }
 
 .modal-content label {
@@ -2088,7 +2088,7 @@ body {
 .modal-content input[type="checkbox"] {
   width: 13px;
   height: 13px;
-  accent-color: #409966;
+  accent-color: #063d37; /* Updated color */
 }
 
 /* Neues Layout für dynamische Verbraucher */
@@ -2376,17 +2376,17 @@ body {
   }
 
   .option-icon {
-  font-size: 1.2rem;
-  color:rgb(6, 35, 22); /* Adjust to match your theme */
-  vertical-align: middle;
-  margin-right: 8px;
-}
+    font-size: 1.2rem;
+    color: rgb(6, 35, 22); /* Unchanged as it wasn't dark green */
+    vertical-align: middle;
+    margin-right: 8px;
+  }
 
-.checkbox-group-label {
-  display: flex;
-  align-items: center;
-  gap: 8px; /* Ensures consistent spacing between checkbox, icon, and text */
-}
+  .checkbox-group-label {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Ensures consistent spacing between checkbox, icon, and text */
+  }
 }`}</style>
 <div className="app-container">
   {/* Fixierter Chart-Bereich */}
@@ -2555,23 +2555,29 @@ body {
 
                     {/* Bestätigung Löschen */}
                     {deleteConfirmOption?.menuId === menu.id &&
-                      deleteConfirmOption?.optionName === option.name && (
-                        <div className="confirm-dialog col-span-4 bg-yellow-50 p-2 rounded-md flex items-center gap-2 sm:col-span-6">
-                          <span className="text-xs text-gray-800">{`"${option.name}" löschen?`}</span>
-                          <button
-                            className="confirm-button bg-red-500 text-white px-2 py-1 rounded-md hover:bg-red-600 text-xs"
-                            onClick={() => confirmDeleteOption(menu.id, option.name)}
-                          >
-                            Ja
-                          </button>
-                          <button
-                            className="cancel-button bg-gray-300 text-gray-800 px-2 py-1 rounded-md hover:bg-gray-400 text-xs"
-                            onClick={cancelDeleteOption}
-                          >
-                            Nein
-                          </button>
-                        </div>
-                      )}
+ deleteConfirmOption?.optionName === option.name && (
+  <div className="col-span-4 sm:col-span-6 bg-red-50 border border-red-200 p-4 rounded-lg flex flex-col sm:flex-row sm:items-center gap-3 shadow-sm">
+    <span className="text-sm sm:text-base text-red-800 font-medium">
+      Möchten Sie <strong>"{option.name}"</strong> wirklich löschen?
+    </span>
+
+    <div className="flex gap-2 sm:ml-auto">
+      <button
+        className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1.5 rounded-md transition-colors duration-150"
+        onClick={() => confirmDeleteOption(menu.id, option.name)}
+      >
+        Ja, löschen
+      </button>
+      <button
+        className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm px-3 py-1.5 rounded-md transition-colors duration-150"
+        onClick={cancelDeleteOption}
+      >
+        Abbrechen
+      </button>
+    </div>
+  </div>
+)}
+
 
                     {/* Erweiterte Einstellungen */}
                     {(menu.id === "dynamischeverbraucher" || menu.id === "eauto") && (
@@ -2603,7 +2609,7 @@ body {
                                       onChange={(e) =>
                                         handleErweiterteEinstellungChange(option.name, "nutzung", Number(e.target.value), null)
                                       }
-                                      className="w-full accent-green-600 mt-1"
+                                      className="w-full accent-[#063d37] mt-1"
                                     />
                                   </div>
 
@@ -2631,7 +2637,7 @@ body {
                                       onChange={(e) =>
                                         handleTimePeriodChange(option.name, timePeriods[e.target.value].label, zeitraum.id)
                                       }
-                                      className="w-full accent-green-600 mt-1"
+                                      className="w-full accent-[#063d37] mt-1"
                                     />
                                   </div>
 
@@ -2652,7 +2658,8 @@ body {
                                       onChange={(e) =>
                                         handleErweiterteEinstellungChange(option.name, "dauer", Number(e.target.value), zeitraum.id)
                                       }
-                                      className="w-full accent-green-600 mt-1"
+                                      className="w-full accent-[#063d37] mt-1"
+
                                     />
                                   </div>
 
@@ -2672,7 +2679,7 @@ body {
                             ))}
                             <div className="flex justify-center mt-1">
                               <button
-                                className="bg-gray-600 text-white px-1 py-0.5 rounded-md hover:bg-gray-700 text-[12px] font-semibold sm:px-[2.2px] sm:py-[0.55px] sm:text-[13px]"
+                                className="bg-[#063d37] text-white px-1 py-0.5 rounded-md hover:bg-gray-700 text-[12px] font-semibold sm:px-[2.2px] sm:py-[0.55px] sm:text-[13px]"
                                 onClick={() => addZeitraum(option.name)}
                               >
                                 Zeitraum hinzufügen
