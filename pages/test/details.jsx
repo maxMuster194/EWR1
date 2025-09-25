@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import StromverbrauchRechnerDesktop from './details38'; // Für Desktop/Tablet
+import StromverbrauchRechnerDesktop from './details39'; // Für Desktop/Tablet
 import StromverbrauchRechnerMobile from './Mdetails45'; // Für Handy
+import LoadingScreen from '../loading/Loadingscreen';
 
 const styles = `
   .layout {
@@ -17,7 +18,6 @@ const styles = `
       "sidebar extra-box-2" auto
       "footer footer" auto
       / 200px 1fr;
-    gap: 12px;
     min-height: 100vh;
   }
   .header {
@@ -217,10 +217,9 @@ const styles = `
 `;
 
 const Energiemanager = () => {
-  // Use state to handle client-side media query
   const [isMobile, setIsMobile] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Check for mobile device on client side
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const mediaQuery = window.matchMedia("(max-width: 767px)");
@@ -230,15 +229,28 @@ const Energiemanager = () => {
       const handleResize = () => setIsMobile(mediaQuery.matches);
       mediaQuery.addEventListener('change', handleResize);
 
-      // Cleanup listener on component unmount
-      return () => mediaQuery.removeEventListener('change', handleResize);
+      // Simulate loading delay (replace with actual data fetching if needed)
+      const timer = setTimeout(() => {
+        setLoading(false);
+      }, 1000); // Adjust the delay as needed (e.g., 2000ms = 2 seconds)
+
+      // Cleanup listener and timer on component unmount
+      return () => {
+        mediaQuery.removeEventListener('change', handleResize);
+        clearTimeout(timer);
+      };
     }
   }, []);
+
+  // If loading is true, show the LoadingScreen
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <>
       <style>{styles}</style>
-      <div className="layout relative  bg-[#fafafa]" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
+      <div className="layout relative bg-[#fafafa]" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
         <header className="header">
           <div className="flex items-start">
             <img src="/bilder/ilumylogo2.png" alt="Logo" className="header-logo" />
@@ -280,9 +292,9 @@ const Energiemanager = () => {
           </div>
         </div>
 
-        <div className="main  bg-[#fafafa] ">
-          <div className="content flex-1 p-6 rounded-xl bg-[#fafafa]  flex flex-col">
-            <div className="flex flex-col gap-6 mt-6 flex-1  bg-[#fafafa]">
+        <div className="main bg-[#fafafa]">
+          <div className="content flex-1 p-6 rounded-xl bg-[#fafafa] flex flex-col">
+            <div className="flex flex-col gap-6 mt-6 flex-1 bg-[#fafafa]">
               <div>
                 {isMobile ? <StromverbrauchRechnerMobile /> : <StromverbrauchRechnerDesktop />}
               </div>

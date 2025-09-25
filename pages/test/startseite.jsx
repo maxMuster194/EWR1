@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle, faUser, faComment } from '@fortawesome/free-solid-svg-icons';
 import Dypreis0 from '../test/dypreis0';
+import LoadingScreen from '../loading/Loadingscreen';
 
 const styles = `
   .layout {
@@ -16,7 +17,6 @@ const styles = `
       "sidebar extra-box-2" auto
       "footer footer" auto
       / 200px 1fr;
-    gap: 12px;
     min-height: 100vh;
     background-color: #F3F4F6;
   }
@@ -172,7 +172,7 @@ const styles = `
       order: 1;
       max-height: none;
       background-color: #fafafa;
-      padding: 8px 4px; /* Reduced padding for more chart space */
+      padding: 8px 4px;
       width: 100%;
       box-sizing: border-box;
     }
@@ -251,21 +251,39 @@ const styles = `
 `;
 
 const Energiemanager = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading delay (replace with actual data fetching if needed)
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000); // Adjust the delay as needed (e.g., 2000ms = 2 seconds)
+
+    // Cleanup the timer when the component unmounts
+    return () => clearTimeout(timer);
+  }, []);
+
+  // If loading is true, show the LoadingScreen
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  // Otherwise, render the main content
   return (
     <>
       <style>{styles}</style>
-      <div className="layout relative"  style={{
-    backgroundColor: '#fafafa',
-    fontFamily: 'Manrope, "Noto Sans", sans-serif'
-  }}>
+      <div className="layout relative" style={{
+        backgroundColor: '#fafafa',
+        fontFamily: 'Manrope, "Noto Sans", sans-serif'
+      }}>
         <header className="header">
           <div className="flex items-start">
             <img src="/bilder/ilumylogo2.png" alt="Ilumy Logo" className="header-logo" />
           </div>
         </header>
 
-        <div className="top-box p-6 rounded-xl bg-[#fafafa] ">
-          <div className="flex flex-col gap-3 rounded-xl p-6 bg-[#fafafa]  text-center">
+        <div className="top-box p-6 rounded-xl bg-[#fafafa]">
+          <div className="flex flex-col gap-3 rounded-xl p-6 bg-[#fafafa] text-center">
             <div className="flex items-center justify-center gap-4">
               <p className="text-[#3c6055] text-4xl font-bold leading-normal">Dynamischer Stromtarif</p>
             </div>
@@ -313,69 +331,69 @@ const Energiemanager = () => {
         </div>
 
         <div className="main flex flex-col lg:flex-row gap-6">
-  <div className="content flex-1 p-6 rounded-xl bg-[#fafafa] flex flex-col">
-    <p className="text-[#D9043D] tracking-tight text-3xl font-bold leading-tight text-center"></p>
-    <p className="text-[#202026] text-lg font-normal leading-relaxed text-center mt-2"></p>
-    <div className="flex flex-col gap-6 mt-6 flex-1">
-      <div className="flex min-w-[200px] flex-1 flex-col gap-3 rounded-xl p-6  bg-[#fafafa]">
-        <p className="text-[#3c6055] text-2xl font-bold leading-normal">Preisrechner dynamische Tarife <a
-          href="test/rechner"
-          className="inline-flex items-center justify-center gap-1 px-4 py-1.5 rounded-xl bg-[#063d37] hover:bg-[#3c6055] text-white text-lg font-medium leading-normal"
-        >
-          <FontAwesomeIcon icon={faCalculator} style={{ color: '#fafafa', fontSize: '19px' }} />
-          Zum Rechner
-        </a></p>
-        <p className="text-[#202026] text-base font-normal leading-normal">
-          Jetzt in wenigen Schritten herausfinden, ob sich ein dynamischer Stromtarif für Ihren Haushalt lohnt.
-        </p>
-        <p></p>
-        <p className="text-[#3c6055] text-2xl font-bold leading-normal">Was ist ein dynamischer Stromtarif?</p>
-        <p className="text-[#202026] text-base font-normal leading-normal">
-          Dynamische Stromtarife sind flexible Strompreise, 
-          die sich in Echtzeit oder stündlich an den aktuellen Börsenstrompreisen orientieren.
-          Im Gegensatz zu festen Tarifen variiert der Preis je nach Angebot und Nachfrage – 
-          zum Beispiel ist Strom nachts oder bei viel Wind und Sonne oft günstiger.
-        </p>
-        <a
-          href=""
-          className="inline-flex items-center justify-center gap-1 px-4 py-1.5 mt-4 rounded-xl bg-[#063d37] hover:bg-[#3c6055] text-white text-lg font-medium leading-normal w-fit"
-        >
-          <FontAwesomeIcon icon={faComment} style={{ color: '#fafafa', fontSize: '19px' }} />
-          Kontakt
-        </a>
-      </div>
-    </div>
-  </div>
-  <div className="chart flex-1 p-2 rounded-xl flex flex-col"> 
-    <div className="flex flex-col gap-2 mt-2 flex-1">
-      <div className="flex min-w-[220px] flex-1 flex-col gap-2 rounded-xl p-2">
-        <div className="flex min-h-[220px] flex-1 flex-col gap-2 py-2">
-          <Dypreis0 />
+          <div className="content flex-1 p-6 rounded-xl bg-[#fafafa] flex flex-col">
+            <p className="text-[#D9043D] tracking-tight text-3xl font-bold leading-tight text-center"></p>
+            <p className="text-[#202026] text-lg font-normal leading-relaxed text-center mt-2"></p>
+            <div className="flex flex-col gap-6 mt-6 flex-1">
+              <div className="flex min-w-[200px] flex-1 flex-col gap-3 rounded-xl p-6 bg-[#fafafa]">
+                <p className="text-[#3c6055] text-2xl font-bold leading-normal">Preisrechner dynamische Tarife <a
+                  href="test/rechner"
+                  className="inline-flex items-center justify-center gap-1 px-4 py-1.5 rounded-xl bg-[#063d37] hover:bg-[#3c6055] text-white text-lg font-medium leading-normal"
+                >
+                  <FontAwesomeIcon icon={faCalculator} style={{ color: '#fafafa', fontSize: '19px' }} />
+                  Zum Rechner
+                </a></p>
+                <p className="text-[#202026] text-base font-normal leading-normal">
+                  Jetzt in wenigen Schritten herausfinden, ob sich ein dynamischer Stromtarif für Ihren Haushalt lohnt.
+                </p>
+                <p></p>
+                <p className="text-[#3c6055] text-2xl font-bold leading-normal">Was ist ein dynamischer Stromtarif?</p>
+                <p className="text-[#202026] text-base font-normal leading-normal">
+                  Dynamische Stromtarife sind flexible Strompreise, 
+                  die sich in Echtzeit oder stündlich an den aktuellen Börsenstrompreisen orientieren.
+                  Im Gegensatz zu festen Tarifen variiert der Preis je nach Angebot und Nachfrage – 
+                  zum Beispiel ist Strom nachts oder bei viel Wind und Sonne oft günstiger.
+                </p>
+                <a
+                  href=""
+                  className="inline-flex items-center justify-center gap-1 px-4 py-1.5 mt-4 rounded-xl bg-[#063d37] hover:bg-[#3c6055] text-white text-lg font-medium leading-normal w-fit"
+                >
+                  <FontAwesomeIcon icon={faComment} style={{ color: '#fafafa', fontSize: '19px' }} />
+                  Kontakt
+                </a>
+              </div>
+            </div>
+          </div>
+          <div className="chart flex-1 p-2 rounded-xl flex flex-col"> 
+            <div className="flex flex-col gap-2 mt-2 flex-1">
+              <div className="flex min-w-[220px] flex-1 flex-col gap-2 rounded-xl p-2">
+                <div className="flex min-h-[220px] flex-1 flex-col gap-2 py-2">
+                  <Dypreis0 />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
 
         <div className="bottom-boxes">
-        <div className="flex flex-col gap-4 rounded-xl p-6 bg-[#fafafa] shadow-sm border border-black">
-  <p className="text-black text-xl font-bold leading-normal">Vorteile</p>
-  <ul className="text-[#202026] text-base font-normal leading-relaxed list-disc list-inside space-y-2">
-    <li><span className="font-medium text-[#202026]">Kostenersparnis:</span> <span className="text-[#202026]">Wer seinen Stromverbrauch in günstige Zeiten verlegt (z. B. Wäsche nachts waschen), kann spürbar sparen.</span></li>
-    <li><span className="font-medium text-[#202026]">Transparenz:</span> <span className="text-[#202026]">Nutzer sehen, wann Strom teuer oder billig ist, und können entsprechend reagieren.</span></li>
-    <li><span className="font-medium text-[#202026]">Umweltfreundlich:</span> <span className="text-[#202026]">Fördert die Nutzung von erneuerbaren Energien, wenn diese im Überfluss verfügbar sind.</span></li>
-    <li><span className="font-medium text-[#202026]">Anreiz zur Automatisierung:</span> <span className="text-[#202026]">Smarte Haushaltsgeräte oder Energiemanagementsysteme lassen sich optimal einsetzen.</span></li>
-  </ul>
-</div>
-<div className="flex flex-col gap-4 rounded-xl p-6 bg-[#fafafa] shadow-sm border border-black mt-4">
-  <p className="text-black text-xl font-bold leading-normal">Nachteile</p>
-  <ul className="text-[#202026] text-base font-normal leading-relaxed list-disc list-inside space-y-2">
-    <li><span className="font-medium text-[#202026]">Preisschwankungen:</span> <span className="text-[#202026]">Strom kann zu bestimmten Tageszeiten sehr teuer sein, was die Planung erschwert.</span></li>
-    <li><span className="font-medium text-[#202026]">Technischer Aufwand:</span> <span className="text-[#202026]">Ein digitaler Stromzähler (Smart Meter) ist meist Voraussetzung.</span></li>
-    <li><span className="font-medium text-[#202026]">Komplexität:</span> <span className="text-[#202026]">Erfordert aktives Mitdenken oder technische Lösungen, um vom günstigen Preis zu profitieren.</span></li>
-    <li><span className="font-medium text-[#202026]">Unvorhersehbarkeit:</span> <span className="text-[#202026]">Bei starker Nachfrage oder Krisen können Preise unerwartet steigen.</span></li>
-  </ul>
-</div>
+          <div className="flex flex-col gap-4 rounded-xl p-6 bg-[#fafafa] shadow-sm border border-black">
+            <p className="text-black text-xl font-bold leading-normal">Vorteile</p>
+            <ul className="text-[#202026] text-base font-normal leading-relaxed list-disc list-inside space-y-2">
+              <li><span className="font-medium text-[#202026]">Kostenersparnis:</span> <span className="text-[#202026]">Wer seinen Stromverbrauch in günstige Zeiten verlegt (z. B. Wäsche nachts waschen), kann spürbar sparen.</span></li>
+              <li><span className="font-medium text-[#202026]">Transparenz:</span> <span className="text-[#202026]">Nutzer sehen, wann Strom teuer oder billig ist, und können entsprechend reagieren.</span></li>
+              <li><span className="font-medium text-[#202026]">Umweltfreundlich:</span> <span className="text-[#202026]">Fördert die Nutzung von erneuerbaren Energien, wenn diese im Überfluss verfügbar sind.</span></li>
+              <li><span className="font-medium text-[#202026]">Anreiz zur Automatisierung:</span> <span className="text-[#202026]">Smarte Haushaltsgeräte oder Energiemanagementsysteme lassen sich optimal einsetzen.</span></li>
+            </ul>
+          </div>
+          <div className="flex flex-col gap-4 rounded-xl p-6 bg-[#fafafa] shadow-sm border border-black mt-4">
+            <p className="text-black text-xl font-bold leading-normal">Nachteile</p>
+            <ul className="text-[#202026] text-base font-normal leading-relaxed list-disc list-inside space-y-2">
+              <li><span className="font-medium text-[#202026]">Preisschwankungen:</span> <span className="text-[#202026]">Strom kann zu bestimmten Tageszeiten sehr teuer sein, was die Planung erschwert.</span></li>
+              <li><span className="font-medium text-[#202026]">Technischer Aufwand:</span> <span className="text-[#202026]">Ein digitaler Stromzähler (Smart Meter) ist meist Voraussetzung.</span></li>
+              <li><span className="font-medium text-[#202026]">Komplexität:</span> <span className="text-[#202026]">Erfordert aktives Mitdenken oder technische Lösungen, um vom günstigen Preis zu profitieren.</span></li>
+              <li><span className="font-medium text-[#202026]">Unvorhersehbarkeit:</span> <span className="text-[#202026]">Bei starker Nachfrage oder Krisen können Preise unerwartet steigen.</span></li>
+            </ul>
+          </div>
         </div>
 
         <div className="extra-box-2">

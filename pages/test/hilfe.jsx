@@ -1,9 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faVideo } from '@fortawesome/free-solid-svg-icons';
 import VideosPage from '../test/video1';
+import LoadingScreen from '../loading/Loadingscreen';
 
 const Energiemanager = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading delay (replace with actual data fetching if needed)
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000); // Adjust the delay as needed (e.g., 2000ms = 2 seconds)
+
+    // Cleanup the timer when the component unmounts
+    return () => clearTimeout(timer);
+  }, []);
+
+  // If loading is true, show the LoadingScreen
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
   return (
     <>
       <style>
@@ -16,7 +34,6 @@ const Energiemanager = () => {
               "sidebar main" 1fr
               "footer footer" auto
               / 200px 1fr;
-            gap: 12px;
             min-height: 100vh;
             background-color: #fafafa;
             font-family: 'Manrope', 'Noto Sans', sans-serif;
@@ -96,7 +113,6 @@ const Energiemanager = () => {
             background-color: #fafafa;
             border-radius: 12px;
             padding: 24px;
-           
             flex: 1;
           }
           .footer {
@@ -222,9 +238,8 @@ const Energiemanager = () => {
         </div>
 
         <div className="main">
-          
           <div className="content-box">
-          <VideosPage />
+            <VideosPage />
           </div>
         </div>
 

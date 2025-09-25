@@ -15,9 +15,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import Profil10 from './Profil10'; // Mobile profile
 import Profil9 from './Profil9'; // Desktop profile
+import LoadingScreen from '../loading/Loadingscreen';
 
 // Register Chart.js components
 ChartJSInstance.register(LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend, Filler);
+
+// Simple LoadingScreen component (replace with your own if you have one)
+
 
 const chartOptions = {
   responsive: true,
@@ -48,7 +52,6 @@ const styles = `
       ". ." 12px
       "footer footer" auto
       / minmax(100px, 120px) 1fr;
-    gap: 12px;
     padding-top: 2.5rem;
     padding-bottom: 3rem;
     background-color: #fafafa;
@@ -81,7 +84,6 @@ const styles = `
     grid-area: top-box;
     padding: 1.5rem;
     background-color: #fafafa;
-    
     border-radius: 12px;
     box-sizing: border-box;
   }
@@ -136,7 +138,6 @@ const styles = `
     margin: 0 auto;
     padding: 1.5rem;
     background-color: #fafafa;
-  
     border-radius: 12px;
     box-sizing: border-box;
     display: flex;
@@ -144,7 +145,6 @@ const styles = `
     gap: 1.5rem;
   }
   .content-box {
-    
     border-radius: 12px;
     overflow: hidden;
     max-width: 800px;
@@ -377,17 +377,32 @@ const styles = `
 
 const Energiemanager = () => {
   const [isMobile, setIsMobile] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Only runs on client side
+    // Handle mobile detection
     setIsMobile(window.innerWidth <= 767);
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 767);
     };
-
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+
+    // Simulate loading delay (replace with actual data fetching if needed)
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000); // Adjust the delay as needed (e.g., 2000ms = 2 seconds)
+
+    // Cleanup both event listener and timer
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timer);
+    };
   }, []);
+
+  // If loading is true, show the LoadingScreen
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <>
@@ -399,7 +414,7 @@ const Energiemanager = () => {
           </div>
         </header>
 
-        <div className="top-box "><h2>Rechner</h2></div>
+        <div className="top-box"><h2>Rechner</h2></div>
 
         <div className="sidebar w-full p-3 bg-[#202026] border-r border-gray-300">
           <div className="flex h-full flex-col justify-between">
@@ -439,7 +454,7 @@ const Energiemanager = () => {
         </div>
 
         <div className="main flex flex-col gap-6">
-          <div className="content-box flex flex-1 flex-col gap-3 rounded-xl bg-[#fafafa]  w-full">
+          <div className="content-box flex flex-1 flex-col gap-3 rounded-xl bg-[#fafafa] w-full">
             <div>
               {isMobile ? <Profil10 /> : <Profil9 />}
             </div>

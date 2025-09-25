@@ -46,7 +46,7 @@ const styles = `
       "sidebar extra-box-2" auto
       "footer footer" auto
       / minmax(100px, 120px) 1fr;
-    gap: 12px;
+   
     padding-top: 5rem;
     padding-bottom: 3rem;
     background-color: #F3F4F6;

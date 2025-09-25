@@ -1504,7 +1504,8 @@ export default function Home() {
   };
 
 
-  const chartData = {
+ // Chart for hourly consumption (unchanged from your original code)
+const chartData = {
     labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
     datasets: [
       {
@@ -1575,11 +1576,12 @@ export default function Home() {
     },
   };
   
+  // Updated chart for hourly costs (including heat pump costs in orange)
   const chartDataKosten = {
     labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
     datasets: [
       {
-        label: `Kosten (Dynamischer Tarif) am ${selectedDate || 'N/A'} (Ct)`,
+        label: 'Kosten Dynamischer Tarif (Ct)',
         data: hourlyData.map((_, index) => {
           const price = chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
           return ((hourlyData[index].total - hourlyData[index].waermepumpe) * price).toFixed(2);
@@ -1590,7 +1592,7 @@ export default function Home() {
         tension: 0.1,
       },
       {
-        label: `Kosten (Fester Tarif) am ${selectedDate || 'N/A'} (Ct)`,
+        label: 'Kosten Fester Tarif (Ct)',
         data: hourlyData.map((_, index) => {
           const price = parseFloat(getPreisDifferenz(strompreis, selectedRegion));
           return ((hourlyData[index].total - hourlyData[index].waermepumpe) * price).toFixed(2);
@@ -1598,6 +1600,17 @@ export default function Home() {
         fill: false,
         borderColor: '#063d37',
         backgroundColor: '#063d37',
+        tension: 0.1,
+      },
+      {
+        label: 'Kosten Wärmepumpe (Ct)',
+        data: hourlyData.map((_, index) => {
+          const price = chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
+          return (hourlyData[index].waermepumpe * price).toFixed(2);
+        }),
+        fill: false,
+        borderColor: '#f93b01',
+        backgroundColor: '#f93b01',
         tension: 0.1,
       },
     ],
@@ -1610,7 +1623,7 @@ export default function Home() {
       legend: { position: 'top', labels: { color: '#333' } },
       title: {
         display: true,
-        text: `Stündliche Stromersparnis ohne Wärmepumpe (${selectedDate || 'Fallback-Preis'})`,
+        text: `Stündliche Stromkosten (inkl. Wärmepumpe) am ${selectedDate || 'Fallback-Preis'}`,
         color: '#333',
         font: { size: 11.2 },
       },
@@ -1619,75 +1632,18 @@ export default function Home() {
           label: function(context) {
             const index = context.dataIndex;
             const datasetLabel = context.dataset.label;
-            const isDynamic = datasetLabel.includes('Dynamischer Tarif');
-            const price = isDynamic ? (chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion))) : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
-            const verbraucherList = hourlyData[index].verbraucher.join(', ');
+            const isDynamicNonWP = datasetLabel.includes('Dynamischer Tarif') && !datasetLabel.includes('Wärmepumpen');
+            const isFixedNonWP = datasetLabel.includes('Fester Tarif');
+            const isWpDynamic = datasetLabel.includes('Wärmepumpen-Kosten');
+            let price, verbraucherList;
+            if (isWpDynamic) {
+              price = chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
+              verbraucherList = hourlyData[index].verbraucher.filter(v => verbraucherTypes[v] === 'waermepumpe').join(', ');
+            } else {
+              price = isDynamicNonWP ? (chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion))) : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
+              verbraucherList = hourlyData[index].verbraucher.filter(v => verbraucherTypes[v] !== 'waermepumpe').join(', ');
+            }
             return `${datasetLabel.split(' am')[0]}: ${context.raw} Ct\nPreis: ${price.toFixed(2)} Ct/kWh\nAktive Verbraucher: ${verbraucherList || 'Keine'}`;
-          },
-        },
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: { display: true, text: 'Ersparnis (Ct)', color: '#333' },
-        ticks: { color: '#333' },
-      },
-      x: {
-        title: { display: true, text: 'Uhrzeit', color: '#333' },
-        ticks: { color: '#333' },
-      },
-    },
-  };
-  
-  const chartDataWaermepumpeKosten = {
-    labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
-    datasets: [
-      {
-        label: `Wärmepumpen-Kosten (Dynamischer Tarif) am ${selectedDate || 'N/A'} (Ct)`,
-        data: hourlyData.map((_, index) => {
-          const price = chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
-          return (hourlyData[index].waermepumpe * price).toFixed(2);
-        }),
-        fill: false,
-        borderColor: '#f93b01',
-        backgroundColor: '#f93b01',
-        tension: 0.1,
-      },
-      {
-        label: `Wärmepumpen-Kosten (Fester Tarif) am ${selectedDate || 'N/A'} (Ct)`,
-        data: hourlyData.map((_, index) => {
-          const price = parseFloat(getPreisDifferenz(strompreis, selectedRegion));
-          return (hourlyData[index].waermepumpe * price).toFixed(2);
-        }),
-        fill: false,
-        borderColor: '#063d37',
-        backgroundColor: '#063d37',
-        tension: 0.1,
-      },
-    ],
-  };
-  
-  const chartOptionsWaermepumpeKosten = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'top', labels: { color: '#333' } },
-      title: {
-        display: true,
-        text: `Stündliche Wärmepumpen-Kosten (${selectedDate || 'Fallback-Preis'})`,
-        color: '#333',
-        font: { size: 11.2 },
-      },
-      tooltip: {
-        callbacks: {
-          label: function(context) {
-            const index = context.dataIndex;
-            const datasetLabel = context.dataset.label;
-            const isDynamic = datasetLabel.includes('Dynamischer Tarif');
-            const price = isDynamic ? (chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion))) : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
-            const verbraucherList = hourlyData[index].verbraucher.filter(v => verbraucherTypes[v] === 'waermepumpe').join(', ');
-            return `${datasetLabel.split(' am')[0]}: ${context.raw} Ct\nPreis: ${price.toFixed(2)} Ct/kWh\nWärmepumpen: ${verbraucherList || 'Keine'}`;
           },
         },
       },
