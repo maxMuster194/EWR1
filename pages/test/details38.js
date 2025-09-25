@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -19,6 +19,7 @@ import TvIcon from '@mui/icons-material/Tv';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
 import DescriptionIcon from '@mui/icons-material/Description';
 import ElectricCarIcon from '@mui/icons-material/ElectricCar';
+import HeatPumpIcon from '@mui/icons-material/HeatPump';
 
 // Register Chart.js components
 ChartJS.register(
@@ -43,6 +44,7 @@ const iconMapping = {
   Licht: 'Lightbulb',
   'E-Auto': 'ElectricCar',
   'Zweites E-Auto': 'ElectricCar',
+  Wärmepumpe: 'HeatPump',
   default: 'Description',
 };
 
@@ -58,6 +60,7 @@ const standardVerbrauch = {
   Licht: 300,
   'E-Auto': 11000,
   'Zweites E-Auto': 7400,
+  Wärmepumpe: 12000,
 };
 
 const verbraucherBeschreibungen = {
@@ -71,6 +74,7 @@ const verbraucherBeschreibungen = {
   Licht: 'Beleuchtung verbraucht etwa 175 W bei 5 Stunden täglicher Nutzung (umgestellt auf Wochenbasis: ca. 7 Nutzungen pro Woche).',
   'E-Auto': 'Das E-Auto verbraucht ca. 11 kW pro Ladevorgang (z.B. 4h/Woche).',
   'Zweites E-Auto': 'Das zweite E-Auto verbraucht ca. 7.4 kW pro Ladevorgang (z.B. 3h/Woche).',
+  Wärmepumpe: 'Die Wärmepumpe verbraucht ca. 12 kW mit einer JAZ von 3.4 und 2000 Heizstunden pro Jahr.',
 };
 
 const timePeriods = [
@@ -96,6 +100,15 @@ const verbraucherTypes = {
   Licht: 'week',
   'E-Auto': 'auto',
   'Zweites E-Auto': 'auto',
+  Wärmepumpe: 'waermepumpe',
+};
+
+// Feste Preise für dynamischen Tarif
+const prices = {
+  Q1: 0.131,
+  Q2: 0.075,
+  Q3: 0.089,
+  Q4: 0.122,
 };
 
 // Functions
@@ -115,23 +128,32 @@ const updateKosten = (watt, verbraucher, strompreis, selectedRegion, setVerbrauc
   const preisDifferenz = parseFloat(getPreisDifferenz(strompreis, selectedRegion)) / 100;
   let kosten = 0;
   const einstellung = erweiterteEinstellungen[verbraucher] || {};
-  const totalDauer = einstellung.zeitraeume?.reduce((sum, z) => sum + (parseFloat(z.dauer) || 0), 0) || 0;
-  const nutzung = einstellung.nutzung || 0;
-  const batterieKapazitaet = einstellung.batterieKapazitaet || 0;
-  const wallboxLeistung = einstellung.wallboxLeistung || watt;
-  const standardLadung = einstellung.standardLadung || false;
   const type = verbraucherTypes[verbraucher] || 'grundlast';
 
-  if (type === 'week') {
-    kosten = (watt * totalDauer * nutzung * 52) / 1000 * preisDifferenz;
-  } else if (type === 'auto') {
-    if (standardLadung) {
-      kosten = (batterieKapazitaet * nutzung * 52) * preisDifferenz;
-    } else {
-      kosten = (wallboxLeistung * totalDauer * nutzung * 52) / 1000 * preisDifferenz;
+  if (type === 'waermepumpe') {
+    const jaz = einstellung.jaz || 3.4;
+    const heizstunden = einstellung.heizstunden || 2000;
+    if (jaz === 0) return 0;
+    const totalKwh = (watt / jaz) * heizstunden / 1000;
+    kosten = totalKwh * preisDifferenz;
+  } else {
+    const totalDauer = einstellung.zeitraeume?.reduce((sum, z) => sum + (parseFloat(z.dauer) || 0), 0) || 0;
+    const nutzung = einstellung.nutzung || 0;
+    const batterieKapazitaet = einstellung.batterieKapazitaet || 0;
+    const wallboxLeistung = einstellung.wallboxLeistung || watt;
+    const standardLadung = einstellung.standardLadung || false;
+
+    if (type === 'week') {
+      kosten = (watt * totalDauer * nutzung * 52) / 1000 * preisDifferenz;
+    } else if (type === 'auto') {
+      if (standardLadung) {
+        kosten = (batterieKapazitaet * nutzung * 52) * preisDifferenz;
+      } else {
+        kosten = (wallboxLeistung * totalDauer * nutzung * 52) / 1000 * preisDifferenz;
+      }
+    } else if (type === 'grundlast') {
+      kosten = (watt * preisDifferenz * 24 * 365) / 1000;
     }
-  } else if (type === 'grundlast') {
-    kosten = (watt * preisDifferenz * 24 * 365) / 1000;
   }
 
   if (kosten < 0) kosten = 0;
@@ -143,24 +165,30 @@ const updateKosten = (watt, verbraucher, strompreis, selectedRegion, setVerbrauc
 };
 
 const berechneDynamischenVerbrauch = (watt, verbraucher, strompreis, selectedRegion, erweiterteEinstellungen) => {
-  console.log('berechneDynamischenVerbrauch:', { watt, verbraucher, strompreis, selectedRegion });
-  console.log('einstellung:', erweiterteEinstellungen[verbraucher]);
   const preisDifferenz = parseFloat(getPreisDifferenz(strompreis, selectedRegion)) / 100;
   const einstellung = erweiterteEinstellungen[verbraucher] || {};
+  const type = verbraucherTypes[verbraucher] || 'grundlast';
+
+  if (type === 'waermepumpe') {
+    const jaz = einstellung.jaz || 3.4;
+    const heizstunden = einstellung.heizstunden || 2000;
+    if (jaz === 0) return 0;
+    const totalKwh = (watt / jaz) * heizstunden / 1000;
+    const kosten = totalKwh * preisDifferenz;
+    return kosten < 0 ? 0 : kosten;
+  }
+
   if (!einstellung.zeitraeume || einstellung.zeitraeume.length === 0 || watt === 0) {
-    console.log('Abbruch: Keine Zeiträume oder watt = 0');
     return 0;
   }
   let totalDauer = einstellung.zeitraeume.reduce((sum, z) => sum + (parseFloat(z.dauer) || 0), 0) || 0;
   if (totalDauer === 0) {
-    console.log('Abbruch: totalDauer = 0');
     return 0;
   }
   let kosten = 0;
   const batterieKapazitaet = einstellung.batterieKapazitaet || 0;
   const wallboxLeistung = einstellung.wallboxLeistung || watt;
   const standardLadung = einstellung.standardLadung || false;
-  const type = verbraucherTypes[verbraucher] || 'grundlast';
 
   if (type === 'week') {
     kosten = (watt * totalDauer * einstellung.nutzung * 52) / 1000 * preisDifferenz;
@@ -172,11 +200,10 @@ const berechneDynamischenVerbrauch = (watt, verbraucher, strompreis, selectedReg
     }
   }
 
-  console.log('Berechnete Kosten:', kosten);
   return kosten < 0 ? 0 : kosten;
 };
 
-const berechneDynamischeKosten = (verbraucher, strompreis, prices, verbraucherDaten, erweiterteEinstellungen, selectedRegion) => {
+const berechneDynamischeKosten = (verbraucher, strompreis, pricesApi, verbraucherDaten, erweiterteEinstellungen, selectedRegion) => {
   const watt = verbraucherDaten[verbraucher]?.watt || 0;
   if (watt === 0) return 0;
   const type = verbraucherTypes[verbraucher];
@@ -185,6 +212,26 @@ const berechneDynamischeKosten = (verbraucher, strompreis, prices, verbraucherDa
   const fixedPrice = parseFloat(getPreisDifferenz(strompreis, selectedRegion));
   const fallbackPrice = fixedPrice;
 
+  if (type === 'waermepumpe') {
+    const jaz = einstellung.jaz || 3.4;
+    const heizstunden = einstellung.heizstunden || 2000;
+    if (jaz === 0) return 0;
+    const totalKwh = (watt / 1000 / jaz) * heizstunden;
+    const quarterlyKwh = {
+      Q1: totalKwh * 0.4,
+      Q2: totalKwh * 0.15,
+      Q3: totalKwh * 0.05,
+      Q4: totalKwh * 0.4,
+    };
+    const quarterlyCosts = {
+      Q1: quarterlyKwh.Q1 * prices.Q1,
+      Q2: quarterlyKwh.Q2 * prices.Q2,
+      Q3: quarterlyKwh.Q3 * prices.Q3,
+      Q4: quarterlyKwh.Q4 * prices.Q4,
+    };
+    return Object.values(quarterlyCosts).reduce((sum, cost) => sum + cost, 0);
+  }
+
   if (type === 'grundlast') {
     const totalKWh = (watt * 24 * 365) / 1000;
     if (totalKWh === 0) return 0;
@@ -192,7 +239,7 @@ const berechneDynamischeKosten = (verbraucher, strompreis, prices, verbraucherDa
     let totalWeight = 0;
     for (let hour = 0; hour < 24; hour++) {
       const frac = 1.0;
-      totalWeightedPrice += (prices[hour] || fallbackPrice) * frac;
+      totalWeightedPrice += (pricesApi[hour] || fallbackPrice) * frac;
       totalWeight += frac;
     }
     const averagePrice = totalWeight > 0 ? totalWeightedPrice / totalWeight : fixedPrice;
@@ -231,7 +278,7 @@ const berechneDynamischeKosten = (verbraucher, strompreis, prices, verbraucherDa
     while (remaining > 0) {
       const hour = Math.floor(currentTime);
       const frac = Math.min(1.0, remaining, hour + 1 - currentTime);
-      totalWeightedPrice += (prices[hour % 24] || fallbackPrice) * frac;
+      totalWeightedPrice += (pricesApi[hour % 24] || fallbackPrice) * frac;
       totalWeight += frac;
       remaining -= frac;
       currentTime += frac;
@@ -254,12 +301,15 @@ const calculateTotalWattage = (verbraucherDaten) => {
 const updateZusammenfassung = (verbraucherDaten, setZusammenfassung) => {
   let grundlast = 0;
   let dynamisch = 0;
+  let waermepumpe = 0;
 
   Object.keys(standardVerbrauch).forEach((key) => {
     const kosten = parseFloat(verbraucherDaten[key]?.kosten) || 0;
     if (isNaN(kosten)) return;
     if (verbraucherTypes[key] === 'grundlast') {
       grundlast += kosten;
+    } else if (verbraucherTypes[key] === 'waermepumpe') {
+      waermepumpe += kosten;
     } else {
       dynamisch += kosten;
     }
@@ -271,13 +321,20 @@ const updateZusammenfassung = (verbraucherDaten, setZusammenfassung) => {
     ...prev,
     grundlast: grundlast.toFixed(2),
     dynamisch: dynamisch.toFixed(2),
-    gesamt: (grundlast + dynamisch).toFixed(2),
+    waermepumpe: waermepumpe.toFixed(2),
+    gesamt: (grundlast + dynamisch + waermepumpe).toFixed(2),
     totalWattage,
   }));
 };
 
 const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => {
-  const stunden = Array(24).fill(0).map(() => ({ total: 0, verbraucher: [] }));
+  const stunden = Array(24).fill(0).map(() => ({
+    grundlast: 0,
+    dynamisch: 0,
+    waermepumpe: 0,
+    total: 0,
+    verbraucher: [],
+  }));
   Object.keys(standardVerbrauch).forEach((verbraucher) => {
     const einstellung = erweiterteEinstellungen[verbraucher] || {};
     const type = verbraucherTypes[verbraucher] || 'grundlast';
@@ -291,9 +348,15 @@ const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => 
     }
     if (useWatt <= 0) return;
     const isGrundlast = type === 'grundlast';
+    let category = 'dynamisch';
+    if (type === 'grundlast') category = 'grundlast';
+    else if (type === 'waermepumpe') category = 'waermepumpe';
+
     if (isGrundlast) {
       for (let i = 0; i < 24; i++) {
-        stunden[i].total += (useWatt / 1000) * dailyMultiplier;
+        const add = (useWatt / 1000) * dailyMultiplier;
+        stunden[i][category] += add;
+        stunden[i].total += add;
         if (!stunden[i].verbraucher.includes(verbraucher)) {
           stunden[i].verbraucher.push(verbraucher);
         }
@@ -309,6 +372,7 @@ const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => 
           const hour = Math.floor(currentTime);
           const frac = Math.min(1.0, remaining, hour + 1 - currentTime);
           const add = (useWatt / 1000) * frac * dailyMultiplier;
+          stunden[hour % 24][category] += add;
           stunden[hour % 24].total += add;
           if (!stunden[hour % 24].verbraucher.includes(verbraucher)) {
             stunden[hour % 24].verbraucher.push(verbraucher);
@@ -335,7 +399,7 @@ export default function Home() {
   );
   const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
     Object.keys(standardVerbrauch).reduce((acc, key) => {
-      let startzeit, endzeit, dauer, nutzung, batterieKapazitaet, wallboxLeistung, standardLadung;
+      let startzeit, endzeit, dauer, nutzung, batterieKapazitaet, wallboxLeistung, standardLadung, jaz, heizstunden;
       const type = verbraucherTypes[key];
       if (type === 'grundlast') {
         startzeit = '06:00';
@@ -358,6 +422,13 @@ export default function Home() {
         batterieKapazitaet = 60;
         wallboxLeistung = standardVerbrauch[key];
         standardLadung = false;
+      } else if (type === 'waermepumpe') {
+        startzeit = '06:00';
+        endzeit = '09:00';
+        dauer = 2;
+        nutzung = 1;
+        jaz = 3.4;
+        heizstunden = 2000;
       }
       return {
         ...acc,
@@ -365,6 +436,7 @@ export default function Home() {
           nutzung,
           zeitraeume: [{ id: Date.now() + Math.random(), startzeit, endzeit, dauer }],
           ...(type === 'auto' ? { batterieKapazitaet, wallboxLeistung, standardLadung } : {}),
+          ...(type === 'waermepumpe' ? { jaz, heizstunden } : {}),
         },
       };
     }, {})
@@ -373,11 +445,15 @@ export default function Home() {
   const [zusammenfassung, setZusammenfassung] = useState({
     grundlast: 0,
     dynamisch: 0,
+    waermepumpe: 0,
     gesamt: 0,
     totalWattage: 0,
     grundlastDyn: 0,
     dynamischDyn: 0,
+    waermepumpeDyn: 0,
     gesamtDyn: 0,
+    quarterlyCosts: { Q1: 0, Q2: 0, Q3: 0, Q4: 0 },
+    dynselbstbestimmt: 0,
   });
   const [error, setError] = useState('');
   const [openMenus, setOpenMenus] = useState({
@@ -385,11 +461,13 @@ export default function Home() {
     grundlastverbraucher: false,
     dynamischeverbraucher: false,
     eauto: false,
+    waermepumpe: false,
     strompeicher: false,
   });
 
   const [newOptionNames, setNewOptionNames] = useState({});
   const [newOptionWatt, setNewOptionWatt] = useState({});
+  const [newOptionKW, setNewOptionKW] = useState({});
   const [newOptionTypes, setNewOptionTypes] = useState({});
   const [showNewOptionForm, setShowNewOptionForm] = useState({});
   const [deleteConfirmOption, setDeleteConfirmOption] = useState(null);
@@ -601,18 +679,7 @@ export default function Home() {
     Object.keys(verbraucherDaten).forEach((verbraucher) => {
       const { watt, checked } = verbraucherDaten[verbraucher];
       if (checked || watt > 0) {
-        const type = verbraucherTypes[verbraucher];
-        let kosten = 0;
-        if (type !== 'grundlast') {
-          kosten = berechneDynamischenVerbrauch(watt, verbraucher, strompreis, selectedRegion, erweiterteEinstellungen);
-        } else {
-          kosten = (watt * (parseFloat(getPreisDifferenz(strompreis, selectedRegion)) / 100) * 24 * 365) / 1000;
-          if (kosten < 0) kosten = 0;
-        }
-        setVerbraucherDaten((prev) => ({
-          ...prev,
-          [verbraucher]: { ...prev[verbraucher], kosten: kosten.toFixed(2) },
-        }));
+        updateKosten(watt, verbraucher, strompreis, selectedRegion, setVerbraucherDaten, erweiterteEinstellungen);
       }
     });
     updateZusammenfassung(verbraucherDaten, setZusammenfassung);
@@ -625,23 +692,13 @@ export default function Home() {
     Object.keys(verbraucherDaten).forEach((verbraucher) => {
       const { watt, checked } = verbraucherDaten[verbraucher];
       if (checked || watt > 0) {
-        const type = verbraucherTypes[verbraucher];
-        if (type !== 'grundlast') {
-          const kosten = berechneDynamischenVerbrauch(watt, verbraucher, strompreis, newRegion, erweiterteEinstellungen);
-          setVerbraucherDaten((prev) => ({
-            ...prev,
-            [verbraucher]: { ...prev[verbraucher], kosten: kosten.toFixed(2) },
-          }));
-        } else {
-          updateKosten(watt, verbraucher, strompreis, newRegion, setVerbraucherDaten, erweiterteEinstellungen);
-        }
+        updateKosten(watt, verbraucher, strompreis, newRegion, setVerbraucherDaten, erweiterteEinstellungen);
       }
     });
     updateZusammenfassung(verbraucherDaten, setZusammenfassung);
   };
 
   const onCheckboxChange = (verbraucher, checked) => {
-    console.log('onCheckboxChange:', { verbraucher, checked });
     setVerbraucherDaten((prev) => {
       const watt = checked ? standardVerbrauch[verbraucher] || 0 : 0;
       const type = verbraucherTypes[verbraucher] || 'grundlast';
@@ -660,7 +717,6 @@ export default function Home() {
         ...prev,
         [verbraucher]: { ...prev[verbraucher], watt, checked, kosten: kosten.toFixed(2) },
       };
-      console.log('updated verbraucherDaten:', updatedData);
       updateZusammenfassung(updatedData, setZusammenfassung);
       return updatedData;
     });
@@ -677,12 +733,7 @@ export default function Home() {
       const type = verbraucherTypes[verbraucher] || 'grundlast';
       let kosten = 0;
       if (prev[verbraucher]?.checked || watt > 0) {
-        if (type !== 'grundlast') {
-          kosten = berechneDynamischenVerbrauch(watt, verbraucher, strompreis, selectedRegion, erweiterteEinstellungen);
-        } else {
-          kosten = (watt * (parseFloat(getPreisDifferenz(strompreis, selectedRegion)) / 100) * 24 * 365) / 1000;
-          if (kosten < 0) kosten = 0;
-        }
+        kosten = berechneDynamischenVerbrauch(watt, verbraucher, strompreis, selectedRegion, erweiterteEinstellungen);
       }
       const updatedData = {
         ...prev,
@@ -693,48 +744,63 @@ export default function Home() {
     });
   };
 
+  const handleKWChange = (verbraucher, value) => {
+    const kw = parseFloat(value) || 0;
+    if (kw < 0) {
+      setError(`kW-Leistung für ${verbraucher} darf nicht negativ sein.`);
+      return;
+    }
+    setError('');
+    setVerbraucherDaten((prev) => {
+      const watt = kw * 1000;
+      const kosten = berechneDynamischenVerbrauch(watt, verbraucher, strompreis, selectedRegion, erweiterteEinstellungen);
+      const updatedData = {
+        ...prev,
+        [verbraucher]: { ...prev[verbraucher], watt, kosten: kosten.toFixed(2) },
+      };
+      updateZusammenfassung(updatedData, setZusammenfassung);
+      return updatedData;
+    });
+  };
+
   const handleErweiterteEinstellungChange = (verbraucher, field, value, zeitraumId) => {
-    console.log('handleErweiterteEinstellungChange:', { verbraucher, field, value, zeitraumId });
-    console.log('Aktuelle erweiterteEinstellungen:', erweiterteEinstellungen[verbraucher]);
-    
-    const parsedValue = field === 'nutzung' || field === 'dauer' || field === 'batterieKapazitaet' || field === 'wallboxLeistung'
+    const parsedValue = field === 'nutzung' || field === 'dauer' || field === 'batterieKapazitaet' || field === 'wallboxLeistung' || field === 'jaz' || field === 'heizstunden'
       ? parseFloat(value) || 0
       : field === 'standardLadung'
       ? value === 'true'
       : value;
-  
-    if ((field === 'nutzung' || field === 'dauer' || field === 'batterieKapazitaet' || field === 'wallboxLeistung') && parsedValue < 0) {
+
+    if ((field === 'nutzung' || field === 'dauer' || field === 'batterieKapazitaet' || field === 'wallboxLeistung' || field === 'jaz' || field === 'heizstunden') && parsedValue < 0) {
       setError(`Wert für ${field} bei ${verbraucher} darf nicht negativ sein.`);
       return;
     }
-  
+
     if (field === 'nutzung' && parsedValue > 20) {
       setError(`Nutzungen pro Woche für ${verbraucher} dürfen 20 nicht überschreiten.`);
       return;
     }
-  
+
     if (field === 'dauer' && parsedValue > 23) {
       setError(`Dauer für ${verbraucher} darf 23 Stunden nicht überschreiten.`);
       return;
     }
-  
+
     setError('');
     setErweiterteEinstellungen((prev) => {
       const updatedSettings = {
         ...prev,
         [verbraucher]: {
           ...prev[verbraucher],
-          [field === 'nutzung' || field === 'batterieKapazitaet' || field === 'wallboxLeistung' || field === 'standardLadung'
+          [field === 'nutzung' || field === 'batterieKapazitaet' || field === 'wallboxLeistung' || field === 'standardLadung' || field === 'jaz' || field === 'heizstunden'
             ? field
-            : 'zeitraeume']: field === 'nutzung' || field === 'batterieKapazitaet' || field === 'wallboxLeistung' || field === 'standardLadung'
+            : 'zeitraeume']: field === 'nutzung' || field === 'batterieKapazitaet' || field === 'wallboxLeistung' || field === 'standardLadung' || field === 'jaz' || field === 'heizstunden'
             ? parsedValue
             : prev[verbraucher].zeitraeume.map(zeitraum =>
                 zeitraum.id === zeitraumId ? { ...zeitraum, [field]: parsedValue } : zeitraum
               ),
         },
       };
-      console.log('Updated erweiterteEinstellungen:', updatedSettings[verbraucher]);
-  
+
       const type = verbraucherTypes[verbraucher];
       if (type !== 'grundlast') {
         setVerbraucherDaten((prev) => {
@@ -749,7 +815,6 @@ export default function Home() {
             ...prev,
             [verbraucher]: { ...prev[verbraucher], kosten: kosten.toFixed(2) },
           };
-          console.log('Updated verbraucherDaten:', updatedData);
           updateZusammenfassung(updatedData, setZusammenfassung);
           return updatedData;
         });
@@ -790,8 +855,8 @@ export default function Home() {
         zeitraeume: [...prev[verbraucher].zeitraeume, {
           id: Date.now() + Math.random(),
           startzeit: '06:00',
-          endzeit: '08:00',
-          dauer: prev[verbraucher].zeitraeume[0]?.dauer || 0,
+          endzeit: '09:00',
+          dauer: prev[verbraucher].zeitraeume[0]?.dauer || 2,
         }],
       },
     }));
@@ -834,16 +899,7 @@ export default function Home() {
     Object.keys(verbraucherDaten).forEach((verbraucher) => {
       const { watt, checked } = verbraucherDaten[verbraucher];
       if (checked || watt > 0) {
-        const type = verbraucherTypes[verbraucher];
-        if (type !== 'grundlast') {
-          const kosten = berechneDynamischenVerbrauch(watt, verbraucher, newStrompreis, selectedRegion, erweiterteEinstellungen);
-          setVerbraucherDaten((prev) => ({
-            ...prev,
-            [verbraucher]: { ...prev[verbraucher], kosten: kosten.toFixed(2) },
-          }));
-        } else {
-          updateKosten(watt, verbraucher, newStrompreis, selectedRegion, setVerbraucherDaten, erweiterteEinstellungen);
-        }
+        updateKosten(watt, verbraucher, newStrompreis, selectedRegion, setVerbraucherDaten, erweiterteEinstellungen);
       }
     });
     updateZusammenfassung(verbraucherDaten, setZusammenfassung);
@@ -855,6 +911,10 @@ export default function Home() {
 
   const handleNewOptionWatt = (menuId, value) => {
     setNewOptionWatt((prev) => ({ ...prev, [menuId]: value }));
+  };
+
+  const handleNewOptionKW = (menuId, value) => {
+    setNewOptionKW((prev) => ({ ...prev, [menuId]: value }));
   };
 
   const handleNewOptionType = (menuId, value) => {
@@ -870,7 +930,7 @@ export default function Home() {
 
   const addNewOption = (menuId) => {
     const name = newOptionNames[menuId]?.trim();
-    const watt = parseFloat(newOptionWatt[menuId]) || 100;
+    const watt = menuId === 'waermepumpe' ? (parseFloat(newOptionKW[menuId]) || 12) * 1000 : parseFloat(newOptionWatt[menuId]) || 100;
     let selectedType = newOptionTypes[menuId] || 'week';
     const menu = menus.find((m) => m.id === menuId);
     if (menu.options.some((opt) => opt.name === name)) {
@@ -883,7 +943,7 @@ export default function Home() {
       let dauer = 0;
       let startzeit = '06:00';
       let endzeit = '09:00';
-      let batterieKapazitaet, wallboxLeistung, standardLadung;
+      let batterieKapazitaet, wallboxLeistung, standardLadung, jaz, heizstunden;
 
       if (menuId === 'grundlastverbraucher') {
         vType = 'grundlast';
@@ -893,17 +953,25 @@ export default function Home() {
         vType = 'week';
         startzeit = '09:00';
         endzeit = '12:00';
-        dauer = 3.0;
+        dauer = 3;
         nutzung = 2;
       } else if (menuId === 'eauto') {
         vType = 'auto';
         startzeit = '21:00';
         endzeit = '00:00';
-        dauer = 3.0;
+        dauer = 3;
         nutzung = 3;
         batterieKapazitaet = 40;
         wallboxLeistung = watt;
         standardLadung = false;
+      } else if (menuId === 'waermepumpe') {
+        vType = 'waermepumpe';
+        startzeit = '06:00';
+        endzeit = '09:00';
+        dauer = 2;
+        nutzung = 1;
+        jaz = 3.4;
+        heizstunden = 2000;
       } else {
         setMenus((prev) =>
           prev.map((menu) =>
@@ -914,6 +982,7 @@ export default function Home() {
         );
         setNewOptionNames((prev) => ({ ...prev, [menuId]: '' }));
         setNewOptionWatt((prev) => ({ ...prev, [menuId]: '' }));
+        setNewOptionKW((prev) => ({ ...prev, [menuId]: '' }));
         setShowNewOptionForm((prev) => ({ ...prev, [menuId]: false }));
         return;
       }
@@ -933,6 +1002,7 @@ export default function Home() {
           nutzung,
           zeitraeume: [{ id: Date.now() + Math.random(), startzeit, endzeit, dauer }],
           ...(vType === 'auto' ? { batterieKapazitaet, wallboxLeistung, standardLadung } : {}),
+          ...(vType === 'waermepumpe' ? { jaz, heizstunden } : {}),
         },
       }));
 
@@ -946,6 +1016,7 @@ export default function Home() {
 
       setNewOptionNames((prev) => ({ ...prev, [menuId]: '' }));
       setNewOptionWatt((prev) => ({ ...prev, [menuId]: '' }));
+      setNewOptionKW((prev) => ({ ...prev, [menuId]: '' }));
       setNewOptionTypes((prev) => ({ ...prev, [menuId]: '' }));
       setShowNewOptionForm((prev) => ({ ...prev, [menuId]: false }));
     } else {
@@ -965,7 +1036,7 @@ export default function Home() {
           : menu
       )
     );
-    if (menuId === 'grundlastverbraucher' || menuId === 'dynamischeverbraucher' || menuId === 'eauto') {
+    if (menuId === 'grundlastverbraucher' || menuId === 'dynamischeverbraucher' || menuId === 'eauto' || menuId === 'waermepumpe') {
       setVerbraucherDaten((prev) => {
         const newData = { ...prev };
         delete newData[optionName];
@@ -1165,14 +1236,14 @@ export default function Home() {
           doc.text(`- ${option.name}:`, 15, yPosition);
           yPosition += subSectionSpacing;
           addNewPageIfNeeded();
-          doc.text(`  Watt: ${data?.watt || '0'} W`, 20, yPosition);
+          doc.text(`  Leistung: ${menu.id === 'waermepumpe' ? (data?.watt / 1000).toFixed(2) + ' kW' : data?.watt + ' W'}`, 20, yPosition);
           yPosition += subSectionSpacing;
           addNewPageIfNeeded();
           doc.text(`  Kosten (fixer Tarif): ${data?.kosten || '0.00'} €`, 20, yPosition);
           yPosition += subSectionSpacing;
 
           const ext = erweiterteEinstellungen[option.name];
-          if (ext && (menu.id === 'dynamischeverbraucher' || menu.id === 'eauto')) {
+          if (ext && (menu.id === 'dynamischeverbraucher' || menu.id === 'eauto' || menu.id === 'waermepumpe')) {
             addNewPageIfNeeded();
             doc.text(`  Erweiterte Einstellungen:`, 20, yPosition);
             yPosition += subSectionSpacing;
@@ -1188,6 +1259,13 @@ export default function Home() {
               yPosition += subSectionSpacing;
               addNewPageIfNeeded();
               doc.text(`    Standardladung: ${ext.standardLadung ? 'Ja' : 'Nein'}`, 25, yPosition);
+              yPosition += subSectionSpacing;
+            } else if (menu.id === 'waermepumpe') {
+              addNewPageIfNeeded();
+              doc.text(`    JAZ: ${ext.jaz}`, 25, yPosition);
+              yPosition += subSectionSpacing;
+              addNewPageIfNeeded();
+              doc.text(`    Heizstunden: ${ext.heizstunden} pro Jahr`, 25, yPosition);
               yPosition += subSectionSpacing;
             } else {
               addNewPageIfNeeded();
@@ -1223,7 +1301,10 @@ export default function Home() {
     doc.text(`Grundlast Kosten (fixer Tarif): ${zusammenfassung.grundlast} €`, 15, yPosition);
     yPosition += lineHeight;
     addNewPageIfNeeded();
-    doc.text(`Dynamische Kosten (fixer Tarif): ${zusammenfassung.dynamisch} €`, 15, yPosition);
+    doc.text(`Dynamische Verbraucher Kosten (fixer Tarif): ${zusammenfassung.dynamisch} €`, 15, yPosition);
+    yPosition += lineHeight;
+    addNewPageIfNeeded();
+    doc.text(`Wärmepumpe Kosten (fixer Tarif): ${zusammenfassung.waermepumpe} €`, 15, yPosition);
     yPosition += lineHeight;
     addNewPageIfNeeded();
     doc.text(`Gesamtkosten (fixer Tarif): ${zusammenfassung.gesamt} €`, 15, yPosition);
@@ -1235,7 +1316,13 @@ export default function Home() {
     doc.text(`Grundlast Kosten (dynamischer Tarif): ${zusammenfassung.grundlastDyn} €`, 15, yPosition);
     yPosition += lineHeight;
     addNewPageIfNeeded();
-    doc.text(`Dynamische Kosten (dynamischer Tarif): ${zusammenfassung.dynamischDyn} €`, 15, yPosition);
+    doc.text(`Dynamische Verbraucher Kosten (dynamischer Tarif): ${zusammenfassung.dynamischDyn} €`, 15, yPosition);
+    yPosition += lineHeight;
+    addNewPageIfNeeded();
+    doc.text(`Wärmepumpe Kosten (dynamischer Tarif): ${zusammenfassung.waermepumpeDyn} €`, 15, yPosition);
+    yPosition += lineHeight;
+    addNewPageIfNeeded();
+    doc.text(`Wärmepumpe Alternative Kosten (dynamischer Tarif): ${zusammenfassung.dynselbstbestimmt} €`, 15, yPosition);
     yPosition += lineHeight;
     addNewPageIfNeeded();
     doc.text(`Gesamtkosten (dynamischer Tarif): ${zusammenfassung.gesamtDyn} €`, 15, yPosition);
@@ -1243,7 +1330,15 @@ export default function Home() {
     addNewPageIfNeeded();
     const ersparnis = (parseFloat(zusammenfassung.gesamt) - parseFloat(zusammenfassung.gesamtDyn)).toFixed(2);
     doc.text(`Ersparnis (fixer vs. dynamischer Tarif): ${ersparnis} €`, 15, yPosition);
-    yPosition += sectionSpacing;
+    yPosition += lineHeight;
+    addNewPageIfNeeded();
+    doc.text('Wärmepumpe Kosten pro Quartal (dynamischer Tarif):', 15, yPosition);
+    yPosition += lineHeight;
+    Object.entries(zusammenfassung.quarterlyCosts).forEach(([quarter, cost]) => {
+      addNewPageIfNeeded();
+      doc.text(`  ${quarter}: ${cost.toFixed(2)} €`, 20, yPosition);
+      yPosition += lineHeight;
+    });
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(10);
@@ -1261,17 +1356,27 @@ export default function Home() {
   };
 
   const hourlyData = berechneStundenVerbrauch(verbraucherDaten, erweiterteEinstellungen);
-  const selectedIndex = apiData.findIndex((entry) => {
-    const dateKey = Object.keys(entry).find((key) => key.includes('Prices - EPEX'));
-    return dateKey && entry[dateKey] === selectedDate;
-  });
-  const labelsAll = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'));
-  const rawValuesAll = selectedIndex !== -1 ? apiData[selectedIndex]?.__parsed_extra?.slice(0, 24) : [];
-  const chartDataApi = labelsAll
-    .map((label, i) => ({ label, value: rawValuesAll[i], index: i }))
-    .filter((entry) => entry.value != null);
-  const chartConvertedValues = chartDataApi.map((entry) =>
-    typeof entry.value === 'number' ? entry.value / 10 : parseFloat((entry.value || '').replace(',', '.')) / 10 || strompreis
+
+  // Memoize chart data to prevent unnecessary recalculations
+  const { chartDataApi, chartConvertedValues } = useMemo(() => {
+    const labelsAll = Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0'));
+    const selectedIndex = apiData.findIndex((entry) => {
+      const dateKey = Object.keys(entry).find((key) => key.includes('Prices - EPEX'));
+      return dateKey && entry[dateKey] === selectedDate;
+    });
+    const rawValuesAll = selectedIndex !== -1 ? apiData[selectedIndex]?.__parsed_extra?.slice(0, 24) : [];
+    const chartDataApi = labelsAll
+      .map((label, i) => ({ label, value: rawValuesAll[i], index: i }))
+      .filter((entry) => entry.value != null);
+    const chartConvertedValues = chartDataApi.map((entry) =>
+      typeof entry.value === 'number' ? entry.value / 10 : parseFloat((entry.value || '').replace(',', '.')) / 10 || strompreis
+    );
+    return { chartDataApi, chartConvertedValues };
+  }, [apiData, selectedDate, strompreis]);
+
+  // Überprüfen, ob Wärmepumpe aktiv ist
+  const isWaermepumpeActive = Object.keys(verbraucherDaten).some(
+    (key) => verbraucherTypes[key] === 'waermepumpe' && (verbraucherDaten[key].checked || verbraucherDaten[key].watt > 0)
   );
 
   const updateZusammenfassungDyn = () => {
@@ -1280,44 +1385,109 @@ export default function Home() {
         ...prev,
         grundlastDyn: '0.00',
         dynamischDyn: '0.00',
+        waermepumpeDyn: '0.00',
         gesamtDyn: '0.00',
+        quarterlyCosts: { Q1: 0, Q2: 0, Q3: 0, Q4: 0 },
+        dynselbstbestimmt: '0.00',
       }));
       return;
     }
     let grundlastDyn = 0;
     let dynamischDyn = 0;
-    const prices = chartConvertedValues;
+    let waermepumpeDyn = 0;
+    let quarterlyCosts = { Q1: 0, Q2: 0, Q3: 0, Q4: 0 };
+    let dynselbstbestimmt = 0;
+    const pricesApi = chartConvertedValues;
+
     Object.keys(standardVerbrauch).forEach((key) => {
       if (verbraucherDaten[key]?.watt > 0 || verbraucherDaten[key]?.checked) {
-        const costDyn = berechneDynamischeKosten(key, strompreis, prices, verbraucherDaten, erweiterteEinstellungen, selectedRegion);
+        const costDyn = berechneDynamischeKosten(key, strompreis, pricesApi, verbraucherDaten, erweiterteEinstellungen, selectedRegion);
         if (verbraucherTypes[key] === 'grundlast') {
           grundlastDyn += costDyn;
-        } else {
+        } else if (verbraucherTypes[key] === 'waermepumpe') {
+          waermepumpeDyn += costDyn; // Dynamische Kosten mit Quartalen
+          const einstellung = erweiterteEinstellungen[key] || {};
+          const jaz = einstellung.jaz || 3.4;
+          const heizstunden = einstellung.heizstunden || 2000;
+          if (jaz !== 0) {
+            const totalKwh = (verbraucherDaten[key].watt / 1000 / jaz) * heizstunden;
+            quarterlyCosts = {
+              Q1: totalKwh * 0.4 * prices.Q1,
+              Q2: totalKwh * 0.15 * prices.Q2,
+              Q3: totalKwh * 0.05 * prices.Q3,
+              Q4: totalKwh * 0.4 * prices.Q4,
+            };
+            // Alternative Berechnung für Wärmepumpe (dynselbstbestimmt)
+            const nutzung = einstellung.nutzung || 1;
+            const totalDauer = einstellung.zeitraeume.reduce((sum, z) => sum + (parseFloat(z.dauer) || 0), 0) || 0;
+            const kw = verbraucherDaten[key].watt / 1000;
+            let totalWeightedPrice = 0;
+            let totalWeight = 0;
+            einstellung.zeitraeume.forEach((z) => {
+              let currentTime = parseInt(z.startzeit.split(':')[0]) + parseInt(z.startzeit.split(':')[1]) / 60;
+              let remaining = parseFloat(z.dauer) || 0;
+              while (remaining > 0) {
+                const hour = Math.floor(currentTime);
+                const frac = Math.min(1.0, remaining, hour + 1 - currentTime);
+                totalWeightedPrice += (pricesApi[hour % 24] || pricesApi[0] || 0) * frac;
+                totalWeight += frac;
+                remaining -= frac;
+                currentTime += frac;
+                if (currentTime >= 24) currentTime -= 24;
+              }
+            });
+            const averagePrice = totalWeight > 0 ? totalWeightedPrice / totalWeight : pricesApi[0] || 0;
+            dynselbstbestimmt += ((kw / jaz) * totalDauer * nutzung * 52) * (averagePrice / 100);
+          }
+        }
+         else {
           dynamischDyn += costDyn;
         }
       }
     });
+
     setZusammenfassung((prev) => ({
       ...prev,
       grundlastDyn: grundlastDyn.toFixed(2),
       dynamischDyn: dynamischDyn.toFixed(2),
-      gesamtDyn: (grundlastDyn + dynamischDyn).toFixed(2),
+      waermepumpeDyn: waermepumpeDyn.toFixed(2),
+      gesamtDyn: (grundlastDyn + dynamischDyn + waermepumpeDyn).toFixed(2),
+      quarterlyCosts,
+      dynselbstbestimmt: dynselbstbestimmt.toFixed(2),
     }));
   };
 
   useEffect(() => {
     updateZusammenfassungDyn();
-  }, [verbraucherDaten, erweiterteEinstellungen, selectedDate, apiData, strompreis, selectedRegion]);
-  
+  }, [verbraucherDaten, erweiterteEinstellungen, selectedDate, strompreis, selectedRegion, chartConvertedValues]);
+
+  // Variablen für Wärmepumpen-Berechnungen
+  const waermepumpeResults = {
+    waermepumpeDyn: zusammenfassung.waermepumpeDyn,
+    quarterlyCosts: zusammenfassung.quarterlyCosts,
+    waermepumpeFix: zusammenfassung.waermepumpe,
+    waermepumpeAlternative: zusammenfassung.waermepumpeAlternative,
+  };
+
+
   const chartData = {
     labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
     datasets: [
       {
-        label: 'Stromverbrauch (kW)',
-        data: hourlyData.map(d => d.total),
+        label: 'Stromverbrauch ohne Wärmepumpe (kW)',
+        data: hourlyData.map(d => d.total - d.waermepumpe),
         fill: false,
         borderColor: '#063d37',
         backgroundColor: '#063d37',
+        tension: 0.1,
+        yAxisID: 'y',
+      },
+      {
+        label: 'Wärmepumpen-Verbrauch (kW)',
+        data: hourlyData.map(d => d.waermepumpe),
+        fill: false,
+        borderColor: '#f93b01',
+        backgroundColor: '#f93b01',
         tension: 0.1,
         yAxisID: 'y',
       },
@@ -1332,7 +1502,7 @@ export default function Home() {
       },
     ],
   };
-
+  
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -1347,7 +1517,8 @@ export default function Home() {
               return `Preis: ${context.raw.toFixed(2)} Ct/kWh`;
             }
             const verbraucherList = hourlyData[index].verbraucher.join(', ');
-            return `Verbrauch: ${context.raw.toFixed(2)} kW\nAktive Verbraucher: ${verbraucherList || 'Keine'}`;
+            const label = context.dataset.label.includes('Wärmepumpen') ? 'Wärmepumpen-Verbrauch' : 'Verbrauch ohne Wärmepumpe';
+            return `${label}: ${context.raw.toFixed(2)} kW\nAktive Verbraucher: ${verbraucherList || 'Keine'}`;
           },
         },
       },
@@ -1369,7 +1540,7 @@ export default function Home() {
       x: { title: { display: true, text: 'Uhrzeit', color: '#333' }, ticks: { color: '#333' } },
     },
   };
-
+  
   const chartDataKosten = {
     labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
     datasets: [
@@ -1377,7 +1548,7 @@ export default function Home() {
         label: `Kosten (Dynamischer Tarif) am ${selectedDate || 'N/A'} (Ct)`,
         data: hourlyData.map((_, index) => {
           const price = chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
-          return (hourlyData[index].total * price).toFixed(2);
+          return ((hourlyData[index].total - hourlyData[index].waermepumpe) * price).toFixed(2);
         }),
         fill: false,
         borderColor: '#88bf50',
@@ -1388,7 +1559,7 @@ export default function Home() {
         label: `Kosten (Fester Tarif) am ${selectedDate || 'N/A'} (Ct)`,
         data: hourlyData.map((_, index) => {
           const price = parseFloat(getPreisDifferenz(strompreis, selectedRegion));
-          return (hourlyData[index].total * price).toFixed(2);
+          return ((hourlyData[index].total - hourlyData[index].waermepumpe) * price).toFixed(2);
         }),
         fill: false,
         borderColor: '#063d37',
@@ -1397,7 +1568,7 @@ export default function Home() {
       },
     ],
   };
-
+  
   const chartOptionsKosten = {
     responsive: true,
     maintainAspectRatio: false,
@@ -1405,7 +1576,7 @@ export default function Home() {
       legend: { position: 'top', labels: { color: '#333' } },
       title: {
         display: true,
-        text: `Stündliche Stromersparnis (${selectedDate || 'Fallback-Preis'})`,
+        text: `Stündliche Stromersparnis ohne Wärmepumpe (${selectedDate || 'Fallback-Preis'})`,
         color: '#333',
         font: { size: 11.2 },
       },
@@ -1424,7 +1595,7 @@ export default function Home() {
     },
     scales: {
       y: {
-        beginAtZero: true, 
+        beginAtZero: true,
         title: { display: true, text: 'Ersparnis (Ct)', color: '#333' },
         ticks: { color: '#333' },
       },
@@ -1434,7 +1605,71 @@ export default function Home() {
       },
     },
   };
-
+  
+  const chartDataWaermepumpeKosten = {
+    labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
+    datasets: [
+      {
+        label: `Wärmepumpen-Kosten (Dynamischer Tarif) am ${selectedDate || 'N/A'} (Ct)`,
+        data: hourlyData.map((_, index) => {
+          const price = chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
+          return (hourlyData[index].waermepumpe * price).toFixed(2);
+        }),
+        fill: false,
+        borderColor: '#f93b01',
+        backgroundColor: '#f93b01',
+        tension: 0.1,
+      },
+      {
+        label: `Wärmepumpen-Kosten (Fester Tarif) am ${selectedDate || 'N/A'} (Ct)`,
+        data: hourlyData.map((_, index) => {
+          const price = parseFloat(getPreisDifferenz(strompreis, selectedRegion));
+          return (hourlyData[index].waermepumpe * price).toFixed(2);
+        }),
+        fill: false,
+        borderColor: '#063d37',
+        backgroundColor: '#063d37',
+        tension: 0.1,
+      },
+    ],
+  };
+  
+  const chartOptionsWaermepumpeKosten = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top', labels: { color: '#333' } },
+      title: {
+        display: true,
+        text: `Stündliche Wärmepumpen-Kosten (${selectedDate || 'Fallback-Preis'})`,
+        color: '#333',
+        font: { size: 11.2 },
+      },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            const index = context.dataIndex;
+            const datasetLabel = context.dataset.label;
+            const isDynamic = datasetLabel.includes('Dynamischer Tarif');
+            const price = isDynamic ? (chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion))) : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
+            const verbraucherList = hourlyData[index].verbraucher.filter(v => verbraucherTypes[v] === 'waermepumpe').join(', ');
+            return `${datasetLabel.split(' am')[0]}: ${context.raw} Ct\nPreis: ${price.toFixed(2)} Ct/kWh\nWärmepumpen: ${verbraucherList || 'Keine'}`;
+          },
+        },
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: { display: true, text: 'Kosten (Ct)', color: '#333' },
+        ticks: { color: '#333' },
+      },
+      x: {
+        title: { display: true, text: 'Uhrzeit', color: '#333' },
+        ticks: { color: '#333' },
+      },
+    },
+  };
 
 
 return (
@@ -2181,11 +2416,30 @@ table, th, td {
   display: flex;
   align-items: center;
   gap: 8px; /* Ensures consistent spacing between checkbox, icon, and text */
+
+.kw-input-container {
+        display: flex;
+        align-items: center;
+        gap: 8px; /* Space between input and label */
+      }
+
+      .kw-input {
+        width: 80px; /* Smaller width for the kW input field */
+        padding: 6px; /* Adjust padding for a compact look */
+        font-size: 14px; /* Smaller font size */
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      .kw-label {
+        font-size: 14px; /* Match font size with input for consistency */
+        white-space: nowrap; /* Prevent label from wrapping */
+      }
 }`}</style>
     
     
     
-    <div className="app-container">
+  <div className="app-container">
   <div className="calculation-report">
     <h2 className="report-title">Rechenbericht</h2>
     <div className="report-content">
@@ -2322,16 +2576,17 @@ table, th, td {
                       </div>
                     )}
                     {menu.id === 'waermepumpe' && (
-                      <div className="input-group">
+                      <div className="input-group kw-input-container">
                         <input
                           type="number"
                           className="kw-input"
-                          value={verbraucherDaten[option.name]?.kw || ''}
+                          value={(verbraucherDaten[option.name]?.watt / 1000) || ''}
                           onChange={(e) => handleKWChange(option.name, e.target.value)}
                           min="0"
-                          step="0.1"
-                          placeholder="kW"
+                          step="1"
+                          placeholder=""
                         />
+                        <span className="kw-label">kW</span>
                       </div>
                     )}
                     <div className="price-display">
@@ -2455,8 +2710,8 @@ table, th, td {
                                         value={timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit)?.label || ''}
                                         onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
                                       >
-                                        {timePeriods.map((period, index) => (
-                                          <option key={`${period.label}-${index}`} value={period.label}>
+                                        {timePeriods.map((period, idx) => (
+                                          <option key={`${period.label}-${idx}`} value={period.label}>
                                             {`${period.label} (${period.startzeit} - ${period.endzeit})`}
                                           </option>
                                         ))}
@@ -2466,11 +2721,12 @@ table, th, td {
                                       Dauer (h):
                                       <input
                                         type="number"
+                                        className="settings-input"
                                         value={zeitraum.dauer || ''}
                                         onChange={(e) => handleErweiterteEinstellungChange(option.name, 'dauer', e.target.value, zeitraum.id)}
                                         min="0"
                                         max="23"
-                                        step="0.1"
+                                        step="1"
                                         placeholder="z.B. 2"
                                       />
                                     </label>
@@ -2508,7 +2764,7 @@ table, th, td {
                                   onChange={(e) => handleErweiterteEinstellungChange(option.name, 'jaz', e.target.value, null)}
                                   min="0"
                                   step="0.1"
-                                  placeholder="z.B. 4.0"
+                                  placeholder="z.B. 3.4"
                                 />
                               </label>
                               <label>
@@ -2550,7 +2806,7 @@ table, th, td {
                                       onChange={(e) => handleErweiterteEinstellungChange(option.name, 'dauer', e.target.value, zeitraum.id)}
                                       min="0"
                                       max="23"
-                                      step="1" // Angepasst auf ganze Stunden wie bei dynamischen Verbrauchern
+                                      step="1"
                                       placeholder="z.B. 2"
                                     />
                                   </label>
@@ -2582,8 +2838,9 @@ table, th, td {
                                 Nutzung (pro Woche):
                                 <input
                                   type="number"
+                                  className="settings-input"
                                   value={erweiterteEinstellungen[option.name]?.nutzung || ''}
-                                  onChange={(e) => handleErweiterteEinstellungChange(option.name, 'nutzung', e.target.value)}
+                                  onChange={(e) => handleErweiterteEinstellungChange(option.name, 'nutzung', e.target.value, null)}
                                   min="0"
                                   max="20"
                                   step="1"
@@ -2601,9 +2858,9 @@ table, th, td {
                                       value={timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit)?.label || ''}
                                       onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
                                     >
-                                      {timePeriods.map((period) => (
-                                        <option key={period.label} value={period.label}>
-                                          {period.label} ({period.startzeit} - {period.endzeit})
+                                      {timePeriods.map((period, idx) => (
+                                        <option key={`${period.label}-${idx}`} value={period.label}>
+                                          {`${period.label} (${period.startzeit} - ${period.endzeit})`}
                                         </option>
                                       ))}
                                     </select>
@@ -2613,7 +2870,7 @@ table, th, td {
                                     <input
                                       type="number"
                                       className="settings-input"
-                                      value={zeitraum.dauer}
+                                      value={zeitraum.dauer || ''}
                                       onChange={(e) => handleErweiterteEinstellungChange(option.name, 'dauer', e.target.value, zeitraum.id)}
                                       min="0"
                                       max="23"
@@ -2673,15 +2930,18 @@ table, th, td {
                     />
                   )}
                   {menu.id === 'waermepumpe' && (
-                    <input
-                      type="number"
-                      className="new-option-kw"
-                      placeholder="kW"
-                      value={newOptionKW[menu.id] || ''}
-                      onChange={(e) => handleNewOptionKW(menu.id, e.target.value)}
-                      min="0"
-                      step="0.1"
-                    />
+                    <div className="kw-input-container">
+                      <input
+                        type="number"
+                        className="new-option-kw"
+                        placeholder=""
+                        value={newOptionKW[menu.id] || ''}
+                        onChange={(e) => handleNewOptionKW(menu.id, e.target.value)}
+                        min="0"
+                        step="0.1"
+                      />
+                      <span className="kw-label">kW</span>
+                    </div>
                   )}
                   {menu.id === 'dynamischeverbraucher' && (
                     <select
@@ -2705,14 +2965,23 @@ table, th, td {
       ))}
       <div className="summary-container">
         <h3 className="summary-title">Zusammenfassung pro Jahr</h3>
-        <div className="summary-item"> Kosten Grundlast: {zusammenfassung.grundlast} €</div>
-        <div className="summary-item"> Kosten Schaltbare Verbraucher: {zusammenfassung.dynamisch} €</div>
-        <div className="summary-item"> Kosten Gesamt: {zusammenfassung.gesamt} €</div>
-        <div className="summary-item"> Gesamtwatt: {zusammenfassung.totalWattage} W/h</div>
-        <div className="summary-item"> Kosten Grundlast (dynamischer Tarif): {zusammenfassung.grundlastDyn} €</div>
-        <div className="summary-item"> Kosten Schaltbare Verbraucher (dynamischer Tarif): {zusammenfassung.dynamischDyn} €</div>
-        <div className="summary-item"> Kosten Gesamt (dynamischer Tarif): {zusammenfassung.gesamtDyn} €</div>
-        <div className="summary-item"> Vergleich (fester vs. dynamischer Tarif): {(parseFloat(zusammenfassung.gesamt) - parseFloat(zusammenfassung.gesamtDyn)).toFixed(2)} €</div>
+        <div className="summary-item">Kosten Grundlast (fixer Tarif): {zusammenfassung.grundlast} €</div>
+        <div className="summary-item">Kosten Schaltbare Verbraucher (fixer Tarif): {zusammenfassung.dynamisch} €</div>
+        <div className="summary-item">Kosten Wärmepumpe (fixer Tarif): {zusammenfassung.waermepumpe} €</div>
+        <div className="summary-item">Kosten Gesamt (fixer Tarif): {zusammenfassung.gesamt} €</div>
+        <div className="summary-item">Gesamtwattage: {zusammenfassung.totalWattage} W</div>
+        <div className="summary-item">Kosten Grundlast (dynamischer Tarif): {zusammenfassung.grundlastDyn} €</div>
+        <div className="summary-item">Kosten Schaltbare Verbraucher (dynamischer Tarif): {zusammenfassung.dynamischDyn} €</div>
+        <div className="summary-item">Kosten Gesamt (dynamischer Tarif): {zusammenfassung.gesamtDyn} €</div>
+        <div className="summary-item">Ersparnis (fixer vs. dynamischer Tarif): {(parseFloat(zusammenfassung.gesamt) - parseFloat(zusammenfassung.gesamtDyn)).toFixed(2)} €</div>
+       
+        <h3 className="summary-title">Zusammenfassung Wärmepumpe</h3>
+        <div className="summary-item">Kosten Wärmepumpe (fixer Tarif): {zusammenfassung.waermepumpe} €</div>
+        <div className="summary-item">Kosten Wärmepumpe (dynamischer Tarif): {zusammenfassung.waermepumpeDyn} €</div>
+        <div className="summary-item">Kosten Wärmepumpe (dyn) Selbsterstellt:{zusammenfassung.dynselbstbestimmt} €</div>
+        
+        
+      
         <button className="download-button bg-[#063d37] text-white py-2 px-4 rounded hover:bg-blue-700" onClick={handleDownloadClick}>
           Download PDF
         </button>
@@ -2860,7 +3129,6 @@ table, th, td {
     </div>
   )}
 </div>
-
 
                                        </>
                                      );
