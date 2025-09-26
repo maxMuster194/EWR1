@@ -1197,7 +1197,7 @@ export default function Home() {
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(18);
-    doc.text('Rechenbericht', 10, yPosition);
+    doc.text('Detail-Rechner', 10, yPosition);
     yPosition += sectionSpacing;
     drawSectionLine();
 
@@ -2497,7 +2497,7 @@ table, th, td {
 
 <div className="app-container">
   <div className="calculation-report">
-    <h2 className="report-title">Rechenbericht</h2>
+    <h2 className="report-title">Detail-Rechner</h2>
     <div className="report-content">
       <div className="input-container-html">
         <label htmlFor="strompreis">Strompreis (Ct/kWh):</label>
@@ -3065,7 +3065,7 @@ table, th, td {
         </div>
       ))}
       <div className="summary-container">
-        <h3 className="summary-title">Zusammenfassung pro Jahr</h3>
+        <h3 className="summary-title">Zusammenfassung pro Jahr (Energie)</h3>
         <div className="summary-item">Kosten Grundlast (fixer Tarif): {zusammenfassung.grundlast} €</div>
         <div className="summary-item">Kosten Schaltbare Verbraucher (fixer Tarif): {zusammenfassung.dynamisch} €</div>
         <div className="summary-item">Kosten Wärmepumpe (fixer Tarif): {zusammenfassung.waermepumpe} €</div>
@@ -3075,7 +3075,7 @@ table, th, td {
         <div className="summary-item">Kosten Schaltbare Verbraucher (dynamischer Tarif): {zusammenfassung.dynamischDyn} €</div>
         <div className="summary-item">Kosten Gesamt (dynamischer Tarif): {zusammenfassung.gesamtDyn} €</div>
         <div className="summary-item">Ersparnis (fixer vs. dynamischer Tarif): {(parseFloat(zusammenfassung.gesamt) - parseFloat(zusammenfassung.gesamtDyn)).toFixed(2)} €</div>
-        <h3 className="summary-title">Zusammenfassung Wärmepumpe</h3>
+        <h3 className="summary-title">Wärmepumpe</h3>
         <div className="summary-item">Kosten Wärmepumpe (fixer Tarif): {zusammenfassung.waermepumpe} €</div>
         <div className="summary-item">Kosten Wärmepumpe (dynamischer Tarif): {zusammenfassung.waermepumpeDyn} €</div>
         <div className="summary-item">Kosten Wärmepumpe (dyn) Selbsterstellt: {zusammenfassung.dynselbstbestimmt} €</div>

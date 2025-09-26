@@ -1197,7 +1197,7 @@ export default function Home() {
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(18);
-    doc.text('Rechenbericht', 10, yPosition);
+    doc.text('Detail-Rechner', 10, yPosition);
     yPosition += sectionSpacing;
     drawSectionLine();
 
@@ -1729,7 +1729,7 @@ body {
   height: 280px;
 }
 
-/* Container für den Rechenbericht */
+/* Container für den Detail-Rechner */
 .calculation-report {
   background: #ffffff;
   padding: 10px;
@@ -1741,7 +1741,7 @@ body {
   -webkit-overflow-scrolling: touch; /* Sanftes Scrollen auf Touch-Geräten */
 }
 
-/* Titel des Rechenberichts */
+/* Titel des Detail-Rechner */
 .report-title {
   font-size: 1.125rem;
   font-weight: 600;
@@ -1749,7 +1749,7 @@ body {
   color: #063d37; /* Updated color */
 }
 
-/* Inhalt des Rechenberichts */
+/* Inhalt des Detail-Rechner */
 .report-content {
   display: flex;
   flex-direction: column;
@@ -2369,7 +2369,7 @@ body {
 
   .calculation-report {
     max-height: calc(100vh - 232px); /* Angepasst für mobile Geräte */
-    overflow-y: auto; /* Scrollbalken für mobilen Rechenbericht */
+    overflow-y: auto; /* Scrollbalken für mobilen Detail-Rechner */
   }
 
   .region-buttons {
@@ -2619,9 +2619,9 @@ body {
     </div>
   </div>
 
-  {/* Rechenbericht */}
+  {/* Detail-Rechner */}
   <div className="calculation-report">
-    <h2 className="report-title">Rechenbericht</h2>
+    <h2 className="report-title">Detail-Rechner</h2>
     <div className="report-content">
       {/* Eingaben: Datum und Strompreis nebeneinander */}
       <div className="inputs-wrapper">
@@ -3097,7 +3097,7 @@ body {
 
       {/* Zusammenfassung */}
       <div className="calculation-report">
-        <h2 className="report-title">Jahreszusammenfassung pro Jahr</h2>
+        <h2 className="report-title">Jahreszusammenfassung pro Jahr (Energie)</h2>
         <p>Kosten Grundlast: {zusammenfassung.grundlast} €</p>
         <p>Kosten Schaltbere Verbraucher: {zusammenfassung.dynamisch} €</p>
         <p>Kosten Gesamt: {zusammenfassung.gesamt} €</p>
@@ -3106,7 +3106,7 @@ body {
         <p>Kosten Schaltbare Verbraucher (dynamischer Tarif): {zusammenfassung.dynamischDyn} €</p>
         <p>Kosten Gesamt (dynamischer Tarif): {zusammenfassung.gesamtDyn} €</p>
         <p>Vergleich (fester vs. dynamischer Tarif): {(parseFloat(zusammenfassung.gesamt) - parseFloat(zusammenfassung.gesamtDyn)).toFixed(2)} €</p>
-        <div className="report-title">Zusammenfassung Wärmepumpe</div>
+        <div className="report-title">Wärmepumpe</div>
         <div className="">Kosten Wärmepumpe (fixer Tarif): {zusammenfassung.waermepumpe} €</div>
         <div className="">Kosten Wärmepumpe (dynamischer Tarif): {zusammenfassung.waermepumpeDyn} €</div>
         <div className="">Kosten Wärmepumpe (dyn) Selbsterstellt: {zusammenfassung.dynselbstbestimmt} €</div>

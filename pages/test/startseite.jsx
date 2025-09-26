@@ -235,7 +235,7 @@ const styles = `
       background-color: #062316;
     }
     .bottom-nav a.active .fa-house {
-      color: #e5dbc1 !important;
+      color: #fafafa !important;
     }
     .bottom-nav a p {
       text-align: center;
@@ -245,7 +245,7 @@ const styles = `
     }
     .bottom-nav a svg {
       font-size: 18px;
-      color: #e5dbc1;
+      color: #fafafa;
     }
   }
 `;
