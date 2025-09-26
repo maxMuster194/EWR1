@@ -1,8 +1,10 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import StromverbrauchRechnerDesktop from './details40'; // Für Desktop/Tablet
-import StromverbrauchRechnerMobile from './Mdetails47'; // Für Handy
+import StromverbrauchRechnerDesktop from './details40';
+import StromverbrauchRechnerMobile from './Mdetails47';
 import LoadingScreen from '../loading/Loadingscreen';
 
 const styles = `
@@ -225,16 +227,14 @@ const Energiemanager = () => {
       const mediaQuery = window.matchMedia("(max-width: 767px)");
       setIsMobile(mediaQuery.matches);
 
-      // Add listener for window resize
       const handleResize = () => setIsMobile(mediaQuery.matches);
       mediaQuery.addEventListener('change', handleResize);
 
-      // Simulate loading delay (replace with actual data fetching if needed)
+      // Ladebildschirm für genau 1 Sekunde
       const timer = setTimeout(() => {
         setLoading(false);
-      }, 1000); // Adjust the delay as needed (e.g., 2000ms = 2 seconds)
+      }, 1000);
 
-      // Cleanup listener and timer on component unmount
       return () => {
         mediaQuery.removeEventListener('change', handleResize);
         clearTimeout(timer);
@@ -242,7 +242,6 @@ const Energiemanager = () => {
     }
   }, []);
 
-  // If loading is true, show the LoadingScreen
   if (loading) {
     return <LoadingScreen />;
   }
