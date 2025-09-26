@@ -3093,7 +3093,7 @@ table, th, td {
       </div>
     </div>
     <div className="diagram">
-      <h3 className="diagram-title">Stromersparnis pro Stunde</h3>
+      <h3 className="diagram-title">Ergebnis pro Stunde</h3>
       <div className="chart-container">
         <Line data={chartDataKosten} options={chartOptionsKosten} />
       </div>

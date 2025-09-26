@@ -20,9 +20,7 @@ import LoadingScreen from '../loading/Loadingscreen';
 // Register Chart.js components
 ChartJSInstance.register(LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend, Filler);
 
-// Simple LoadingScreen component (replace with your own if you have one)
-
-
+// Chart options
 const chartOptions = {
   responsive: true,
   maintainAspectRatio: false,
@@ -35,6 +33,7 @@ const chartOptions = {
   },
 };
 
+// Styles with updated top-box
 const styles = `
   .layout {
     width: 100%;
@@ -54,7 +53,7 @@ const styles = `
       / 200px 1fr;
     padding-top: 2.5rem;
     padding-bottom: 3rem;
-    background-color: #F3F4F6;
+    background-color: #fafafa;
     box-sizing: border-box;
   }
   .header {
@@ -84,6 +83,14 @@ const styles = `
     background-color: #fafafa;
     border-radius: 12px;
     box-sizing: border-box;
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #063d37;
+  }
+  .top-box h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
   }
   .sidebar {
     grid-area: sidebar;
@@ -388,19 +395,18 @@ const Energiemanager = () => {
     };
     window.addEventListener('resize', handleResize);
 
-    // Simulate loading delay (replace with actual data fetching if needed)
+    // Simulate loading delay
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1000); // Adjust the delay as needed (e.g., 2000ms = 2 seconds)
+    }, 1000);
 
-    // Cleanup both event listener and timer
+    // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
       clearTimeout(timer);
     };
   }, []);
 
-  // If loading is true, show the LoadingScreen
   if (loading) {
     return <LoadingScreen />;
   }
@@ -415,7 +421,9 @@ const Energiemanager = () => {
           </div>
         </header>
 
-        <div className="top-box"><h2>Rechner</h2></div>
+        <div className="top-box">
+          <h2>Übersichtsrechner</h2>
+        </div>
 
         <div className="sidebar w-full p-3 bg-[#202026] border-r border-gray-300">
           <div className="flex h-full flex-col justify-between">

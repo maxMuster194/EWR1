@@ -355,7 +355,7 @@ export default function MongoDBPricesPage() {
   
     <div className="bg-[#fafafa] p-4 sm:p-6 rounded-xl  mb-6 sm:mb-8">
       <label className="block text-lg sm:text-xl font-semibold text-[#063d37] mb-4 text-center bg-[#fafafa]">
-        Jährlichen Verbrauch, Preis und Region auswählen
+      Rückblick Kosten und Erpsrnis (exclusiv Wärmepumpe und E-Mobilität)
       </label>
   
       <div className="flex flex-col gap-4 sm:gap-6 p-4 rounded-lg">
