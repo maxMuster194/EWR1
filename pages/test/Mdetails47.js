@@ -1197,7 +1197,7 @@ export default function Home() {
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(18);
-    doc.text('Detail-Rechner', 10, yPosition);
+    doc.text('Rechenbericht', 10, yPosition);
     yPosition += sectionSpacing;
     drawSectionLine();
 
@@ -2619,7 +2619,7 @@ body {
     </div>
   </div>
 
-  {/* Detail-Rechner */}
+  {/* Rechenbericht */}
   <div className="calculation-report">
     <h2 className="report-title">Detail-Rechner</h2>
     <div className="report-content">
@@ -2831,6 +2831,26 @@ body {
                         )}
                         {(menu.id === "dynamischeverbraucher" || menu.id === "waermepumpe") && (
                           <div className="dynamic-consumer-layout flex flex-col gap-0.5">
+                            {menu.id === "dynamischeverbraucher" && (
+                              <div className="flex flex-col items-center justify-center w-full">
+                                <span className="text-[11px] font-semibold text-gray-700 text-center">
+                                  Nutzung/Woche
+                                </span>
+                                <span className="text-[15px] font-bold text-gray-700">
+                                  {erweiterteEinstellungen[option.name]?.nutzung || 0}
+                                </span>
+                                <input
+                                  type="range"
+                                  min="0"
+                                  max="20"
+                                  value={erweiterteEinstellungen[option.name]?.nutzung || 0}
+                                  onChange={(e) =>
+                                    handleErweiterteEinstellungChange(option.name, "nutzung", Number(e.target.value), null)
+                                  }
+                                  className="w-full accent-[#063d37] mt-1"
+                                />
+                              </div>
+                            )}
                             {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum, index) => (
                               <div
                                 key={zeitraum.id}
