@@ -1739,7 +1739,7 @@ return (
   content: '';
   height: 20px;
   width: 20px;
-  left: 0px; /* Kugel weiter nach links verschoben */
+  left: 0px;
   bottom: 1.7px;
   background-color: #ffffff;
   border-radius: 50%;
@@ -1748,15 +1748,15 @@ return (
 }
 
 .discount-switch-input:checked + .discount-switch-slider {
-  background-color: #063d37; /* Updated color */
+  background-color: #063d37;
 }
 
 .discount-switch-input:checked + .discount-switch-slider:before {
-  transform: translateX(26px); /* Angepasst für kleinere Kugel */
+  transform: translateX(26px);
 }
 
 .discount-switch-input:focus + .discount-switch-slider {
-  box-shadow: 0 0 0 3px rgba(6, 61, 55, 0.2); /* Updated focus color */
+  box-shadow: 0 0 0 3px rgba(6, 61, 55, 0.2);
 }
 
 .discount-switch-slider:hover {
@@ -1764,11 +1764,11 @@ return (
 }
 
 .discount-switch-input:checked + .discount-switch-slider:hover {
-  background-color: #052f2b; /* Darker shade of new color for hover */
+  background-color: #052f2b;
 }
 
 .region-switch-wrapper:hover .region-label {
-  color: #063d37; /* Updated color */
+  color: #063d37;
 }
 
 .modal-overlay {
@@ -1798,11 +1798,11 @@ return (
 }
 
 .modal-content input.pr-10 {
-  padding-right: 2.5rem; /* Platz für den X-Button */
+  padding-right: 2.5rem;
 }
 
 .modal-content .absolute.top-2.right-2 {
-  z-index: 10; /* Stellt sicher, dass das X über dem Eingabefeld liegt */
+  z-index: 10;
 }
 
 * {
@@ -1812,7 +1812,7 @@ return (
 }
 
 html {
-  font-size: 16px; /* Base font size for consistency */
+  font-size: 16px;
 }
 
 body {
@@ -1828,8 +1828,8 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1fr; /* Single column by default */
-  gap: 24px; /* Reduzierter Gap für besseres Layout */
+  grid-template-columns: 1fr;
+  gap: 24px;
   padding: 20px;
   min-height: calc(100vh - 64px);
 }
@@ -1842,14 +1842,14 @@ body {
 
 .calculation-report {
   background: #ffffff;
-  padding: 24px; /* Reduzierter Padding */
+  padding: 24px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   overflow-y: auto;
   max-height: calc(100vh - 64px);
   scrollbar-width: thin;
-  scrollbar-color: #063d37 #e5e7eb; /* Updated color */
+  scrollbar-color: #063d37 #e5e7eb;
 }
 
 .calculation-report::-webkit-scrollbar {
@@ -1862,7 +1862,7 @@ body {
 }
 
 .calculation-report::-webkit-scrollbar-thumb {
-  background: #063d37; /* Updated color */
+  background: #063d37;
   border-radius: 4px;
 }
 
@@ -1874,11 +1874,11 @@ body {
 .diagrams-container {
   display: flex;
   flex-direction: column;
-  gap: 24px; /* Reduzierter Gap */
+  gap: 24px;
   overflow-y: auto;
   max-height: calc(100vh - 64px);
   scrollbar-width: thin;
-  scrollbar-color: #063d37 #e5e7eb; /* Updated color */
+  scrollbar-color: #063d37 #e5e7eb;
 }
 
 .diagrams-container::-webkit-scrollbar {
@@ -1891,7 +1891,7 @@ body {
 }
 
 .diagrams-container::-webkit-scrollbar-thumb {
-  background: #063d37; /* Updated color */
+  background: #063d37;
   border-radius: 4px;
 }
 
@@ -1912,9 +1912,9 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px; /* Reduzierter Padding */
+  padding: 16px;
   cursor: pointer;
-  background: linear-gradient(90deg, #062316, #063d37); /* Updated color */
+  background: linear-gradient(90deg, #062316, #063d37);
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
   color: #ffffff;
@@ -1922,11 +1922,11 @@ body {
 }
 
 .menu-header:hover {
-  background: linear-gradient(90deg, #062316, #063d37); /* Updated color */
+  background: linear-gradient(90deg, #062316, #063d37);
 }
 
 .menu-header span {
-  font-size: 0.875rem; /* Kleinere Schrift */
+  font-size: 0.875rem;
   font-weight: 700;
 }
 
@@ -1939,17 +1939,17 @@ body {
 }
 
 .menu-content {
-  padding: 12px; /* Anpassung für besseres Layout */
+  padding: 12px;
   background: #ffffff;
   border-radius: 0 0 6px 6px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .report-title {
-  font-size: 1.5rem; /* Kleinere Schrift */
+  font-size: 1.5rem;
   font-weight: 700;
-  margin-bottom: 16px; /* Reduzierter Abstand */
-  color: #063d37; /* Updated color */
+  margin-bottom: 16px;
+  color: #063d37;
 }
 
 @media (min-width: 1024px) {
@@ -1961,7 +1961,7 @@ body {
 .report-content {
   display: flex;
   flex-direction: column;
-  gap: 16px; /* Reduzierter Gap */
+  gap: 16px;
 }
 
 .input-container-html {
@@ -1970,18 +1970,18 @@ body {
 }
 
 .input-container-html label {
-  font-size: 0.875rem; /* Kleinere Schrift */
+  font-size: 0.875rem;
   font-weight: 600;
   color: #1f2937;
-  margin-bottom: 6px; /* Reduzierter Abstand */
+  margin-bottom: 6px;
 }
 
 .input-container-html input,
 .input-container-html select {
-  padding: 8px; /* Kleinere Padding */
+  padding: 8px;
   border: 2px solid #d1d5db;
-  border-radius: 6px; /* Kleinere Radius */
-  font-size: 0.875rem; /* Kleinere Schrift */
+  border-radius: 6px;
+  font-size: 0.875rem;
   width: 100%;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -1989,21 +1989,21 @@ body {
 .input-container-html input:focus,
 .input-container-html select:focus {
   outline: none;
-  border-color: #063d37; /* Updated color */
-  box-shadow: 0 0 0 3px rgba(6, 61, 55, 0.3); /* Updated color */
+  border-color: #063d37;
+  box-shadow: 0 0 0 3px rgba(6, 61, 55, 0.3);
 }
 
 .loading,
 .no-data {
   color: #dc2626;
-  font-size: 0.875rem; /* Kleinere Schrift */
+  font-size: 0.875rem;
   font-weight: 500;
 }
 
 .checkbox-group {
   display: flex;
   flex-direction: column;
-  gap: 8px; /* Anpassung für kompakteres Layout */
+  gap: 8px;
 }
 
 .checkbox-group-header {
@@ -2012,18 +2012,18 @@ body {
   gap: 8px;
   font-weight: 700;
   font-size: 0.9rem;
-  color: #063d37; /* Updated color */
+  color: #063d37;
   padding: 6px 0;
   background: #f0f4f8;
   border-radius: 4px;
 }
 
 .checkbox-group-header > *:nth-child(4) {
-  padding-left: 40px; /* Verschiebt die "Kosten"-Überschrift 10px nach rechts */
+  padding-left: 40px;
 }
 
 .checkbox-group-header > *:nth-child(3) {
-  padding-left: 30px; /* Verschiebt die "Kosten"-Überschrift 10px nach rechts */
+  padding-left: 30px;
 }
 
 .checkbox-group li {
@@ -2036,7 +2036,7 @@ body {
   border-radius: 4px;
   transition: background 0.2s ease;
   position: relative;
-  font-size: 0.85rem; /* Kleinere Schriftgröße für alle Inhalte in der Liste */
+  font-size: 0.85rem;
 }
 
 .checkbox-group li:hover {
@@ -2052,7 +2052,7 @@ body {
 .checkbox-group-label input {
   width: 16px;
   height: 16px;
-  accent-color: #063d37; /* Updated color */
+  accent-color: #063d37;
   cursor: pointer;
 }
 
@@ -2065,7 +2065,7 @@ body {
 .info-field .tooltip {
   visibility: hidden;
   position: absolute;
-  background: #063d37; /* Updated color */
+  background: #063d37;
   color: #ffffff;
   font-size: 0.75rem;
   padding: 4px 6px;
@@ -2096,8 +2096,8 @@ body {
 
 .input-group input.watt-input:focus {
   outline: none;
-  border-color: #063d37; /* Updated color */
-  box-shadow: 0 0 0 2px rgba(6, 61, 55, 0.2); /* Updated color */
+  border-color: #063d37;
+  box-shadow: 0 0 0 2px rgba(6, 61, 55, 0.2);
 }
 
 .price-display {
@@ -2108,7 +2108,7 @@ body {
 }
 
 .settings-field {
-  background: linear-gradient(90deg, #062316, #063d37); /* Updated color */
+  background: linear-gradient(90deg, #062316, #063d37);
   color: #ffffff;
   padding: 4px 8px;
   border-radius: 3px;
@@ -2119,7 +2119,7 @@ body {
 }
 
 .settings-field:hover {
-  background: linear-gradient(90deg, #062316, #052f2b); /* Updated hover color */
+  background: linear-gradient(90deg, #062316, #052f2b);
   transform: scale(1.05);
 }
 
@@ -2190,13 +2190,13 @@ body {
 .settings-container {
   grid-column: 1 / -1;
   background: #ffffff;
-  padding: 20px; /* Reduzierter Padding */
-  border-radius: 10px; /* Kleinere Radius */
+  padding: 20px;
+  border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  margin-top: 10px; /* Reduzierter Abstand */
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
-  gap: 16px; /* Reduzierter Gap */
+  gap: 16px;
   transition: transform 0.3s ease;
 }
 
@@ -2205,22 +2205,22 @@ body {
 }
 
 .settings-container h4 {
-  font-size: 1.25rem; /* Kleinere Schrift */
+  font-size: 1.25rem;
   font-weight: 700;
-  color: #063d37; /* Updated color */
+  color: #063d37;
 }
 
 .settings-container h5 {
-  font-size: 1rem; /* Kleinere Schrift */
+  font-size: 1rem;
   font-weight: 600;
-  color: #063d37; /* Updated color */
-  margin-bottom: 10px; /* Reduzierter Abstand */
+  color: #063d37;
+  margin-bottom: 10px;
 }
 
 .settings-container .grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px; /* Reduzierter Gap */
+  gap: 16px;
 }
 
 @media (min-width: 640px) {
@@ -2235,78 +2235,78 @@ body {
 .settings-container label {
   display: flex;
   flex-direction: column;
-  font-size: 0.875rem; /* Kleinere Schrift */
+  font-size: 0.875rem;
   font-weight: 600;
   color: #1f2937;
 }
 
 .settings-container select {
-  padding: 8px; /* Kleinere Padding */
+  padding: 8px;
   border: 2px solid #d1d5db;
-  border-radius: 6px; /* Kleinere Radius */
-  font-size: 0.875rem; /* Kleinere Schrift */
+  border-radius: 6px;
+  font-size: 0.875rem;
   width: 100%;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .settings-container select:focus {
   outline: none;
-  border-color: #063d37; /* Updated color */
-  box-shadow: 0 0 0 3px rgba(6, 61, 55, 0.3); /* Updated color */
+  border-color: #063d37;
+  box-shadow: 0 0 0 3px rgba(6, 61, 55, 0.3);
 }
 
 .radio-group-settings {
   display: flex;
-  gap: 12px; /* Reduzierter Gap */
-  margin-top: 6px; /* Reduzierter Abstand */
+  gap: 12px;
+  margin-top: 6px;
 }
 
 .radio-group-settings label {
   display: flex;
   align-items: center;
-  gap: 8px; /* Reduzierter Gap */
+  gap: 8px;
 }
 
 .radio-group-settings input {
-  width: 16px; /* Kleinere Radio-Button */
+  width: 16px;
   height: 16px;
-  accent-color: #063d37; /* Updated color */
+  accent-color: #063d37;
   cursor: pointer;
 }
 
 .zeitraum-section {
-  border-top: 1px solid #e5e7eb; /* Dünnerer Rand */
-  padding-top: 10px; /* Reduzierter Abstand */
-  margin-top: 10px; /* Reduzierter Abstand */
+  border-top: 1px solid #e5e7eb;
+  padding-top: 10px;
+  margin-top: 10px;
 }
 
 .add-option-button {
-  background: linear-gradient(90deg, #062316, #063d37); /* Updated color */
+  background: linear-gradient(90deg, #062316, #063d37);
   color: #ffffff;
-  padding: 6px 12px; /* Reduzierter Padding */
-  border-radius: 6px; /* Kleinere Radius */
-  font-size: 0.875rem; /* Kleinere Schrift */
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.875rem;
   font-weight: 600;
   border: none;
   cursor: pointer;
-  margin-top: 16px; /* Reduzierter Abstand */
+  margin-top: 16px;
   transition: transform 0.2s ease, background 0.3s ease;
 }
 
 .add-option-button:hover {
-  background: linear-gradient(90deg, #062316, #052f2b); /* Updated hover color */
+  background: linear-gradient(90deg, #062316, #052f2b);
   transform: scale(1.05);
 }
 
 .new-option-container {
-  margin-top: 16px; /* Reduzierter Abstand */
-  padding: 16px; /* Reduzierter Padding */
+  margin-top: 16px;
+  padding: 16px;
   background: linear-gradient(135deg, #f9fafb, #e5e7eb);
-  border-radius: 10px; /* Kleinere Radius */
+  border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px; /* Reduzierter Gap */
+  gap: 16px;
 }
 
 @media (min-width: 640px) {
@@ -2317,10 +2317,10 @@ body {
 
 .new-option-input,
 .new-option-watt {
-  padding: 8px; /* Kleinere Padding */
+  padding: 8px;
   border: 2px solid #d1d5db;
-  border-radius: 6px; /* Kleinere Radius */
-  font-size: 0.875rem; /* Kleinere Schrift */
+  border-radius: 6px;
+  font-size: 0.875rem;
   width: 100%;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -2329,15 +2329,15 @@ body {
 .new-option-watt:focus {
   outline: none;
   border-color: #062316;
-  box-shadow: 0 0 0 3px rgba(6, 61, 55, 0.3); /* Updated color */
+  box-shadow: 0 0 0 3px rgba(6, 61, 55, 0.3);
 }
 
 .save-option-button {
-  background: linear-gradient(90deg, #062316, #063d37); /* Updated color */
+  background: linear-gradient(90deg, #062316, #063d37);
   color: #ffffff;
-  padding: 6px 12px; /* Reduzierter Padding */
-  border-radius: 6px; /* Kleinere Radius */
-  font-size: 0.875rem; /* Kleinere Schrift */
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.875rem;
   font-weight: 600;
   border: none;
   cursor: pointer;
@@ -2345,23 +2345,23 @@ body {
 }
 
 .save-option-button:hover {
-  background: linear-gradient(90deg, #062316, #052f2b); /* Updated hover color */
+  background: linear-gradient(90deg, #062316, #052f2b);
   transform: scale(1.05);
 }
 
 .summary-container {
-  margin-top: 24px; /* Reduzierter Abstand */
+  margin-top: 24px;
   background: linear-gradient(135deg, #f9fafb, #e5e7eb);
-  padding: 16px; /* Reduzierter Padding */
-  border-radius: 10px; /* Kleinere Radius */
+  padding: 16px;
+  border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .summary-title {
-  font-size: 1.25rem; /* Kleinere Schrift */
+  font-size: 1.25rem;
   font-weight: 700;
-  color: #063d37; /* Updated color */
-  margin-bottom: 10px; /* Reduzierter Abstand */
+  color: #063d37;
+  margin-bottom: 10px;
 }
 
 @media (min-width: 1024px) {
@@ -2371,15 +2371,15 @@ body {
 }
 
 .summary-item {
-  font-size: 0.875rem; /* Kleinere Schrift */
+  font-size: 0.875rem;
   font-weight: 500;
-  margin-bottom: 6px; /* Reduzierter Abstand */
+  margin-bottom: 6px;
 }
 
 .diagram {
   background: #ffffff;
-  padding: 24px; /* Reduzierter Padding */
-  border-radius: 10px; /* Kleinere Radius */
+  padding: 24px;
+  border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease;
 }
@@ -2389,10 +2389,10 @@ body {
 }
 
 .diagram-title {
-  font-size: 1.25rem; /* Kleinere Schrift */
+  font-size: 1.25rem;
   font-weight: 700;
-  color: #063d37; /* Updated color */
-  margin-bottom: 16px; /* Reduzierter Abstand */
+  color: #063d37;
+  margin-bottom: 16px;
 }
 
 @media (min-width: 1024px) {
@@ -2402,7 +2402,7 @@ body {
 }
 
 .chart-container {
-  height: 300px; /* Kleinere Höhe */
+  height: 300px;
 }
 
 table {
@@ -2411,11 +2411,11 @@ table {
 
 table, th, td {
   border: none;
-} 
+}
 
 .option-icon {
   font-size: 1.2rem;
-  color: #062316; /* Unchanged as it wasn't dark green */
+  color: #062316;
   vertical-align: middle;
   margin-right: 8px;
 }
@@ -2423,29 +2423,35 @@ table, th, td {
 .checkbox-group-label {
   display: flex;
   align-items: center;
-  gap: 8px; /* Ensures consistent spacing between checkbox, icon, and text */
+  gap: 8px;
+}
 
 .kw-input-container {
-        display: flex;
-        align-items: center;
-        gap: 8px; /* Space between input and label */
-      }
+  display: flex;
+  align-items: center;
+  gap: 4px; /* Reduzierter Abstand zwischen Eingabefeld und Label */
+}
 
-      .kw-input {
-        width: 80px; /* Smaller width for the kW input field */
-        padding: 6px; /* Adjust padding for a compact look */
-        font-size: 14px; /* Smaller font size */
-        border: 1px solid #ccc;
-        border-radius: 4px;
-      }
+.kw-input {
+  width: 50px; /* Verkleinert von 60px auf 50px */
+  padding: 4px 2px 4px 4px; /* Reduziertes Padding für kompakteres Aussehen */
+  font-size: 14px; /* Kleinere Schriftgröße */
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  text-align: center; /* Zahl rechtsbündig */
+}
 
-      .kw-label {
-        font-size: 14px; /* Match font size with input for consistency */
-        white-space: nowrap; /* Prevent label from wrapping */
-      }
+.kw-input:focus {
+  outline: none;
+  border-color: #063d37;
+  box-shadow: 0 0 0 2px rgba(6, 61, 55, 0.2);
+}
 
+.kw-label {
+  font-size: 12px; /* Kleinere Schriftgröße für das Label */
+  white-space: nowrap;
+}
 
-      // Slider
 .dynamic-consumer-layout {
   display: flex;
   flex-direction: column;
@@ -2455,7 +2461,7 @@ table, th, td {
 
 .dynamic-consumer-layout input[type="range"] {
   width: 100%;
-  accent-color: #063d37; /* Farbe des Sliders */
+  accent-color: #063d37;
   margin-top: 4px;
 }
 
@@ -2467,16 +2473,29 @@ table, th, td {
 
   .dynamic-consumer-layout input[type="range"] {
     width: 100%;
-    accent-color: #063d37; /* Farbe des Sliders für mobile Geräte */
+    accent-color: #063d37;
     margin-top: 4px;
   }
 }
-      
+
+.new-option-kw {
+  width: 50px; /* Verkleinert von 60px auf 50px */
+  padding: 4px; /* Reduziertes Padding */
+  font-size: 12px; /* Kleinere Schriftgröße */
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  box-sizing: border-box;
+  text-align: right;
+}
+
+.new-option-kw:focus {
+  outline: none;
+  border-color: #063d37;
+  box-shadow: 0 0 0 2px rgba(6, 61, 55, 0.2);
+}
 `}</style>
-    
-    
-    
-  <div className="app-container">
+
+<div className="app-container">
   <div className="calculation-report">
     <h2 className="report-title">Rechenbericht</h2>
     <div className="report-content">
@@ -2620,7 +2639,7 @@ table, th, td {
                           value={(verbraucherDaten[option.name]?.watt / 1000) || ''}
                           onChange={(e) => handleKWChange(option.name, e.target.value)}
                           min="0"
-                          step="1"
+                          step="0.1"
                           placeholder=""
                         />
                         <span className="kw-label">kW</span>
@@ -2922,7 +2941,7 @@ table, th, td {
                                   <div className="dynamic-consumer-layout flex flex-col gap-0.5">
                                     <div className="flex flex-col items-center justify-center w-full">
                                       <span className="text-[11px] font-semibold text-gray-700 text-center">
-                                        Zeitraum 
+                                        Zeitraum
                                       </span>
                                       <span className="text-[11px] text-gray-700 text-center">
                                         {timePeriods.find(
@@ -3056,17 +3075,10 @@ table, th, td {
         <div className="summary-item">Kosten Schaltbare Verbraucher (dynamischer Tarif): {zusammenfassung.dynamischDyn} €</div>
         <div className="summary-item">Kosten Gesamt (dynamischer Tarif): {zusammenfassung.gesamtDyn} €</div>
         <div className="summary-item">Ersparnis (fixer vs. dynamischer Tarif): {(parseFloat(zusammenfassung.gesamt) - parseFloat(zusammenfassung.gesamtDyn)).toFixed(2)} €</div>
-       
         <h3 className="summary-title">Zusammenfassung Wärmepumpe</h3>
         <div className="summary-item">Kosten Wärmepumpe (fixer Tarif): {zusammenfassung.waermepumpe} €</div>
         <div className="summary-item">Kosten Wärmepumpe (dynamischer Tarif): {zusammenfassung.waermepumpeDyn} €</div>
-        <div className="summary-item">Kosten Wärmepumpe (dyn) Selbsterstellt:{zusammenfassung.dynselbstbestimmt} €</div>
-        
-        
-
-        
-        
-      
+        <div className="summary-item">Kosten Wärmepumpe (dyn) Selbsterstellt: {zusammenfassung.dynselbstbestimmt} €</div>
         <button className="download-button bg-[#063d37] text-white py-2 px-4 rounded hover:bg-blue-700" onClick={handleDownloadClick}>
           Download PDF
         </button>
@@ -3214,6 +3226,10 @@ table, th, td {
     </div>
   )}
 </div>
+    
+    
+    
+  
 
                                        </>
                                      );
