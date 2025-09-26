@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import StromverbrauchRechnerDesktop from './details39'; // Für Desktop/Tablet
-import StromverbrauchRechnerMobile from './Mdetails45'; // Für Handy
+import StromverbrauchRechnerDesktop from './details40'; // Für Desktop/Tablet
+import StromverbrauchRechnerMobile from './Mdetails47'; // Für Handy
 import LoadingScreen from '../loading/Loadingscreen';
 
 const styles = `

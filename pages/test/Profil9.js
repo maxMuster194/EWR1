@@ -182,6 +182,7 @@ const styles = {
     height: '16px',
     cursor: 'pointer',
     color: '#063d37',
+    fontWeight: 'bold',
   },
   noteText: {
     fontSize: '12px',
@@ -254,7 +255,7 @@ const styles = {
     width: '100%',
   },
   image: {
-    width: '60px',
+    width: '50px', // Angepasst von 60px auf 40px
     height: 'auto',
     objectFit: 'contain',
   },
@@ -553,8 +554,8 @@ function StrompreisChart() {
           tension: 0.4,
           pointRadius: 0,
           pointHoverRadius: 5,
-          pointHoverBackgroundColor: '#333333', // Dunkelgrau für Hover
-          pointHoverBorderColor: '#333333', // Dunkelgrau für Hover
+          pointHoverBackgroundColor: '#333333',
+          pointHoverBorderColor: '#333333',
         },
         {
           label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh, Profil ${profile}, Faktor ${factor})`,
@@ -565,8 +566,8 @@ function StrompreisChart() {
           tension: 0.4,
           pointRadius: 0,
           pointHoverRadius: 5,
-          pointHoverBackgroundColor: '#333333', // Dunkelgrau für Hover
-          pointHoverBorderColor: '#333333', // Dunkelgrau für Hover
+          pointHoverBackgroundColor: '#333333',
+          pointHoverBorderColor: '#333333',
           hidden: isNaN(adjustedCustomPrice) || adjustedCustomPrice < 0,
         }
       );
@@ -581,8 +582,8 @@ function StrompreisChart() {
           tension: 0.4,
           pointRadius: 0,
           pointHoverRadius: 5,
-          pointHoverBackgroundColor: '#333333', // Dunkelgrau für Hover
-          pointHoverBorderColor: '#333333', // Dunkelgrau für Hover
+          pointHoverBackgroundColor: '#333333',
+          pointHoverBorderColor: '#333333',
         },
         {
           label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh, Profil ${profile}, Faktor ${factor})`,
@@ -593,8 +594,8 @@ function StrompreisChart() {
           tension: 0.4,
           pointRadius: 0,
           pointHoverRadius: 5,
-          pointHoverBackgroundColor: '#333333', // Dunkelgrau für Hover
-          pointHoverBorderColor: '#333333', // Dunkelgrau für Hover
+          pointHoverBackgroundColor: '#333333',
+          pointHoverBorderColor: '#333333',
           hidden: isNaN(adjustedCustomPrice) || adjustedCustomPrice < 0,
         }
       );
@@ -609,8 +610,8 @@ function StrompreisChart() {
           tension: 0.4,
           pointRadius: 0,
           pointHoverRadius: 5,
-          pointHoverBackgroundColor: '#333333', // Dunkelgrau für Hover
-          pointHoverBorderColor: '#333333', // Dunkelgrau für Hover
+          pointHoverBackgroundColor: '#333333',
+          pointHoverBorderColor: '#333333',
         },
         {
           label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh, Profil ${profile}, Faktor ${factor})`,
@@ -621,8 +622,8 @@ function StrompreisChart() {
           tension: 0.4,
           pointRadius: 0,
           pointHoverRadius: 5,
-          pointHoverBackgroundColor: '#333333', // Dunkelgrau für Hover
-          pointHoverBorderColor: '#333333', // Dunkelgrau für Hover
+          pointHoverBackgroundColor: '#333333',
+          pointHoverBorderColor: '#333333',
           hidden: isNaN(adjustedCustomPrice) || adjustedCustomPrice < 0,
         }
       );
@@ -873,7 +874,7 @@ function StrompreisChart() {
               justifyContent: center;
             }
             .image {
-              width: 50px;
+              width: '30px'; // Angepasst von 50px auf 30px
             }
             .menschen1, .menschen2, .menschen3, .menschen4, .menschen5 {
               transform: none;
@@ -893,10 +894,10 @@ function StrompreisChart() {
                 <label style={styles.sliderLabel}>Wie viele Personen leben in Ihrem Haushalt?</label>
                 {activeProfile >= 1 && (
                   <div style={styles.imageContainer} className="image-container">
-                    {['menschen1', 'menschen2', 'menschen3', 'menschen4', 'menschen5'].map((id) => (
+                    {['People1', 'People1', 'People1', 'People1', 'People1'].map((id) => (
                       <img
                         key={id}
-                        src={`/bilder/${id}.jpg`}
+                        src={`/bilder/${id}.svg`}
                         alt={`Haushaltsmitglied ${id.replace('menschen', '')}`}
                         style={styles.image}
                         className={id}
@@ -976,9 +977,7 @@ function StrompreisChart() {
                     step="0.01"
                     min="0"
                   />
-                  <svg style={styles.infoIcon} viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-                  </svg>
+                  <span style={styles.infoIcon}>?</span>
                   <span className="tooltip">Ihren aktuellen Strompreis entnehmen Sie z.B. Ihrer letzten Stromrechnung</span>
                 </div>
                 {inputError && <p className="input-error">{inputError}</p>}
@@ -1065,9 +1064,7 @@ function StrompreisChart() {
             <div style={styles.consumptionSummary}>
               <div style={styles.tooltipContainer} className="tooltip-container">
                 <h3 style={styles.summaryTitle}>Täglicher Verbrauch und Kosten</h3>
-                <svg style={styles.infoIcon} viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-                </svg>
+                <span style={styles.infoIcon}>?</span>
                 <span className="tooltip">Preise sind auf zwei Nachkommastellen gerundet</span>
               </div>
               <table style={styles.summaryTable}>

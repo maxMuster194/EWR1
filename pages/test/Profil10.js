@@ -988,11 +988,11 @@ function StrompreisChart() {
             <div style={styles.controlGroup}>
               <label style={styles.sliderLabel}>Wie viele Personen leben in Ihrem Haushalt?</label>
               <div style={styles.imageContainer} className="image-container">
-                {['menschen1', 'menschen2', 'menschen3', 'menschen4', 'menschen5'].slice(0, activeProfile).map((id) => (
+                {['People1', 'People1', 'People1', 'People1', 'People1'].slice(0, activeProfile).map((id, index) => (
                   <img
-                    key={id}
-                    src={`/bilder/${id}.jpg`}
-                    alt={`Haushaltsmitglied ${id.replace('menschen', '')}`}
+                    key={`${id}-${index}`}
+                    src={`/bilder/${id}.svg`}
+                    alt={`Haushaltsmitglied ${index + 1}`}
                     style={styles.image}
                     className="image"
                   />

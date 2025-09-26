@@ -1681,8 +1681,8 @@ const chartData = {
 
 return (
   <>
-    <style>{`
-    .region-buttons {
+ <style>{`
+.region-buttons {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -2443,7 +2443,36 @@ table, th, td {
         font-size: 14px; /* Match font size with input for consistency */
         white-space: nowrap; /* Prevent label from wrapping */
       }
-}`}</style>
+
+
+      // Slider
+.dynamic-consumer-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.dynamic-consumer-layout input[type="range"] {
+  width: 100%;
+  accent-color: #063d37; /* Farbe des Sliders */
+  margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+  .dynamic-consumer-layout {
+    gap: 4px;
+    margin-top: 6px;
+  }
+
+  .dynamic-consumer-layout input[type="range"] {
+    width: 100%;
+    accent-color: #063d37; /* Farbe des Sliders für mobile Geräte */
+    margin-top: 4px;
+  }
+}
+      
+`}</style>
     
     
     
@@ -2712,19 +2741,34 @@ table, th, td {
                                 <h5>Zeiträume</h5>
                                 {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum, index) => (
                                   <div key={zeitraum.id} className="zeitraum-grid">
-                                    <label>
-                                      Zeitraum:
-                                      <select
-                                        value={timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit)?.label || ''}
-                                        onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
-                                      >
-                                        {timePeriods.map((period, idx) => (
-                                          <option key={`${period.label}-${idx}`} value={period.label}>
-                                            {`${period.label} (${period.startzeit} - ${period.endzeit})`}
-                                          </option>
-                                        ))}
-                                      </select>
-                                    </label>
+                                    <div className="dynamic-consumer-layout flex flex-col gap-0.5">
+                                      <div className="flex flex-col items-center justify-center w-full">
+                                        <span className="text-[11px] font-semibold text-gray-700 text-center">
+                                          Zeitraum
+                                        </span>
+                                        <span className="text-[11px] text-gray-700 text-center">
+                                          {timePeriods.find(
+                                            (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+                                          )
+                                            ? `${timePeriods.find(
+                                                (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+                                              ).label} (${zeitraum.startzeit}-${zeitraum.endzeit})`
+                                            : "–"}
+                                        </span>
+                                        <input
+                                          type="range"
+                                          min="0"
+                                          max={timePeriods.length - 1}
+                                          value={timePeriods.findIndex(
+                                            (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+                                          )}
+                                          onChange={(e) =>
+                                            handleTimePeriodChange(option.name, timePeriods[e.target.value].label, zeitraum.id)
+                                          }
+                                          className="w-full accent-[#063d37] mt-1"
+                                        />
+                                      </div>
+                                    </div>
                                     <label>
                                       Dauer (h):
                                       <input
@@ -2792,19 +2836,34 @@ table, th, td {
                               <h5>Zeiträume</h5>
                               {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum, index) => (
                                 <div key={zeitraum.id} className="zeitraum-grid">
-                                  <label>
-                                    Zeitraum:
-                                    <select
-                                      value={timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit)?.label || ''}
-                                      onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
-                                    >
-                                      {timePeriods.map((period, idx) => (
-                                        <option key={`${period.label}-${idx}`} value={period.label}>
-                                          {`${period.label} (${period.startzeit} - ${period.endzeit})`}
-                                        </option>
-                                      ))}
-                                    </select>
-                                  </label>
+                                  <div className="dynamic-consumer-layout flex flex-col gap-0.5">
+                                    <div className="flex flex-col items-center justify-center w-full">
+                                      <span className="text-[11px] font-semibold text-gray-700 text-center">
+                                        Zeitraum
+                                      </span>
+                                      <span className="text-[11px] text-gray-700 text-center">
+                                        {timePeriods.find(
+                                          (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+                                        )
+                                          ? `${timePeriods.find(
+                                              (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+                                            ).label} (${zeitraum.startzeit}-${zeitraum.endzeit})`
+                                          : "–"}
+                                      </span>
+                                      <input
+                                        type="range"
+                                        min="0"
+                                        max={timePeriods.length - 1}
+                                        value={timePeriods.findIndex(
+                                          (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+                                        )}
+                                        onChange={(e) =>
+                                          handleTimePeriodChange(option.name, timePeriods[e.target.value].label, zeitraum.id)
+                                        }
+                                        className="w-full accent-[#063d37] mt-1"
+                                      />
+                                    </div>
+                                  </div>
                                   <label>
                                     Dauer (h):
                                     <input
@@ -2860,19 +2919,34 @@ table, th, td {
                               <h5>Zeiträume</h5>
                               {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum, index) => (
                                 <div key={zeitraum.id} className="zeitraum-grid">
-                                  <label>
-                                    Zeitraum:
-                                    <select
-                                      value={timePeriods.find(p => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit)?.label || ''}
-                                      onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
-                                    >
-                                      {timePeriods.map((period, idx) => (
-                                        <option key={`${period.label}-${idx}`} value={period.label}>
-                                          {`${period.label} (${period.startzeit} - ${period.endzeit})`}
-                                        </option>
-                                      ))}
-                                    </select>
-                                  </label>
+                                  <div className="dynamic-consumer-layout flex flex-col gap-0.5">
+                                    <div className="flex flex-col items-center justify-center w-full">
+                                      <span className="text-[11px] font-semibold text-gray-700 text-center">
+                                        Zeitraum 
+                                      </span>
+                                      <span className="text-[11px] text-gray-700 text-center">
+                                        {timePeriods.find(
+                                          (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+                                        )
+                                          ? `${timePeriods.find(
+                                              (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+                                            ).label} (${zeitraum.startzeit}-${zeitraum.endzeit})`
+                                          : "–"}
+                                      </span>
+                                      <input
+                                        type="range"
+                                        min="0"
+                                        max={timePeriods.length - 1}
+                                        value={timePeriods.findIndex(
+                                          (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+                                        )}
+                                        onChange={(e) =>
+                                          handleTimePeriodChange(option.name, timePeriods[e.target.value].label, zeitraum.id)
+                                        }
+                                        className="w-full accent-[#063d37] mt-1"
+                                      />
+                                    </div>
+                                  </div>
                                   <label>
                                     Dauer (h):
                                     <input
