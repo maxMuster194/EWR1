@@ -3,7 +3,6 @@ import Papa from 'papaparse';
 import fs from 'fs';
 import path from 'path';
 import mongoose from 'mongoose';
-import Germany15MinPrice from 'models/15minPrices'; // Import des Modells
 
 // MongoDB connection
 const mongoURI = 'mongodb+srv://max:Julian1705@strom.vm0dp8f.mongodb.net/?retryWrites=true&w=majority&appName=Strom';
@@ -18,16 +17,67 @@ async function connectDB() {
     console.log('MongoDB connected');
   } catch (err) {
     console.error('MongoDB connection error:', err);
-    throw err;
+    throw err; // Throw error to handle in API
   }
 }
 
+// Schema & Model for 15-minute intervals
+const germany15MinSchema = new mongoose.Schema({
+  'Delivery day': String,
+  'Hour 1 Q1': Number, 'Hour 1 Q2': Number, 'Hour 1 Q3': Number, 'Hour 1 Q4': Number,
+  'Hour 2 Q1': Number, 'Hour 2 Q2': Number, 'Hour 2 Q3': Number, 'Hour 2 Q4': Number,
+  'Hour 3A Q1': Number, 'Hour 3A Q2': Number, 'Hour 3A Q3': Number, 'Hour 3A Q4': Number,
+  'Hour 3B Q1': Number, 'Hour 3B Q2': Number, 'Hour 3B Q3': Number, 'Hour 3B Q4': Number,
+  'Hour 4 Q1': Number, 'Hour 4 Q2': Number, 'Hour 4 Q3': Number, 'Hour 4 Q4': Number,
+  'Hour 5 Q1': Number, 'Hour 5 Q2': Number, 'Hour 5 Q3': Number, 'Hour 5 Q4': Number,
+  'Hour 6 Q1': Number, 'Hour 6 Q2': Number, 'Hour 6 Q3': Number, 'Hour 6 Q4': Number,
+  'Hour 7 Q1': Number, 'Hour 7 Q2': Number, 'Hour 7 Q3': Number, 'Hour 7 Q4': Number,
+  'Hour 8 Q1': Number, 'Hour 8 Q2': Number, 'Hour 8 Q3': Number, 'Hour 8 Q4': Number,
+  'Hour 9 Q1': Number, 'Hour 9 Q2': Number, 'Hour 9 Q3': Number, 'Hour 9 Q4': Number,
+  'Hour 10 Q1': Number, 'Hour 10 Q2': Number, 'Hour 10 Q3': Number, 'Hour 10 Q4': Number,
+  'Hour 11 Q1': Number, 'Hour 11 Q2': Number, 'Hour 11 Q3': Number, 'Hour 11 Q4': Number,
+  'Hour 12 Q1': Number, 'Hour 12 Q2': Number, 'Hour 12 Q3': Number, 'Hour 12 Q4': Number,
+  'Hour 13 Q1': Number, 'Hour 13 Q2': Number, 'Hour 13 Q3': Number, 'Hour 13 Q4': Number,
+  'Hour 14 Q1': Number, 'Hour 14 Q2': Number, 'Hour 14 Q3': Number, 'Hour 14 Q4': Number,
+  'Hour 15 Q1': Number, 'Hour 15 Q2': Number, 'Hour 15 Q3': Number, 'Hour 15 Q4': Number,
+  'Hour 16 Q1': Number, 'Hour 16 Q2': Number, 'Hour 16 Q3': Number, 'Hour 16 Q4': Number,
+  'Hour 17 Q1': Number, 'Hour 17 Q2': Number, 'Hour 17 Q3': Number, 'Hour 17 Q4': Number,
+  'Hour 18 Q1': Number, 'Hour 18 Q2': Number, 'Hour 18 Q3': Number, 'Hour 18 Q4': Number,
+  'Hour 19 Q1': Number, 'Hour 19 Q2': Number, 'Hour 19 Q3': Number, 'Hour 19 Q4': Number,
+  'Hour 20 Q1': Number, 'Hour 20 Q2': Number, 'Hour 20 Q3': Number, 'Hour 20 Q4': Number,
+  'Hour 21 Q1': Number, 'Hour 21 Q2': Number, 'Hour 21 Q3': Number, 'Hour 21 Q4': Number,
+  'Hour 22 Q1': Number, 'Hour 22 Q2': Number, 'Hour 22 Q3': Number, 'Hour 22 Q4': Number,
+  'Hour 23 Q1': Number, 'Hour 23 Q2': Number, 'Hour 23 Q3': Number, 'Hour 23 Q4': Number,
+  'Hour 24 Q1': Number, 'Hour 24 Q2': Number, 'Hour 24 Q3': Number, 'Hour 24 Q4': Number,
+  Minimum: Number,
+  Maximum: Number,
+  Baseload: Number,
+  Peakload: Number,
+  'Off-peak': Number,
+  'Off-peak 2': Number,
+  'Off-peak 1': Number,
+  Night: Number,
+  'Late morning': Number,
+  'Early afternoon': Number,
+  Evening: Number,
+  'Early morning': Number,
+  Business: Number,
+  Afternoon: Number,
+  'Middle night': Number,
+  Morning: Number,
+  'High noon': Number,
+  'Rush hour': Number,
+  'Sun peak': Number
+}, { strict: true });
+
+const Germany15MinPrice = mongoose.models['15minPrices'] || mongoose.model('15minPrices', germany15MinSchema);
+
 // SFTP config
 const sftpConfig = {
-  host: 'ftp.epexspot.com',
+  host: "ftp.epexspot.com",
   port: 22,
-  username: 'ew-reutte.marketdata',
-  password: 'j3zbZNcXo$p52Pkpo'
+  username: "ew-reutte.marketdata",
+  password: "j3zbZNcXo$p52Pkpo"
 };
 
 // SFTP Directory Listing
@@ -86,7 +136,7 @@ const saveCSVFile = (data, filename) => {
   return filePath;
 };
 
-// MongoDB Update (mit bulkWrite für bessere Performance)
+// MongoDB Update (mit bulkWrite für bessere Performance und mehr Logging)
 const updateMongoDB = async (data, model) => {
   if (!data || data.length === 0) {
     console.warn(`[WARN] Keine Daten zum Speichern in MongoDB (${model.modelName})`);
@@ -94,10 +144,12 @@ const updateMongoDB = async (data, model) => {
   }
   try {
     console.log(`✅ Starte MongoDB-Update: ${model.modelName} (${data.length} Datensätze)`);
+    // Logge den ersten Datensatz zur Überprüfung
     if (data.length > 0) {
       console.log('Beispiel-Datensatz:', data[0]);
     }
 
+    // Bulk-Operationen vorbereiten
     const bulkOps = data.map(record => {
       if (!record['Delivery day']) {
         console.warn('Warnung: Datensatz ohne "Delivery day" übersprungen:', record);
@@ -110,18 +162,18 @@ const updateMongoDB = async (data, model) => {
           upsert: true
         }
       };
-    }).filter(op => op !== null);
+    }).filter(op => op !== null); // Entferne ungültige Ops
 
     if (bulkOps.length === 0) {
       console.warn('[WARN] Keine gültigen Bulk-Operationen.');
       return;
     }
 
-    const result = await model.bulkWrite(bulkOps, { ordered: false });
-    console.log(`✅ MongoDB-Update erfolgreich: ${model.modelName} - Matched ${result.matchedCount}, Upserted ${result.upsertedCount}, Modified ${result.modifiedCount}`);
+    const result = await model.bulkWrite(bulkOps);
+    console.log(`✅ MongoDB-Update erfolgreich: Matched ${result.matchedCount}, Upserted ${result.upsertedCount}, Modified ${result.modifiedCount}`);
   } catch (err) {
     console.error(`❌ Fehler beim MongoDB-Update (${model.modelName}):`, err.message);
-    throw err;
+    throw err; // Werfe Fehler weiter, um in API zu handhaben
   }
 };
 
@@ -141,20 +193,23 @@ const fetchMongoDBData = async (model) => {
 const updateData = async () => {
   console.log(`[INFO] [${new Date().toLocaleString()}] Datenupdate gestartet`);
 
+  // Mögliche Pfade für 15-Minuten-Daten (angepasst an tatsächliche Datei)
   const possiblePaths = [
-    '/germany/Day-Ahead Auction/Quarter-Hourly/Current/Prices_Volumes/auction_spot_prices_germany_quarterhourly_2025.csv',
-    '/germany/Day-Ahead Auction/15-Minute/Current/Prices_Volumes/auction_spot_prices_germany_15min_2025.csv',
-    '/germany/Day-Ahead Auction/QH/Current/Prices_Volumes/auction_spot_prices_germany_quarterhourly_2025.csv',
-    '/germany/Intraday Continuous/15-Minute/Current/Prices_Volumes/auction_spot_prices_germany_15min_2025.csv'
+    '/germany/Day-Ahead Auction/Quarter-hourly/Current/Prices_Volumes/auction_spot_15_prices_germany_luxembourg_2025.csv'
   ];
 
+  // Verzeichnis auflisten
   console.log('[INFO] Untersuche SFTP-Verzeichnisstruktur...');
   await listSFTPDirectory('/germany');
   await listSFTPDirectory('/germany/Day-Ahead Auction');
+  await listSFTPDirectory('/germany/Day-Ahead Auction/Quarter-hourly');
+  await listSFTPDirectory('/germany/Day-Ahead Auction/Quarter-hourly/Current');
+  await listSFTPDirectory('/germany/Day-Ahead Auction/Quarter-hourly/Current/Prices_Volumes');
 
   let germany15MinData = null;
   let successfulPath = null;
 
+  // Versuche jeden Pfad
   for (const filePath of possiblePaths) {
     console.log(`🔍 Versuche Pfad: ${filePath}`);
     germany15MinData = await fetchCSVData(filePath);
@@ -170,7 +225,9 @@ const updateData = async () => {
     return null;
   }
 
+  // CSV speichern mit Datum im Dateinamen
   saveCSVFile(germany15MinData, `germany_15min_prices_${new Date().toISOString().split('T')[0]}.csv`);
+  // MongoDB-Update
   await updateMongoDB(germany15MinData, Germany15MinPrice);
 
   console.log(`[INFO] [${new Date().toLocaleString()}] ✅ Datenupdate abgeschlossen von: ${successfulPath}`);
@@ -181,26 +238,31 @@ const updateData = async () => {
 export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Only GET allowed' });
   try {
+    // Stelle MongoDB-Verbindung her (await, um sicherzustellen, dass sie bereit ist)
     await connectDB();
+
+    // Daten von SFTP holen und speichern
     const germany15MinData = await updateData();
+
+    // Vorhandene MongoDB-Daten abrufen (nach dem Update)
     const mongoData = await fetchMongoDBData(Germany15MinPrice);
 
     if (!germany15MinData || germany15MinData.length === 0) {
-      return res.status(500).json({
+      return res.status(500).json({ 
         error: 'Failed to fetch 15-minute data from SFTP. Check logs for directory structure or verify SFTP credentials and file path.',
         mongoData
       });
     }
 
-    res.status(200).json({
+    res.status(200).json({ 
       message: '15-minute data fetched from SFTP and saved to MongoDB.',
       recordsFetched: germany15MinData.length,
       recordsInMongo: mongoData.length,
-      data: mongoData // Gibt die Daten aus MongoDB zurück
+      data: germany15MinData
     });
   } catch (err) {
     const mongoData = await fetchMongoDBData(Germany15MinPrice);
-    res.status(500).json({
+    res.status(500).json({ 
       error: `Failed to fetch or save data: ${err.message}`,
       mongoData
     });
