@@ -1490,7 +1490,7 @@ export default function Home() {
             const weightedPrice = totalWeight > 0 ? totalWeightedPrice / totalWeight : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
             console.log(`Gewichteter Preis für ${key}: ${weightedPrice}, TotalWeightedPrice: ${totalWeightedPrice}, TotalWeight: ${totalWeight}`);
   
-            dynselbstbestimmt += (((verbraucherDaten[key].watt/1000) / jaz) *(weightedPrice)/100);
+            dynselbstbestimmt += (((verbraucherDaten[key].watt/1000) / jaz) * totalWeight * (weightedPrice)/100);
           }
         } else {
           dynamischDyn += costDyn;
@@ -1519,6 +1519,8 @@ export default function Home() {
     waermepumpeFix: zusammenfassung.waermepumpe,
     waermepumpeAlternative: zusammenfassung.waermepumpeAlternative,
   };
+
+
 
 
  // Chart for hourly consumption (unchanged from your original code)

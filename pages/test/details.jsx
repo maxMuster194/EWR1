@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import StromverbrauchRechnerDesktop from './details40';
+import StromverbrauchRechnerDesktop from './details41';
 import StromverbrauchRechnerMobile from './Mdetails47';
 import LoadingScreen from '../loading/Loadingscreen';
 

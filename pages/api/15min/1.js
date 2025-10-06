@@ -8,6 +8,7 @@ import mongoose from 'mongoose';
 const mongoURI = 'mongodb+srv://max:Julian1705@strom.vm0dp8f.mongodb.net/?retryWrites=true&w=majority&appName=Strom';
 if (mongoose.connection.readyState === 0) {
   mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('MongoDB connected'))
     .catch(err => console.error('MongoDB connection error:', err));
 }
 
@@ -60,7 +61,7 @@ const germany15MinSchema = new mongoose.Schema({
   'Sun peak': Number
 }, { strict: true });
 
-const Germany15MinPrice = mongoose.models.Germany15MinPrice || mongoose.model('Germany15MinPrice', germany15MinSchema);
+const Germany15MinPrice = mongoose.models.germany15minprices || mongoose.model('germany15minprices', germany15MinSchema);
 
 // SFTP config
 const sftpConfig = {
@@ -126,13 +127,11 @@ const saveCSVFile = (data, filename) => {
   return filePath;
 };
 
-// MongoDB Update
+// MongoDB Update (deaktiviert, da Speichern noch nicht erfolgen soll)
 const updateMongoDB = async (data, model) => {
   if (!data || data.length === 0) return;
   try {
-    await model.deleteMany({});
-    await model.insertMany(data, { ordered: false });
-    console.log(`✅ MongoDB aktualisiert: ${model.modelName} (${data.length} Datensätze)`);
+    console.log(`✅ MongoDB-Update deaktiviert: ${model.modelName} (${data.length} Datensätze)`);
   } catch (err) {
     console.error(`❌ Fehler beim MongoDB-Update (${model.modelName}):`, err.message);
   }
@@ -154,18 +153,18 @@ const fetchMongoDBData = async (model) => {
 const updateData = async () => {
   console.log(`[INFO] [${new Date().toLocaleString()}] Datenupdate gestartet`);
 
-  // Mögliche Pfade für 15-Minuten-Daten
+  // Mögliche Pfade für 15-Minuten-Daten (angepasst an tatsächliche Datei)
   const possiblePaths = [
-    '/germany/Day-Ahead Auction/Quarter-Hourly/Current/Prices_Volumes/auction_spot_prices_germany_quarterhourly_2025.csv',
-    '/germany/Day-Ahead Auction/15-Minute/Current/Prices_Volumes/auction_spot_prices_germany_15min_2025.csv',
-    '/germany/Day-Ahead Auction/QH/Current/Prices_Volumes/auction_spot_prices_germany_quarterhourly_2025.csv',
-    '/germany/Intraday Continuous/15-Minute/Current/Prices_Volumes/auction_spot_prices_germany_15min_2025.csv'
+    '/germany/Day-Ahead Auction/Quarter-hourly/Current/Prices_Volumes/auction_spot_15_prices_germany_luxembourg_2025.csv'
   ];
 
-  // Verzeichnis auflisten, um den korrekten Pfad zu finden
+  // Verzeichnis au непосредйств auflisten
   console.log('[INFO] Untersuche SFTP-Verzeichnisstruktur...');
   await listSFTPDirectory('/germany');
   await listSFTPDirectory('/germany/Day-Ahead Auction');
+  await listSFTPDirectory('/germany/Day-Ahead Auction/Quarter-hourly');
+  await listSFTPDirectory('/germany/Day-Ahead Auction/Quarter-hourly/Current');
+  await listSFTPDirectory('/germany/Day-Ahead Auction/Quarter-hourly/Current/Prices_Volumes');
 
   let germany15MinData = null;
   let successfulPath = null;
@@ -188,7 +187,7 @@ const updateData = async () => {
 
   // CSV speichern mit Datum im Dateinamen
   saveCSVFile(germany15MinData, `germany_15min_prices_${new Date().toISOString().split('T')[0]}.csv`);
-  await updateMongoDB(germany15MinData, Germany15MinPrice);
+  // await updateMongoDB(germany15MinData, Germany15MinPrice); // Deaktiviert
 
   console.log(`[INFO] [${new Date().toLocaleString()}] ✅ Datenupdate abgeschlossen von: ${successfulPath}`);
   return germany15MinData;
@@ -198,29 +197,29 @@ const updateData = async () => {
 export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ error: 'Only GET allowed' });
   try {
-    // Daten von SFTP aktualisieren
+    // Daten von SFTP holen
     const germany15MinData = await updateData();
 
-    // Aktuelle Daten aus MongoDB abrufen
+    // Vorhandene MongoDB-Daten abrufen
     const mongoData = await fetchMongoDBData(Germany15MinPrice);
 
     if (!germany15MinData || germany15MinData.length === 0) {
       return res.status(500).json({ 
         error: 'Failed to fetch 15-minute data from SFTP. Check logs for directory structure or verify SFTP credentials and file path.',
-        mongoData // Gibt vorhandene MongoDB-Daten zurück, falls vorhanden
+        mongoData
       });
     }
 
     res.status(200).json({ 
-      message: '15-minute data successfully updated.',
-      recordsUpdated: germany15MinData.length,
-      data: mongoData // Gibt die aktuellen Daten aus MongoDB zurück
+      message: '15-minute data fetched from SFTP (not saved to MongoDB).',
+      recordsFetched: germany15MinData.length,
+      data: germany15MinData
     });
   } catch (err) {
     const mongoData = await fetchMongoDBData(Germany15MinPrice);
     res.status(500).json({ 
-      error: `Failed to update data: ${err.message}`,
-      mongoData // Gibt vorhandene MongoDB-Daten zurück, auch bei Fehlern
+      error: `Failed to fetch data: ${err.message}`,
+      mongoData
     });
   }
 };
