@@ -369,12 +369,12 @@ const Energiemanager = () => {
             <p className="text-[#3c6055] text-4xl font-bold leading-normal">Dynamischer Stromtarif</p>
           </div>
           <div className="button-container">
-            <a href="/test/startseitemitR" className="flex items-center gap-2 active">
+            <a href="/test/startseite" className="flex items-center gap-2 active">
               <FontAwesomeIcon icon={faBackward} style={{ color: '#fafafa', fontSize: '16px' }} />
               <span>Datenrückblick</span>
               <span className="tooltip">Preisdaten bis zum 30.09.2025</span>
             </a>
-            <a href="/test15/startseitemitR" className="flex items-center gap-2 ">
+            <a href="/test15/startseite" className="flex items-center gap-2 ">
               <FontAwesomeIcon icon={faClock} style={{ color: '#fafafa', fontSize: '16px' }} />
               <span>Aktuell</span>
               <span className="tooltip">Preisdaten ab dem 01.10.2025</span>
@@ -436,7 +436,10 @@ const Energiemanager = () => {
                   Zum Rechner
                 </a></p>
                 <p className="text-[#202026] text-base font-normal leading-normal">
-                  Jetzt in wenigen Schritten herausfinden, ob sich ein dynamischer Stromtarif für Ihren Haushalt lohnt.
+                
+                  <p>Jetzt in wenigen Schritten herausfinden, ob sich ein dynamischer Stromtarif für Ihren Haushalt lohnt.</p>
+                  <p>Wir vergleichen in diesem Tool den reinen Energiepreis. Steuern, netzentgelte sowie alle weiteren abgaben sind in den Vergleichen abgezogen. 
+                  </p>
                 </p>
                 <p></p>
                 <p className="text-[#3c6055] text-2xl font-bold leading-normal">Was ist ein dynamischer Stromtarif?</p>

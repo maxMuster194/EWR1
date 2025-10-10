@@ -1,9 +1,6 @@
 import mongoose from 'mongoose';
 import GermanyMin15Prices from '../../models/min15Prices';
-import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import DatePicker from 'react-datepicker'; // Import react-datepicker
-import 'react-datepicker/dist/react-datepicker.css'; // Import CSS for datepicker
 
 // Dynamisch den Line-Chart importieren, um SSR zu vermeiden
 const Line = dynamic(() => import('react-chartjs-2').then((mod) => mod.Line), {
@@ -64,6 +61,14 @@ function formatWeek(weekObj) {
   return `KW ${weekObj.week} ${weekObj.year}`;
 }
 
+// Funktion zum Sortieren der Wochen chronologisch
+function sortWeeks(weeks) {
+  return weeks.sort((a, b) => {
+    if (a.year !== b.year) return a.year - b.year;
+    return a.week - b.week;
+  });
+}
+
 export async function getServerSideProps() {
   try {
     await connectDB();
@@ -74,14 +79,52 @@ export async function getServerSideProps() {
       const weekObj = getISOWeek(new Date(date));
       return JSON.stringify(weekObj);
     }))].map(str => JSON.parse(str));
-    const todayBerlin = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Berlin' });
-    const currentWeek = getISOWeek(new Date(todayBerlin));
+    const sortedUniqueWeeks = sortWeeks(uniqueWeeks);
+
+    // Berechne Durchschnittspreise pro Woche im Voraus
+    const weeklyAverages = sortedUniqueWeeks.map(weekObj => {
+      const filteredData = data.filter(record => {
+        const date = parseDeliveryDay(record['Delivery day']);
+        if (!date) return false;
+        const recordWeek = getISOWeek(new Date(date));
+        return recordWeek.year === weekObj.year && recordWeek.week === weekObj.week;
+      });
+
+      const priceFields = Array.from({ length: 24 }, (_, h) => {
+        const hour = h + 1;
+        if (hour === 3) {
+          return ['Hour 3A Q1', 'Hour 3A Q2', 'Hour 3A Q3', 'Hour 3A Q4'];
+        }
+        return [
+          `Hour ${hour} Q1`,
+          `Hour ${hour} Q2`,
+          `Hour ${hour} Q3`,
+          `Hour ${hour} Q4`,
+        ];
+      }).flat();
+
+      let totalSum = 0;
+      let totalCount = 0;
+
+      filteredData.forEach(record => {
+        priceFields.forEach(field => {
+          const value = record[field]?.$numberDouble || record[field]?.$numberInt || record[field] || 0;
+          const parsedValue = parseFloat(value);
+          if (!isNaN(parsedValue)) {
+            totalSum += parsedValue;
+            totalCount++;
+          }
+        });
+      });
+
+      const average = totalCount > 0 ? totalSum / totalCount : 0;
+      return average;
+    });
 
     return {
       props: {
-        data: JSON.parse(JSON.stringify(data)),
-        uniqueWeeks: uniqueWeeks || [],
-        currentWeek,
+        sortedUniqueWeeks: sortedUniqueWeeks || [],
+        weeklyAverages,
         error: null,
       },
     };
@@ -89,19 +132,15 @@ export async function getServerSideProps() {
     console.error('Error in getServerSideProps:', { message: err.message, stack: err.stack });
     return {
       props: {
-        data: [],
-        uniqueWeeks: [],
-        currentWeek: { year: new Date().getFullYear(), week: 1 },
+        sortedUniqueWeeks: [],
+        weeklyAverages: [],
         error: `Failed to fetch data: ${err.message}`,
       },
     };
   }
 }
 
-export default function DynamischerPreis({ data = [], uniqueWeeks = [], currentWeek, error }) {
-  const initialWeek = uniqueWeeks.find(w => w.year === currentWeek.year && w.week === currentWeek.week) || uniqueWeeks[0] || null;
-  const [selectedWeek, setSelectedWeek] = useState(initialWeek);
-
+export default function DynamischerPreis({ sortedUniqueWeeks = [], weeklyAverages = [], error }) {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#fafafa' }}>
@@ -110,104 +149,45 @@ export default function DynamischerPreis({ data = [], uniqueWeeks = [], currentW
     );
   }
 
-  if (data.length === 0 || uniqueWeeks.length === 0) {
+  if (sortedUniqueWeeks.length === 0 || weeklyAverages.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#fafafa' }}>
         <p className="text-lg font-semibold text-red-900">
-          {data.length === 0
-            ? 'Keine Daten in der Datenbank gefunden.'
-            : 'Keine gültigen Kalenderwochen gefunden.'}
+          Keine gültigen Kalenderwochen oder Durchschnittswerte gefunden.
         </p>
       </div>
     );
   }
 
-  // Define price fields (Hour 1 Q1 to Hour 24 Q4, handling Hour 3A and skipping 3B if null)
-  const priceFields = Array.from({ length: 24 }, (_, h) => {
-    const hour = h + 1;
-    if (hour === 3) {
-      return ['Hour 3A Q1', 'Hour 3A Q2', 'Hour 3A Q3', 'Hour 3A Q4'];
-    }
-    return [
-      `Hour ${hour} Q1`,
-      `Hour ${hour} Q2`,
-      `Hour ${hour} Q3`,
-      `Hour ${hour} Q4`,
-    ];
-  }).flat();
-
-  // Filter data for the selected week
-  const filteredData = selectedWeek
-    ? data.filter(record => {
-        const date = parseDeliveryDay(record['Delivery day']);
-        if (!date) return false;
-        const weekObj = getISOWeek(new Date(date));
-        return weekObj.year === selectedWeek.year && weekObj.week === selectedWeek.week;
-      })
-    : [];
-  console.log('Filtered data for week:', filteredData); // Debug log
-
-  // Berechne Durchschnittspreise pro 15-Min-Slot über alle Tage der Woche
-  const averagePrices = priceFields.map((field, index) => {
-    const values = filteredData.map(record => {
-      const value = record[field]?.$numberDouble || record[field]?.$numberInt || record[field] || 0;
-      return parseFloat(value);
-    }).filter(v => !isNaN(v));
-    const sum = values.reduce((acc, val) => acc + val, 0);
-    const avg = values.length > 0 ? sum / values.length : 0;
-    console.log(`Field: ${field}, Average: ${avg}`); // Debug-Log
-    return avg;
-  });
-
-  // Prepare chart data for the selected week (using averages)
+  // Prepare chart data for weekly averages
   const chartData = {
-    labels: priceFields.map((field, index) => {
-      // Korrigierte Labels-Generierung: Direkt aus index berechnen
-      let hourNum;
-      if (field.includes('Hour 3A')) {
-        hourNum = 3;
-      } else {
-        hourNum = Math.floor(index / 4) + 1; // 0-3 → Hour 1, 4-7 → Hour 2, etc.
-      }
-      const quarterNum = (index % 4) * 15; // 0 → 0, 1 → 15, 2 → 30, 3 → 45
-      return `${(hourNum - 1).toString().padStart(2, '0')}:${quarterNum.toString().padStart(2, '0')}`;
-    }),
-    datasets: filteredData.length > 0 ? [{
-      label: `Durchschnittspreise in ${formatWeek(selectedWeek)}`,
-      data: averagePrices,
+    labels: sortedUniqueWeeks.map(weekObj => formatWeek(weekObj)),
+    datasets: [{
+      label: 'Durchschnittlicher Wochenpreis (ct/kWh)',
+      data: weeklyAverages,
       borderColor: '#063d37',
       backgroundColor: 'rgba(6, 61, 55, 0.2)',
-      fill: true,
-      tension: 0.4,
-      spanGaps: true,
-    }] : [],
+      fill: false,
+      tension: 0.1,
+      pointRadius: 5,
+      pointHoverRadius: 8,
+    }],
   };
-  
-  // Chart options with customized x-axis ticks to show only full hours
+
+  // Chart options
   const chartOptions = {
     responsive: true,
     plugins: {
       legend: { position: 'top' },
-      title: { display: true, text: `Durchschnittliche 15-Minuten Strompreise in ${formatWeek(selectedWeek)}` },
+      title: { display: true, text: 'Durchschnittliche Strompreise pro Kalenderwoche' },
     },
     scales: {
       y: {
-        title: { display: true, text: 'Preis (ct/kWh)' },
+        title: { display: true, text: 'Durchschnittspreis (ct/kWh)' },
         beginAtZero: false,
       },
       x: {
-        title: { display: true, text: 'Uhrzeit' },
-        ticks: {
-          callback: function (value, index, values) {
-            // Nur Labels für volle Stunden anzeigen (index % 4 === 0 entspricht 00, 15, 30, 45; wir wollen nur :00)
-            if (index % 4 === 0) {
-              const hourNum = Math.floor(index / 4);
-              return `${hourNum.toString().padStart(2, '0')}:00`;
-            }
-            return null; // Keine Beschriftung für 15, 30, 45
-          },
-          maxTicksLimit: 24, // Maximal 24 Ticks (eine pro Stunde)
-        },
+        title: { display: true, text: 'Kalenderwoche' },
       },
     },
   };
@@ -218,36 +198,17 @@ export default function DynamischerPreis({ data = [], uniqueWeeks = [], currentW
         {/* Heading */}
         <div className="text-center">
           <h2 className="text-xl font-semibold" style={{ color: '#063d37' }}>
-            Aktueller Strompreis Dynamischer Tarif (Wöchentliche Zusammenfassung)
+            Durchschnittlicher Strompreis pro Kalenderwoche (Dynamischer Tarif)
           </h2>
-        </div>
-        {/* Week selection with dropdown (since DatePicker doesn't support weeks directly) */}
-        <div className="mb-6">
-          <label htmlFor="week-select" className="block text-sm font-medium text-black">
-            Kalenderwoche auswählen:
-          </label>
-          <select
-            id="week-select"
-            value={selectedWeek ? JSON.stringify(selectedWeek) : ''}
-            onChange={(e) => setSelectedWeek(JSON.parse(e.target.value))}
-            className="mt-1 block w-full max-w-xs p-2 border border-black rounded-md shadow-sm focus:ring-red-500 focus:border-black sm:text-sm text-black"
-            disabled={uniqueWeeks.length === 0}
-          >
-            {uniqueWeeks.map((weekObj) => (
-              <option key={JSON.stringify(weekObj)} value={JSON.stringify(weekObj)}>
-                {formatWeek(weekObj)}
-              </option>
-            ))}
-          </select>
         </div>
 
         {/* Line chart */}
-        {chartData.datasets.length > 0 && chartData.datasets[0].data.some(d => d !== 0) ? (
+        {weeklyAverages.some(d => d !== 0) ? (
           <div className="mb-8">
             <Line data={chartData} options={chartOptions} />
           </div>
         ) : (
-          <p className="text-center text-red-600">Keine Preisdaten für die ausgewählte Kalenderwoche verfügbar oder alle Werte sind 0.</p>
+          <p className="text-center text-red-600">Keine gültigen Preisdaten verfügbar oder alle Werte sind 0.</p>
         )}
       </div>
     </div>
