@@ -1,0 +1,337 @@
+import React, { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import Statistik from '../test15/stk7';
+import Durchschnitt from '../test15/durch17';
+import LoadingScreen from '../loading/Loadingscreen';
+
+const styles = `
+  .layout {
+    width: 100%;
+    display: grid;
+    grid:
+      "header header" auto
+      "sidebar top-box" auto
+      "sidebar main" 1fr
+      "sidebar bottom-boxes" auto
+      "sidebar extra-box-1" auto
+      "sidebar extra-box-2" auto
+      "footer footer" auto
+      / 200px 1fr;
+   
+    min-height: 100vh;
+  }
+  .header {
+    grid-area: header;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    border-bottom: 1px solid #D1D5DB;
+    padding: 6px 24px;
+    background: linear-gradient(90deg, #063d37, #063d37); /* Updated dark green */
+  }
+  .header-logo {
+    width: 125px;
+    height: 47.5px;
+    object-fit: contain;
+  }
+  .top-box { grid-area: top-box; }
+  .sidebar {
+    grid-area: sidebar;
+    width: 100%;
+    max-width: 200px;
+    padding: 12px;
+    background-color: #202026;
+   
+  }
+  .sidebar .flex {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sidebar a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px;
+    border-radius: 12px;
+    color: #FFFFFF;
+    text-decoration: none;
+    transition: background-color 0.2s;
+  }
+  .sidebar a:hover {
+    background-color: #063d37; /* Updated dark green */
+  }
+  .sidebar a.active {
+    background-color: #063d37; /* Updated dark green */
+  }
+  .sidebar a.active .fa-house {
+    color: #fafafa !important; /* Updated to off-white */
+  }
+  .sidebar a p {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    margin: 0;
+  }
+  .main {
+    grid-area: main;
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    padding: 24px;
+    background-color: #F3F4F6;
+   
+  }
+  .bottom-boxes {
+    grid-area: bottom-boxes;
+    padding: 24px;
+    background-color: #F3F4F6;
+    
+  }
+  .extra-box-1 {
+    grid-area: extra-box-1;
+    padding: 24px;
+    background-color: #F3F4F6;
+    border-radius: 12px;
+  }
+  .extra-box-2 {
+    grid-area: extra-box-2;
+    padding: 16px;
+    background-color: #F3F4F6;
+    border-radius: 12px;
+  }
+  .extra-box-2 .inner-box {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  .content {
+    flex: 1;
+    overflow: auto;
+    max-height: 100vh;
+    padding: 8px;
+    border-radius: 12px;
+    background-color: #FFFFFF;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+  }
+  .content > * {
+    width: 100%;
+    height: 100%;
+    flex: 1;
+  }
+  .content * {
+    font-size: 1.1em;
+  }
+  .chart {
+    flex: 1;
+    overflow: auto;
+    max-height: 100vh;
+    padding: 24px;
+    border-radius: 12px;
+    background-color: #FFFFFF;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  .footer {
+    grid-area: footer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid #D1D5DB;
+    padding: 12px 48px;
+    background: linear-gradient(90deg, #063d37, #063d37); /* Updated dark green */
+  }
+  .bottom-nav {
+    display: none;
+  }
+@media (max-width: 767px) {
+  .layout {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 60px;
+  }
+  .header, .top-box, .main, .bottom-boxes, .extra-box-1, .extra-box-2, .footer {
+    width: 100%;
+    padding: 12px;
+  }
+  .header {
+    padding: 6px;
+  }
+  .header-logo {
+    width: 75px;
+    height: 28.5px;
+  }
+  .sidebar {
+    display: none;
+  }
+  .main {
+    flex-direction: column;
+  }
+  .content {
+    max-height: none;
+    padding: 8px;
+  }
+  .content * {
+    font-size: 1em;
+  }
+  .chart {
+    max-height: none;
+    padding: 12px;
+  }
+  .extra-box-2 .inner-box {
+    max-width: 100%;
+  }
+  .footer {
+    padding: 12px;
+  }
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #202026;
+    border-top: 1px solid #D1D5DB;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 0;
+    z-index: 1000;
+  }
+  .bottom-nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    border-radius: 12px;
+    color: #FFFFFF;
+    text-decoration: none;
+    transition: background-color 0.2s;
+    flex: 1;
+    text-align: center;
+  }
+  .bottom-nav a:hover {
+    background-color: #063d37; /* Updated dark green */
+  }
+  .bottom-nav a.active {
+    background-color: #063d37; /* Updated dark green */
+  }
+  .bottom-nav a.active .fa-house {
+    color: #fafafa !important; /* Updated to off-white */
+  }
+  .bottom-nav a p {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 500;
+    margin: 0;
+  }
+  .bottom-nav a svg {
+    font-size: 18px;
+    color: #fafafa; /* Updated to off-white */
+  }
+}
+`;
+
+const Energiemanager = () => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading delay (replace with actual data fetching if needed)
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000); // Adjust the delay as needed (e.g., 2000ms = 2 seconds)
+
+    // Cleanup the timer when the component unmounts
+    return () => clearTimeout(timer);
+  }, []);
+
+  // If loading is true, show the LoadingScreen
+  if (loading) {
+    return <LoadingScreen />;
+  }
+  return (
+    <>
+      <style>{styles}</style>
+      <div className="layout relative" style={{ backgroundColor: '#fafafa', fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
+        <header className="header">
+          <div className="flex items-start">
+            <img src="/bilder/ilumylogo2.png" alt="Logo" className="header-logo" />
+          </div>
+        </header>
+
+        <div className="sidebar w-full p-3 bg-[#202026] border-r border-gray-300">
+          <div className="flex h-full flex-col justify-between">
+            <div className="flex flex-col gap-3">
+              <div className="flex gap-2">
+                <div
+                  className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8"
+                  style={{ backgroundImage: `url("https://lh3.googleusercontent.com/aida-public/AB6AXuAmnxnxpn4igDe4BfK3Jk0-s2CVTa4kG5bBXQK5Q3sz97EVpfvDRNoYRZ6IEY1cwzMbdDYAvnZyx1ElWq2chI_K9WMbnvRtLpaXMuFW17eHrHQGE9L767-I personallyWAxet4V8qjLi4FQMa0xDybtXWlP--5VrYcGVklH6MAfwyPJx0hXFxRrf2ayne-MgYYH6E9dYyqmRLSJvKFlhhylpFvpSyM-aHM2XdirG1dzKHzCiz6QAbBjL1skTZVWmnyTGnWwgYTfOZymx-fv0Dms")` }}
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <a href="/test/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#202026] hover:bg-[#063d37] text-white">
+                  <FontAwesomeIcon icon={faHouse} style={{ color: '#fafafa', fontSize: '20px' }} />
+                  <p className="text-white text-xs font-medium leading-normal">Home</p>
+                </a>
+                <a href="/test/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#063d37] text-white active">
+                  <FontAwesomeIcon icon={faChartLine} style={{ color: '#fafafa', fontSize: '20px' }} />
+                  <p className="text-white text-xs font-medium leading-normal">Preis</p>
+                </a>
+                <a href="/test/rechner" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#063d37] text-white">
+                  <FontAwesomeIcon icon={faCalculator} style={{ color: '#fafafa', fontSize: '20px' }} />
+                  <p className="text-white text-xs font-medium leading-normal">Rechner</p>
+                </a>
+                <a href="/test/details" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#063d37] text-white">
+                  <FontAwesomeIcon icon={faFileLines} style={{ color: '#fafafa', fontSize: '20px' }} />
+                  <p className="text-white text-xs font-medium leading-normal">Detail-Rechner</p>
+                </a>
+                <a href="/test/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#063d37] text-white">
+                  <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#fafafa', fontSize: '20px' }} />
+                  <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="main flex flex-col lg:flex-row gap-6" style={{ backgroundColor: '#fafafa',}} >
+          <div className="content flex-1 rounded-xl   flex flex-col"style={{ backgroundColor: '#fafafa',}}>
+            <Statistik />
+          </div>
+          <div className="chart flex-1 p-6 rounded-xl bg-white shadow-md flex flex-col">
+            <Durchschnitt />
+          </div>
+        </div>
+
+        <nav className="bottom-nav">
+          <a href="/test/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#063d37] text-white">
+            <FontAwesomeIcon icon={faHouse} style={{ color: '#fafafa', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Home</p>
+          </a>
+          <a href="/test/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#063d37] text-white active">
+            <FontAwesomeIcon icon={faChartLine} style={{ color: '#fafafa', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Preis</p>
+          </a>
+          <a href="/test/rechner" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#063d37] text-white">
+            <FontAwesomeIcon icon={faCalculator} style={{ color: '#fafafa', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Rechner</p>
+          </a>
+          <a href="/test/details" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#063d37] text-white">
+            <FontAwesomeIcon icon={faFileLines} style={{ color: '#fafafa', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Detail</p>
+          </a>
+          <a href="/test/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#063d37] text-white">
+            <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#fafafa', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
+          </a>
+        </nav>
+      </div>
+    </>
+  );
+};
+
+export default Energiemanager;

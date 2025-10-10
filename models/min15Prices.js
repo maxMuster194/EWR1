@@ -1,7 +1,6 @@
-// models/15minPrices.js
 import mongoose from 'mongoose';
 
-const germany15MinSchema = new mongoose.Schema({
+const germanyMin15Schema = new mongoose.Schema({
   'Delivery day': String,
   'Hour 1 Q1': Number, 'Hour 1 Q2': Number, 'Hour 1 Q3': Number, 'Hour 1 Q4': Number,
   'Hour 2 Q1': Number, 'Hour 2 Q2': Number, 'Hour 2 Q3': Number, 'Hour 2 Q4': Number,
@@ -47,6 +46,6 @@ const germany15MinSchema = new mongoose.Schema({
   'High noon': Number,
   'Rush hour': Number,
   'Sun peak': Number
-}, { strict: true, collection: '15minPrices' });
+}, { strict: true, collection: 'min15Prices' });
 
-export default mongoose.models['15minPrices'] || mongoose.model('15minPrices', germany15MinSchema);
+export default mongoose.models['min15Prices'] || mongoose.model('min15Prices', germanyMin15Schema);

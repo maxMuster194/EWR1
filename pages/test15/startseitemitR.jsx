@@ -1,9 +1,66 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle, faUser, faComment, faBackward, faClock } from '@fortawesome/free-solid-svg-icons';
-import Dypreis0 from '../test/dypreis0';
+import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle, faComment, faBackward, faClock } from '@fortawesome/free-solid-svg-icons';
+import mongoose from 'mongoose';
+import GermanyMin15Prices from '/models/min15Prices'; // Passe den Pfad an
+import DynamischerPreis from '../test15/dypreis1';
 import LoadingScreen from '../loading/Loadingscreen';
 
+// MongoDB-Verbindung
+const mongoURI = process.env.MONGO_URI || 'mongodb+srv://max:Julian1705@strom.vm0dp8f.mongodb.net/?retryWrites=true&w=majority&appName=Strom';
+
+async function connectDB() {
+  if (mongoose.connection.readyState >= 1) {
+    console.log('MongoDB already connected');
+    return;
+  }
+  try {
+    await mongoose.connect(mongoURI);
+    console.log('MongoDB connected successfully');
+  } catch (err) {
+    console.error('MongoDB connection error:', { message: err.message, stack: err.stack });
+    throw new Error(`MongoDB connection failed: ${err.message}`);
+  }
+}
+
+// Parse DD/MM/YYYY to YYYY-MM-DD
+function parseDeliveryDay(dateStr) {
+  if (!dateStr) return null;
+  const [day, month, year] = dateStr.split('/');
+  const parsedDate = new Date(`${year}-${month}-${day}`);
+  return !isNaN(parsedDate) ? parsedDate.toISOString().split('T')[0] : null;
+}
+
+export async function getServerSideProps() {
+  try {
+    await connectDB();
+    const data = await GermanyMin15Prices.find({}).lean();
+    console.log('Available fields in data:', Object.keys(data[0] || {})); // Debug: Verfügbare Felder
+    const uniqueDates = [...new Set(data.map(item => parseDeliveryDay(item['Delivery day'])).filter(date => date !== null))];
+    const todayBerlin = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Berlin' });
+
+    return {
+      props: {
+        data: JSON.parse(JSON.stringify(data)),
+        uniqueDates: uniqueDates || [],
+        todayBerlin,
+        error: null,
+      },
+    };
+  } catch (err) {
+    console.error('Error in getServerSideProps:', { message: err.message, stack: err.stack });
+    return {
+      props: {
+        data: [],
+        uniqueDates: [],
+        todayBerlin: new Date().toISOString().split('T')[0],
+        error: `Failed to fetch data: ${err.message}`,
+      },
+    };
+  }
+}
+
+// Angepasster Stil-Code
 const styles = `
   .layout {
     width: 100%;
@@ -36,20 +93,57 @@ const styles = `
   }
   .top-box { 
     grid-area: top-box; 
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-    padding: 24px;
-  }
-  .top-box .title-container {
-    display: flex;
-    justify-content: center;
-    text-align: center;
+    position: relative;
   }
   .top-box .button-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
     display: flex;
-    justify-content: flex-end;
+    gap: 10px;
+  }
+  .top-box .button-container a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background-color: #063d37;
+    color: #FFFFFF;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    position: relative;
+  }
+  .top-box .button-container a:hover {
+    background-color: #3c6055;
+  }
+  .top-box .button-container a.active {
+    background-color: #88bf50;
+    color: #FFFFFF;
+  }
+  .top-box .button-container a .tooltip {
+    visibility: hidden;
+    width: 120px;
+    background-color: #202026;
+    color: #FFFFFF;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: 50%;
+    margin-left: -60px;
+    margin-top: 8px;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .top-box .button-container a:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
   }
   .sidebar {
     grid-area: sidebar;
@@ -153,55 +247,6 @@ const styles = `
   .bottom-nav {
     display: none;
   }
-  .button-container {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    position: relative;
-  }
-  .button-container a {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    background-color: #063d37;
-    color: #FFFFFF;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    transition: background-color 0.2s;
-    position: relative;
-  }
-  .button-container a:hover {
-    background-color: #3c6055;
-  }
-  .button-container a.active {
-    background-color: #88bf50;
-    color: #FFFFFF;
-  }
-  .button-container a .tooltip {
-    visibility: hidden;
-    width: 120px;
-    background-color: #202026;
-    color: #FFFFFF;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px;
-    position: absolute;
-    z-index: 1;
-    top: 100%;
-    left: 50%;
-    margin-left: -60px;
-    margin-top: 8px;
-    font-size: 12px;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .button-container a:hover .tooltip {
-    visibility: visible;
-    opacity: 1;
-  }
   @media (max-width: 767px) {
     .layout {
       display: flex;
@@ -219,12 +264,22 @@ const styles = `
     }
     .top-box {
       order: 3;
-      flex-direction: column;
-      gap: 12px;
-      padding: 12px;
+      position: relative;
     }
     .top-box .button-container {
-      justify-content: flex-end;
+      top: 8px;
+      right: 8px;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .top-box .button-container a {
+      font-size: 12px;
+      padding: 6px 10px;
+    }
+    .top-box .button-container a .tooltip {
+      width: 100px;
+      margin-left: -50px;
+      font-size: 10px;
     }
     .sidebar {
       display: none;
@@ -316,41 +371,23 @@ const styles = `
       font-size: 18px;
       color: #fafafa;
     }
-    .button-container {
-      flex-direction: row;
-      gap: 8px;
-    }
-    .button-container a {
-      font-size: 12px;
-      padding: 6px 10px;
-    }
-    .button-container a .tooltip {
-      width: 100px;
-      margin-left: -50px;
-      font-size: 10px;
-    }
   }
 `;
 
-const Energiemanager = () => {
+export default function Energiemanager({ data, uniqueDates, todayBerlin, error }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate loading delay (replace with actual data fetching if needed)
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1000); // Adjust the delay as needed (e.g., 2000ms = 2 seconds)
-
-    // Cleanup the timer when the component unmounts
+    }, 1000);
     return () => clearTimeout(timer);
   }, []);
 
-  // If loading is true, show the LoadingScreen
   if (loading) {
     return <LoadingScreen />;
   }
 
-  // Otherwise, render the main content
   return (
     <>
       <style>{styles}</style>
@@ -364,21 +401,23 @@ const Energiemanager = () => {
           </div>
         </header>
 
-        <div className="top-box">
-          <div className="title-container">
-            <p className="text-[#3c6055] text-4xl font-bold leading-normal">Dynamischer Stromtarif</p>
-          </div>
-          <div className="button-container">
-            <a href="/test/startseitemitR" className="flex items-center gap-2 active">
-              <FontAwesomeIcon icon={faBackward} style={{ color: '#fafafa', fontSize: '16px' }} />
-              <span>Datenrückblick</span>
-              <span className="tooltip">Preisdaten bis zum 30.09.2025</span>
-            </a>
-            <a href="/test15/startseitemitR" className="flex items-center gap-2 ">
-              <FontAwesomeIcon icon={faClock} style={{ color: '#fafafa', fontSize: '16px' }} />
-              <span>Aktuell</span>
-              <span className="tooltip">Preisdaten ab dem 01.10.2025</span>
-            </a>
+        <div className="top-box p-6 rounded-xl bg-[#fafafa]">
+          <div className="flex flex-col gap-3 rounded-xl p-6 bg-[#fafafa] text-center relative">
+            <div className="flex items-center justify-center gap-4">
+              <p className="text-[#3c6055] text-4xl font-bold leading-normal">Dynamischer Stromtarif</p>
+            </div>
+            <div className="button-container">
+              <a href="/test/startseitemitR" className="flex items-center gap-2">
+                <FontAwesomeIcon icon={faBackward} style={{ color: '#fafafa', fontSize: '16px' }} />
+                <span>Datenrückblick</span>
+                <span className="tooltip">Preisdaten bis zum 30.09.2025</span>
+              </a>
+              <a href="/test15/startseitemitR" className="flex items-center gap-2 active">
+                <FontAwesomeIcon icon={faClock} style={{ color: '#fafafa', fontSize: '16px' }} />
+                <span>Aktuell</span>
+                <span className="tooltip">Preisdaten ab dem 01.10.2025</span>
+              </a>
+            </div>
           </div>
         </div>
 
@@ -395,25 +434,25 @@ const Energiemanager = () => {
               </div>
               <div className="flex flex-col gap-1">
                 <a
-                  href="/test/startseite"
+                  href="/test15/startseite"
                   className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#202026] hover:bg-[#D9043D] text-white active"
                 >
                   <FontAwesomeIcon icon={faHouse} style={{ color: '#fafafa', fontSize: '20px' }} />
                   <p className="text-white text-xs font-medium leading-normal">Home</p>
                 </a>
-                <a href="/test/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+                <a href="/test15/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
                   <FontAwesomeIcon icon={faChartLine} style={{ color: '#fafafa', fontSize: '20px' }} />
                   <p className="text-white text-xs font-medium leading-normal">Preis</p>
                 </a>
-                <a href="/test/rechner" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+                <a href="/test15/rechner" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
                   <FontAwesomeIcon icon={faCalculator} style={{ color: '#fafafa', fontSize: '20px' }} />
                   <p className="text-white text-xs font-medium leading-normal">Rechner</p>
                 </a>
-                <a href="/test/details" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+                <a href="/test15/details" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
                   <FontAwesomeIcon icon={faFileLines} style={{ color: '#fafafa', fontSize: '20px' }} />
                   <p className="text-white text-xs font-medium leading-normal">Detail-Rechner</p>
                 </a>
-                <a href="/test/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+                <a href="/test15/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
                   <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#fafafa', fontSize: '20px' }} />
                   <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
                 </a>
@@ -429,7 +468,7 @@ const Energiemanager = () => {
             <div className="flex flex-col gap-6 mt-6 flex-1">
               <div className="flex min-w-[200px] flex-1 flex-col gap-3 rounded-xl p-6 bg-[#fafafa]">
                 <p className="text-[#3c6055] text-2xl font-bold leading-normal">Preisrechner dynamische Tarife <a
-                  href="test/rechner"
+                  href="/test15/rechner"
                   className="inline-flex items-center justify-center gap-1 px-4 py-1.5 rounded-xl bg-[#063d37] hover:bg-[#3c6055] text-white text-lg font-medium leading-normal"
                 >
                   <FontAwesomeIcon icon={faCalculator} style={{ color: '#fafafa', fontSize: '19px' }} />
@@ -438,7 +477,6 @@ const Energiemanager = () => {
                 <p className="text-[#202026] text-base font-normal leading-normal">
                   Jetzt in wenigen Schritten herausfinden, ob sich ein dynamischer Stromtarif für Ihren Haushalt lohnt.
                 </p>
-                <p></p>
                 <p className="text-[#3c6055] text-2xl font-bold leading-normal">Was ist ein dynamischer Stromtarif?</p>
                 <p className="text-[#202026] text-base font-normal leading-normal">
                   Dynamische Stromtarife sind flexible Strompreise, 
@@ -460,7 +498,7 @@ const Energiemanager = () => {
             <div className="flex flex-col gap-2 mt-2 flex-1">
               <div className="flex min-w-[220px] flex-1 flex-col gap-2 rounded-xl p-2">
                 <div className="flex min-h-[220px] flex-1 flex-col gap-2 py-2">
-                  <Dypreis0 />
+                  <DynamischerPreis data={data} uniqueDates={uniqueDates} todayBerlin={todayBerlin} error={error} />
                 </div>
               </div>
             </div>
@@ -493,7 +531,7 @@ const Energiemanager = () => {
             <p className="text-[#3c6055] text-lg font-medium leading-normal">Jetzt berechnen, ob der dynamische Stromtarif für Sie in Frage kommt.</p>
             <p className="text-[#202026] text-base font-normal leading-normal">
               <a
-                href="/Amberg1/rechner"
+                href="/test15/rechner"
                 className="inline-flex items-center justify-center gap-1 px-3 py-1 rounded-xl bg-[#063d37] hover:bg-[#3c6055] text-white text-sm font-medium leading-normal"
               >
                 <FontAwesomeIcon icon={faCalculator} style={{ color: '#fafafa', fontSize: '14px' }} />
@@ -506,23 +544,23 @@ const Energiemanager = () => {
         <footer className="footer"></footer>
 
         <nav className="bottom-nav">
-          <a href="/test/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#D9043D] text-white active">
+          <a href="/test15/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#D9043D] text-white active">
             <FontAwesomeIcon icon={faHouse} style={{ color: '#fafafa', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Home</p>
           </a>
-          <a href="/test/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+          <a href="/test15/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
             <FontAwesomeIcon icon={faChartLine} style={{ color: '#fafafa', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Preis</p>
           </a>
-          <a href="/test/rechner" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+          <a href="/test15/rechner" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
             <FontAwesomeIcon icon={faCalculator} style={{ color: '#fafafa', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Rechner</p>
           </a>
-          <a href="/test/details" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+          <a href="/test15/details" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
             <FontAwesomeIcon icon={faFileLines} style={{ color: '#fafafa', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Detail</p>
           </a>
-          <a href="/test/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
+          <a href="/test15/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
             <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#fafafa', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
           </a>
@@ -530,6 +568,4 @@ const Energiemanager = () => {
       </div>
     </>
   );
-};
-
-export default Energiemanager;
+}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle, faUser, faComment, faBackward, faClock } from '@fortawesome/free-solid-svg-icons';
+import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle, faUser, faComment } from '@fortawesome/free-solid-svg-icons';
 import Dypreis0 from '../test/dypreis0';
 import LoadingScreen from '../loading/Loadingscreen';
 
@@ -36,20 +36,6 @@ const styles = `
   }
   .top-box { 
     grid-area: top-box; 
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-    padding: 24px;
-  }
-  .top-box .title-container {
-    display: flex;
-    justify-content: center;
-    text-align: center;
-  }
-  .top-box .button-container {
-    display: flex;
-    justify-content: flex-end;
   }
   .sidebar {
     grid-area: sidebar;
@@ -153,55 +139,6 @@ const styles = `
   .bottom-nav {
     display: none;
   }
-  .button-container {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    position: relative;
-  }
-  .button-container a {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    background-color: #063d37;
-    color: #FFFFFF;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    transition: background-color 0.2s;
-    position: relative;
-  }
-  .button-container a:hover {
-    background-color: #3c6055;
-  }
-  .button-container a.active {
-    background-color: #88bf50;
-    color: #FFFFFF;
-  }
-  .button-container a .tooltip {
-    visibility: hidden;
-    width: 120px;
-    background-color: #202026;
-    color: #FFFFFF;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px;
-    position: absolute;
-    z-index: 1;
-    top: 100%;
-    left: 50%;
-    margin-left: -60px;
-    margin-top: 8px;
-    font-size: 12px;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .button-container a:hover .tooltip {
-    visibility: visible;
-    opacity: 1;
-  }
   @media (max-width: 767px) {
     .layout {
       display: flex;
@@ -219,12 +156,6 @@ const styles = `
     }
     .top-box {
       order: 3;
-      flex-direction: column;
-      gap: 12px;
-      padding: 12px;
-    }
-    .top-box .button-container {
-      justify-content: flex-end;
     }
     .sidebar {
       display: none;
@@ -316,19 +247,6 @@ const styles = `
       font-size: 18px;
       color: #fafafa;
     }
-    .button-container {
-      flex-direction: row;
-      gap: 8px;
-    }
-    .button-container a {
-      font-size: 12px;
-      padding: 6px 10px;
-    }
-    .button-container a .tooltip {
-      width: 100px;
-      margin-left: -50px;
-      font-size: 10px;
-    }
   }
 `;
 
@@ -364,21 +282,11 @@ const Energiemanager = () => {
           </div>
         </header>
 
-        <div className="top-box">
-          <div className="title-container">
-            <p className="text-[#3c6055] text-4xl font-bold leading-normal">Dynamischer Stromtarif</p>
-          </div>
-          <div className="button-container">
-            <a href="/test/startseitemitR" className="flex items-center gap-2 active">
-              <FontAwesomeIcon icon={faBackward} style={{ color: '#fafafa', fontSize: '16px' }} />
-              <span>Datenrückblick</span>
-              <span className="tooltip">Preisdaten bis zum 30.09.2025</span>
-            </a>
-            <a href="/test15/startseitemitR" className="flex items-center gap-2 ">
-              <FontAwesomeIcon icon={faClock} style={{ color: '#fafafa', fontSize: '16px' }} />
-              <span>Aktuell</span>
-              <span className="tooltip">Preisdaten ab dem 01.10.2025</span>
-            </a>
+        <div className="top-box p-6 rounded-xl bg-[#fafafa]">
+          <div className="flex flex-col gap-3 rounded-xl p-6 bg-[#fafafa] text-center">
+            <div className="flex items-center justify-center gap-4">
+              <p className="text-[#3c6055] text-4xl font-bold leading-normal">Dynamischer Stromtarif</p>
+            </div>
           </div>
         </div>
 

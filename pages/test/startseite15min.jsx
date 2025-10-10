@@ -1,9 +1,66 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle, faUser, faComment, faBackward, faClock } from '@fortawesome/free-solid-svg-icons';
-import Dypreis0 from '../test/dypreis0';
+import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle, faComment } from '@fortawesome/free-solid-svg-icons';
+import mongoose from 'mongoose';
+import GermanyMin15Prices from '../../models/min15Prices'; // Passe den Pfad an
+import DynamischerPreis from '../test/dypreis1';
 import LoadingScreen from '../loading/Loadingscreen';
 
+// MongoDB-Verbindung
+const mongoURI = process.env.MONGO_URI || 'mongodb+srv://max:Julian1705@strom.vm0dp8f.mongodb.net/?retryWrites=true&w=majority&appName=Strom';
+
+async function connectDB() {
+  if (mongoose.connection.readyState >= 1) {
+    console.log('MongoDB already connected');
+    return;
+  }
+  try {
+    await mongoose.connect(mongoURI);
+    console.log('MongoDB connected successfully');
+  } catch (err) {
+    console.error('MongoDB connection error:', { message: err.message, stack: err.stack });
+    throw new Error(`MongoDB connection failed: ${err.message}`);
+  }
+}
+
+// Parse DD/MM/YYYY to YYYY-MM-DD
+function parseDeliveryDay(dateStr) {
+  if (!dateStr) return null;
+  const [day, month, year] = dateStr.split('/');
+  const parsedDate = new Date(`${year}-${month}-${day}`);
+  return !isNaN(parsedDate) ? parsedDate.toISOString().split('T')[0] : null;
+}
+
+export async function getServerSideProps() {
+  try {
+    await connectDB();
+    const data = await GermanyMin15Prices.find({}).lean();
+    console.log('Available fields in data:', Object.keys(data[0] || {})); // Debug: Verfügbare Felder
+    const uniqueDates = [...new Set(data.map(item => parseDeliveryDay(item['Delivery day'])).filter(date => date !== null))];
+    const todayBerlin = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Berlin' });
+
+    return {
+      props: {
+        data: JSON.parse(JSON.stringify(data)),
+        uniqueDates: uniqueDates || [],
+        todayBerlin,
+        error: null,
+      },
+    };
+  } catch (err) {
+    console.error('Error in getServerSideProps:', { message: err.message, stack: err.stack });
+    return {
+      props: {
+        data: [],
+        uniqueDates: [],
+        todayBerlin: new Date().toISOString().split('T')[0],
+        error: `Failed to fetch data: ${err.message}`,
+      },
+    };
+  }
+}
+
+// Dein bestehender Stil-Code
 const styles = `
   .layout {
     width: 100%;
@@ -36,20 +93,6 @@ const styles = `
   }
   .top-box { 
     grid-area: top-box; 
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-    padding: 24px;
-  }
-  .top-box .title-container {
-    display: flex;
-    justify-content: center;
-    text-align: center;
-  }
-  .top-box .button-container {
-    display: flex;
-    justify-content: flex-end;
   }
   .sidebar {
     grid-area: sidebar;
@@ -153,55 +196,6 @@ const styles = `
   .bottom-nav {
     display: none;
   }
-  .button-container {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    position: relative;
-  }
-  .button-container a {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    background-color: #063d37;
-    color: #FFFFFF;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    transition: background-color 0.2s;
-    position: relative;
-  }
-  .button-container a:hover {
-    background-color: #3c6055;
-  }
-  .button-container a.active {
-    background-color: #88bf50;
-    color: #FFFFFF;
-  }
-  .button-container a .tooltip {
-    visibility: hidden;
-    width: 120px;
-    background-color: #202026;
-    color: #FFFFFF;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px;
-    position: absolute;
-    z-index: 1;
-    top: 100%;
-    left: 50%;
-    margin-left: -60px;
-    margin-top: 8px;
-    font-size: 12px;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .button-container a:hover .tooltip {
-    visibility: visible;
-    opacity: 1;
-  }
   @media (max-width: 767px) {
     .layout {
       display: flex;
@@ -219,12 +213,6 @@ const styles = `
     }
     .top-box {
       order: 3;
-      flex-direction: column;
-      gap: 12px;
-      padding: 12px;
-    }
-    .top-box .button-container {
-      justify-content: flex-end;
     }
     .sidebar {
       display: none;
@@ -316,23 +304,10 @@ const styles = `
       font-size: 18px;
       color: #fafafa;
     }
-    .button-container {
-      flex-direction: row;
-      gap: 8px;
-    }
-    .button-container a {
-      font-size: 12px;
-      padding: 6px 10px;
-    }
-    .button-container a .tooltip {
-      width: 100px;
-      margin-left: -50px;
-      font-size: 10px;
-    }
   }
 `;
 
-const Energiemanager = () => {
+export default function Energiemanager({ data, uniqueDates, todayBerlin, error }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -364,21 +339,11 @@ const Energiemanager = () => {
           </div>
         </header>
 
-        <div className="top-box">
-          <div className="title-container">
-            <p className="text-[#3c6055] text-4xl font-bold leading-normal">Dynamischer Stromtarif</p>
-          </div>
-          <div className="button-container">
-            <a href="/test/startseitemitR" className="flex items-center gap-2 active">
-              <FontAwesomeIcon icon={faBackward} style={{ color: '#fafafa', fontSize: '16px' }} />
-              <span>Datenrückblick</span>
-              <span className="tooltip">Preisdaten bis zum 30.09.2025</span>
-            </a>
-            <a href="/test15/startseitemitR" className="flex items-center gap-2 ">
-              <FontAwesomeIcon icon={faClock} style={{ color: '#fafafa', fontSize: '16px' }} />
-              <span>Aktuell</span>
-              <span className="tooltip">Preisdaten ab dem 01.10.2025</span>
-            </a>
+        <div className="top-box p-6 rounded-xl bg-[#fafafa]">
+          <div className="flex flex-col gap-3 rounded-xl p-6 bg-[#fafafa] text-center">
+            <div className="flex items-center justify-center gap-4">
+              <p className="text-[#3c6055] text-4xl font-bold leading-normal">Dynamischer Stromtarif</p>
+            </div>
           </div>
         </div>
 
@@ -429,7 +394,7 @@ const Energiemanager = () => {
             <div className="flex flex-col gap-6 mt-6 flex-1">
               <div className="flex min-w-[200px] flex-1 flex-col gap-3 rounded-xl p-6 bg-[#fafafa]">
                 <p className="text-[#3c6055] text-2xl font-bold leading-normal">Preisrechner dynamische Tarife <a
-                  href="test/rechner"
+                  href="/test/rechner"
                   className="inline-flex items-center justify-center gap-1 px-4 py-1.5 rounded-xl bg-[#063d37] hover:bg-[#3c6055] text-white text-lg font-medium leading-normal"
                 >
                   <FontAwesomeIcon icon={faCalculator} style={{ color: '#fafafa', fontSize: '19px' }} />
@@ -460,7 +425,7 @@ const Energiemanager = () => {
             <div className="flex flex-col gap-2 mt-2 flex-1">
               <div className="flex min-w-[220px] flex-1 flex-col gap-2 rounded-xl p-2">
                 <div className="flex min-h-[220px] flex-1 flex-col gap-2 py-2">
-                  <Dypreis0 />
+                  <DynamischerPreis data={data} uniqueDates={uniqueDates} todayBerlin={todayBerlin} error={error} />
                 </div>
               </div>
             </div>
@@ -493,7 +458,7 @@ const Energiemanager = () => {
             <p className="text-[#3c6055] text-lg font-medium leading-normal">Jetzt berechnen, ob der dynamische Stromtarif für Sie in Frage kommt.</p>
             <p className="text-[#202026] text-base font-normal leading-normal">
               <a
-                href="/Amberg1/rechner"
+                href="/test/rechner"
                 className="inline-flex items-center justify-center gap-1 px-3 py-1 rounded-xl bg-[#063d37] hover:bg-[#3c6055] text-white text-sm font-medium leading-normal"
               >
                 <FontAwesomeIcon icon={faCalculator} style={{ color: '#fafafa', fontSize: '14px' }} />
@@ -530,6 +495,4 @@ const Energiemanager = () => {
       </div>
     </>
   );
-};
-
-export default Energiemanager;
+}
