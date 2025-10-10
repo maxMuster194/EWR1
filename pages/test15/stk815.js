@@ -1,13 +1,6 @@
-import mongoose from 'mongoose';
+import mongooseAlias from 'mongoose';
 import GermanyMin15Prices from '../../models/min15Prices';
 import dynamic from 'next/dynamic';
-
-// Dynamisch den Line-Chart importieren, um SSR zu vermeiden
-const Line = dynamic(() => import('react-chartjs-2').then((mod) => mod.Line), {
-  ssr: false,
-});
-
-// Chart.js-Komponenten registrieren
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -19,18 +12,24 @@ import {
   Legend,
 } from 'chart.js';
 
+// Dynamisch den Line-Chart importieren, um SSR zu vermeiden
+const Line = dynamic(() => import('react-chartjs-2').then((mod) => mod.Line), {
+  ssr: false,
+});
+
+// Chart.js-Komponenten registrieren
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 // MongoDB-Verbindung
 const mongoURI = process.env.MONGO_URI || 'mongodb+srv://max:Julian1705@strom.vm0dp8f.mongodb.net/?retryWrites=true&w=majority&appName=Strom';
 
 async function connectDB() {
-  if (mongoose.connection.readyState >= 1) {
+  if (mongooseAlias.connection.readyState >= 1) {
     console.log('MongoDB already connected');
     return;
   }
   try {
-    await mongoose.connect(mongoURI);
+    await mongooseAlias.connect(mongoURI);
     console.log('MongoDB connected successfully');
   } catch (err) {
     console.error('MongoDB connection error:', { message: err.message, stack: err.stack });
@@ -69,11 +68,13 @@ function sortWeeks(weeks) {
   });
 }
 
+// Server-Side Props
 export async function getServerSideProps() {
   try {
     await connectDB();
     const data = await GermanyMin15Prices.find({}).lean();
-    console.log('Available fields in data:', Object.keys(data[0] || {})); // Debug: Verfügbare Felder
+    console.log('Available fields in data:', Object.keys(data[0] || {}));
+
     const parsedDates = data.map(item => parseDeliveryDay(item['Delivery day'])).filter(date => date !== null);
     const uniqueWeeks = [...new Set(parsedDates.map(date => {
       const weekObj = getISOWeek(new Date(date));
@@ -81,7 +82,7 @@ export async function getServerSideProps() {
     }))].map(str => JSON.parse(str));
     const sortedUniqueWeeks = sortWeeks(uniqueWeeks);
 
-    // Berechne Durchschnittspreise pro Woche im Voraus
+    // Berechne Durchschnittspreise pro Woche
     const weeklyAverages = sortedUniqueWeeks.map(weekObj => {
       const filteredData = data.filter(record => {
         const date = parseDeliveryDay(record['Delivery day']);
@@ -117,8 +118,7 @@ export async function getServerSideProps() {
         });
       });
 
-      const average = totalCount > 0 ? totalSum / totalCount : 0;
-      return average;
+      return totalCount > 0 ? totalSum / totalCount : 0;
     });
 
     return {
@@ -140,7 +140,9 @@ export async function getServerSideProps() {
   }
 }
 
+// Haupt-Komponente
 export default function DynamischerPreis({ sortedUniqueWeeks = [], weeklyAverages = [], error }) {
+  // Fehlerbehandlung
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#fafafa' }}>
@@ -149,6 +151,7 @@ export default function DynamischerPreis({ sortedUniqueWeeks = [], weeklyAverage
     );
   }
 
+  // Prüfung auf leere Daten
   if (sortedUniqueWeeks.length === 0 || weeklyAverages.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#fafafa' }}>
@@ -159,7 +162,7 @@ export default function DynamischerPreis({ sortedUniqueWeeks = [], weeklyAverage
     );
   }
 
-  // Prepare chart data for weekly averages
+  // Chart-Daten vorbereiten
   const chartData = {
     labels: sortedUniqueWeeks.map(weekObj => formatWeek(weekObj)),
     datasets: [{
@@ -174,7 +177,7 @@ export default function DynamischerPreis({ sortedUniqueWeeks = [], weeklyAverage
     }],
   };
 
-  // Chart options
+  // Chart-Optionen
   const chartOptions = {
     responsive: true,
     plugins: {
@@ -195,14 +198,11 @@ export default function DynamischerPreis({ sortedUniqueWeeks = [], weeklyAverage
   return (
     <div className="min-h-screen p-4" style={{ backgroundColor: '#fafafa' }}>
       <div className="max-w-7xl mx-auto">
-        {/* Heading */}
         <div className="text-center">
           <h2 className="text-xl font-semibold" style={{ color: '#063d37' }}>
             Durchschnittlicher Strompreis pro Kalenderwoche (Dynamischer Tarif)
           </h2>
         </div>
-
-        {/* Line chart */}
         {weeklyAverages.some(d => d !== 0) ? (
           <div className="mb-8">
             <Line data={chartData} options={chartOptions} />

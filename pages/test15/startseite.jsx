@@ -477,7 +477,7 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
                 <p className="text-[#202026] text-base font-normal leading-normal">
                   
                 <p>Jetzt in wenigen Schritten herausfinden, ob sich ein dynamischer Stromtarif für Ihren Haushalt lohnt.</p>
-                  <p>Wir vergleichen in diesem Tool den reinen Energiepreis. Steuern, netzentgelte sowie alle weiteren abgaben sind in den Vergleichen abgezogen. 
+                  <p>Wir vergleichen in diesem Tool den reinen Energiepreis. Steuern, Netzentgelte sowie alle weiteren Abgaben sind in den Vergleichen abgezogen. 
                   </p>
                 </p>
                 <p className="text-[#3c6055] text-2xl font-bold leading-normal">Was ist ein dynamischer Stromtarif?</p>
