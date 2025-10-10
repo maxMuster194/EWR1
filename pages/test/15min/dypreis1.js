@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import GermanyMin15Prices from '../../models/min15Prices';
+import GermanyMin15Prices from '/models/min15Prices';
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import DatePicker from 'react-datepicker'; // Import react-datepicker
