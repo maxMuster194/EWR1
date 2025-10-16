@@ -95,7 +95,7 @@ const styles = `
   .top-box { 
     grid-area: top-box; 
     position: relative;
-    background-color: #2a2a2a; /* Einheitliches Grau */
+    background-color: transparent; /* Einheitlich transparent */
   }
   .top-box .button-container {
     position: absolute;
@@ -128,7 +128,7 @@ const styles = `
   .top-box .button-container a .tooltip {
     visibility: hidden;
     width: 120px;
-    background-color: #2a2a2a; /* Einheitliches Grau */
+    background-color: transparent; /* Einheitlich transparent */
     color: #FFFFFF;
     text-align: center;
     border-radius: 6px;
@@ -152,7 +152,7 @@ const styles = `
     width: 100%;
     max-width: 200px;
     padding: 12px;
-    background-color: #2a2a2a; /* Einheitliches Grau */
+    background-color: transparent; /* Einheitlich transparent */
     border-right: 1px solid #4a4a4a; /* Rand für Sidebar */
     color: #FFFFFF;
   }
@@ -194,52 +194,52 @@ const styles = `
     flex-direction: row;
     gap: 12px;
     padding: 24px;
-    background-color: #2a2a2a; /* Einheitliches Grau */
+    background-color: transparent; /* Einheitlich transparent */
     border-radius: 12px;
     color: #FFFFFF;
   }
   .bottom-boxes {
     grid-area: bottom-boxes;
     padding: 24px;
-    background-color: #2a2a2a; /* Einheitliches Grau */
+    background-color: transparent; /* Einheitlich transparent */
     border-radius: 12px;
     color: #FFFFFF;
   }
   .extra-box-1 {
     grid-area: extra-box-1;
     padding: 24px;
-    background-color: #2a2a2a; /* Einheitliches Grau */
+    background-color: transparent; /* Einheitlich transparent */
     border-radius: 12px;
     color: #FFFFFF;
   }
   .extra-box-2 {
     grid-area: extra-box-2;
     padding: 16px;
-    background-color: #2a2a2a; /* Einheitliches Grau */
+    background-color: transparent; /* Einheitlich transparent */
     border-radius: 12px;
     color: #FFFFFF;
   }
   .extra-box-2 .inner-box {
     max-width: 400px;
     margin: 0 auto;
-    background-color: #2a2a2a; /* Einheitliches Grau */
+    background-color: transparent; /* Einheitlich transparent */
   }
   .content {
     flex: 1;
     overflow: auto;
     max-height: 100vh;
-    background-color: #2a2a2a; /* Einheitliches Grau */
+    background-color: transparent; /* Einheitlich transparent */
     border-radius: 12px;
   }
   .chart {
     flex: 1;
     overflow: auto;
     max-height: 100vh;
-    background-color: #2a2a2a; /* Einheitliches Grau */
+    background-color: transparent; /* Einheitlich transparent */
     border-radius: 12px;
   }
   .chart .flex.min-w-[200px] {
-    background-color: #2a2a2a; /* Einheitliches Grau */
+    background-color: transparent; /* Einheitlich transparent */
     border: none;
     box-shadow: none;
   }
@@ -289,7 +289,7 @@ const styles = `
     .header, .top-box, .main, .bottom-boxes, .extra-box-1, .extra-box-2, .footer {
       width: 100%;
       padding: 12px;
-      background-color: #2a2a2a; /* Einheitliches Grau */
+      background-color: transparent; /* Einheitlich transparent */
     }
     .header {
       padding: 6px;
@@ -313,7 +313,7 @@ const styles = `
       width: 100px;
       margin-left: -50px;
       font-size: 10px;
-      background-color: #2a2a2a; /* Einheitliches Grau */
+      background-color: transparent; /* Einheitlich transparent */
     }
     .sidebar {
       display: none;
@@ -321,23 +321,23 @@ const styles = `
     .main {
       flex-direction: column;
       order: 2;
-      background-color: #2a2a2a; /* Einheitliches Grau */
+      background-color: transparent; /* Einheitlich transparent */
     }
     .content {
       order: 2;
       max-height: none;
-      background-color: #2a2a2a; /* Einheitliches Grau */
+      background-color: transparent; /* Einheitlich transparent */
     }
     .chart {
       order: 1;
       max-height: none;
-      background-color: #2a2a2a; /* Einheitliches Grau */
+      background-color: transparent; /* Einheitlich transparent */
       padding: 8px 4px;
       width: 100%;
       box-sizing: border-box;
     }
     .chart .flex.min-w-[200px] {
-      background-color: #2a2a2a; /* Einheitliches Grau */
+      background-color: transparent; /* Einheitlich transparent */
       border: none;
       box-shadow: none;
       width: 100%;
@@ -367,7 +367,7 @@ const styles = `
       bottom: 0;
       left: 0;
       right: 0;
-      background-color: #2a2a2a; /* Einheitliches Grau */
+      background-color: transparent; /* Einheitlich transparent */
       border-top: 1px solid #4a4a4a; /* Rand für Bottom-Nav */
       justify-content: space-around;
       align-items: center;
@@ -437,11 +437,11 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
         color: '#FFFFFF'
       }}>
         <div className="main flex flex-col lg:flex-row gap-6">
-          <div className="content flex-1 p-6 rounded-xl bg-[#2a2a2a] flex flex-col">
+          <div className="content flex-1 p-6 rounded-xl bg-transparent flex flex-col">
             <p className="text-[#FFFFFF] tracking-tight text-3xl font-bold leading-tight text-center gradient-heading"></p>
             <p className="text-[#FFFFFF] text-lg font-normal leading-relaxed text-center mt-2"></p>
             <div className="flex flex-col gap-6 mt-6 flex-1">
-              <div className="flex min-w-[200px] flex-1 flex-col gap-3 rounded-xl p-6 bg-[#2a2a2a]">
+              <div className="flex min-w-[200px] flex-1 flex-col gap-3 rounded-xl p-6 bg-transparent">
                 <div className="flex items-center gap-4">
                   <p className="text-[#FFFFFF] text-2xl font-bold leading-normal gradient-heading">
                     Preisrechner dynamische Tarife
@@ -496,7 +496,7 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
         </div>
 
         <div className="bottom-boxes">
-          <div className="flex flex-col gap-4 rounded-xl p-6 bg-[#2a2a2a] shadow-sm">
+          <div className="flex flex-col gap-4 rounded-xl p-6 bg-transparent shadow-sm">
             <p className="text-[#FFFFFF] text-xl font-bold leading-normal gradient-heading">Vorteile</p>
             <ul className="text-[#FFFFFF] text-base font-normal leading-relaxed list-disc list-inside space-y-2">
               <li><span className="font-medium text-[#FFFFFF]">Kostenersparnis:</span> <span className="text-[#FFFFFF]">Wer seinen Stromverbrauch in günstige Zeiten verlegt (z. B. Wäsche nachts waschen), kann spürbar sparen.</span></li>
@@ -505,7 +505,7 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
               <li><span className="font-medium text-[#FFFFFF]">Anreiz zur Automatisierung:</span> <span className="text-[#FFFFFF]">Smarte Haushaltsgeräte oder Energiemanagementsysteme lassen sich optimal einsetzen.</span></li>
             </ul>
           </div>
-          <div className="flex flex-col gap-4 rounded-xl p-6 bg-[#2a2a2a] shadow-sm mt-4">
+          <div className="flex flex-col gap-4 rounded-xl p-6 bg-transparent shadow-sm mt-4">
             <p className="text-[#FFFFFF] text-xl font-bold leading-normal gradient-heading">Nachteile</p>
             <ul className="text-[#FFFFFF] text-base font-normal leading-relaxed list-disc list-inside space-y-2">
               <li><span className="font-medium text-[#FFFFFF]">Preisschwankungen:</span> <span className="text-[#FFFFFF]">Strom kann zu bestimmten Tageszeiten sehr teuer sein, was die Planung erschwert.</span></li>
@@ -517,7 +517,7 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
         </div>
 
         <div className="extra-box-2">
-          <div className="inner-box flex flex-col gap-3 rounded-xl p-4 bg-[#2a2a2a] shadow-sm text-center">
+          <div className="inner-box flex flex-col gap-3 rounded-xl p-4 bg-transparent shadow-sm text-center">
             <p className="text-[#FFFFFF] text-lg font-medium leading-normal gradient-heading">Jetzt berechnen, ob der dynamische Stromtarif für Sie in Frage kommt.</p>
             <p className="text-[#FFFFFF] text-base font-normal leading-normal">
               <a
