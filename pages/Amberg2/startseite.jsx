@@ -61,7 +61,10 @@ export async function getServerSideProps() {
 }
 
 // Überarbeiteter Stil-Code: Alles transparent, keine Ränder, keine Hintergründe, einfaches Layout mit Fokus auf Inhalt.
+// Hinzugefügt: FF Good Web Pro als primäre Schriftart (Fallback zu Sans-Serif), mit dem Typekit-Link im Head-Bereich (da Next.js <Head> benötigt – passe an, falls du next/head importierst).
 const styles = `
+  @import url('https://use.typekit.net/oie4cok.css');
+  
   .layout {
     width: 100%;
     display: flex;
@@ -69,7 +72,9 @@ const styles = `
     min-height: 100vh;
     background-color: transparent;
     color: #FFFFFF;
-    font-family: 'Manrope', sans-serif;
+    font-family: 'ff-good-web-pro', sans-serif;
+    font-weight: 400;
+    font-style: normal;
     gap: 32px;
     padding: 24px;
   }
@@ -123,6 +128,9 @@ const styles = `
     color: #FFFFFF !important;
     border: none !important;
     box-shadow: none !important;
+    font-family: 'ff-good-web-pro', sans-serif !important;
+    font-weight: 400 !important;
+    font-style: normal !important;
   }
   a.inline-flex {
     display: inline-flex;
@@ -135,6 +143,7 @@ const styles = `
     font-weight: 600;
     transition: all 0.3s;
     border: none;
+    font-family: 'ff-good-web-pro', sans-serif !important;
   }
   a.inline-flex:hover {
     background: linear-gradient(90deg, #905fa4, #4372b7) !important;
@@ -175,6 +184,7 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
 
   return (
     <>
+      {/* Hinweis: In Next.js solltest du import Head from 'next/head'; hinzufügen und <Head><link rel="stylesheet" href="https://use.typekit.net/oie4cok.css" /></Head> verwenden, um den Font sauber zu laden. Hier als Fallback im Style. */}
       <style>{styles}</style>
       <div className="layout" style={{ backgroundColor: 'transparent' }}>
         {/* Main: Content + Chart */}
