@@ -24,7 +24,7 @@ import {
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip);
 
 // MongoDB-Verbindung (unverändert)
-const mongoURI = process.env.MONGO_URI || 'mongodb+srv://max:Julian1705@strom.vm0dp8f.mongodb.net/?retryWrites=true&w=majority&appName=Strom';
+const mongoURI = process.env.MONGO_URI || 'mongodb+srv://max:Julian5@strom.vm0dp8f.mongodb.net/?retryWrites=true&w=majority&appName=Strom';
 
 async function connectDB() {
   if (mongoose.connection.readyState >= 1) {
@@ -77,19 +77,21 @@ export async function getServerSideProps() {
   }
 }
 
-// CSS angepasst: Transparenter Hintergrund überall, aber Rand um das DatePicker-Input-Feld hinzugefügt (sichtbarer Rahmen für Auswahl). Rest bleibt transparent/minimalistisch.
+// CSS angepasst: Alles transparent, damit es sich perfekt an den Eltern-Hintergrund anpasst (z.B. in deiner Energiemanager-Seite). 
+// Der Rand um das Input-Feld ist nun ein subtiler weißer/gradient Border, der auf dunklem Hintergrund sichtbar ist (anpassbar, falls Eltern-Hintergrund hell ist).
+// Chart-Grid-Linien und Ticks angepasst für bessere Sichtbarkeit auf transparentem/überlagerndem BG.
 const styles = `
   .container {
     min-height: 100vh;
     padding: 16px;
-    background-color: transparent;
+    background-color: transparent !important; /* Force transparent, passt sich Eltern an */
     font-family: 'Manrope', 'Noto Sans', sans-serif;
     color: #FFFFFF;
   }
   .content {
     max-width: 1280px;
     margin: 0 auto;
-    background-color: transparent;
+    background-color: transparent !important;
   }
   .gradient-heading {
     background: linear-gradient(90deg, #4372b7, #905fa4);
@@ -102,13 +104,14 @@ const styles = `
     display: block;
     width: 100%;
     max-width: 300px;
+    background-color: transparent !important;
   }
   .react-datepicker__input-container input {
     width: 100%;
     padding: 8px;
-    background-color: transparent;
+    background-color: transparent !important; /* Passt sich an */
     color: #FFFFFF;
-    border: 1px solid #905fa4; /* Sichtbarer Rand um das Datumsfeld (Gradient-Farbe für Akzent) */
+    border: 1px solid rgba(255, 255, 255, 0.3); /* Subtiler, anpassungsfähiger Rand (weiß-transparent, sichtbar auf dunkel) */
     border-radius: 6px;
     font-size: 14px;
     font-family: 'Manrope', 'Noto Sans', sans-serif;
@@ -116,18 +119,18 @@ const styles = `
   }
   .react-datepicker__input-container input:focus {
     outline: none;
-    border: 1px solid #4372b7; /* Fokus-Rand für bessere Sichtbarkeit */
-    background: rgba(67, 114, 183, 0.1); /* Leichter Hintergrund im Fokus */
+    border: 1px solid #905fa4; /* Gradient-Farbe im Fokus */
+    background: rgba(144, 95, 164, 0.1) !important; /* Leichter Overlay für Interaktion */
   }
   .react-datepicker {
-    background-color: transparent;
+    background-color: rgba(0, 0, 0, 0.8); /* Popup etwas abgedunkelt für Lesbarkeit, aber transparenter Rand */
     color: #FFFFFF;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     font-family: 'Manrope', 'Noto Sans', sans-serif;
   }
   .react-datepicker__header {
-    background-color: transparent;
-    border-bottom: none;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     color: #FFFFFF;
   }
   .react-datepicker__current-month,
@@ -148,7 +151,11 @@ const styles = `
     border-color: #FFFFFF;
   }
   canvas {
-    background-color: transparent !important; /* Chart-Hintergrund transparent */
+    background-color: transparent !important; /* Chart passt sich perfekt an Eltern-BG an */
+  }
+  /* Chart-Anpassungen für transparente Überlagerung: Heller Grid für Sichtbarkeit */
+  .chartjs-render-monitor {
+    background-color: transparent !important;
   }
 `;
 
@@ -225,7 +232,7 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
     }] : [],
   };
 
-  // Chart options (minimiert: Entfernt Title und Legend, um Bundle klein zu halten; nur Tooltip und Scales)
+  // Chart options (erweitert für bessere Sichtbarkeit auf transparentem BG)
   const chartOptions = {
     responsive: true,
     plugins: {
@@ -235,7 +242,7 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
       y: {
         title: { display: true, text: 'Preis (ct/kWh)', color: '#FFFFFF' },
         beginAtZero: false,
-        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        grid: { color: 'rgba(255, 255, 255, 0.2)' }, // Etwas heller für Sichtbarkeit
         ticks: { color: '#FFFFFF' },
       },
       x: {
@@ -251,10 +258,10 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
           maxTicksLimit: 24,
           color: '#FFFFFF',
         },
-        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+        grid: { color: 'rgba(255, 255, 255, 0.2)' }, // Etwas heller
       },
     },
-    maintainAspectRatio: false, // Bessere Anpassung, kleinere Render-Overhead
+    maintainAspectRatio: false,
   };
 
   // Convert uniqueDates to Date objects
@@ -287,9 +294,9 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
               disabled={uniqueDates.length === 0}
             />
           </div>
-          {/* Line chart (Höhe angepasst für kleinere Renderings) */}
+          {/* Line chart */}
           {chartData.datasets.length > 0 && chartData.datasets[0].data.some(d => d !== 0) ? (
-            <div className="mb-8" style={{ height: '400px' }}> {/* Feste Höhe für konsistente, kleinere Bundle-Nutzung */}
+            <div className="mb-8" style={{ height: '400px' }}>
               <Line data={chartData} options={chartOptions} />
             </div>
           ) : (
