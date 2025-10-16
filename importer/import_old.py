@@ -10,7 +10,7 @@ sheet = "Tabelle1"  # Sheet-Name
 # MongoDB-Verbindung (Atlas)
 mongo_uri = "mongodb+srv://max:Julian1705@strom.vm0dp8f.mongodb.net/?retryWrites=true&w=majority&appName=Strom"
 db_name = "test"
-collection_name = "min15Prices"
+collection_name = "old_prices"
 
 # === Mongo-Verbindung ===
 try:
