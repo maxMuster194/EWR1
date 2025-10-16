@@ -1,4 +1,3 @@
-
 import mongoose from 'mongoose';
 import GermanyMin15Prices from '/models/min15Prices';
 import { useState } from 'react';
@@ -6,26 +5,25 @@ import dynamic from 'next/dynamic';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-// Dynamisch den Line-Chart importieren, um SSR zu vermeiden
+// Dynamisch den Line-Chart importieren, um SSR zu vermeiden (klein gehalten: nur Line-Komponente)
 const Line = dynamic(() => import('react-chartjs-2').then((mod) => mod.Line), {
   ssr: false,
+  loading: () => <p>Lade Chart...</p>, // Kleiner Lade-Indikator, um Bundle klein zu halten
 });
 
-// Chart.js-Komponenten registrieren
+// Nur notwendige Chart.js-Komponenten registrieren (reduziert Bundle-Size)
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
-  Title,
   Tooltip,
-  Legend,
 } from 'chart.js';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip);
 
-// MongoDB-Verbindung
+// MongoDB-Verbindung (unverändert)
 const mongoURI = process.env.MONGO_URI || 'mongodb+srv://max:Julian1705@strom.vm0dp8f.mongodb.net/?retryWrites=true&w=majority&appName=Strom';
 
 async function connectDB() {
@@ -42,7 +40,7 @@ async function connectDB() {
   }
 }
 
-// Parse DD/MM/YYYY to YYYY-MM-DD
+// Parse DD/MM/YYYY to YYYY-MM-DD (unverändert)
 function parseDeliveryDay(dateStr) {
   if (!dateStr) return null;
   const [day, month, year] = dateStr.split('/');
@@ -79,18 +77,19 @@ export async function getServerSideProps() {
   }
 }
 
-// CSS für DatePicker und Container
+// CSS angepasst: Transparenter Hintergrund überall, aber Rand um das DatePicker-Input-Feld hinzugefügt (sichtbarer Rahmen für Auswahl). Rest bleibt transparent/minimalistisch.
 const styles = `
   .container {
     min-height: 100vh;
     padding: 16px;
-    background-color: #2a2a2a; /* Einheitliches Grau */
+    background-color: transparent;
     font-family: 'Manrope', 'Noto Sans', sans-serif;
     color: #FFFFFF;
   }
   .content {
-    max-width: 1280px; /* max-w-7xl */
+    max-width: 1280px;
     margin: 0 auto;
+    background-color: transparent;
   }
   .gradient-heading {
     background: linear-gradient(90deg, #4372b7, #905fa4);
@@ -102,14 +101,14 @@ const styles = `
   .react-datepicker-wrapper {
     display: block;
     width: 100%;
-    max-width: 300px; /* max-w-xs */
+    max-width: 300px;
   }
   .react-datepicker__input-container input {
     width: 100%;
     padding: 8px;
-    background-color: #2a2a2a; /* Einheitliches Grau */
+    background-color: transparent;
     color: #FFFFFF;
-    border: 1px solid #4a4a4a; /* Rahmen für Datumsfeld */
+    border: 1px solid #905fa4; /* Sichtbarer Rand um das Datumsfeld (Gradient-Farbe für Akzent) */
     border-radius: 6px;
     font-size: 14px;
     font-family: 'Manrope', 'Noto Sans', sans-serif;
@@ -117,17 +116,17 @@ const styles = `
   }
   .react-datepicker__input-container input:focus {
     outline: none;
-    background: linear-gradient(90deg, #4372b7, #905fa4);
-    border: 1px solid #4a4a4a; /* Rahmen bleibt auch im Fokus */
+    border: 1px solid #4372b7; /* Fokus-Rand für bessere Sichtbarkeit */
+    background: rgba(67, 114, 183, 0.1); /* Leichter Hintergrund im Fokus */
   }
   .react-datepicker {
-    background-color: #2a2a2a; /* Einheitliches Grau */
+    background-color: transparent;
     color: #FFFFFF;
     border: none;
     font-family: 'Manrope', 'Noto Sans', sans-serif;
   }
   .react-datepicker__header {
-    background-color: #2a2a2a; /* Einheitliches Grau */
+    background-color: transparent;
     border-bottom: none;
     color: #FFFFFF;
   }
@@ -147,6 +146,9 @@ const styles = `
   }
   .react-datepicker__navigation-icon::before {
     border-color: #FFFFFF;
+  }
+  canvas {
+    background-color: transparent !important; /* Chart-Hintergrund transparent */
   }
 `;
 
@@ -174,7 +176,7 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
     );
   }
 
-  // Define price fields (Hour 1 Q1 to Hour 24 Q4, handling Hour 3A and skipping 3B if null)
+  // Define price fields (minimiert: nur notwendig)
   const priceFields = Array.from({ length: 24 }, (_, h) => {
     const hour = h + 1;
     if (hour === 3) {
@@ -193,7 +195,7 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
     ? data.filter(record => parseDeliveryDay(record['Delivery day']) === selectedDate.toISOString().split('T')[0])
     : [];
 
-  // Prepare chart data for the selected date
+  // Prepare chart data (minimiert: Keine unnötigen Features)
   const chartData = {
     labels: priceFields.map((field, index) => {
       let hourNum;
@@ -220,20 +222,14 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
       borderWidth: 1,
       pointRadius: 2,
       pointBackgroundColor: '#905fa4',
-      pointBorderColor: '#905fa4',
-      pointBorderWidth: 1,
-      pointHoverRadius: 6,
-      pointHoverBackgroundColor: '#905fa4',
     }] : [],
   };
 
-  // Chart options
+  // Chart options (minimiert: Entfernt Title und Legend, um Bundle klein zu halten; nur Tooltip und Scales)
   const chartOptions = {
     responsive: true,
     plugins: {
-      legend: { position: 'top', labels: { color: '#FFFFFF' } },
-      title: { display: false },
-      tooltip: { backgroundColor: '#2a2a2a', titleColor: '#FFFFFF', bodyColor: '#FFFFFF' },
+      tooltip: { backgroundColor: 'rgba(0,0,0,0.7)', titleColor: '#FFFFFF', bodyColor: '#FFFFFF' },
     },
     scales: {
       y: {
@@ -258,9 +254,10 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
         grid: { color: 'rgba(255, 255, 255, 0.1)' },
       },
     },
+    maintainAspectRatio: false, // Bessere Anpassung, kleinere Render-Overhead
   };
 
-  // Convert uniqueDates to Date objects for the date picker
+  // Convert uniqueDates to Date objects
   const validDates = uniqueDates.map(date => new Date(date));
 
   return (
@@ -274,9 +271,9 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
               Aktueller Strompreis Dynamischer Tarif
             </h2>
           </div>
-          {/* Date selection with calendar picker */}
+          {/* Date selection */}
           <div className="mb-6">
-            <label htmlFor="date-picker" className="block text-sm font-medium text-white">
+            <label htmlFor="date-picker" className="block text-sm font-medium text-white mb-1">
               Datum auswählen:
             </label>
             <DatePicker
@@ -290,9 +287,9 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
               disabled={uniqueDates.length === 0}
             />
           </div>
-          {/* Line chart */}
+          {/* Line chart (Höhe angepasst für kleinere Renderings) */}
           {chartData.datasets.length > 0 && chartData.datasets[0].data.some(d => d !== 0) ? (
-            <div className="mb-8">
+            <div className="mb-8" style={{ height: '400px' }}> {/* Feste Höhe für konsistente, kleinere Bundle-Nutzung */}
               <Line data={chartData} options={chartOptions} />
             </div>
           ) : (

@@ -60,21 +60,24 @@ export async function getServerSideProps() {
   }
 }
 
-// Angepasster Stil-Code
+// Angepasster Stil-Code ohne Sidebar
 const styles = `
   .layout {
     width: 100%;
+    max-width: 1200px;
+    height: 800px;
+    margin: 0 auto;
     display: grid;
     grid:
-      "header header" auto
-      "sidebar top-box" auto
-      "sidebar main" 1fr
-      "sidebar bottom-boxes" auto
-      "sidebar extra-box-1" auto
-      "sidebar extra-box-2" auto
-      "footer footer" auto
-      / 200px 1fr;
-    min-height: 100vh;
+      "header" auto
+      "top-box" auto
+      "main" 1fr
+      "bottom-boxes" auto
+      "extra-box-1" auto
+      "extra-box-2" auto
+      "footer" auto
+      / 1fr;
+    overflow: hidden;
     background-color: transparent; /* Hintergrund auf transparent gesetzt */
     color: #FFFFFF;
   }
@@ -147,47 +150,6 @@ const styles = `
     visibility: visible;
     opacity: 1;
   }
-  .sidebar {
-    grid-area: sidebar;
-    width: 100%;
-    max-width: 200px;
-    padding: 12px;
-    background-color: transparent; /* Einheitlich transparent */
-    border-right: 1px solid #4a4a4a; /* Rand für Sidebar */
-    color: #FFFFFF;
-  }
-  .sidebar .flex {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .sidebar a {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    padding: 8px;
-    border-radius: 12px;
-    color: #FFFFFF;
-    text-decoration: none;
-    transition: background-color 0.2s;
-  }
-  .sidebar a:hover {
-    background-color: #4372b7;
-  }
-  .sidebar a.active {
-    background: linear-gradient(90deg, #4372b7, #905fa4);
-  }
-  .sidebar a.active .fa-house {
-    color: #FFFFFF !important;
-  }
-  .sidebar a p {
-    text-align: center;
-    font-size: 12px;
-    font-weight: 500;
-    margin: 0;
-  }
   .main {
     grid-area: main;
     display: flex;
@@ -227,14 +189,15 @@ const styles = `
   .content {
     flex: 1;
     overflow: auto;
-    max-height: 100vh;
+    max-height: 100%;
     background-color: transparent; /* Einheitlich transparent */
     border-radius: 12px;
+    text-align: left; /* Linksbuendig */
   }
   .chart {
     flex: 1;
     overflow: auto;
-    max-height: 100vh;
+    max-height: 100%;
     background-color: transparent; /* Einheitlich transparent */
     border-radius: 12px;
   }
@@ -270,6 +233,7 @@ const styles = `
   /* Allgemeine Textfarbe weiß */
   p, li, span, a {
     color: #FFFFFF !important;
+    text-align: left !important; /* Linksbuendig fuer alle Text-Elemente */
   }
   /* Buttons mit Gradient */
   a.inline-flex {
@@ -284,6 +248,9 @@ const styles = `
       flex-direction: column;
       gap: 12px;
       padding-bottom: 60px;
+      max-width: 1200px;
+      height: 800px;
+      overflow: auto;
       background-color: transparent; /* Transparent auch für Mobile */
     }
     .header, .top-box, .main, .bottom-boxes, .extra-box-1, .extra-box-2, .footer {
@@ -315,9 +282,6 @@ const styles = `
       font-size: 10px;
       background-color: transparent; /* Einheitlich transparent */
     }
-    .sidebar {
-      display: none;
-    }
     .main {
       flex-direction: column;
       order: 2;
@@ -327,6 +291,7 @@ const styles = `
       order: 2;
       max-height: none;
       background-color: transparent; /* Einheitlich transparent */
+      text-align: left; /* Linksbuendig */
     }
     .chart {
       order: 1;
@@ -413,9 +378,9 @@ const styles = `
 export default function Energiemanager({ data, uniqueDates, todayBerlin, error }) {
   const [loading, setLoading] = useState(true);
   
-  // Größe des DynamischerPreis-Charts
-  const [chartWidth, setChartWidth] = useState('80%');
-  const [chartHeight, setChartHeight] = useState('600px');
+  // Größe des DynamischerPreis-Charts anpassen für 1200x800
+  const [chartWidth, setChartWidth] = useState('100%');
+  const [chartHeight, setChartHeight] = useState('400px'); // Reduziert, um in 800px Gesamthöhe zu passen
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -438,8 +403,8 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
       }}>
         <div className="main flex flex-col lg:flex-row gap-6">
           <div className="content flex-1 p-6 rounded-xl bg-transparent flex flex-col">
-            <p className="text-[#FFFFFF] tracking-tight text-3xl font-bold leading-tight text-center gradient-heading"></p>
-            <p className="text-[#FFFFFF] text-lg font-normal leading-relaxed text-center mt-2"></p>
+            <p className="text-[#FFFFFF] tracking-tight text-3xl font-bold leading-tight text-left gradient-heading"></p>
+            <p className="text-[#FFFFFF] text-lg font-normal leading-relaxed text-left mt-2"></p>
             <div className="flex flex-col gap-6 mt-6 flex-1">
               <div className="flex min-w-[200px] flex-1 flex-col gap-3 rounded-xl p-6 bg-transparent">
                 <div className="flex items-center gap-4">
@@ -477,7 +442,7 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
               </div>
             </div>
           </div>
-          <div className="chart flex-1 p-2 rounded-xl flex flex-col" style={{ width: chartWidth, height: chartHeight, margin: '0 auto' }}>
+          <div className="chart flex-1 p-2 rounded-xl flex flex-col" style={{ width: chartWidth, height: chartHeight, margin: '0' }}>
             <div className="flex flex-col gap-2 mt-2 flex-1">
               <div className="flex min-w-[220px] flex-1 flex-col gap-2 rounded-xl p-2">
                 <div className="flex min-h-[220px] flex-1 flex-col gap-2 py-2" style={{ height: '100%' }}>
@@ -517,7 +482,7 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
         </div>
 
         <div className="extra-box-2">
-          <div className="inner-box flex flex-col gap-3 rounded-xl p-4 bg-transparent shadow-sm text-center">
+          <div className="inner-box flex flex-col gap-3 rounded-xl p-4 bg-transparent shadow-sm text-left"> {/* text-left für linksbündig */}
             <p className="text-[#FFFFFF] text-lg font-medium leading-normal gradient-heading">Jetzt berechnen, ob der dynamische Stromtarif für Sie in Frage kommt.</p>
             <p className="text-[#FFFFFF] text-base font-normal leading-normal">
               <a
