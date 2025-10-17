@@ -15,7 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import Profil10 from './Profil10'; // Mobile profile
 import Profil9 from './Profil9'; // Desktop profile
-import LoadingScreen from '../loading/Loadingscreen';
+import LoadingScreen from '../loading/Amberg';
 import mongoose from 'mongoose';
 import GermanyMin15Prices from '../../models/min15Prices';
 

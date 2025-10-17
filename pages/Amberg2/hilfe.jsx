@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import VideosPage from '../Amberg2/video1';
-import LoadingScreen from '../loading/Loadingscreen';
+import LoadingScreen from '../loading/Amberg';
 
 const Energiemanager = () => {
   const [loading, setLoading] = useState(true);
