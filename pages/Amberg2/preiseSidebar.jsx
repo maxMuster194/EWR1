@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import Statistik from '../test15/stk816';
-import Durchschnitt from '../test15/durch18';
-import LoadingScreen from '../loading/Loadingscreen';
+import Statistik from '../Amberg2/stk816';
+import Durchschnitt from '../Amberg2/durch18';
+import LoadingScreen from '../loading/Amberg';
 
 const styles = `
   .layout {

@@ -219,7 +219,7 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
       data: priceFields.map(field => {
         const record = filteredData[0];
         const value = record[field]?.$numberDouble || record[field]?.$numberInt || record[field] || 0;
-        return parseFloat(value);
+        return parseFloat(value) / 10; // Korrektur: Werte durch 10 teilen, um das Komma eine Stelle nach rechts zu verschieben (z.B. 90 -> 9.0 Cent)
       }),
       borderColor: '#905fa4',
       backgroundColor: 'rgba(144, 95, 164, 0.2)',
@@ -274,9 +274,9 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
         <div className="content">
           {/* Heading */}
           <div className="text-center mb-6">
-            <h2 className="text-xl font-semibold gradient-heading">
+            <h1 className="text-xl font-semibold gradient-heading">
               Aktueller Strompreis Dynamischer Tarif
-            </h2>
+            </h1>
           </div>
           {/* Date selection */}
           <div className="mb-6">

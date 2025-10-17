@@ -190,15 +190,13 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
         {/* Main: Content + Chart */}
         <div className="main">
           <div className="content">
-            <h1 className="text-3xl font-bold gradient-heading text-center">Energiemanager</h1>
+            <h1 className="text-2xl font-bold gradient-heading text-center">Energiemanager</h1>
             <p className="text-lg text-center mt-2">Entdecken Sie dynamische Stromtarife</p>
             
             <div className="mt-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
                 <h2 className="text-2xl font-bold gradient-heading">Preisrechner dynamische Tarife</h2>
-                <a href="/test15/rechner" className="inline-flex">
-                  <FontAwesomeIcon icon={faCalculator} /> Zum Rechner
-                </a>
+               
               </div>
               <p className="text-base">
                 Jetzt in wenigen Schritten herausfinden, ob sich ein dynamischer Stromtarif für Ihren Haushalt lohnt.<br />
@@ -209,7 +207,7 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
                 Dynamische Stromtarife sind flexible Strompreise, die sich in Echtzeit oder stündlich an den aktuellen Börsenstrompreisen orientieren.
                 Im Gegensatz zu festen Tarifen variiert der Preis je nach Angebot und Nachfrage – zum Beispiel ist Strom nachts oder bei viel Wind und Sonne oft günstiger.
               </p>
-              <a href="/kontakt" className="inline-flex mt-4">
+              <a href="/" className="inline-flex mt-4">
                 <FontAwesomeIcon icon={faComment} /> Kontakt
               </a>
             </div>
@@ -229,34 +227,12 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
 
         {/* Bottom-Boxes: Vorteile & Nachteile */}
         <div className="bottom-boxes">
-          <div>
-            <h3 className="text-xl font-bold gradient-heading mb-4">Vorteile</h3>
-            <ul className="space-y-2">
-              <li><strong>Kostenersparnis:</strong> Wer seinen Stromverbrauch in günstige Zeiten verlegt (z. B. Wäsche nachts waschen), kann spürbar sparen.</li>
-              <li><strong>Transparenz:</strong> Nutzer sehen, wann Strom teuer oder billig ist, und können entsprechend reagieren.</li>
-              <li><strong>Umweltfreundlich:</strong> Fördert die Nutzung von erneuerbaren Energien, wenn diese im Überfluss verfügbar sind.</li>
-              <li><strong>Anreiz zur Automatisierung:</strong> Smarte Haushaltsgeräte oder Energiemanagementsysteme lassen sich optimal einsetzen.</li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-xl font-bold gradient-heading mb-4">Nachteile</h3>
-            <ul className="space-y-2">
-              <li><strong>Preisschwankungen:</strong> Strom kann zu bestimmten Tageszeiten sehr teuer sein, was die Planung erschwert.</li>
-              <li><strong>Technischer Aufwand:</strong> Ein digitaler Stromzähler (Smart Meter) ist meist Voraussetzung.</li>
-              <li><strong>Komplexität:</strong> Erfordert aktives Mitdenken oder technische Lösungen, um vom günstigen Preis zu profitieren.</li>
-              <li><strong>Unvorhersehbarkeit:</strong> Bei starker Nachfrage oder Krisen können Preise unerwartet steigen.</li>
-            </ul>
-          </div>
+        
         </div>
 
         {/* Extra-Box */}
         <div className="extra-box">
-          <div className="inner-box">
-            <p className="text-lg font-medium gradient-heading">Jetzt berechnen, ob der dynamische Stromtarif für Sie in Frage kommt.</p>
-            <a href="/test15/rechner" className="inline-flex mt-4">
-              <FontAwesomeIcon icon={faCalculator} /> Zum Rechner
-            </a>
-          </div>
+        
         </div>
       </div>
     </>

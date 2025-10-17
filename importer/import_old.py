@@ -10,7 +10,7 @@ sheet = "Tabelle1"  # Sheet-Name
 # MongoDB-Verbindung (Atlas)
 mongo_uri = "mongodb+srv://max:Julian1705@strom.vm0dp8f.mongodb.net/?retryWrites=true&w=majority&appName=Strom"
 db_name = "test"
-collection_name = "old_prices"
+collection_name = "min15Prices"
 
 # === Mongo-Verbindung ===
 try:
@@ -38,7 +38,7 @@ if date_column not in df.columns:
 hour_columns = [f"Hour {i}" for i in range(1, 25)]
 hour_columns[2] = "Hour 3A"  # Ersetze Hour 3 durch Hour 3A
 hour_columns.insert(3, "Hour 3B")  # Füge Hour 3B nach Hour 3A ein
-hour_columns = hour_columns[:24]  # Behalte nur die ersten 24 Stunden
+# Entfernt: hour_columns = hour_columns[:24]  # Jetzt alle (25) behalten, um Hour 24 einzuschließen
 
 # Zusätzliche Spalten
 additional_columns = [
