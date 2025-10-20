@@ -1849,12 +1849,11 @@ export default function StromverbrauchRechnerDesktop({ data = [], uniqueDates = 
 
   return (
     <>
-        <style>{`/* Allgemeine Regel für Textfarbe */
-* {
+        <style>{`* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  color: #ffffff; /* Textfarbe auf Weiß für alle Elemente */
+  color: #ffffff;
 }
 
 html {
@@ -1954,7 +1953,7 @@ body {
 }
 
 .region-switch-wrapper:hover .region-label {
-  color: #ffffff; /* Text bleibt weiß bei Hover */
+  color: #ffffff;
 }
 
 .modal-overlay {
@@ -1992,7 +1991,7 @@ body {
 }
 
 .app-container {
-  max-width: 1400px;
+  max-width: 1100px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr;
@@ -2001,13 +2000,12 @@ body {
   min-height: calc(100vh - 64px);
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1100px) {
   .app-container {
-    grid-template-columns: minmax(0, 600px) minmax(0, 600px);
+    grid-template-columns: minmax(0, 550px) minmax(0, 550px);
   }
 }
 
-/* Transparente Berechnungs-Box */
 .calculation-report {
   background: transparent;
   padding: 24px;
@@ -2042,7 +2040,6 @@ body {
   border-color: rgba(144, 95, 164, 0.4);
 }
 
-/* Transparente Diagramm-Container */
 .diagrams-container {
   display: flex;
   flex-direction: column;
@@ -2068,7 +2065,6 @@ body {
   border-radius: 4px;
 }
 
-/* Transparente Diagramm-Boxen */
 .diagram {
   background: transparent;
   padding: 24px;
@@ -2086,11 +2082,11 @@ body {
 }
 
 .menu {
-  background: transparent; /* Transparenter Hintergrund für Menüs */
+  background: transparent;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease;
-  max-width: 600px;
+  max-width: 550px;
   width: 100%;
   backdrop-filter: blur(5px);
   border: 1px solid rgba(144, 95, 164, 0.1);
@@ -2107,11 +2103,10 @@ body {
   padding: 16px;
   cursor: pointer;
   background: linear-gradient(90deg, #7a4d8b, #905fa4, #4372b7);
-  border-radius: 12px; /* alle vier Ecken abgerundet */
+  border-radius: 12px;
   color: #ffffff;
   transition: background 0.3s ease;
 }
-
 
 .menu-header:hover {
   background: linear-gradient(90deg, #6a437b, #7a4d8b, #355f9a);
@@ -2132,7 +2127,7 @@ body {
 
 .menu-content {
   padding: 12px;
-  background: transparent; /* Transparenter Hintergrund für Menü-Inhalt */
+  background: transparent;
   border-radius: 0 0 6px 6px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(5px);
@@ -2140,15 +2135,15 @@ body {
 
 .menu-content input,
 .menu-content select {
-  border: 2px solid #ffffff; /* Weißer Rahmen für Eingabefelder */
+  border: 2px solid #ffffff;
   border-radius: 6px;
   padding: 8px;
   font-size: 0.875rem;
   width: 100%;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  background: transparent; /* Transparenter Hintergrund für Eingabefelder */
+  background: transparent;
   backdrop-filter: blur(5px);
-  color: #ffffff; /* Textfarbe auf Weiß */
+  color: #ffffff;
 }
 
 .menu-content input:focus,
@@ -2162,10 +2157,10 @@ body {
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 16px;
-  color: #ffffff; /* Textfarbe auf Weiß */
+  color: #ffffff;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1100px) {
   .report-title {
     font-size: 1.75rem;
   }
@@ -2191,12 +2186,12 @@ body {
 .input-container-html input,
 .input-container-html select {
   padding: 8px;
-  border: 2px solid #ffffff; /* Weißer Rahmen für Datepicker und Strompreis */
+  border: 2px solid #ffffff;
   border-radius: 6px;
   font-size: 0.875rem;
   width: 100%;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  background: transparent; /* Transparenter Hintergrund */
+  background: transparent;
   backdrop-filter: blur(5px);
 }
 
@@ -2305,7 +2300,7 @@ body {
   font-size: 0.875rem;
   width: 100%;
   transition: border-color 0.2s ease;
-  background: ;
+  background: transparent;
   backdrop-filter: blur(5px);
 }
 
@@ -2451,12 +2446,12 @@ body {
 
 .settings-container select {
   padding: 8px;
-  border: 2px solid #ffffff; /* Weißer Rahmen für Konsistenz */
+  border: 2px solid #ffffff;
   border-radius: 6px;
   font-size: 0.875rem;
   width: 100%;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  background: transparent; /* Transparenter Hintergrund */
+  background: transparent;
   backdrop-filter: blur(5px);
 }
 
@@ -2511,7 +2506,7 @@ body {
 .new-option-container {
   margin-top: 16px;
   padding: 16px;
-  background: ;
+  background: transparent;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   display: grid;
@@ -2530,12 +2525,12 @@ body {
 .new-option-input,
 .new-option-watt {
   padding: 8px;
-  border: 2px solid #ffffff; /* Weißer Rahmen für Konsistenz */
+  border: 2px solid #ffffff;
   border-radius: 6px;
   font-size: 0.875rem;
   width: 100%;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  background: transparent; /* Transparenter Hintergrund */
+  background: transparent;
   backdrop-filter: blur(5px);
 }
 
@@ -2564,12 +2559,12 @@ body {
 
 .summary-container {
   margin-top: 24px;
-  background: transparent; /* Transparenter Hintergrund */
+  background: transparent;
   padding: 16px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(5px); /* Frosted Glass Effekt */
-  border: 1px solid #ffffff; /* Weißer Rahmen */
+  backdrop-filter: blur(5px);
+  border: 1px solid #ffffff;
 }
 
 .summary-title {
@@ -2579,7 +2574,7 @@ body {
   margin-bottom: 10px;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1100px) {
   .summary-title {
     font-size: 1.5rem;
   }
@@ -2677,7 +2672,7 @@ table, th, td {
   border-radius: 4px;
   box-sizing: border-box;
   text-align: right;
-  background:transparent;
+  background: transparent;
   backdrop-filter: blur(5px);
 }
 
