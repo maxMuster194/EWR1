@@ -6,26 +6,31 @@ import Durchschnitt from '../Amberg2/durch18';
 import LoadingScreen from '../loading/Amberg';
 
 const styles = `
+  * {
+    box-sizing: border-box;
+  }
   .layout {
     width: 100%;
-    height: 800px;
+    max-width: 100%;
+    min-height: 100vh; /* Use viewport height instead of fixed 800px */
     display: flex;
     flex-direction: column;
     font-family: Manrope, "Noto Sans", sans-serif;
     background: transparent;
+    overflow-x: hidden; /* Prevent horizontal overflow */
   }
   .main {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 12px;
+    gap: 10px;
+    padding: 10px;
     background: transparent;
     flex: 1;
-    overflow: hidden;
+    overflow: auto; /* Allow scrolling if content overflows */
   }
   .content {
     flex: 1;
-    padding: 8px;
+    padding: 6px;
     border-radius: 8px;
     background: transparent;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -39,7 +44,7 @@ const styles = `
   }
   .chart {
     flex: 1;
-    padding: 8px;
+    padding: 6px;
     border-radius: 8px;
     background: transparent;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -57,7 +62,7 @@ const styles = `
   @media (min-width: 768px) {
     .main {
       flex-direction: row;
-      gap: 12px;
+      gap: 10px;
     }
     .content, .chart {
       flex: 1;
@@ -65,14 +70,14 @@ const styles = `
   }
   @media (max-width: 767px) {
     .layout {
-      height: 800px;
+      min-height: calc(100vh - 60px); /* Adjust for bottom-nav height */
       padding-bottom: 60px;
     }
     .main {
-      padding: 8px;
+      padding: 6px;
     }
     .content, .chart {
-      padding: 6px;
+      padding: 4px;
     }
     .content > *, .chart > * {
       font-size: 0.9em;
@@ -122,6 +127,23 @@ const styles = `
     .bottom-nav a svg {
       font-size: 16px;
       color: #fafafa;
+    }
+  }
+  @media (max-width: 500px) {
+    .main {
+      padding: 4px;
+    }
+    .content, .chart {
+      padding: 4px;
+    }
+    .bottom-nav a {
+      padding: 4px;
+    }
+    .bottom-nav a svg {
+      font-size: 14px;
+    }
+    .bottom-nav a p {
+      font-size: 8px;
     }
   }
 `;
