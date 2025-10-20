@@ -132,10 +132,16 @@ const prices = {
 
 // Functions
 const getRegionPreis = (selectedRegion) => {
-  if (selectedRegion === 'KF') return 10;
-  if (selectedRegion === 'MN') return 17;
-  if (selectedRegion === 'MOD') return 20;
+  if (selectedRegion === 'AM') return 20.14;
+  if (selectedRegion === 'SuRo') return 20.44;
+  if (selectedRegion === 'Regio') return 20.98;
   return 0;
+};
+const getRegionStrompreis = (selectedRegion) => {
+  if (selectedRegion === 'AM') return 34.06;
+  if (selectedRegion === 'SuRo') return 34.82;
+  if (selectedRegion === 'Regio') return 34.35;
+  return 31; // Fallback-Preis
 };
 
 const getPreisDifferenz = (strompreis, selectedRegion) => {
@@ -408,8 +414,8 @@ const berechneStundenVerbrauch = (verbraucherDaten, erweiterteEinstellungen) => 
 
 // Home Component
 export default function Home() {
-  const [strompreis, setStrompreis] = useState(31);
-  const [selectedRegion, setSelectedRegion] = useState('KF');
+  const [strompreis, setStrompreis] = useState(34.06); // Standardpreis für AM
+  const [selectedRegion, setSelectedRegion] = useState('AM');
   const [verbraucherDaten, setVerbraucherDaten] = useState(
     Object.keys(standardVerbrauch).reduce((acc, key) => ({
       ...acc,
@@ -707,11 +713,13 @@ export default function Home() {
   const handleRegionChange = (region) => {
     const newRegion = selectedRegion === region ? null : region;
     setSelectedRegion(newRegion);
+    const newStrompreis = newRegion ? getRegionStrompreis(newRegion) : 31;
+    setStrompreis(newStrompreis);
 
     Object.keys(verbraucherDaten).forEach((verbraucher) => {
       const { watt, checked } = verbraucherDaten[verbraucher];
       if (checked || watt > 0) {
-        updateKosten(watt, verbraucher, strompreis, newRegion, setVerbraucherDaten, erweiterteEinstellungen);
+        updateKosten(watt, verbraucher, newStrompreis, newRegion, setVerbraucherDaten, erweiterteEinstellungen);
       }
     });
     updateZusammenfassung(verbraucherDaten, setZusammenfassung);
@@ -908,7 +916,7 @@ export default function Home() {
   };
 
   const handleStrompreisChange = (value) => {
-    const newStrompreis = parseFloat(value) || 31;
+    const newStrompreis = parseFloat(value) || (selectedRegion ? getRegionStrompreis(selectedRegion) : 31);
     if (newStrompreis < 0) {
       setError('Strompreis darf nicht negativ sein.');
       return;
@@ -923,7 +931,6 @@ export default function Home() {
     });
     updateZusammenfassung(verbraucherDaten, setZusammenfassung);
   };
-
   const handleNewOptionName = (menuId, value) => {
     setNewOptionNames((prev) => ({ ...prev, [menuId]: value }));
   };
@@ -2529,42 +2536,42 @@ table, th, td {
         <label>Region:</label>
         <div className="region-buttons">
           <div className="region-switch-wrapper">
-            <label className="region-label">KF</label>
+            <label className="region-label">AM</label>
             <div className="discount-switch-container">
               <input
                 type="checkbox"
                 id="region-kf"
                 className="discount-switch-input"
-                checked={selectedRegion === 'KF'}
-                onChange={() => handleRegionChange('KF')}
+                checked={selectedRegion === 'AM'}
+                onChange={() => handleRegionChange('AM')}
                 aria-label="Region Kraftwerk auswählen"
               />
               <label className="discount-switch-slider" htmlFor="region-kf"></label>
             </div>
           </div>
           <div className="region-switch-wrapper">
-            <label className="region-label">MN</label>
+            <label className="region-label">SuRo</label>
             <div className="discount-switch-container">
               <input
                 type="checkbox"
                 id="region-mn"
                 className="discount-switch-input"
-                checked={selectedRegion === 'MN'}
-                onChange={() => handleRegionChange('MN')}
+                checked={selectedRegion === 'SuRo'}
+                onChange={() => handleRegionChange('SuRo')}
                 aria-label="Region Mittlerer Netzpreis auswählen"
               />
               <label className="discount-switch-slider" htmlFor="region-mn"></label>
             </div>
           </div>
           <div className="region-switch-wrapper">
-            <label className="region-label">MOD</label>
+            <label className="region-label">Regio</label>
             <div className="discount-switch-container">
               <input
                 type="checkbox"
                 id="region-mod"
                 className="discount-switch-input"
-                checked={selectedRegion === 'MOD'}
-                onChange={() => handleRegionChange('MOD')}
+                checked={selectedRegion === 'Regio'}
+                onChange={() => handleRegionChange('Regio')}
                 aria-label="Region Modellregion auswählen"
               />
               <label className="discount-switch-slider" htmlFor="region-mod"></label>

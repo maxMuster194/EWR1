@@ -386,7 +386,7 @@ export default function MongoDBPricesPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-4">
         {months.map((monthKey, index) => {
           const monthlyAverage = monthlyData[monthKey]
             ? calculateMonthlyAverage(monthlyData[monthKey])
@@ -399,15 +399,15 @@ export default function MongoDBPricesPage() {
             <div
               key={monthKey}
               onClick={() => handleCardClick(monthKey)}
-              className={`p-3 rounded-lg shadow-md cursor-pointer text-center transition-all duration-300 bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white hover:bg-gradient-to-r hover:from-[#905fa4] hover:to-[#4372b7] hover:shadow-lg`}
+              className={`p-2 rounded-lg shadow-md cursor-pointer text-center transition-all duration-300 bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white hover:bg-gradient-to-r hover:from-[#905fa4] hover:to-[#4372b7] hover:shadow-lg`}
             >
-              <div className="text-base font-bold">{monthNames[index]}</div>
-              <div className="text-xs">
+              <div className="text-sm font-bold">{monthNames[index]}</div>
+              <div className="text-[10px]">
                 {monthlyAverage !== '–'
                   ? `Ø Preis: ${monthlyAverage} Cent/kWh`
                   : 'Keine Daten'}
               </div>
-              <div className="text-xs">
+              <div className="text-[10px]">
                 Ø {savingsLabel}: {displayValue !== '–' ? `${displayValue} €` : '–'}
               </div>
             </div>
