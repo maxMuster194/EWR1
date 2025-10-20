@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalculator, faComment } from '@fortawesome/free-solid-svg-icons';
 import mongoose from 'mongoose';
-import GermanyMin15Prices from '/models/min15Prices'; // Passe den Pfad an
+import GermanyMin15Prices from '/models/min15Prices'; // Adjust path as needed
 import DynamischerPreis from '../Amberg2/dypreis1';
 import LoadingScreen from '../loading/Amberg';
 
-// MongoDB-Verbindung (unverändert)
+// MongoDB Connection
 const mongoURI = process.env.MONGO_URI || 'mongodb+srv://max:Julian1705@strom.vm0dp8f.mongodb.net/?retryWrites=true&w=majority&appName=Strom';
 
 async function connectDB() {
@@ -23,7 +23,7 @@ async function connectDB() {
   }
 }
 
-// Parse DD/MM/YYYY to YYYY-MM-DD (unverändert)
+// Parse DD/MM/YYYY to YYYY-MM-DD
 function parseDeliveryDay(dateStr) {
   if (!dateStr) return null;
   const [day, month, year] = dateStr.split('/');
@@ -35,7 +35,7 @@ export async function getServerSideProps() {
   try {
     await connectDB();
     const data = await GermanyMin15Prices.find({}).lean();
-    console.log('Available fields in data:', Object.keys(data[0] || {})); // Debug: Verfügbare Felder
+    console.log('Available fields in data:', Object.keys(data[0] || {}));
     const uniqueDates = [...new Set(data.map(item => parseDeliveryDay(item['Delivery day'])).filter(date => date !== null))];
     const todayBerlin = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Berlin' });
 
@@ -60,31 +60,42 @@ export async function getServerSideProps() {
   }
 }
 
-// Überarbeiteter Stil-Code: Alles transparent, keine Ränder, keine Hintergründe, einfaches Layout mit Fokus auf Inhalt.
-// Hinzugefügt: FF Good Web Pro als primäre Schriftart (Fallback zu Sans-Serif), mit dem Typekit-Link im Head-Bereich (da Next.js <Head> benötigt – passe an, falls du next/head importierst).
+// Updated styles for iframe compatibility, centering, and responsiveness
 const styles = `
   @import url('https://use.typekit.net/oie4cok.css');
-  
+
+  html, body {
+    background-color: transparent !important;
+    margin: 0;
+    padding: 0;
+  }
+
   .layout {
     width: 100%;
+    max-width: 100vw;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    align-items: center;
+    padding: 24px;
+    box-sizing: border-box;
     background-color: transparent;
     color: #FFFFFF;
     font-family: 'ff-good-web-pro', sans-serif;
     font-weight: 400;
     font-style: normal;
-    gap: 32px;
-    padding: 24px;
   }
+
   .main {
+    width: 1200px;
+    max-width: 90vw;
     display: flex;
     flex-direction: row;
     gap: 40px;
     background-color: transparent;
-    color: #FFFFFF;
+    margin: 0 auto;
   }
+
   .content {
     flex: 1;
     display: flex;
@@ -92,30 +103,46 @@ const styles = `
     gap: 24px;
     background-color: transparent;
   }
+
   .chart {
     flex: 1;
     background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
+
   .chart canvas {
     max-width: 100%;
     height: auto;
   }
+
   .bottom-boxes {
+    width: 1200px;
+    max-width: 90vw;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 32px;
     background-color: transparent;
+    margin: 24px auto;
   }
+
   .bottom-boxes > div {
     background-color: transparent;
   }
+
   .extra-box {
+    width: 1200px;
+    max-width: 90vw;
     text-align: center;
     background-color: transparent;
+    margin: 24px auto;
   }
+
   .extra-box .inner-box {
     background-color: transparent;
   }
+
   .gradient-heading {
     background: linear-gradient(90deg, #4372b7, #905fa4);
     -webkit-background-clip: text;
@@ -123,6 +150,7 @@ const styles = `
     background-clip: text;
     font-weight: bold;
   }
+
   p, li, span, a, h1, h2, h3, ul {
     background-color: transparent !important;
     color: #FFFFFF !important;
@@ -132,6 +160,7 @@ const styles = `
     font-weight: 400 !important;
     font-style: normal !important;
   }
+
   a.inline-flex {
     display: inline-flex;
     align-items: center;
@@ -145,37 +174,71 @@ const styles = `
     border: none;
     font-family: 'ff-good-web-pro', sans-serif !important;
   }
+
   a.inline-flex:hover {
     background: linear-gradient(90deg, #905fa4, #4372b7) !important;
     transform: scale(1.05);
   }
+
   ul {
     list-style-type: disc;
     padding-left: 20px;
     margin: 0;
   }
+
+  @media (max-width: 1024px) {
+    .main, .bottom-boxes, .extra-box {
+      width: 100%;
+      max-width: 95vw;
+    }
+  }
+
   @media (max-width: 767px) {
     .layout {
       padding: 16px;
-      gap: 24px;
+      gap: 16px;
     }
     .main {
       flex-direction: column;
-      gap: 24px;
+      gap: 16px;
+      width: 100%;
+      max-width: 100%;
+      margin: 0;
     }
     .bottom-boxes {
       grid-template-columns: 1fr;
-      gap: 24px;
+      gap: 16px;
+      margin: 16px auto;
+    }
+    .extra-box {
+      margin: 16px auto;
+    }
+    .chart {
+      width: 100%;
     }
   }
 `;
 
 export default function Energiemanager({ data, uniqueDates, todayBerlin, error }) {
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // Handle mobile detection
+    setIsMobile(window.innerWidth <= 767);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 767);
+    };
+    window.addEventListener('resize', handleResize);
+
+    // Simulate loading delay
     const timer = setTimeout(() => setLoading(false), 1000);
-    return () => clearTimeout(timer);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timer);
+    };
   }, []);
 
   if (loading) {
@@ -184,7 +247,7 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
 
   return (
     <>
-      {/* Hinweis: In Next.js solltest du import Head from 'next/head'; hinzufügen und <Head><link rel="stylesheet" href="https://use.typekit.net/oie4cok.css" /></Head> verwenden, um den Font sauber zu laden. Hier als Fallback im Style. */}
+      {/* Note: In Next.js, import Head from 'next/head' and use <Head><link rel="stylesheet" href="https://use.typekit.net/oie4cok.css" /></Head> for proper font loading */}
       <style>{styles}</style>
       <div className="layout" style={{ backgroundColor: 'transparent' }}>
         {/* Main: Content + Chart */}
@@ -196,7 +259,6 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
             <div className="mt-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">
                 <h2 className="text-2xl font-bold gradient-heading">Preisrechner dynamische Tarife</h2>
-               
               </div>
               <p className="text-base">
                 Jetzt in wenigen Schritten herausfinden, ob sich ein dynamischer Stromtarif für Ihren Haushalt lohnt.<br />
@@ -227,12 +289,12 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
 
         {/* Bottom-Boxes: Vorteile & Nachteile */}
         <div className="bottom-boxes">
-        
+          {/* Add content here if needed */}
         </div>
 
         {/* Extra-Box */}
         <div className="extra-box">
-        
+          {/* Add content here if needed */}
         </div>
       </div>
     </>
