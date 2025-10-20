@@ -2394,7 +2394,7 @@ body {
 
 .settings-container {
   grid-column: 1 / -1;
-  background: rgba(255, 255, 255, 0.9);
+  background: transparent;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);

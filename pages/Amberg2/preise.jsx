@@ -12,49 +12,64 @@ const styles = `
   .layout {
     width: 100%;
     max-width: 100%;
-    min-height: 100vh; /* Use viewport height instead of fixed 800px */
+    height: 800px; /* Feste Höhe von 800px */
     display: flex;
     flex-direction: column;
     font-family: Manrope, "Noto Sans", sans-serif;
     background: transparent;
-    overflow-x: hidden; /* Prevent horizontal overflow */
+    overflow-x: hidden;
   }
   .main {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 10px;
+    gap: 8px;
+    padding: 8px;
     background: transparent;
     flex: 1;
-    overflow: auto; /* Allow scrolling if content overflows */
+    overflow-y: auto; /* Scrollen erlauben, falls Inhalt 800px überschreitet */
+    height: 100%; /* Nutze die volle Höhe der .layout */
   }
   .content {
     flex: 1;
-    padding: 6px;
+    padding: 4px;
     border-radius: 8px;
     background: transparent;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
+    min-height: 0; /* Verhindert Überlaufen */
   }
   .content > * {
     width: 100%;
     height: 100%;
     flex: 1;
   }
+  .content iframe {
+    width: 100%;
+    height: 100%;
+    border: none; /* Entfernt Rahmen für sauberes Erscheinungsbild */
+    overflow-y: auto; /* Ermöglicht Scrollen im iframe */
+  }
   .chart {
     flex: 1;
-    padding: 6px;
+    padding: 4px;
     border-radius: 8px;
     background: transparent;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
+    min-height: 0; /* Verhindert Überlaufen */
   }
   .chart > * {
     width: 100%;
     height: 100%;
     flex: 1;
+  }
+  .chart iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    overflow-y: auto; /* Ermöglicht Scrollen im iframe */
   }
   .bottom-nav {
     display: none;
@@ -62,25 +77,27 @@ const styles = `
   @media (min-width: 768px) {
     .main {
       flex-direction: row;
-      gap: 10px;
+      gap: 8px;
     }
     .content, .chart {
       flex: 1;
+      min-width: 0;
     }
   }
   @media (max-width: 767px) {
     .layout {
-      min-height: calc(100vh - 60px); /* Adjust for bottom-nav height */
-      padding-bottom: 60px;
+      height: 800px; /* Feste Höhe auch für mobile Geräte */
+      padding-bottom: 60px; /* Platz für bottom-nav */
     }
     .main {
-      padding: 6px;
+      padding: 4px;
+      height: 100%; /* Nutze die volle Höhe der .layout */
     }
     .content, .chart {
-      padding: 4px;
+      padding: 2px;
     }
     .content > *, .chart > * {
-      font-size: 0.9em;
+      font-size: 0.85em;
     }
     .bottom-nav {
       display: flex;
@@ -92,7 +109,7 @@ const styles = `
       border-top: 1px solid #D1D5DB;
       justify-content: space-around;
       align-items: center;
-      padding: 6px 0;
+      padding: 4px 0;
       z-index: 1000;
       height: 60px;
     }
@@ -100,8 +117,8 @@ const styles = `
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
-      padding: 6px;
+      gap: 2px;
+      padding: 4px;
       border-radius: 8px;
       color: #FFFFFF;
       text-decoration: none;
@@ -120,30 +137,30 @@ const styles = `
     }
     .bottom-nav a p {
       text-align: center;
-      font-size: 10px;
+      font-size: 8px;
       font-weight: 500;
       margin: 0;
     }
     .bottom-nav a svg {
-      font-size: 16px;
+      font-size: 14px;
       color: #fafafa;
     }
   }
   @media (max-width: 500px) {
     .main {
-      padding: 4px;
+      padding: 2px;
     }
     .content, .chart {
-      padding: 4px;
+      padding: 2px;
     }
     .bottom-nav a {
-      padding: 4px;
+      padding: 2px;
     }
     .bottom-nav a svg {
-      font-size: 14px;
+      font-size: 12px;
     }
     .bottom-nav a p {
-      font-size: 8px;
+      font-size: 6px;
     }
   }
 `;
@@ -178,7 +195,7 @@ const Energiemanager = () => {
         <nav className="bottom-nav">
           <a href="/test15/startseite" className="active">
             <FontAwesomeIcon icon={faHouse} />
-            <p>Home</p>
+            <p>Home</p> {/* Korrigierter Text von "Home-CN" zu "Home" */}
           </a>
           <a href="/test15/preise">
             <FontAwesomeIcon icon={faChartLine} />

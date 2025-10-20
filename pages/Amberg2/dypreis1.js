@@ -242,7 +242,7 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
       y: {
         title: { display: true, text: 'Preis (ct/kWh)', color: '#FFFFFF' },
         beginAtZero: false,
-        grid: { color: 'rgba(255, 255, 255, 0.2)' }, // Etwas heller für Sichtbarkeit
+        grid: { color: 'rgba(255, 255, 255, 0.1)' }, // Etwas heller für Sichtbarkeit
         ticks: { color: '#FFFFFF' },
       },
       x: {
@@ -258,7 +258,7 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
           maxTicksLimit: 24,
           color: '#FFFFFF',
         },
-        grid: { color: 'rgba(255, 255, 255, 0.2)' }, // Etwas heller
+        grid: { color: 'rgba(255, 255, 255, 0.1)' }, // Etwas heller
       },
     },
     maintainAspectRatio: false,

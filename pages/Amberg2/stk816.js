@@ -116,15 +116,15 @@ export default function WeeklyPriceChart() {
               y: {
                 beginAtZero: true,
                 ticks: {
-                  color: '#4372b7',
+                  color: '#fff',
                   callback: (value) => `${value.toFixed(2)} ct`,
                   font: { size: 10 },
                 },
-                grid: { color: 'rgb(255, 255, 255)' },
+                grid: { color: 'rgba(255, 255, 255, 0.1)' },
               },
               x: {
-                ticks: { color: '#4372b7', font: { size: 10 } },
-                grid: { color: 'rgb(255, 255, 255)' },
+                ticks: { color: '#fff', font: { size: 10 } },
+                grid: { color: 'rgba(255, 255, 255, 0.1)' },
               },
             },
           }}

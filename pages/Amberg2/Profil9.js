@@ -635,7 +635,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
             label: `Dynamischer Tarif (Profil ${profile}, Faktor ${factor})`,
             data: h25AdjustedValues,
             borderColor: '#905fa4',
-            backgroundColor: 'rgba(144, 95, 164, 0.1)',
+            backgroundColor: 'rgba(30, 14, 252, 0.1)',
             fill: false,
             tension: 0.4,
             pointRadius: 0,
@@ -752,7 +752,10 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
       y: {
         beginAtZero: false,
         title: { display: true, text: 'Stromkosten in Ct', font: { size: 14, family: "'Inter', sans-serif" }, color: '#FFFFFF' },
-        ticks: { callback: (value) => `${value.toFixed(2)}` },
+        ticks: { 
+          callback: (value) => `${value.toFixed(2)}`,
+          color: '#FFFFFF'  // Hinzugefügt: Weiße Farbe für Y-Achsen-Ticks
+        },
         grid: {
           display: true,
           color: 'rgba(255, 255, 255, 0.1)',
@@ -761,6 +764,9 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
       },
       x: {
         title: { display: true, text: 'Uhrzeit', font: { size: 14, family: "'Inter', sans-serif" }, color: '#FFFFFF' },
+        ticks: { 
+          color: '#FFFFFF'  // Hinzugefügt: Weiße Farbe für X-Achsen-Ticks
+        },
         grid: {
           display: true,
           color: 'rgba(255, 255, 255, 0.1)',
