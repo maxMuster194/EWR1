@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import StromverbrauchRechnerDesktop from './';
+import StromverbrauchRechnerDesktop from './Mdetails47';
 import StromverbrauchRechnerMobile from './Mdetails47';
 import LoadingScreen from '../loading/Amberg';
 
