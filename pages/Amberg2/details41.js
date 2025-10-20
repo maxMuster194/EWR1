@@ -1528,7 +1528,7 @@ const chartData = {
     labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
     datasets: [
       {
-        label: 'Stromverbrauch ohne Wärmepumpe (kW)',
+        label: 'Stromverbrauch Eigener Trarif',
         data: hourlyData.map(d => d.total - d.waermepumpe),
         fill: false,
         borderColor: '#4372b7',
@@ -1537,7 +1537,7 @@ const chartData = {
         yAxisID: 'y',
       },
       {
-        label: 'Wärmepumpen-Verbrauch (kW)',
+        label: 'Wärmepumpe (kW)',
         data: hourlyData.map(d => d.waermepumpe),
         fill: false,
         borderColor: '#f93b01',
@@ -1618,7 +1618,7 @@ const chartData = {
         }),
         fill: false,
         borderColor: '#4372b7',
-        backgroundColor: '#063d37',
+        backgroundColor: '#4372b7',
         tension: 0.1,
       },
       {
@@ -1683,7 +1683,26 @@ const chartData = {
 
 return (
   <>
- <style>{`
+ <style>{`/* Allgemeine Regel für Textfarbe */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: #ffffff; /* Textfarbe auf Weiß für alle Elemente */
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  background: linear-gradient(135deg, #e5e7eb, #f3f4f6);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 .region-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -1705,7 +1724,6 @@ return (
 .region-label {
   font-size: 15px;
   font-weight: 600;
-  color: #1a1a1a;
   text-align: center;
   margin-bottom: 6px;
   transition: color 0.2s ease;
@@ -1770,7 +1788,7 @@ return (
 }
 
 .region-switch-wrapper:hover .region-label {
-  color: #905fa4;
+  color: #ffffff; /* Text bleibt weiß bei Hover */
 }
 
 .modal-overlay {
@@ -1807,25 +1825,6 @@ return (
   z-index: 10;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html {
-  font-size: 16px;
-}
-
-body {
-  font-family: 'Inter', Arial, sans-serif;
-  background: linear-gradient(135deg, #e5e7eb, #f3f4f6);
-  color: #1f2937;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 .app-container {
   max-width: 1400px;
   margin: 0 auto;
@@ -1844,12 +1843,12 @@ body {
 
 /* Transparente Berechnungs-Box */
 .calculation-report {
-  background: transparent; /* Transparent gemacht */
+  background: transparent;
   padding: 24px;
   border-radius: 12px;
-  box-shadow: 0 0 20px rgba(144, 95, 164, 0.1), 0 0 40px rgba(67, 114, 183, 0.05); /* Lila-Blau Glühen */
-  backdrop-filter: blur(10px); /* Frosted Glass Effekt */
-  border: 1px solid rgba(144, 95, 164, 0.2); /* Leichter lila Rand */
+  box-shadow: 0 0 20px rgba(144, 95, 164, 0.1), 0 0 40px rgba(67, 114, 183, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(144, 95, 164, 0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
   overflow-y: auto;
   max-height: calc(100vh - 64px);
@@ -1862,7 +1861,7 @@ body {
 }
 
 .calculation-report::-webkit-scrollbar-track {
-  background: rgba(229, 231, 235, 0.5); /* Transparent */
+  background: rgba(229, 231, 235, 0.5);
   border-radius: 4px;
 }
 
@@ -1905,7 +1904,7 @@ body {
 
 /* Transparente Diagramm-Boxen */
 .diagram {
-  background: transparent; /* Transparent gemacht */
+  background: transparent;
   padding: 24px;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(144, 95, 164, 0.1), 0 0 30px rgba(67, 114, 183, 0.05);
@@ -1921,7 +1920,7 @@ body {
 }
 
 .menu {
-  background: rgba(249, 250, 251, 0.9); /* Leicht transparent */
+  background: rgba(249, 250, 251, 0.9);
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease;
@@ -1967,7 +1966,7 @@ body {
 
 .menu-content {
   padding: 12px;
-  background: rgba(255, 255, 255, 0.8); /* Leicht transparent */
+  background: rgba(255, 255, 255, 0.8);
   border-radius: 0 0 6px 6px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(5px);
@@ -1977,10 +1976,7 @@ body {
   font-size: 1.5rem;
   font-weight: 700;
   margin-bottom: 16px;
-  background: linear-gradient(90deg, #905fa4, #4372b7);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #ffffff; /* Textfarbe auf Weiß */
 }
 
 @media (min-width: 1024px) {
@@ -2003,19 +1999,18 @@ body {
 .input-container-html label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #1f2937;
   margin-bottom: 6px;
 }
 
 .input-container-html input,
 .input-container-html select {
   padding: 8px;
-  border: 2px solid #d1d5db;
+  border: 2px solid #ffffff; /* Weißer Rahmen für Datepicker und Strompreis */
   border-radius: 6px;
   font-size: 0.875rem;
   width: 100%;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  background: rgba(255, 255, 255, 0.9); /* Leicht transparente Inputs */
+  background: transparent; /* Transparenter Hintergrund */
   backdrop-filter: blur(5px);
 }
 
@@ -2028,7 +2023,6 @@ body {
 
 .loading,
 .no-data {
-  color: #dc2626;
   font-size: 0.875rem;
   font-weight: 500;
 }
@@ -2045,9 +2039,8 @@ body {
   gap: 8px;
   font-weight: 700;
   font-size: 0.9rem;
-  color: #905fa4;
   padding: 6px 0;
-  background: rgba(240, 244, 248, 0.7); /* Transparent */
+  background: rgba(240, 244, 248, 0.7);
   border-radius: 4px;
   backdrop-filter: blur(5px);
 }
@@ -2066,7 +2059,7 @@ body {
   gap: 8px;
   align-items: center;
   padding: 6px 0;
-  background: rgba(255, 255, 255, 0.6); /* Transparent */
+  background: rgba(255, 255, 255, 0.6);
   border-radius: 4px;
   transition: background 0.2s ease;
   position: relative;
@@ -2101,7 +2094,6 @@ body {
   visibility: hidden;
   position: absolute;
   background: #905fa4;
-  color: #ffffff;
   font-size: 0.75rem;
   padding: 4px 6px;
   border-radius: 3px;
@@ -2140,13 +2132,11 @@ body {
 .price-display {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #1f2937;
   text-align: right;
 }
 
 .settings-field {
   background: linear-gradient(90deg, #905fa4, #4372b7);
-  color: #ffffff;
   padding: 4px 8px;
   border-radius: 3px;
   font-size: 0.875rem;
@@ -2161,7 +2151,6 @@ body {
 }
 
 .delete-option-button {
-  color: #dc2626;
   font-size: 0.875rem;
   font-weight: 500;
   border: none;
@@ -2172,7 +2161,7 @@ body {
 }
 
 .delete-option-button:hover {
-  color: #b91c1c;
+  color: #ffffff;
 }
 
 .confirm-dialog {
@@ -2194,7 +2183,6 @@ body {
 
 .confirm-button {
   background: linear-gradient(90deg, #dc2626, #ef4444);
-  color: #ffffff;
   padding: 4px 8px;
   border-radius: 3px;
   font-size: 0.875rem;
@@ -2210,7 +2198,6 @@ body {
 
 .cancel-button {
   background: linear-gradient(90deg, #9ca3af, #d1d5db);
-  color: #1f2937;
   padding: 4px 8px;
   border-radius: 3px;
   font-size: 0.875rem;
@@ -2226,7 +2213,7 @@ body {
 
 .settings-container {
   grid-column: 1 / -1;
-  background: rgba(255, 255, 255, 0.9); /* Leicht transparent */
+  background: rgba(255, 255, 255, 0.9);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -2246,13 +2233,11 @@ body {
 .settings-container h4 {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #905fa4;
 }
 
 .settings-container h5 {
   font-size: 1rem;
   font-weight: 600;
-  color: #905fa4;
   margin-bottom: 10px;
 }
 
@@ -2276,17 +2261,16 @@ body {
   flex-direction: column;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #1f2937;
 }
 
 .settings-container select {
   padding: 8px;
-  border: 2px solid #d1d5db;
+  border: 2px solid #ffffff; /* Weißer Rahmen für Konsistenz */
   border-radius: 6px;
   font-size: 0.875rem;
   width: 100%;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  background: rgba(255, 255, 255, 0.9);
+  background: transparent; /* Transparenter Hintergrund */
   backdrop-filter: blur(5px);
 }
 
@@ -2323,7 +2307,6 @@ body {
 
 .add-option-button {
   background: linear-gradient(90deg, #905fa4, #4372b7);
-  color: #ffffff;
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 0.875rem;
@@ -2342,7 +2325,7 @@ body {
 .new-option-container {
   margin-top: 16px;
   padding: 16px;
-  background: rgba(249, 250, 251, 0.7); /* Transparent */
+  background: rgba(249, 250, 251, 0.7);
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   display: grid;
@@ -2361,12 +2344,12 @@ body {
 .new-option-input,
 .new-option-watt {
   padding: 8px;
-  border: 2px solid #d1d5db;
+  border: 2px solid #ffffff; /* Weißer Rahmen für Konsistenz */
   border-radius: 6px;
   font-size: 0.875rem;
   width: 100%;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  background: rgba(255, 255, 255, 0.9);
+  background: transparent; /* Transparenter Hintergrund */
   backdrop-filter: blur(5px);
 }
 
@@ -2379,7 +2362,6 @@ body {
 
 .save-option-button {
   background: linear-gradient(90deg, #905fa4, #4372b7);
-  color: #ffffff;
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 0.875rem;
@@ -2396,21 +2378,18 @@ body {
 
 .summary-container {
   margin-top: 24px;
-  background: rgba(249, 250, 251, 0.8); /* Transparent */
+  background: transparent; /* Transparenter Hintergrund */
   padding: 16px;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(144, 95, 164, 0.1);
+  backdrop-filter: blur(5px); /* Frosted Glass Effekt */
+  border: 1px solid #ffffff; /* Weißer Rahmen */
 }
 
 .summary-title {
   font-size: 1.25rem;
   font-weight: 700;
-  background: linear-gradient(90deg, #905fa4, #4372b7);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #ffffff;
   margin-bottom: 10px;
 }
 
@@ -2440,7 +2419,6 @@ table, th, td {
 
 .option-icon {
   font-size: 1.2rem;
-  color: #905fa4;
   vertical-align: middle;
   margin-right: 8px;
 }
@@ -2521,8 +2499,7 @@ table, th, td {
   outline: none;
   border-color: #905fa4;
   box-shadow: 0 0 0 2px rgba(144, 95, 164, 0.2);
-}
-`}</style>
+}`}</style>
 
 <div className="app-container">
   <div className="calculation-report">

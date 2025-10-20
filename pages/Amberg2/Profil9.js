@@ -334,13 +334,13 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
   const [error, setError] = useState(null);
   const [activeProfile, setActiveProfile] = useState(1);
   const [householdType, setHouseholdType] = useState('none');
-  const [selectedDiscount, setSelectedDiscount] = useState(14.70); // Default to AM discount
+  const [selectedDiscount, setSelectedDiscount] = useState(20.14); // Default to AM discount
 
   const profileFactors = { 1: 2.1, 2: 3.4, 3: 5.4, 4: 7, 5: 8.9 };
   const discounts = [
-    { label: 'AM', value: 14.70 },
-    { label: 'SuRo', value: 15.20 },
-    { label: 'Regio', value: 15.49 },
+    { label: 'AM', value: 20.14 },
+    { label: 'SuRo', value: 20.44 },
+    { label: 'Regio', value: 20.98 },
   ];
   const regionBasisPreise = {
     'AM': 34.06,
@@ -772,216 +772,219 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
 
   return (
     <div style={styles.mainContainer}>
-      <style>
-        {`
-          html, body {
-            background-color: transparent !important;
-          }
-          .date-picker {
-            padding: 10px 12px;
-            font-size: 14px;
-            border: 1px solid #FFFFFF;
-            border-radius: 8px;
-            background-color: transparent;
-            width: 100%;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-            color: #FFFFFF;
-          }
-          .date-picker * {
-            color: #FFFFFF;
-            background-color: transparent;
-          }
-          .date-picker:focus {
-            outline: none;
-            border-color: #905fa4;
-            box-shadow: 0 0 0 3px rgba(144, 95, 164, 0.1);
-          }
-          .price-input {
-            padding: 10px 12px;
-            font-size: 14px;
-            border: 1px solid #FFFFFF;
-            border-radius: 8px;
-            background-color: transparent;
-            width: 100%;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-            color: #FFFFFF;
-          }
-          .price-input * {
-            color: #FFFFFF;
-            background-color: transparent;
-          }
-          .price-input:focus {
-            outline: none;
-            border-color: #4372b7;
-            box-shadow: 0 0 0 3px rgba(67, 114, 183, 0.1);
-          }
-          .input-error {
-            color: rgb(218, 17, 17);
-            font-size: 12px;
-            margin-top: 4px;
-          }
-          .slider {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 8px;
-            background: #e0e0e0;
-            border-radius: 4px;
-            outline: none;
-            transition: background 0.2s ease;
-          }
-          .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #4372b7;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: background 0.2s ease;
-          }
-          .slider::-webkit-slider-thumb:hover {
-            background: #905fa4;
-          }
-          .slider::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: #4372b7;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: background 0.2s ease;
-          }
-          .slider::-moz-range-thumb:hover {
-            background: #905fa4;
-          }
-          .radio-input {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #ccc;
-            border-radius: 50%;
-            background-color: #333333;
-            cursor: pointer;
-            position: 'relative';
-            transition: 'border-color 0.2s ease, background-color 0.2s ease';
-          }
-          .radio-input:checked {
-            border: 2px solid #4372b7;
-            background-color: #333333;
-          }
-          .radio-input:checked::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 8px;
-            height: 8px;
-            background-color: #4372b7;
-            border-radius: 50%;
-          }
-          .radio-input:hover {
-            border-color: #905fa4;
-          }
-          .radio-input:checked:hover::before {
-            background-color: #905fa4;
-          }
-          .tooltip {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background-color: #4372b7;
-            color: #fff;
-            padding: 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            white-space: nowrap;
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.2s ease, visibility 0.2s ease;
-            z-index: 10;
-          }
-          .tooltip-container:hover .tooltip {
-            visibility: visible;
-            opacity: 1;
-            background-color: #4372b7;
-          }
-          .discount-switch-container input:checked + .discount-switch-slider {
-            background-color: #4372b7;
-          }
-          .discount-switch-container input:checked + .discount-switch-slider:before {
-            transform: translateX(20px);
-          }
-          .discount-switch-container input:focus + .discount-switch-slider {
-            box-shadow: 0 0 0 3px rgba(67, 114, 183, 0.1);
-          }
-          .image-container {
-            display: flex;
-            flex-direction: row;
-            gap: 8px;
-            margin: 12px 0;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            position: relative;
-          }
-          .person-image {
-            width: 50px;
-            height: auto;
-            object-fit: contain;
-            transition: opacity 0.2s ease;
-          }
-          .person-1 { transform: translate(0px, 0px); }
-          .person-2 { transform: translate(-10px, 0px); }
-          .person-3 { transform: translate(-20px, 0px); }
-          .person-4 { transform: translate(-30px, 0px); }
-          .person-5 { transform: translate(-40px, 0px); }
-          @media (max-width: 900px) {
-            .main-container {
-              flex-direction: column;
-            }
-            .controls-container {
-              width: 100%;
-            }
-            .date-picker, .price-input, .slider, .radio-input {
-              width: 100%;
-            }
-            .summary-table {
-              font-size: 12px;
-            }
-            .summary-table-cell {
-              padding: 6px;
-            }
-            .legend-container {
-              gap: 12px;
-            }
-            .legend-label {
-              font-size: 12px;
-            }
-            .legend-color {
-              width: 12px;
-              height: 12px;
-            }
-            .region-switch-wrapper {
-              flex: 1;
-              min-width: 60px;
-              background-color: #4372b7;
-            }
-            .image-container {
-              flex-wrap: wrap;
-              justify-content: center;
-            }
-            .person-image {
-              width: 30px;
-              height: auto;
-            }
-            .person-1 { transform: translate(0px, 0px); }
-            .person-2 { transform: translate(-5px, 0px); }
-            .person-3 { transform: translate(-10px, 0px); }
-            .person-4 { transform: translate(-15px, 0px); }
-            .person-5 { transform: translate(-20px, 0px); }
-          }
-        `}
-      </style>
+    
+<style>
+  {`
+    html, body {
+      background-color: transparent !important;
+    }
+    .date-picker {
+      padding: 10px 12px;
+      font-size: 14px;
+      border: 1px solid #FFFFFF;
+      border-radius: 8px;
+      background-color: transparent;
+      width: 100%;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      color: #FFFFFF;
+    }
+    .date-picker * {
+      color: #FFFFFF;
+      background-color: transparent;
+    }
+    .date-picker:focus {
+      outline: none;
+      border-color: #905fa4;
+      box-shadow: 0 0 0 3px rgba(144, 95, 164, 0.1);
+    }
+    .price-input {
+      padding: 10px 12px;
+      font-size: 14px;
+      border: 1px solid #FFFFFF;
+      border-radius: 8px;
+      background-color: transparent;
+      width: 100%;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      color: #FFFFFF;
+    }
+    .price-input * {
+      color: #FFFFFF;
+      background-color: transparent;
+    }
+    .price-input:focus {
+      outline: none;
+      border-color: #4372b7;
+      box-shadow: 0 0 0 3px rgba(67, 114, 183, 0.1);
+    }
+    .input-error {
+      color: rgb(218, 17, 17);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    .slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 8px;
+      background: #e0e0e0;
+      border-radius: 4px;
+      outline: none;
+      transition: background 0.2s ease;
+    }
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #4372b7;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .slider::-webkit-slider-thumb:hover {
+      background: #905fa4;
+    }
+    .slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: #4372b7;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .slider::-moz-range-thumb:hover {
+      background: #905fa4;
+    }
+    .radio-input {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #ccc;
+      border-radius: 50%;
+      background-color: #333333;
+      cursor: pointer;
+      position: relative;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+    .radio-input:checked {
+      border: 2px solid #4372b7;
+      background-color: #333333;
+    }
+    .radio-input:checked::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      background-color: #4372b7;
+      border-radius: 50%;
+    }
+    .radio-input:hover {
+      border-color: #905fa4;
+    }
+    .radio-input:checked:hover::before {
+      background-color: #905fa4;
+    }
+    .tooltip {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #4372b7;
+      color: #fff;
+      padding: 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+      z-index: 10;
+    }
+    .tooltip-container:hover .tooltip {
+      visibility: visible;
+      opacity: 1;
+      background-color: #4372b7;
+    }
+    .discount-switch-container input:checked + .discount-switch-slider {
+      background-color: #4372b7;
+    }
+    .discount-switch-container input:checked + .discount-switch-slider:before {
+      transform: translateX(20px);
+    }
+    .discount-switch-container input:focus + .discount-switch-slider {
+      box-shadow: 0 0 0 3px rgba(67, 114, 183, 0.1);
+    }
+    .image-container {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+      margin: 12px 0;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      position: relative;
+    }
+    .person-image {
+      width: 50px;
+      height: auto;
+      object-fit: contain;
+      transition: opacity 0.2s ease;
+      filter: invert(36%) sepia(65%) saturate(1200%) hue-rotate(260deg) brightness(95%) contrast(90%); /* Refined for #905fa4 */
+    }
+    .person-1 { transform: translate(0px, 0px); }
+    .person-2 { transform: translate(-10px, 0px); }
+    .person-3 { transform: translate(-20px, 0px); }
+    .person-4 { transform: translate(-30px, 0px); }
+    .person-5 { transform: translate(-40px, 0px); }
+    @media (max-width: 900px) {
+      .main-container {
+        flex-direction: column;
+      }
+      .controls-container {
+        width: 100%;
+      }
+      .date-picker, .price-input, .slider, .radio-input {
+        width: 100%;
+      }
+      .summary-table {
+        font-size: 12px;
+      }
+      .summary-table-cell {
+        padding: 6px;
+      }
+      .legend-container {
+        gap: 12px;
+      }
+      .legend-label {
+        font-size: 12px;
+      }
+      .legend-color {
+        width: 12px;
+        height: 12px;
+      }
+      .region-switch-wrapper {
+        flex: 1;
+        min-width: 60px;
+        background-color: #4372b7;
+      }
+      .image-container {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .person-image {
+        width: 30px;
+        height: auto;
+        filter: invert(36%) sepia(65%) saturate(1200%) hue-rotate(260deg) brightness(95%) contrast(90%); /* Same refined filter */
+      }
+      .person-1 { transform: translate(0px, 0px); }
+      .person-2 { transform: translate(-5px, 0px); }
+      .person-3 { transform: translate(-10px, 0px); }
+      .person-4 { transform: translate(-15px, 0px); }
+      .person-5 { transform: translate(-20px, 0px); }
+    }
+  `}
+</style>
 
       <div style={styles.mainContainer}>
         <div style={styles.controlsContainer}>
@@ -1114,7 +1117,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
                 ? `Keine Region ausgewählt, Preis: ${parseFloat(customPrice).toFixed(2) || 'N/A'} Ct/kWh`
                 : `Ausgewählte Region: ${
                     discounts.find((r) => r.value === selectedDiscount)?.label
-                  }, Basispreis: ${regionBasisPreise[discounts.find((r) => r.value === selectedDiscount)?.label].toFixed(2)} Ct/kWh, Rabatt: ${selectedDiscount.toFixed(2)} Ct/kWh, Angepasster Preis: ${adjustedCustomPrice.toFixed(2)} Ct/kWh`}
+                  }, Basispreis: ${regionBasisPreise[discounts.find((r) => r.value === selectedDiscount)?.label].toFixed(2)} Ct/kWh, Angepasster Preis: ${adjustedCustomPrice.toFixed(2)} Ct/kWh`}
             </p>
           </div>
 

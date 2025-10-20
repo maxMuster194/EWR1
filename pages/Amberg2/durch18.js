@@ -105,7 +105,7 @@ export default function MongoDBPricesPage() {
   const [loading, setLoading] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(null);
   const [verbrauchInput, setVerbrauchInput] = useState('3600');
-  const [eigenerPreis, setEigenerPreis] = useState('34');
+  const [eigenerPreis, setEigenerPreis] = useState('34.06');
   const [displayedKwh, setDisplayedKwh] = useState({});
   const [displayedSavings, setDisplayedSavings] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -122,9 +122,9 @@ export default function MongoDBPricesPage() {
   ];
 
   const discounts = [
-    { label: 'AM', value: 14.70 },
-    { label: 'SuRo', value: 15.20 },
-    { label: 'Regio', value: 15.49 },
+    { label: 'AM', value: 20.14 },
+    { label: 'SuRo', value: 20.44 },
+    { label: 'Regio', value: 20.98 },
   ];
 
   const regionBasisPreise = {
@@ -155,7 +155,7 @@ export default function MongoDBPricesPage() {
     if (selectedDiscount) {
       setEigenerPreis(regionBasisPreise[selectedDiscount].toString());
     } else {
-      setEigenerPreis('34');
+      setEigenerPreis('34.06');
     }
   }, [selectedDiscount]);
 
@@ -314,77 +314,77 @@ export default function MongoDBPricesPage() {
       </div>
 
       <div className="bg-transparent p-4 rounded-xl mb-6">
-  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-    <label className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-center sm:text-left">
-      Rückblick Kosten und Ersparnis (exklusiv Wärmepumpe und E-Mobilität)
-    </label>
-    <div className="flex flex-col items-center">
-      <div className="text-[#4372b7] font-bold text-sm mb-3 text-center">
-        Region auswählen
-      </div>
-      <div className="flex flex-row gap-4 items-center p-3  rounded-lg ">
-        {discounts.map((discount) => (
-          <div key={discount.label} className="flex items-center gap-2">
-            <span className="text-xs font-medium text-[#4372b7]">{discount.label}</span>
-            <label className="relative inline-block w-10 h-5">
-              <input
-                type="checkbox"
-                id={`region-${discount.label}`}
-                checked={selectedDiscount === discount.label}
-                onChange={() => handleDiscountToggle(discount)}
-                className="opacity-0 w-0 h-0"
-              />
-              <span
-                className={`absolute cursor-pointer top-0 left-0 right-0 bottom-0 rounded-full transition-all duration-300 ${
-                  selectedDiscount === discount.label
-                    ? 'bg-gradient-to-r from-[#4372b7] to-[#905fa4]'
-                    : 'bg-gray-300'
-                }`}
-              >
-                <span
-                  className={`absolute left-1 bottom-1 h-3.5 w-3.5 bg-white rounded-full transition-all duration-300 ${
-                    selectedDiscount === discount.label ? 'translate-x-5' : ''
-                  }`}
-                />
-              </span>
-            </label>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+          <label className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-center sm:text-left">
+            Rückblick Kosten und Ersparnis (exklusiv Wärmepumpe und E-Mobilität)
+          </label>
+          <div className="flex flex-col items-center">
+            <div className="text-[#4372b7] font-bold text-sm mb-3 text-center">
+              Region auswählen
+            </div>
+            <div className="flex flex-row gap-4 items-center p-3 rounded-lg">
+              {discounts.map((discount) => (
+                <div key={discount.label} className="flex items-center gap-2">
+                  <span className="text-xs font-medium text-[#4372b7]">{discount.label}</span>
+                  <label className="relative inline-block w-10 h-5">
+                    <input
+                      type="checkbox"
+                      id={`region-${discount.label}`}
+                      checked={selectedDiscount === discount.label}
+                      onChange={() => handleDiscountToggle(discount)}
+                      className="opacity-0 w-0 h-0"
+                    />
+                    <span
+                      className={`absolute cursor-pointer top-0 left-0 right-0 bottom-0 rounded-full transition-all duration-300 ${
+                        selectedDiscount === discount.label
+                          ? 'bg-gradient-to-r from-[#4372b7] to-[#905fa4]'
+                          : 'bg-gray-300'
+                      }`}
+                    >
+                      <span
+                        className={`absolute left-1 bottom-1 h-3.5 w-3.5 bg-white rounded-full transition-all duration-300 ${
+                          selectedDiscount === discount.label ? 'translate-x-5' : ''
+                        }`}
+                      />
+                    </span>
+                  </label>
+                </div>
+              ))}
+            </div>
           </div>
-        ))}
-      </div>
-    </div>
-  </div>
+        </div>
 
-  <div className="flex flex-col sm:flex-row sm:justify-between gap-4 w-full">
-    <div className="relative">
-      <label className="block text-xs font-medium text-[#4372b7] mb-1.5">
-        Preis pro kWh (Cent)
-      </label>
-      <input
-        type="number"
-        id="eigenerPreis"
-        placeholder="z. B. 30 Cent/kWh"
-        value={eigenerPreis}
-        onChange={(e) => setEigenerPreis(e.target.value)}
-        className="p-2.5 text-sm border-2 border-[#4372b7] rounded-lg w-full max-w-[250px] bg-white text-[#4372b7] focus:border-[#905fa4] focus:ring-2 focus:ring-[#905fa4] focus:ring-opacity-50 transition-all"
-        title="Preis pro kWh in Cent"
-      />
-    </div>
-    <div className="relative">
-      <label className="block text-xs font-medium text-[#4372b7] mb-1.5">
-        Jährlicher Verbrauch (kWh)
-      </label>
-      <input
-        type="number"
-        id="verbrauchInput"
-        placeholder="z. B. 3600 kWh/Jahr"
-        value={verbrauchInput}
-        onChange={(e) => setVerbrauchInput(e.target.value)}
-        className="p-2.5 text-sm border-2 border-[#4372b7] rounded-lg w-full max-w-[250px] bg-white text-[#4372b7] focus:border-[#905fa4] focus:ring-2 focus:ring-[#905fa4] focus:ring-opacity-50 transition-all"
-        title="Jährlicher Verbrauch in kWh"
-      />
-    </div>
-  </div>
-</div>
+        <div className="flex flex-col sm:flex-row sm:justify-between gap-4 w-full">
+          <div className="relative">
+            <label className="block text-xs font-medium text-[#4372b7] mb-1.5">
+              Preis pro kWh (Cent)
+            </label>
+            <input
+              type="number"
+              id="eigenerPreis"
+              placeholder="z. B. 30 Cent/kWh"
+              value={eigenerPreis}
+              onChange={(e) => setEigenerPreis(e.target.value)}
+              className="p-2.5 text-sm border-2 border-[#4372b7] rounded-lg w-full max-w-[250px] bg-white text-[#4372b7] focus:border-[#905fa4] focus:ring-2 focus:ring-[#905fa4] focus:ring-opacity-50 transition-all"
+              title="Preis pro kWh in Cent"
+            />
+          </div>
+          <div className="relative">
+            <label className="block text-xs font-medium text-[#4372b7] mb-1.5">
+              Jährlicher Verbrauch (kWh)
+            </label>
+            <input
+              type="number"
+              id="verbrauchInput"
+              placeholder="z. B. 3600 kWh/Jahr"
+              value={verbrauchInput}
+              onChange={(e) => setVerbrauchInput(e.target.value)}
+              className="p-2.5 text-sm border-2 border-[#4372b7] rounded-lg w-full max-w-[250px] bg-white text-[#4372b7] focus:border-[#905fa4] focus:ring-2 focus:ring-[#905fa4] focus:ring-opacity-50 transition-all"
+              title="Jährlicher Verbrauch in kWh"
+            />
+          </div>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
         {months.map((monthKey, index) => {
@@ -439,7 +439,7 @@ export default function MongoDBPricesPage() {
                 <div className="bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white p-2 rounded-lg mb-3 flex items-center gap-2 text-xs">
                   Eingegebener Preis: {getAdjustedPrice() ? `${getAdjustedPrice()} Cent/kWh` : '–'}
                   {selectedDiscount && (
-                    <span className="text-[10px]"> ({selectedDiscount} Rabatt: -{discounts.find((r) => r.label === selectedDiscount)?.value}¢)</span>
+                    <span className="text-[10px]"> ({selectedDiscount} Abzüge: -{discounts.find((r) => r.label === selectedDiscount)?.value}¢)</span>
                   )}
                 </div>
                 <div className="bg-white p-3 rounded-lg shadow-md mb-3">
@@ -580,7 +580,7 @@ export default function MongoDBPricesPage() {
                           const weeklyCosts = calculateWeeklyAverages(selectedMonth)
                             .map((week) => {
                               const weeklyAvgNum = week.average !== '–' ? parseFloat(week.average) : 0;
-                              const weeklyKwhNum = edu/weeklyKwh !== '–' ? parseFloat(week.weeklyKwh) : 0;
+                              const weeklyKwhNum = week.weeklyKwh !== '–' ? parseFloat(week.weeklyKwh) : 0;
                               return weeklyAvgNum > 0 && weeklyKwhNum > 0 ? weeklyAvgNum * weeklyKwhNum / 100 : 0;
                             })
                             .reduce((sum, cost) => sum + cost, 0);
@@ -637,4 +637,3 @@ export default function MongoDBPricesPage() {
     </div>
   );
 }
-
