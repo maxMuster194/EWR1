@@ -6,123 +6,76 @@ import Durchschnitt from '../Amberg2/durch18';
 import LoadingScreen from '../loading/Amberg';
 
 const styles = `
-  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Noto+Sans:wght@400;500;700&display=swap');
-
-  html, body {
-    background-color: transparent !important;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-  }
-
   .layout {
     width: 100%;
-    max-width: 1000px;
+    height: 800px;
+    display: flex;
+    flex-direction: column;
+    font-family: Manrope, "Noto Sans", sans-serif;
+    background: transparent;
+  }
+  .main {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    max-height: 1100px;
-    overflow-y: auto;
-    background: transparent;
-    margin: 0 auto;
-    font-family: 'Manrope', 'Noto Sans', sans-serif;
-  }
-
-  .main {
-    width: 100%;
-    max-width: 1000px;
-    display: flex;
-    flex-direction: row;
-    gap: 12px;
-    padding: 24px;
+    padding: 12px;
     background: transparent;
     flex: 1;
-    margin: 0 auto;
+    overflow: hidden;
   }
-
   .content {
     flex: 1;
-    overflow: auto;
     padding: 8px;
-    border-radius: 12px;
+    border-radius: 8px;
     background: transparent;
-    box-shadow: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    max-width: 100%;
-    height: 100% !important; /* Höhe flexibel gemacht, um bis zum Ende des Feldes zu passen */
-    min-height: 800px; /* Minimale Höhe für Stabilität */
   }
-
   .content > * {
     width: 100%;
-    height: 100% !important;
+    height: 100%;
     flex: 1;
   }
-
-  .content * {
-    font-size: 1.1em;
-  }
-
   .chart {
     flex: 1;
-    overflow: auto;
-    padding: 24px;
-    border-radius: 12px;
+    padding: 8px;
+    border-radius: 8px;
     background: transparent;
-    box-shadow: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    max-width: 100%;
-    height: 100% !important; /* Chart-Höhe flexibel anpassen */
   }
-
+  .chart > * {
+    width: 100%;
+    height: 100%;
+    flex: 1;
+  }
   .bottom-nav {
     display: none;
-    width: 100%;
-    max-width: 1000px;
-    margin: 0 auto;
   }
-
-  @media (max-width: 1024px) {
-    .layout, .main, .bottom-nav {
-      width: 100%;
-      max-width: 95vw;
+  @media (min-width: 768px) {
+    .main {
+      flex-direction: row;
+      gap: 12px;
+    }
+    .content, .chart {
+      flex: 1;
     }
   }
-
   @media (max-width: 767px) {
     .layout {
-      gap: 12px;
+      height: 800px;
       padding-bottom: 60px;
-      max-height: 1100px;
-      overflow-y: auto;
-      max-width: 100vw;
-      padding: 12px;
     }
     .main {
-      flex-direction: column;
-      padding: 12px;
-      max-width: 100%;
-      margin: 0;
-    }
-    .content {
-      max-height: none;
-      height: 100% !important; /* Flexibel für Mobile */
-      min-height: 600px; /* Minimale Höhe für Mobile */
       padding: 8px;
-      background: transparent;
-      max-width: 100%;
     }
-    .content * {
-      font-size: 1em;
+    .content, .chart {
+      padding: 6px;
     }
-    .chart {
-      max-height: none;
-      height: 100% !important; /* Flexibel für Mobile */
-      padding: 12px;
-      background: transparent;
-      max-width: 100%;
+    .content > *, .chart > * {
+      font-size: 0.9em;
     }
     .bottom-nav {
       display: flex;
@@ -134,18 +87,17 @@ const styles = `
       border-top: 1px solid #D1D5DB;
       justify-content: space-around;
       align-items: center;
-      padding: 8px 0;
+      padding: 6px 0;
       z-index: 1000;
-      max-width: 1000px;
-      margin: 0 auto;
+      height: 60px;
     }
     .bottom-nav a {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 4px;
-      padding: 8px;
-      border-radius: 12px;
+      padding: 6px;
+      border-radius: 8px;
       color: #FFFFFF;
       text-decoration: none;
       transition: background-color 0.2s;
@@ -168,15 +120,8 @@ const styles = `
       margin: 0;
     }
     .bottom-nav a svg {
-      font-size: 18px;
+      font-size: 16px;
       color: #fafafa;
-    }
-  }
-
-  @container (max-width: 1000px) {
-    .layout, .main, .bottom-nav {
-      max-width: 100%;
-      width: 100%;
     }
   }
 `;
@@ -199,36 +144,35 @@ const Energiemanager = () => {
   return (
     <>
       <style>{styles}</style>
-      <div className="layout" style={{ background: 'transparent', fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
-        <div className="main flex flex-col lg:flex-row gap-6" style={{ background: 'transparent' }}>
-          <div className="content flex-1 rounded-xl flex flex-col" style={{ background: 'transparent' }}>
-            <Statistik style={{ height: '100%', width: '100%' }} /> {/* Inline-Style flexibel gemacht */}
+      <div className="layout">
+        <div className="main">
+          <div className="content">
+            <Statistik style={{ width: '100%', height: '100%' }} />
           </div>
-          <div className="chart flex-1 p-6 rounded-xl flex flex-col" style={{ background: 'transparent' }}>
-            <Durchschnitt style={{ height: '100%', width: '100%' }} /> {/* Auch für Durchschnitt flexibel */}
+          <div className="chart">
+            <Durchschnitt style={{ width: '100%', height: '100%' }} />
           </div>
         </div>
-
         <nav className="bottom-nav">
-          <a href="/test15/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#063d37] text-white">
-            <FontAwesomeIcon icon={faHouse} style={{ color: '#fafafa', fontSize: '18px' }} />
-            <p className="text-white text-xs font-medium leading-normal">Home</p>
+          <a href="/test15/startseite" className="active">
+            <FontAwesomeIcon icon={faHouse} />
+            <p>Home</p>
           </a>
-          <a href="/test15/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#063d37] text-white active">
-            <FontAwesomeIcon icon={faChartLine} style={{ color: '#fafafa', fontSize: '18px' }} />
-            <p className="text-white text-xs font-medium leading-normal">Preis</p>
+          <a href="/test15/preise">
+            <FontAwesomeIcon icon={faChartLine} />
+            <p>Preis</p>
           </a>
-          <a href="/test15/rechner" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#063d37] text-white">
-            <FontAwesomeIcon icon={faCalculator} style={{ color: '#fafafa', fontSize: '18px' }} />
-            <p className="text-white text-xs font-medium leading-normal">Rechner</p>
+          <a href="/test15/rechner">
+            <FontAwesomeIcon icon={faCalculator} />
+            <p>Rechner</p>
           </a>
-          <a href="/test15/details" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#063d37] text-white">
-            <FontAwesomeIcon icon={faFileLines} style={{ color: '#fafafa', fontSize: '18px' }} />
-            <p className="text-white text-xs font-medium leading-normal">Detail</p>
+          <a href="/test15/details">
+            <FontAwesomeIcon icon={faFileLines} />
+            <p>Detail</p>
           </a>
-          <a href="/test15/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#063d37] text-white">
-            <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#fafafa', fontSize: '18px' }} />
-            <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
+          <a href="/test15/hilfe">
+            <FontAwesomeIcon icon={faQuestionCircle} />
+            <p>Hilfe</p>
           </a>
         </nav>
       </div>

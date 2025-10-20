@@ -120,11 +120,11 @@ export default function WeeklyPriceChart() {
                   callback: (value) => `${value.toFixed(2)} ct`,
                   font: { size: 10 },
                 },
-                grid: { color: 'rgba(144, 95, 164, 0.1)' },
+                grid: { color: 'rgb(255, 255, 255)' },
               },
               x: {
                 ticks: { color: '#4372b7', font: { size: 10 } },
-                grid: { color: 'rgba(144, 95, 164, 0.1)' },
+                grid: { color: 'rgb(255, 255, 255)' },
               },
             },
           }}
