@@ -1521,164 +1521,173 @@ export default function Home() {
   };
 
 
-
-
- // Chart for hourly consumption (unchanged from your original code)
+// Chart for hourly consumption
 const chartData = {
-    labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
-    datasets: [
-      {
-        label: 'Stromverbrauch Eigener Trarif',
-        data: hourlyData.map(d => d.total - d.waermepumpe),
-        fill: false,
-        borderColor: '#4372b7',
-        backgroundColor: '#4372b7',
-        tension: 0.1,
-        yAxisID: 'y',
-      },
-      {
-        label: 'Wärmepumpe (kW)',
-        data: hourlyData.map(d => d.waermepumpe),
-        fill: false,
-        borderColor: '#f93b01',
-        backgroundColor: '#f93b01',
-        tension: 0.1,
-        yAxisID: 'y',
-      },
-      {
-        label: `Dynamischer Preis am ${selectedDate || 'N/A'} (Ct/kWh)`,
-        data: chartConvertedValues,
-        fill: false,
-        borderColor: '#905fa4',
-        backgroundColor: '#905fa4',
-        tension: 0.1,
-        yAxisID: 'y1',
-      },
-    ],
-  };
-  
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'top', labels: { color: '#333' } },
-      title: { display: true, text: 'Stündlicher Stromverbrauch und Preis', color: '#333', font: { size: 11.2 } },
-      tooltip: {
-        callbacks: {
-          label: function(context) {
-            const index = context.dataIndex;
-            if (context.dataset.label.includes('Dynamischer Preis')) {
-              return `Preis: ${context.raw.toFixed(2)} Ct/kWh`;
-            }
-            const verbraucherList = hourlyData[index].verbraucher.join(', ');
-            const label = context.dataset.label.includes('Wärmepumpen') ? 'Wärmepumpen-Verbrauch' : 'Verbrauch ohne Wärmepumpe';
-            return `${label}: ${context.raw.toFixed(2)} kW\nAktive Verbraucher: ${verbraucherList || 'Keine'}`;
-          },
+  labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
+  datasets: [
+    {
+      label: 'Stromverbrauch Eigener Tarif',
+      data: hourlyData.map(d => d.total - d.waermepumpe),
+      fill: false,
+      borderColor: '#4372b7',
+      backgroundColor: '#4372b7',
+      tension: 0.1,
+      yAxisID: 'y',
+    },
+    {
+      label: 'Wärmepumpe (kW)',
+      data: hourlyData.map(d => d.waermepumpe),
+      fill: false,
+      borderColor: '#f93b01',
+      backgroundColor: '#f93b01',
+      tension: 0.1,
+      yAxisID: 'y',
+    },
+    {
+      label: `Dynamischer Preis am ${selectedDate || 'N/A'} (Ct/kWh)`,
+      data: chartConvertedValues,
+      fill: false,
+      borderColor: '#905fa4',
+      backgroundColor: '#905fa4',
+      tension: 0.1,
+      yAxisID: 'y1',
+    },
+  ],
+};
+
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { position: 'top', labels: { color: '#FFFFFF' } }, // Weiße Legendenbeschriftung
+    title: { display: true, text: 'Stündlicher Stromverbrauch und Preis', color: '#FFFFFF', font: { size: 11.2 } }, // Weißer Titel
+    tooltip: {
+      callbacks: {
+        label: function(context) {
+          const index = context.dataIndex;
+          if (context.dataset.label.includes('Dynamischer Preis')) {
+            return `Preis: ${context.raw.toFixed(2)} Ct/kWh`;
+          }
+          const verbraucherList = hourlyData[index].verbraucher.join(', ');
+          const label = context.dataset.label.includes('Wärmepumpen') ? 'Wärmepumpen-Verbrauch' : 'Verbrauch ohne Wärmepumpe';
+          return `${label}: ${context.raw.toFixed(2)} kW\nAktive Verbraucher: ${verbraucherList || 'Keine'}`;
         },
       },
+      // Weiße Tooltips für bessere Lesbarkeit
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      titleColor: '#FFFFFF',
+      bodyColor: '#FFFFFF',
     },
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: { display: true, text: 'Verbrauch (kW)', color: '#333' },
-        ticks: { color: '#333' },
-        position: 'left',
-      },
-      y1: {
-        beginAtZero: true,
-        title: { display: true, text: 'Preis (Ct/kWh)', color: '#333' },
-        ticks: { color: '#333' },
-        position: 'right',
-        grid: { drawOnChartArea: false },
-      },
-      x: { title: { display: true, text: 'Uhrzeit', color: '#333' }, ticks: { color: '#333' } },
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
+      title: { display: true, text: 'Verbrauch (kW)', color: '#FFFFFF' }, // Weiße Achsenbeschriftung
+      ticks: { color: '#FFFFFF' }, // Weiße Ticks
+      position: 'left',
     },
-  };
-  
-  // Updated chart for hourly costs (including heat pump costs in orange)
-  const chartDataKosten = {
-    labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
-    datasets: [
-      {
-        label: 'Kosten Dynamischer Tarif (Ct)',
-        data: hourlyData.map((_, index) => {
-          const price = chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
-          return ((hourlyData[index].total - hourlyData[index].waermepumpe) * price).toFixed(2);
-        }),
-        fill: false,
-        borderColor: '#905fa4',
-        backgroundColor: '#905fa4',
-        tension: 0.1,
-      },
-      {
-        label: 'Kosten Fester Tarif (Ct)',
-        data: hourlyData.map((_, index) => {
-          const price = parseFloat(getPreisDifferenz(strompreis, selectedRegion));
-          return ((hourlyData[index].total - hourlyData[index].waermepumpe) * price).toFixed(2);
-        }),
-        fill: false,
-        borderColor: '#4372b7',
-        backgroundColor: '#4372b7',
-        tension: 0.1,
-      },
-      {
-        label: 'Kosten Wärmepumpe (Ct)',
-        data: hourlyData.map((_, index) => {
-          const price = chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
-          return (hourlyData[index].waermepumpe * price).toFixed(2);
-        }),
-        fill: false,
-        borderColor: '#f93b01',
-        backgroundColor: '#f93b01',
-        tension: 0.1,
-      },
-    ],
-  };
-  
-  const chartOptionsKosten = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'top', labels: { color: '#333' } },
-      title: {
-        display: true,
-        text: `Stündliche Stromkosten (inkl. Wärmepumpe) am ${selectedDate || 'Fallback-Preis'}`,
-        color: '#333',
-        font: { size: 11.2 },
-      },
-      tooltip: {
-        callbacks: {
-          label: function(context) {
-            const index = context.dataIndex;
-            const datasetLabel = context.dataset.label;
-            const isDynamicNonWP = datasetLabel.includes('Dynamischer Tarif') && !datasetLabel.includes('Wärmepumpen');
-            const isFixedNonWP = datasetLabel.includes('Fester Tarif');
-            const isWpDynamic = datasetLabel.includes('Wärmepumpen-Kosten');
-            let price, verbraucherList;
-            if (isWpDynamic) {
-              price = chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
-              verbraucherList = hourlyData[index].verbraucher.filter(v => verbraucherTypes[v] === 'waermepumpe').join(', ');
-            } else {
-              price = isDynamicNonWP ? (chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion))) : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
-              verbraucherList = hourlyData[index].verbraucher.filter(v => verbraucherTypes[v] !== 'waermepumpe').join(', ');
-            }
-            return `${datasetLabel.split(' am')[0]}: ${context.raw} Ct\nPreis: ${price.toFixed(2)} Ct/kWh\nAktive Verbraucher: ${verbraucherList || 'Keine'}`;
-          },
+    y1: {
+      beginAtZero: true,
+      title: { display: true, text: 'Preis (Ct/kWh)', color: '#FFFFFF' }, // Weiße Achsenbeschriftung
+      ticks: { color: '#FFFFFF' }, // Weiße Ticks
+      position: 'right',
+      grid: { drawOnChartArea: false },
+    },
+    x: {
+      title: { display: true, text: 'Uhrzeit', color: '#FFFFFF' }, // Weiße Achsenbeschriftung
+      ticks: { color: '#FFFFFF' }, // Weiße Ticks
+    },
+  },
+};
+
+// Updated chart for hourly costs (including heat pump costs in orange)
+const chartDataKosten = {
+  labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
+  datasets: [
+    {
+      label: 'Kosten Dynamischer Tarif (Ct)',
+      data: hourlyData.map((_, index) => {
+        const price = chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
+        return ((hourlyData[index].total - hourlyData[index].waermepumpe) * price).toFixed(2);
+      }),
+      fill: false,
+      borderColor: '#905fa4',
+      backgroundColor: '#905fa4',
+      tension: 0.1,
+    },
+    {
+      label: 'Kosten Fester Tarif (Ct)',
+      data: hourlyData.map((_, index) => {
+        const price = parseFloat(getPreisDifferenz(strompreis, selectedRegion));
+        return ((hourlyData[index].total - hourlyData[index].waermepumpe) * price).toFixed(2);
+      }),
+      fill: false,
+      borderColor: '#4372b7',
+      backgroundColor: '#4372b7',
+      tension: 0.1,
+    },
+    {
+      label: 'Kosten Wärmepumpe (Ct)',
+      data: hourlyData.map((_, index) => {
+        const price = chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
+        return (hourlyData[index].waermepumpe * price).toFixed(2);
+      }),
+      fill: false,
+      borderColor: '#f93b01',
+      backgroundColor: '#f93b01',
+      tension: 0.1,
+    },
+  ],
+};
+
+const chartOptionsKosten = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { position: 'top', labels: { color: '#FFFFFF' } }, // Weiße Legendenbeschriftung
+    title: {
+      display: true,
+      text: `Stündliche Stromkosten (inkl. Wärmepumpe) am ${selectedDate || 'Fallback-Preis'}`,
+      color: '#FFFFFF', // Weißer Titel
+      font: { size: 11.2 },
+    },
+    tooltip: {
+      callbacks: {
+        label: function(context) {
+          const index = context.dataIndex;
+          const datasetLabel = context.dataset.label;
+          const isDynamicNonWP = datasetLabel.includes('Dynamischer Tarif') && !datasetLabel.includes('Wärmepumpen');
+          const isFixedNonWP = datasetLabel.includes('Fester Tarif');
+          const isWpDynamic = datasetLabel.includes('Wärmepumpen-Kosten');
+          let price, verbraucherList;
+          if (isWpDynamic) {
+            price = chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
+            verbraucherList = hourlyData[index].verbraucher.filter(v => verbraucherTypes[v] === 'waermepumpe').join(', ');
+          } else {
+            price = isDynamicNonWP ? (chartConvertedValues[index] != null ? chartConvertedValues[index] : parseFloat(getPreisDifferenz(strompreis, selectedRegion))) : parseFloat(getPreisDifferenz(strompreis, selectedRegion));
+            verbraucherList = hourlyData[index].verbraucher.filter(v => verbraucherTypes[v] !== 'waermepumpe').join(', ');
+          }
+          return `${datasetLabel.split(' am')[0]}: ${context.raw} Ct\nPreis: ${price.toFixed(2)} Ct/kWh\nAktive Verbraucher: ${verbraucherList || 'Keine'}`;
         },
       },
+      // Weiße Tooltips für bessere Lesbarkeit
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      titleColor: '#FFFFFF',
+      bodyColor: '#FFFFFF',
     },
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: { display: true, text: 'Kosten (Ct)', color: '#333' },
-        ticks: { color: '#333' },
-      },
-      x: {
-        title: { display: true, text: 'Uhrzeit', color: '#333' },
-        ticks: { color: '#333' },
-      },
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
+      title: { display: true, text: 'Kosten (Ct)', color: '#FFFFFF' }, // Weiße Achsenbeschriftung
+      ticks: { color: '#FFFFFF' }, // Weiße Ticks
     },
-  };
+    x: {
+      title: { display: true, text: 'Uhrzeit', color: '#FFFFFF' }, // Weiße Achsenbeschriftung
+      ticks: { color: '#FFFFFF' }, // Weiße Ticks
+    },
+  },
+};
 
 
 return (

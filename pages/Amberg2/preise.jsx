@@ -6,23 +6,40 @@ import Durchschnitt from '../Amberg2/durch18';
 import LoadingScreen from '../loading/Amberg';
 
 const styles = `
+  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Noto+Sans:wght@400;500;700&display=swap');
+
+  html, body {
+    background-color: transparent !important;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+  }
+
   .layout {
     width: 100%;
+    max-width: 1000px; /* Set max-width to 1000px */
     display: flex;
     flex-direction: column;
     gap: 12px;
     max-height: 1100px; /* Maximale Höhe auf 1100px beschränkt */
     overflow-y: auto; /* Scrollbar bei Überschreitung der Höhe */
     background: transparent;
+    margin: 0 auto; /* Center the layout */
+    font-family: 'Manrope', 'Noto Sans', sans-serif;
   }
+
   .main {
+    width: 100%;
+    max-width: 1000px; /* Set max-width to 1000px */
     display: flex;
     flex-direction: row;
     gap: 12px;
     padding: 24px;
     background: transparent;
     flex: 1; /* Nimmt verfügbaren Platz innerhalb des .layout ein */
+    margin: 0 auto;
   }
+
   .content {
     flex: 1;
     overflow: auto;
@@ -32,15 +49,19 @@ const styles = `
     box-shadow: none;
     display: flex;
     flex-direction: column;
+    max-width: 100%; /* Ensure content respects container width */
   }
+
   .content > * {
     width: 100%;
     height: 100%;
     flex: 1;
   }
+
   .content * {
     font-size: 1.1em;
   }
+
   .chart {
     flex: 1;
     overflow: auto;
@@ -50,25 +71,43 @@ const styles = `
     box-shadow: none;
     display: flex;
     flex-direction: column;
+    max-width: 100%; /* Ensure chart respects container width */
   }
+
   .bottom-nav {
     display: none;
+    width: 100%;
+    max-width: 1000px; /* Set max-width to 1000px */
+    margin: 0 auto;
   }
+
+  @media (max-width: 1024px) {
+    .layout, .main, .bottom-nav {
+      width: 100%;
+      max-width: 95vw; /* Use 95vw for slightly smaller screens */
+    }
+  }
+
   @media (max-width: 767px) {
     .layout {
       gap: 12px;
       padding-bottom: 60px;
       max-height: 1100px; /* Maximale Höhe auch für Mobile */
       overflow-y: auto;
+      max-width: 100vw; /* Ensure full width on mobile */
+      padding: 12px;
     }
     .main {
       flex-direction: column;
       padding: 12px;
+      max-width: 100%;
+      margin: 0;
     }
     .content {
       max-height: none;
       padding: 8px;
       background: transparent;
+      max-width: 100%;
     }
     .content * {
       font-size: 1em;
@@ -77,6 +116,7 @@ const styles = `
       max-height: none;
       padding: 12px;
       background: transparent;
+      max-width: 100%;
     }
     .bottom-nav {
       display: flex;
@@ -90,6 +130,8 @@ const styles = `
       align-items: center;
       padding: 8px 0;
       z-index: 1000;
+      max-width: 1000px; /* Ensure bottom-nav respects max-width */
+      margin: 0 auto;
     }
     .bottom-nav a {
       display: flex;
@@ -122,6 +164,14 @@ const styles = `
     .bottom-nav a svg {
       font-size: 18px;
       color: #fafafa;
+    }
+  }
+
+  /* Ensure iFrame compatibility */
+  @container (max-width: 1000px) {
+    .layout, .main, .bottom-nav {
+      max-width: 100%;
+      width: 100%;
     }
   }
 `;

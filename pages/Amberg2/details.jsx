@@ -9,11 +9,12 @@ const styles = `
   /* GROßER HINTERGRUND TRANSPARENT */
   .layout {
     width: 100%;
+    max-width: 1000px; /* Maximum width constraint */
+    margin: 0 auto; /* Center the layout */
     height: 100vh;
     display: flex;
     flex-direction: column;
     padding: 0;
-    margin: 0;
     background: transparent !important;
     box-sizing: border-box;
   }
@@ -58,7 +59,17 @@ const styles = `
     .layout, .main, .content {
       background: transparent !important;
       padding: 0;
+      max-width: 100%; /* Ensure mobile respects viewport width */
     }
+  }
+
+  /* Ensure iframe compatibility */
+  .iframe-container {
+    width: 100%;
+    max-width: 1000px; /* Match layout max-width */
+    margin: 0 auto;
+    height: 100%;
+    background: transparent !important;
   }
 `;
 
