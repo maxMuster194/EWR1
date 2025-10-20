@@ -37,209 +37,213 @@ const chartOptions = {
 
 
 // Styles with reduced left/right spacing
-const styles = `
-  html, body {
-    background-color: transparent !important;
-  }
+const styles = `html, body {
+  background-color: transparent !important;
+  margin: 0; /* Entfernt Standard-Margins */
+  padding: 0; /* Entfernt Standard-Paddings */
+  overflow: hidden; /* Verhindert Scrollbalken am Body */
+}
+.layout {
+  width: 100%;
+  max-width: 1100px; /* Genau auf Iframe-Breite von 1100px gesetzt */
+  min-height: 100vh;
+  display: grid;
+  grid:
+    ". ." 6px /* Weiter reduziert von 8px */
+    "top-box" auto
+    "main" 1fr
+    "bottom-boxes" auto
+    "extra-box-1" auto
+    "extra-box-2" auto
+    ". ." 6px /* Weiter reduziert von 8px */
+    / 1fr;
+  padding: 1rem 0.2rem 1.5rem 0.2rem; /* Noch kompakter, von 1.5rem/0.3rem/2rem/0.3rem */
+  background-color: transparent;
+  box-sizing: border-box;
+  margin: 0 auto; /* Zentriert das Layout */
+}
+.top-box {
+  grid-area: top-box;
+  padding: 0.8rem; /* Reduziert von 1rem */
+  background-color: transparent;
+  border-radius: 6px; /* Reduziert von 8px */
+  box-sizing: border-box;
+  text-align: center;
+  margin-top: 0.8rem; /* Reduziert von 1rem */
+  color: #4372b7;
+}
+.top-box h2 {
+  font-size: 1.1rem; /* Reduziert von 1.2rem */
+  font-weight: 700;
+  margin: 0;
+}
+.main {
+  grid-area: main;
+  width: 100%;
+  max-width: 1080px; /* Etwas kleiner als 1100px, um Padding zu berücksichtigen */
+  margin: 0 auto;
+  padding: 0.5rem; /* Reduziert von 0.6rem */
+  background-color: transparent;
+  border-radius: 6px; /* Reduziert von 8px */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem; /* Reduziert von 1rem */
+}
+.content-box {
+  border-radius: 6px; /* Reduziert von 8px */
+  overflow: hidden;
+  max-width: 1080px; /* Angepasst an .main */
+  max-height: 550px; /* Reduziert von 600px, um vertikales Scrollen zu vermeiden */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  margin: 0 auto;
+  background-color: transparent;
+}
+.content-box > div {
+  border-bottom: 1px solid #D1D5DB;
+  padding: 0.4rem; /* Reduziert von 0.5rem */
+  background-color: transparent;
+  max-width: 1080px; /* Angepasst an .content-box */
+  max-height: 550px; /* Reduziert von 600px */
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+  flex-grow: 1;
+  overflow: hidden; /* Verhindert Scrollbalken in content-box */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+.content-box > div:last-child {
+  border-bottom: none;
+}
+.content-box > div > * {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+.bottom-boxes {
+  grid-area: bottom-boxes;
+  width: 100%;
+  max-width: 1080px; /* Angepasst an .main */
+  margin: 0 auto;
+  padding: 0.5rem; /* Reduziert von 0.6rem */
+  background-color: transparent;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px; /* Reduziert von 8px */
+  box-sizing: border-box;
+}
+.extra-box-1 {
+  grid-area: extra-box-1;
+  padding: 0.8rem; /* Reduziert von 1rem */
+  background-color: transparent;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px; /* Reduziert von 8px */
+  box-sizing: border-box;
+}
+.extra-box-2 {
+  grid-area: extra-box-2;
+  padding: 0.5rem; /* Reduziert von 0.6rem */
+  background-color: transparent;
+  border: 1px solid #D1D5DB;
+  border-radius: 6px; /* Reduziert von 8px */
+  box-sizing: border-box;
+}
+.extra-box-2 .inner-box {
+  max-width: 280px; /* Reduziert von 300px */
+  margin: 0 auto;
+}
+@media (max-width: 1024px) {
   .layout {
+    padding: 0.8rem 0.1rem 1.2rem 0.1rem; /* Reduziert von 1.2rem/0.15rem/1.6rem/0.15rem */
+  }
+  .main, .bottom-boxes {
     width: 100%;
-    max-width: 100vw;
-    min-height: 100vh;
-    display: grid;
-    grid:
-      ". ." 10px /* Reduziert von 12px */
-      "top-box" auto
-      "main" 1fr
-      "bottom-boxes" auto
-      "extra-box-1" auto
-      "extra-box-2" auto
-      ". ." 10px /* Reduziert von 12px */
-      / 1fr;
-    padding: 2rem 0.4rem 2.5rem 0.4rem; /* Reduziert von 2.5rem/0.5rem/3rem/0.5rem */
+    max-width: 1080px; /* Angepasst an .main */
+    padding: 0.2rem; /* Reduziert von 0.3rem */
     background-color: transparent;
-    box-sizing: border-box;
-  }
-  .top-box {
-    grid-area: top-box;
-    padding: 1.2rem; /* Reduziert von 1.5rem */
-    background-color: transparent;
-    border-radius: 10px; /* Reduziert von 12px */
-    box-sizing: border-box;
-    text-align: center;
-    margin-top: 1.2rem; /* Reduziert von 1.5rem */
-    color: #4372b7;
-  }
-  .top-box h2 {
-    font-size: 1.3rem; /* Reduziert von 1.5rem */
-    font-weight: 700;
-    margin: 0;
-  }
-  .main {
-    grid-area: main;
-    width: 100%;
-    max-width: 98vw;
-    margin: 0 auto;
-    padding: 0.8rem; /* Reduziert von 1rem */
-    background-color: transparent;
-    border-radius: 10px; /* Reduziert von 12px */
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem; /* Reduziert von 1.5rem */
   }
   .content-box {
-    border-radius: 10px; /* Reduziert von 12px */
-    overflow: hidden;
-    max-width: 98vw;
-    max-height: 680px; /* Reduziert von 800px */
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    box-sizing: border-box;
-    margin: 0 auto;
+    max-width: 1080px; /* Angepasst */
+    max-height: 400px; /* Reduziert von 450px */
     background-color: transparent;
   }
   .content-box > div {
-    border-bottom: 1px solid #D1D5DB;
-    padding: 0.6rem; /* Reduziert von 0.75rem */
+    max-width: 1080px; /* Angepasst */
+    max-height: 400px; /* Reduziert von 450px */
     background-color: transparent;
-    max-width: 98vw;
-    max-height: 680px; /* Reduziert von 800px */
+    overflow: hidden; /* Verhindert Scrollbalken */
+  }
+  .header-logo {
+    width: 55px; /* Reduziert von 60px */
+    height: 20.9px; /* Reduziert von 22.8px */
+  }
+}
+@media (max-width: 767px) {
+  .layout {
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* Reduziert von 8px */
+    padding: 0.8rem 0.1rem 30px 0.1rem; /* Reduziert von 1rem/0.15rem/40px/0.15rem */
+    min-height: 100vh;
+    background-color: transparent;
+  }
+  .top-box, .bottom-boxes, .extra-box-1, .extra-box-2 {
+    display: none;
+  }
+  .main {
     width: 100%;
-    height: 100%;
-    flex-shrink: 0;
+    max-width: 100%;
+    margin: 0;
+    padding: 0.1rem; /* Reduziert von 0.15rem */
+    border: none;
+    border-radius: 0;
+    min-height: calc(100vh - 0.8rem); /* Angepasst an reduziertes Padding */
+    display: flex;
+    flex-direction: column;
     flex-grow: 1;
-    overflow: auto;
+    background-color: transparent;
+  }
+  .content-box {
+    max-width: 100%;
+    max-height: none;
+    height: 100%;
+    border: none;
+    border-radius: 0;
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    margin: 0;
+  }
+  .content-box > div {
+    max-width: 100%;
+    max-height: none;
+    padding: 0.1rem; /* Reduziert von 0.15rem */
+    border: none;
+    background-color: transparent;
+    border-radius: 4px; /* Reduziert von 5px */
+    flex-grow: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-sizing: border-box;
+    overflow: hidden; /* Verhindert Scrollbalken */
   }
-  .content-box > div:last-child {
-    border-bottom: none;
+  .header-logo {
+    width: 40px; /* Reduziert von 45px */
+    height: 15.2px; /* Reduziert von 17.1px */
   }
-  .content-box > div > * {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    display: block;
-    margin: 0 auto;
-  }
-  .bottom-boxes {
-    grid-area: bottom-boxes;
-    width: 100%;
-    max-width: 98vw;
-    margin: 0 auto;
-    padding: 0.8rem; /* Reduziert von 1rem */
-    background-color: transparent;
-    border: 1px solid #D1D5DB;
-    border-radius: 10px; /* Reduziert von 12px */
-    box-sizing: border-box;
-  }
-  .extra-box-1 {
-    grid-area: extra-box-1;
-    padding: 1.2rem; /* Reduziert von 1.5rem */
-    background-color: transparent;
-    border: 1px solid #D1D5DB;
-    border-radius: 10px; /* Reduziert von 12px */
-    box-sizing: border-box;
-  }
-  .extra-box-2 {
-    grid-area: extra-box-2;
-    padding: 0.8rem; /* Reduziert von 1rem */
-    background-color: transparent;
-    border: 1px solid #D1D5DB;
-    border-radius: 10px; /* Reduziert von 12px */
-    box-sizing: border-box;
-  }
-  .extra-box-2 .inner-box {
-    max-width: 340px; /* Reduziert von 400px */
-    margin: 0 auto;
-  }
-  @media (max-width: 1024px) {
-    .layout {
-      padding: 1.6rem 0.2rem 2rem 0.2rem; /* Reduziert von 2rem/0.25rem/2.5rem/0.25rem */
-    }
-    .main, .bottom-boxes {
-      width: 100%;
-      max-width: 98vw;
-      padding: 0.4rem; /* Reduziert von 0.5rem */
-      background-color: transparent;
-    }
-    .content-box {
-      max-width: 98vw;
-      max-height: 510px; /* Reduziert von 600px */
-      background-color: transparent;
-    }
-    .content-box > div {
-      max-width: 98vw;
-      max-height: 510px; /* Reduziert von 600px */
-      background-color: transparent;
-    }
-    .header-logo {
-      width: 68px; /* Reduziert von 80px */
-      height: 25.84px; /* Reduziert von 30.4px */
-    }
-  }
-  @media (max-width: 767px) {
-    .layout {
-      display: flex;
-      flex-direction: column;
-      gap: 10px; /* Reduziert von 12px */
-      padding: 1.2rem 0.2rem 50px 0.2rem; /* Reduziert von 1.5rem/0.25rem/60px/0.25rem */
-      min-height: 100vh;
-      background-color: transparent;
-    }
-    .top-box, .bottom-boxes, .extra-box-1, .extra-box-2 {
-      display: none;
-    }
-    .main {
-      width: 100%;
-      max-width: 100%;
-      margin: 0;
-      padding: 0.2rem; /* Reduziert von 0.25rem */
-      border: none;
-      border-radius: 0;
-      min-height: calc(100vh - 1.2rem); /* Angepasst an reduziertes Padding */
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-      background-color: transparent;
-    }
-    .content-box {
-      max-width: 100%;
-      max-height: none;
-      height: 100%;
-      border: none;
-      border-radius: 0;
-      background-color: transparent;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-      margin: 0;
-    }
-    .content-box > div {
-      max-width: 100%;
-      max-height: none;
-      padding: 0.2rem; /* Reduziert von 0.25rem */
-      border: none;
-      background-color: transparent;
-      border-radius: 6px; /* Reduziert von 8px */
-      flex-grow: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .header-logo {
-      width: 51px; /* Reduziert von 60px */
-      height: 19.38px; /* Reduziert von 22.8px */
-    }
-  }
-`;
+}`;
 
 // MongoDB-Verbindung
 const mongoURI = process.env.MONGO_URI || 'mongodb+srv://max:Julian1705@strom.vm0dp8f.mongodb.net/?retryWrites=true&w=majority&appName=Strom';
