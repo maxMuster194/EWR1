@@ -60,7 +60,7 @@ export async function getServerSideProps() {
   }
 }
 
-// Updated styles with max-width set to 1100px
+// Updated styles with max-width set to 1000px
 const styles = `
   @import url('https://use.typekit.net/oie4cok.css');
 
@@ -68,11 +68,12 @@ const styles = `
     background-color: transparent !important;
     margin: 0;
     padding: 0;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
   }
 
   .layout {
     width: 100%;
-    max-width: 100vw;
+    max-width: 1000px; /* Set max-width to 1000px */
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -84,11 +85,12 @@ const styles = `
     font-family: 'ff-good-web-pro', sans-serif;
     font-weight: 400;
     font-style: normal;
+    margin: 0 auto; /* Center the layout */
   }
 
   .main {
-    width: 1100px;
-    max-width: 90vw;
+    width: 100%;
+    max-width: 1000px; /* Set max-width to 1000px */
     display: flex;
     flex-direction: row;
     gap: 40px;
@@ -110,6 +112,7 @@ const styles = `
     display: flex;
     justify-content: center;
     align-items: center;
+    max-width: 100%; /* Ensure chart respects container width */
   }
 
   .chart canvas {
@@ -118,8 +121,8 @@ const styles = `
   }
 
   .bottom-boxes {
-    width: 1100px;
-    max-width: 90vw;
+    width: 100%;
+    max-width: 1000px; /* Set max-width to 1000px */
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 32px;
@@ -132,8 +135,8 @@ const styles = `
   }
 
   .extra-box {
-    width: 1100px;
-    max-width: 90vw;
+    width: 100%;
+    max-width: 1000px; /* Set max-width to 1000px */
     text-align: center;
     background-color: transparent;
     margin: 24px auto;
@@ -187,9 +190,9 @@ const styles = `
   }
 
   @media (max-width: 1024px) {
-    .main, .bottom-boxes, .extra-box {
+    .layout, .main, .bottom-boxes, .extra-box {
       width: 100%;
-      max-width: 95vw;
+      max-width: 95vw; /* Use 95vw for slightly smaller screens */
     }
   }
 
@@ -197,6 +200,7 @@ const styles = `
     .layout {
       padding: 16px;
       gap: 16px;
+      max-width: 100vw; /* Ensure full width on mobile */
     }
     .main {
       flex-direction: column;
@@ -209,11 +213,22 @@ const styles = `
       grid-template-columns: 1fr;
       gap: 16px;
       margin: 16px auto;
+      max-width: 100%;
     }
     .extra-box {
       margin: 16px auto;
+      max-width: 100%;
     }
     .chart {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+
+  /* Ensure iFrame compatibility */
+  @container (max-width: 1000px) {
+    .layout, .main, .bottom-boxes, .extra-box {
+      max-width: 100%;
       width: 100%;
     }
   }
@@ -247,7 +262,6 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
 
   return (
     <>
-      {/* Note: In Next.js, import Head from 'next/head' and use <Head><link rel="stylesheet" href="https://use.typekit.net/oie4cok.css" /></Head> for proper font loading */}
       <style>{styles}</style>
       <div className="layout" style={{ backgroundColor: 'transparent' }}>
         {/* Main: Content + Chart */}
