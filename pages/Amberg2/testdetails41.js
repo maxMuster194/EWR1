@@ -1936,7 +1936,7 @@ body {
 }
 
 .menu {
-  background: rgba(249, 250, 251, 0.9);
+  background: transparent; /* Transparenter Hintergrund für Menüs */
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: transform 0.3s ease;
@@ -1982,10 +1982,30 @@ body {
 
 .menu-content {
   padding: 12px;
-  background: rgba(255, 255, 255, 0.8);
+  background: transparent; /* Transparenter Hintergrund für Menü-Inhalt */
   border-radius: 0 0 6px 6px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(5px);
+}
+
+.menu-content input,
+.menu-content select {
+  border: 2px solid #ffffff; /* Weißer Rahmen für Eingabefelder */
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 0.875rem;
+  width: 100%;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background: transparent; /* Transparenter Hintergrund für Eingabefelder */
+  backdrop-filter: blur(5px);
+  color: #ffffff; /* Textfarbe auf Weiß */
+}
+
+.menu-content input:focus,
+.menu-content select:focus {
+  outline: none;
+  border-color: #905fa4;
+  box-shadow: 0 0 0 3px rgba(144, 95, 164, 0.3);
 }
 
 .report-title {
@@ -2056,7 +2076,7 @@ body {
   font-weight: 700;
   font-size: 0.9rem;
   padding: 6px 0;
-  background: rgba(240, 244, 248, 0.7);
+  background: transparent;
   border-radius: 4px;
   backdrop-filter: blur(5px);
 }
@@ -2075,7 +2095,7 @@ body {
   gap: 8px;
   align-items: center;
   padding: 6px 0;
-  background: rgba(255, 255, 255, 0.6);
+  background: transparent;
   border-radius: 4px;
   transition: background 0.2s ease;
   position: relative;
@@ -2084,7 +2104,7 @@ body {
 }
 
 .checkbox-group li:hover {
-  background: rgba(249, 250, 251, 0.8);
+  background: transparent;
 }
 
 .checkbox-group-label {
@@ -2135,7 +2155,7 @@ body {
   font-size: 0.875rem;
   width: 100%;
   transition: border-color 0.2s ease;
-  background: rgba(255, 255, 255, 0.9);
+  background: ;
   backdrop-filter: blur(5px);
 }
 
@@ -2341,7 +2361,7 @@ body {
 .new-option-container {
   margin-top: 16px;
   padding: 16px;
-  background: rgba(249, 250, 251, 0.7);
+  background: ;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   display: grid;
@@ -2458,7 +2478,7 @@ table, th, td {
   border: 1px solid #d1d5db;
   border-radius: 4px;
   text-align: center;
-  background: rgba(255, 255, 255, 0.9);
+  background: transparent;
   backdrop-filter: blur(5px);
 }
 
@@ -2507,7 +2527,7 @@ table, th, td {
   border-radius: 4px;
   box-sizing: border-box;
   text-align: right;
-  background: rgba(255, 255, 255, 0.9);
+  background:transparent;
   backdrop-filter: blur(5px);
 }
 

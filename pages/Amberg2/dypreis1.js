@@ -296,7 +296,7 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
           </div>
           {/* Line chart */}
           {chartData.datasets.length > 0 && chartData.datasets[0].data.some(d => d !== 0) ? (
-            <div className="mb-8" style={{ height: '400px' }}>
+            <div className="mb-8" style={{ height: '300px' }}>
               <Line data={chartData} options={chartOptions} />
             </div>
           ) : (
