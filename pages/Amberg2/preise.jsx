@@ -11,7 +11,8 @@ const styles = `
     display: flex;
     flex-direction: column;
     gap: 12px;
-    min-height: 100vh;
+    max-height: 1100px; /* Maximale Höhe auf 1100px beschränkt */
+    overflow-y: auto; /* Scrollbar bei Überschreitung der Höhe */
     background: transparent;
   }
   .main {
@@ -20,6 +21,7 @@ const styles = `
     gap: 12px;
     padding: 24px;
     background: transparent;
+    flex: 1; /* Nimmt verfügbaren Platz innerhalb des .layout ein */
   }
   .content {
     flex: 1;
@@ -56,6 +58,8 @@ const styles = `
     .layout {
       gap: 12px;
       padding-bottom: 60px;
+      max-height: 1100px; /* Maximale Höhe auch für Mobile */
+      overflow-y: auto;
     }
     .main {
       flex-direction: column;

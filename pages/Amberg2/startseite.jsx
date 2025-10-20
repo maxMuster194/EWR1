@@ -60,7 +60,7 @@ export async function getServerSideProps() {
   }
 }
 
-// Updated styles for iframe compatibility, centering, and responsiveness
+// Updated styles with max-width set to 1100px
 const styles = `
   @import url('https://use.typekit.net/oie4cok.css');
 
@@ -87,7 +87,7 @@ const styles = `
   }
 
   .main {
-    width: 1200px;
+    width: 1100px;
     max-width: 90vw;
     display: flex;
     flex-direction: row;
@@ -118,7 +118,7 @@ const styles = `
   }
 
   .bottom-boxes {
-    width: 1200px;
+    width: 1100px;
     max-width: 90vw;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -132,7 +132,7 @@ const styles = `
   }
 
   .extra-box {
-    width: 1200px;
+    width: 1100px;
     max-width: 90vw;
     text-align: center;
     background-color: transparent;
