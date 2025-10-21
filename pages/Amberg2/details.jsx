@@ -124,7 +124,7 @@ const iconMapping = {
   default: 'Description',
 };
 
-// Default consumer data and descriptions
+// Änderungen an standardVerbrauch (für Licht auf 120 Watt setzen)
 const standardVerbrauch = {
   Kühlschrank: 35,
   Gefrierschrank: 38,
@@ -133,12 +133,13 @@ const standardVerbrauch = {
   Trockner: 1200,
   Herd: 900,
   Multimedia: 350,
-  Licht: 300,
+  Licht: 120,  // Geändert auf 120 Watt wie angegeben
   'E-Auto': 11000,
   'Zweites E-Auto': 7400,
   Wärmepumpe: 12000,
 };
 
+// Optionale Änderungen an verbraucherBeschreibungen (angepasst an neue Werte)
 const verbraucherBeschreibungen = {
   Kühlschrank: 'Der Kühlschrank läuft kontinuierlich und verbraucht typischerweise 120 W.',
   Gefrierschrank: 'Der Gefrierschrank benötigt etwa 200 W für Langzeitlagerung.',
@@ -147,7 +148,7 @@ const verbraucherBeschreibungen = {
   Trockner: 'Der Wäschetrockner verbraucht ca. 3500 W pro Trocknung (1,37h/Woche).',
   Herd: 'Der Herd benötigt etwa 700 W bei 1 Stunde täglicher Nutzung (umgestellt auf Wochenbasis: ca. 7 Nutzungen pro Woche).',
   Multimedia: 'Multimedia-Geräte verbrauchen ca. 350 W bei 3 Stunden täglicher Nutzung (umgestellt auf Wochenbasis: ca. 7 Nutzungen pro Woche).',
-  Licht: 'Beleuchtung verbraucht etwa 175 W bei 5 Stunden täglicher Nutzung (umgestellt auf Wochenbasis: ca. 7 Nutzungen pro Woche).',
+  Licht: 'Beleuchtung verbraucht etwa 120 W bei 4 Stunden täglicher Nutzung (umgestellt auf Wochenbasis: ca. 7 Nutzungen pro Woche).',  // Angepasst
   'E-Auto': 'Das E-Auto verbraucht ca. 11 kW pro Ladevorgang (z.B. 4h/Woche).',
   'Zweites E-Auto': 'Das zweite E-Auto verbraucht ca. 7.4 kW pro Ladevorgang (z.B. 3h/Woche).',
   Wärmepumpe: 'Die Wärmepumpe verbraucht ca. 12 kW mit einer JAZ von 3.4 und 2000 Heizstunden pro Jahr.',
@@ -491,56 +492,99 @@ export default function StromverbrauchRechnerDesktop({ data = [], uniqueDates = 
   const [selectedDate, setSelectedDate] = useState(initialDate);
   const [strompreis, setStrompreis] = useState(34.06); // Standardpreis für AM
   const [selectedRegion, setSelectedRegion] = useState('AM');
-  const [verbraucherDaten, setVerbraucherDaten] = useState(
-    Object.keys(standardVerbrauch).reduce((acc, key) => ({
+ // Initialisierung von verbraucherDaten (Checkboxen für die genannten Verbraucher checked setzen und Watt-Werte zuweisen)
+const [verbraucherDaten, setVerbraucherDaten] = useState(
+  Object.keys(standardVerbrauch).reduce((acc, key) => {
+    let watt = 0;
+    let checked = false;
+    if (['Waschmaschine', 'Trockner', 'Herd', 'Geschirrspüler', 'Multimedia', 'Licht'].includes(key)) {
+      checked = true;
+      watt = standardVerbrauch[key];
+    }
+    return {
       ...acc,
-      [key]: { watt: 0, checked: false, kosten: 0 },
-    }), {})
-  );
-  const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
-    Object.keys(standardVerbrauch).reduce((acc, key) => {
-      let startzeit, endzeit, dauer, nutzung, batterieKapazitaet, wallboxLeistung, standardLadung, jaz, heizstunden;
-      const type = verbraucherTypes[key];
-      if (type === 'grundlast') {
-        startzeit = '06:00';
-        endzeit = '09:00';
-        dauer = 0;
-        nutzung = 0;
-      } else if (type === 'week') {
-        startzeit = '09:00';
-        endzeit = '12:00';
-        dauer = 7;
-        nutzung = 2;
-        if (['Herd', 'Multimedia', 'Licht'].includes(key)) {
-          nutzung = 7;
-        }
-      } else if (type === 'auto') {
-        startzeit = '21:00';
-        endzeit = '00:00';
+      [key]: { watt, checked, kosten: 0 },
+    };
+  }, {})
+);
+// Initialisierung von erweiterteEinstellungen (spezifische Defaults für die genannten Verbraucher setzen)
+const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
+  Object.keys(standardVerbrauch).reduce((acc, key) => {
+    let startzeit, endzeit, dauer, nutzung, batterieKapazitaet, wallboxLeistung, standardLadung, jaz, heizstunden;
+    const type = verbraucherTypes[key];
+
+    if (type === 'grundlast') {
+      startzeit = '06:00';
+      endzeit = '09:00';
+      dauer = 0;
+      nutzung = 0;
+    } else if (type === 'week') {
+      // Standardwerte überschreiben für spezifische Verbraucher
+      if (key === 'Waschmaschine') {
+        startzeit = '17:00';
+        endzeit = '20:00';
         dauer = 3;
+        nutzung = 4;
+      } else if (key === 'Trockner') {
+        startzeit = '20:00';
+        endzeit = '21:30';
+        dauer = 1.5;
         nutzung = 3;
-        batterieKapazitaet = 60;
-        wallboxLeistung = standardVerbrauch[key];
-        standardLadung = false;
-      } else if (type === 'waermepumpe') {
-        startzeit = '06:00';
-        endzeit = '09:00';
+      } else if (key === 'Herd') {
+        startzeit = '12:00';
+        endzeit = '13:00';
+        dauer = 1;
+        nutzung = 6;
+      } else if (key === 'Geschirrspüler') {
+        startzeit = '14:00';
+        endzeit = '16:00';
         dauer = 2;
-        nutzung = 1;
-        jaz = 3.4;
-        heizstunden = 2000;
+        nutzung = 4;
+      } else if (key === 'Multimedia') {
+        startzeit = '19:00';
+        endzeit = '22:00';
+        dauer = 3;
+        nutzung = 7;
+      } else if (key === 'Licht') {
+        startzeit = '18:30';
+        endzeit = '22:30';
+        dauer = 4;
+        nutzung = 7;
+      } else {
+        // Fallback für andere 'week'-Typen
+        startzeit = '12:00';
+        endzeit = '19:00';
+        dauer = 9;
+        nutzung = 2;
       }
-      return {
-        ...acc,
-        [key]: {
-          nutzung,
-          zeitraeume: [{ id: Date.now() + Math.random(), startzeit, endzeit, dauer }],
-          ...(type === 'auto' ? { batterieKapazitaet, wallboxLeistung, standardLadung } : {}),
-          ...(type === 'waermepumpe' ? { jaz, heizstunden } : {}),
-        },
-      };
-    }, {})
-  );
+    } else if (type === 'auto') {
+      startzeit = '21:00';
+      endzeit = '00:00';
+      dauer = 3;
+      nutzung = 3;
+      batterieKapazitaet = 60;
+      wallboxLeistung = standardVerbrauch[key];
+      standardLadung = false;
+    } else if (type === 'waermepumpe') {
+      startzeit = '06:00';
+      endzeit = '09:00';
+      dauer = 2;
+      nutzung = 1;
+      jaz = 3.4;
+      heizstunden = 2000;
+    }
+
+    return {
+      ...acc,
+      [key]: {
+        nutzung,
+        zeitraeume: [{ id: Date.now() + Math.random(), startzeit, endzeit, dauer }],
+        ...(type === 'auto' ? { batterieKapazitaet, wallboxLeistung, standardLadung } : {}),
+        ...(type === 'waermepumpe' ? { jaz, heizstunden } : {}),
+      },
+    };
+  }, {})
+);
   const [showErweiterteOptionen, setShowErweiterteOptionen] = useState({});
   const [zusammenfassung, setZusammenfassung] = useState({
     grundlast: 0,
@@ -1170,6 +1214,19 @@ export default function StromverbrauchRechnerDesktop({ data = [], uniqueDates = 
       setMessage('Fehler beim Senden des Codes.');
     }
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   async function verifyCode() {
     setMessage('');

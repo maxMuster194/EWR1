@@ -22,79 +22,78 @@ import GermanyMin15Prices from '../../models/min15Prices';
 // Register Chart.js components
 ChartJSInstance.register(LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend, Filler);
 
-// Chart options
+// Chart options for line chart
 const chartOptions = {
   responsive: true,
   maintainAspectRatio: false,
   scales: {
-    x: { grid: { display: false }, ticks: { color: '#202026' } },
-    y: { grid: { color: '#E5E7EB' }, ticks: { color: '#202026' }, beginAtZero: true },
+    x: { grid: { display: false }, ticks: { color: '#202026', font: { size: 8 } } },
+    y: { grid: { color: '#E5E7EB' }, ticks: { color: '#202026', font: { size: 8 } }, beginAtZero: true },
   },
   plugins: {
-    legend: { labels: { color: '#202026' } },
+    legend: { labels: { color: '#202026', font: { size: 8 } } },
   },
 };
 
-// Updated styles
+// CSS styles for ultra-compact layout
 const styles = `
 html, body {
   background-color: transparent !important;
   margin: 0;
   padding: 0;
-  overflow: auto; /* Allow scrolling if content overflows */
+  overflow: hidden;
 }
 .layout {
   width: 100%;
-  max-width: 1100px; /* Match iframe width */
-  height: 800px; /* Match iframe height */
+  max-width: 1200px;
+  height: 800px;
   display: grid;
   grid:
-    ". ." 6px
+    ". ." 1px
     "top-box" auto
     "main" 1fr
     "bottom-boxes" auto
     "extra-box-1" auto
     "extra-box-2" auto
-    ". ." 6px
+    ". ." 1px
     / 1fr;
-  padding: 1rem 0.2rem;
+  padding: 0.2rem 0.1rem;
   background-color: transparent;
   box-sizing: border-box;
   margin: 0 auto;
-  overflow: auto; /* Allow scrolling within layout if needed */
+  overflow: hidden;
 }
 .top-box {
   grid-area: top-box;
-  padding: 0.8rem;
+  padding: 0.2rem;
   background-color: transparent;
-  border-radius: 6px;
-  box-sizing: border-box;
+  border-radius: 3px;
   text-align: center;
-  margin-top: 0.8rem;
+  margin-top: 0.2rem;
   color: #4372b7;
 }
 .top-box h2 {
-  font-size: 1.1rem;
+  font-size: 0.85rem;
   font-weight: 700;
   margin: 0;
 }
 .main {
   grid-area: main;
   width: 100%;
-  max-width: 1080px;
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 0.5rem;
+  padding: 0.1rem;
   background-color: transparent;
-  border-radius: 6px;
+  border-radius: 3px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 0.2rem;
 }
 .content-box {
-  border-radius: 6px;
-  max-width: 1080px;
-  max-height: 700px; /* Increased to fit within 800px iframe */
+  border-radius: 3px;
+  max-width: 1180px;
+  max-height: 550px;
   width: 100%;
   height: 100%;
   display: flex;
@@ -104,19 +103,19 @@ html, body {
   box-sizing: border-box;
   margin: 0 auto;
   background-color: transparent;
-  overflow: visible; /* Allow content to be visible */
+  overflow: visible;
 }
 .content-box > div {
   border-bottom: 1px solid #D1D5DB;
-  padding: 0.4rem;
+  padding: 0.1rem;
   background-color: transparent;
-  max-width: 1080px;
-  max-height: 700px;
+  max-width: 1180px;
+  max-height: 550px;
   width: 100%;
   height: 100%;
   flex-shrink: 0;
   flex-grow: 1;
-  overflow: visible; /* Allow chart to render fully */
+  overflow: visible;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -136,68 +135,68 @@ html, body {
 .bottom-boxes {
   grid-area: bottom-boxes;
   width: 100%;
-  max-width: 1080px;
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 0.5rem;
+  padding: 0.1rem;
   background-color: transparent;
   border: 1px solid #D1D5DB;
-  border-radius: 6px;
+  border-radius: 3px;
   box-sizing: border-box;
 }
 .extra-box-1 {
   grid-area: extra-box-1;
-  padding: 0.8rem;
+  padding: 0.2rem;
   background-color: transparent;
   border: 1px solid #D1D5DB;
-  border-radius: 6px;
+  border-radius: 3px;
   box-sizing: border-box;
 }
 .extra-box-2 {
   grid-area: extra-box-2;
-  padding: 0.5rem;
+  padding: 0.1rem;
   background-color: transparent;
   border: 1px solid #D1D5DB;
-  border-radius: 6px;
+  border-radius: 3px;
   box-sizing: border-box;
 }
 .extra-box-2 .inner-box {
-  max-width: 280px;
+  max-width: 180px;
   margin: 0 auto;
 }
 @media (max-width: 1024px) {
   .layout {
-    padding: 0.8rem 0.1rem;
-    height: 800px; /* Ensure consistent height */
+    padding: 0.2rem 0.1rem;
+    height: 800px;
   }
   .main, .bottom-boxes {
     width: 100%;
-    max-width: 1080px;
-    padding: 0.2rem;
+    max-width: 1180px;
+    padding: 0.1rem;
     background-color: transparent;
   }
   .content-box {
-    max-width: 1080px;
-    max-height: 600px; /* Adjusted for smaller screens */
+    max-width: 1180px;
+    max-height: 450px;
     background-color: transparent;
   }
   .content-box > div {
-    max-width: 1080px;
-    max-height: 600px;
+    max-width: 1180px;
+    max-height: 450px;
     background-color: transparent;
     overflow: visible;
   }
   .header-logo {
-    width: 55px;
-    height: 20.9px;
+    width: 40px;
+    height: 15px;
   }
 }
 @media (max-width: 767px) {
   .layout {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    padding: 0.8rem 0.1rem;
-    height: auto; /* Allow height to adjust */
+    gap: 1px;
+    padding: 0.2rem 0.1rem;
+    height: auto;
     background-color: transparent;
   }
   .top-box, .bottom-boxes, .extra-box-1, .extra-box-2 {
@@ -234,7 +233,7 @@ html, body {
     padding: 0.1rem;
     border: none;
     background-color: transparent;
-    border-radius: 4px;
+    border-radius: 3px;
     flex-grow: 1;
     display: flex;
     justify-content: center;
@@ -242,14 +241,14 @@ html, body {
     overflow: visible;
   }
   .header-logo {
-    width: 40px;
-    height: 15.2px;
+    width: 30px;
+    height: 11px;
   }
 }
 `;
 
-// MongoDB connection and getServerSideProps remain unchanged
-const mongoURI = process.env.MONGO_URI || 'mongodb+srv://max:Julian1705@strom.vm0dp8f.mongodb.net/?retryWrites=true&w=majority&appName=Strom';
+// MongoDB connection
+const mongoURI = process.env.MONGO_URI || 'mongodb+srv://<username>:<password>@strom.vm0dp8f.mongodb.net/?retryWrites=true&w=majority&appName=Strom';
 
 async function connectDB() {
   if (mongoose.connection.readyState >= 1) {
@@ -265,6 +264,7 @@ async function connectDB() {
   }
 }
 
+// Parse delivery day to ISO format
 function parseDeliveryDay(dateStr) {
   if (!dateStr) return null;
   const [day, month, year] = dateStr.split('/');
@@ -272,6 +272,7 @@ function parseDeliveryDay(dateStr) {
   return !isNaN(parsedDate) ? parsedDate.toISOString().split('T')[0] : null;
 }
 
+// Server-side data fetching
 export async function getServerSideProps() {
   try {
     await connectDB();
@@ -301,23 +302,24 @@ export async function getServerSideProps() {
   }
 }
 
+// Main Energiemanager component
 const Energiemanager = ({ data, uniqueDates, todayBerlin, error }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [isContentVisible, setIsContentVisible] = useState(false); // State for visibility toggle
+  const [isContentVisible, setIsContentVisible] = useState(false);
 
+  // Handle mobile detection and loading state
   useEffect(() => {
-    // Handle mobile detection
     setIsMobile(window.innerWidth <= 767);
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 767);
     };
     window.addEventListener('resize', handleResize);
 
-    // Simulate loading delay and show content
+    // Simulate loading delay (1 second)
     const timer = setTimeout(() => {
       setLoading(false);
-      setIsContentVisible(true); // Show content after loading
+      setIsContentVisible(true);
     }, 1000);
 
     // Cleanup
@@ -327,10 +329,30 @@ const Energiemanager = ({ data, uniqueDates, todayBerlin, error }) => {
     };
   }, []);
 
+  // Show loading screen
   if (loading) {
     return <LoadingScreen />;
   }
 
+  // Show error if present
+  if (error) {
+    return (
+      <div className="layout relative" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
+        <div className="top-box">
+          <h2>Energiemanager</h2>
+        </div>
+        <div className="main flex flex-col gap-2">
+          <div className="content-box flex flex-1 flex-col gap-1 rounded-xl w-full">
+            <div style={{ color: 'red', textAlign: 'center', fontSize: '0.75rem' }}>
+              <p>Error: {error}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Main render
   return (
     <>
       <style>{styles}</style>
@@ -338,11 +360,10 @@ const Energiemanager = ({ data, uniqueDates, todayBerlin, error }) => {
         <div className="top-box">
           <h2>Energiemanager</h2>
         </div>
-
-        <div className="main flex flex-col gap-6">
+        <div className="main flex flex-col gap-2">
           <div
-            className="content-box flex flex-1 flex-col gap-3 rounded-xl w-full"
-            style={{ display: isContentVisible ? 'flex' : 'none' }} // Toggle visibility
+            className="content-box flex flex-1 flex-col gap-1 rounded-xl w-full"
+            style={{ display: isContentVisible ? 'flex' : 'none' }}
           >
             <div>
               {isMobile ? (

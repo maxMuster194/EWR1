@@ -17,7 +17,6 @@ const styles = `
     flex-direction: column;
     font-family: Manrope, "Noto Sans", sans-serif;
     background: transparent;
-    overflow-x: hidden;
   }
   .main {
     display: flex;
@@ -26,8 +25,8 @@ const styles = `
     padding: 8px;
     background: transparent;
     flex: 1;
-    overflow-y: auto; /* Scrollen erlauben, falls Inhalt 800px überschreitet */
-    height: 100%; /* Nutze die volle Höhe der .layout */
+    overflow: hidden; /* Kein Scrollen im main */
+    height: calc(100% - 16px); /* Abzug für padding */
   }
   .content {
     flex: 1;
@@ -37,18 +36,18 @@ const styles = `
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    min-height: 0; /* Verhindert Überlaufen */
+    height: calc(50% - 8px); /* Genau 50% minus gap */
   }
   .content > * {
     width: 100%;
     height: 100%;
-    flex: 1;
   }
   .content iframe {
     width: 100%;
     height: 100%;
-    border: none; /* Entfernt Rahmen für sauberes Erscheinungsbild */
-    overflow-y: auto; /* Ermöglicht Scrollen im iframe */
+    max-height: 388px; /* Genau 800px / 2 - Paddings */
+    border: none;
+    overflow: hidden; /* Kein Scrollen im iframe */
   }
   .chart {
     flex: 1;
@@ -58,18 +57,18 @@ const styles = `
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    min-height: 0; /* Verhindert Überlaufen */
+    height: calc(50% - 8px); /* Genau 50% minus gap */
   }
   .chart > * {
     width: 100%;
     height: 100%;
-    flex: 1;
   }
   .chart iframe {
     width: 100%;
     height: 100%;
+    max-height: 388px; /* Genau 800px / 2 - Paddings */
     border: none;
-    overflow-y: auto; /* Ermöglicht Scrollen im iframe */
+    overflow: hidden; /* Kein Scrollen im iframe */
   }
   .bottom-nav {
     display: none;
@@ -78,10 +77,16 @@ const styles = `
     .main {
       flex-direction: row;
       gap: 8px;
+      height: calc(100% - 16px);
     }
     .content, .chart {
       flex: 1;
-      min-width: 0;
+      height: calc(800px - 32px); /* 800px minus alle Paddings */
+      max-height: 768px;
+    }
+    .content iframe, .chart iframe {
+      height: 100%;
+      max-height: 760px; /* 768px minus inner padding */
     }
   }
   @media (max-width: 767px) {
@@ -91,10 +96,14 @@ const styles = `
     }
     .main {
       padding: 4px;
-      height: 100%; /* Nutze die volle Höhe der .layout */
+      height: calc(800px - 60px - 8px); /* 800px minus bottom-nav und padding */
     }
     .content, .chart {
       padding: 2px;
+      height: calc(50% - 4px); /* Genau 50% minus gap */
+    }
+    .content iframe, .chart iframe {
+      max-height: 388px; /* (800-60-16)/2 = 388px */
     }
     .content > *, .chart > * {
       font-size: 0.85em;
@@ -149,9 +158,14 @@ const styles = `
   @media (max-width: 500px) {
     .main {
       padding: 2px;
+      height: calc(800px - 60px - 4px);
     }
     .content, .chart {
       padding: 2px;
+      height: calc(50% - 2px);
+    }
+    .content iframe, .chart iframe {
+      max-height: 394px; /* Angepasst für kleinere Paddings */
     }
     .bottom-nav a {
       padding: 2px;
@@ -195,7 +209,7 @@ const Energiemanager = () => {
         <nav className="bottom-nav">
           <a href="/test15/startseite" className="active">
             <FontAwesomeIcon icon={faHouse} />
-            <p>Home</p> {/* Korrigierter Text von "Home-CN" zu "Home" */}
+            <p>Home</p>
           </a>
           <a href="/test15/preise">
             <FontAwesomeIcon icon={faChartLine} />
