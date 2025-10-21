@@ -106,6 +106,7 @@ export default function MongoDBPricesPage() {
   const [selectedMonth, setSelectedMonth] = useState(null);
   const [verbrauchInput, setVerbrauchInput] = useState('3600');
   const [eigenerPreis, setEigenerPreis] = useState('34.06');
+  const [dynamicMarkup] = useState('2.00'); // Aufschlag auf dynamischen Preis (nicht sichtbar, standardmäßig 0.90 Cent/kWh)
   const [displayedKwh, setDisplayedKwh] = useState({});
   const [displayedSavings, setDisplayedSavings] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -181,7 +182,9 @@ export default function MongoDBPricesPage() {
         const monthlyAverage = calculateMonthlyAverage(monthData);
         if (monthlyAverage !== '–' && eigenerPreis) {
           const adjustedPrice = getAdjustedPrice();
-          const kostenDynamisch = (parseFloat(monthlyAverage) * monatsVerbrauch) / 100;
+          const markup = parseFloat(dynamicMarkup) || 0;
+          const adjustedDynamicAverage = parseFloat(monthlyAverage) + markup;
+          const kostenDynamisch = (adjustedDynamicAverage * monatsVerbrauch) / 100;
           const kostenEigener = (adjustedPrice * monatsVerbrauch) / 100;
           savingsValue = (kostenEigener - kostenDynamisch).toFixed(2);
         }
@@ -193,7 +196,7 @@ export default function MongoDBPricesPage() {
 
     setDisplayedKwh(kwhValues);
     setDisplayedSavings(savingsValues);
-  }, [verbrauchInput, eigenerPreis, selectedDiscount, monthlyData]);
+  }, [verbrauchInput, eigenerPreis, selectedDiscount, monthlyData, dynamicMarkup]);
 
   const calculateWeeklyAverages = (monthKey) => {
     const weeks = calendarWeeks[monthKey] || [];
@@ -223,13 +226,16 @@ export default function MongoDBPricesPage() {
         ? (validAverages.reduce((sum, val) => sum + val, 0) / validAverages.length).toFixed(2)
         : '–';
 
+      const markup = parseFloat(dynamicMarkup) || 0;
+      const adjustedWeeklyAverage = weeklyAverage !== '–' ? (parseFloat(weeklyAverage) + markup).toFixed(2) : '–';
+
       const weeklyKwh = totalDaysInMonth > 0 && monatsVerbrauch > 0
         ? ((monatsVerbrauch * weekDays.length) / totalDaysInMonth).toFixed(2)
         : '–';
 
       return {
         kw: week.kw,
-        average: weeklyAverage,
+        average: adjustedWeeklyAverage,
         days: week.days,
         numDaysInMonth: weekDays.length,
         weeklyKwh,
@@ -245,9 +251,12 @@ export default function MongoDBPricesPage() {
       .filter((data) => data.average !== '–')
       .map((data) => parseFloat(data.average));
 
-    return validAverages.length > 0
-      ? (validAverages.reduce((sum, val) => sum + val, 0) / validAverages.length).toFixed(2)
-      : '–';
+    const average = validAverages.length > 0
+      ? (validAverages.reduce((sum, val) => sum + val, 0) / validAverages.length)
+      : 0;
+
+    const markup = parseFloat(dynamicMarkup) || 0;
+    return average > 0 ? (average + markup).toFixed(2) : '–';
   };
 
   const getWeekDateRange = (days) => {
@@ -454,8 +463,8 @@ export default function MongoDBPricesPage() {
                           <th className="p-2 text-left font-semibold">Zeitraum</th>
                           <th className="p-2 text-left font-semibold">Ø Preis (Cent/kWh)</th>
                           <th className="p-2 text-left font-semibold">Verbrauch (kWh)</th>
-                          <th className="p-2 text-left font-semibold">Kosten (€)</th>
-                          <th className="p-2 text-left font-semibold">Kosten Eigener Preis (€)</th>
+                          <th className="p-2 text-left font-semibold">Dynamisch (€)</th>
+                          <th className="p-2 text-left font-semibold">Normaltrarif (€)</th>
                         </tr>
                       </thead>
                       <tbody>

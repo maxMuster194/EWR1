@@ -5,13 +5,13 @@ import dynamic from 'next/dynamic';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-// Dynamisch den Line-Chart importieren, um SSR zu vermeiden (klein gehalten: nur Line-Komponente)
+// Dynamisch den Line-Chart importieren, um SSR zu vermeiden
 const Line = dynamic(() => import('react-chartjs-2').then((mod) => mod.Line), {
   ssr: false,
-  loading: () => <p>Lade Chart...</p>, // Kleiner Lade-Indikator, um Bundle klein zu halten
+  loading: () => <p>Lade Chart...</p>,
 });
 
-// Nur notwendige Chart.js-Komponenten registrieren (reduziert Bundle-Size)
+// Nur notwendige Chart.js-Komponenten registrieren
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -23,7 +23,7 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip);
 
-// MongoDB-Verbindung (unverändert)
+// MongoDB-Verbindung
 const mongoURI = process.env.MONGO_URI || 'mongodb+srv://max:Julian5@strom.vm0dp8f.mongodb.net/?retryWrites=true&w=majority&appName=Strom';
 
 async function connectDB() {
@@ -40,7 +40,7 @@ async function connectDB() {
   }
 }
 
-// Parse DD/MM/YYYY to YYYY-MM-DD (unverändert)
+// Parse DD/MM/YYYY to YYYY-MM-DD
 function parseDeliveryDay(dateStr) {
   if (!dateStr) return null;
   const [day, month, year] = dateStr.split('/');
@@ -77,14 +77,12 @@ export async function getServerSideProps() {
   }
 }
 
-// CSS angepasst: Alles transparent, damit es sich perfekt an den Eltern-Hintergrund anpasst (z.B. in deiner Energiemanager-Seite). 
-// Der Rand um das Input-Feld ist nun ein subtiler weißer/gradient Border, der auf dunklem Hintergrund sichtbar ist (anpassbar, falls Eltern-Hintergrund hell ist).
-// Chart-Grid-Linien und Ticks angepasst für bessere Sichtbarkeit auf transparentem/überlagerndem BG.
+// CSS unverändert
 const styles = `
   .container {
     min-height: 100vh;
     padding: 16px;
-    background-color: transparent !important; /* Force transparent, passt sich Eltern an */
+    background-color: transparent !important;
     font-family: 'Manrope', 'Noto Sans', sans-serif;
     color: #FFFFFF;
   }
@@ -109,9 +107,9 @@ const styles = `
   .react-datepicker__input-container input {
     width: 100%;
     padding: 8px;
-    background-color: transparent !important; /* Passt sich an */
+    background-color: transparent !important;
     color: #FFFFFF;
-    border: 1px solid rgba(255, 255, 255, 0.3); /* Subtiler, anpassungsfähiger Rand (weiß-transparent, sichtbar auf dunkel) */
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 6px;
     font-size: 14px;
     font-family: 'Manrope', 'Noto Sans', sans-serif;
@@ -119,11 +117,11 @@ const styles = `
   }
   .react-datepicker__input-container input:focus {
     outline: none;
-    border: 1px solid #905fa4; /* Gradient-Farbe im Fokus */
-    background: rgba(144, 95, 164, 0.1) !important; /* Leichter Overlay für Interaktion */
+    border: 1px solid #905fa4;
+    background: rgba(144, 95, 164, 0.1) !important;
   }
   .react-datepicker {
-    background-color: rgba(0, 0, 0, 0.8); /* Popup etwas abgedunkelt für Lesbarkeit, aber transparenter Rand */
+    background-color: rgba(0, 0, 0, 0.8);
     color: #FFFFFF;
     border: 1px solid rgba(255, 255, 255, 0.2);
     font-family: 'Manrope', 'Noto Sans', sans-serif;
@@ -151,9 +149,8 @@ const styles = `
     border-color: #FFFFFF;
   }
   canvas {
-    background-color: transparent !important; /* Chart passt sich perfekt an Eltern-BG an */
+    background-color: transparent !important;
   }
-  /* Chart-Anpassungen für transparente Überlagerung: Heller Grid für Sichtbarkeit */
   .chartjs-render-monitor {
     background-color: transparent !important;
   }
@@ -162,6 +159,7 @@ const styles = `
 export default function DynamischerPreis({ data = [], uniqueDates = [], todayBerlin, error }) {
   const initialDate = uniqueDates.includes(todayBerlin) ? todayBerlin : uniqueDates[0] || '';
   const [selectedDate, setSelectedDate] = useState(initialDate ? new Date(initialDate) : null);
+  const dynamicMarkup = 0.00; // Aufschlag auf dynamischen Preis (Cent/kWh), unsichtbar im Hintergrund
 
   if (error) {
     return (
@@ -183,7 +181,7 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
     );
   }
 
-  // Define price fields (minimiert: nur notwendig)
+  // Define price fields
   const priceFields = Array.from({ length: 24 }, (_, h) => {
     const hour = h + 1;
     if (hour === 3) {
@@ -202,7 +200,7 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
     ? data.filter(record => parseDeliveryDay(record['Delivery day']) === selectedDate.toISOString().split('T')[0])
     : [];
 
-  // Prepare chart data (minimiert: Keine unnötigen Features)
+  // Prepare chart data with dynamic markup
   const chartData = {
     labels: priceFields.map((field, index) => {
       let hourNum;
@@ -219,7 +217,8 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
       data: priceFields.map(field => {
         const record = filteredData[0];
         const value = record[field]?.$numberDouble || record[field]?.$numberInt || record[field] || 0;
-        return parseFloat(value) / 10; // Korrektur: Werte durch 10 teilen, um das Komma eine Stelle nach rechts zu verschieben (z.B. 90 -> 9.0 Cent)
+        const adjustedValue = (parseFloat(value) / 10) + dynamicMarkup; // Werte durch 10 teilen und Aufschlag hinzufügen
+        return parseFloat(adjustedValue.toFixed(2)); // Auf 2 Dezimalstellen runden
       }),
       borderColor: '#905fa4',
       backgroundColor: 'rgba(144, 95, 164, 0.2)',
@@ -232,7 +231,7 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
     }] : [],
   };
 
-  // Chart options (erweitert für bessere Sichtbarkeit auf transparentem BG)
+  // Chart options
   const chartOptions = {
     responsive: true,
     plugins: {
@@ -242,7 +241,7 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
       y: {
         title: { display: true, text: 'Preis (ct/kWh)', color: '#FFFFFF' },
         beginAtZero: false,
-        grid: { color: 'rgba(255, 255, 255, 0.1)' }, // Etwas heller für Sichtbarkeit
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
         ticks: { color: '#FFFFFF' },
       },
       x: {
@@ -258,7 +257,7 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
           maxTicksLimit: 24,
           color: '#FFFFFF',
         },
-        grid: { color: 'rgba(255, 255, 255, 0.1)' }, // Etwas heller
+        grid: { color: 'rgba(255, 255, 255, 0.1)' },
       },
     },
     maintainAspectRatio: false,

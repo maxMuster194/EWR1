@@ -554,7 +554,7 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
         // Fallback für andere 'week'-Typen
         startzeit = '12:00';
         endzeit = '19:00';
-        dauer = 9;
+        dauer = 2;
         nutzung = 2;
       }
     } else if (type === 'auto') {
@@ -2841,7 +2841,7 @@ table, th, td {
                     <span>Info</span>
                     {menu.id !== 'waermepumpe' && <span>Watt/h</span>}
                     {menu.id === 'waermepumpe' && <span>kW</span>}
-                    <span>Kosten/Normaltarif</span>
+                    <span>Normaltarif/Jahr</span>
                     {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto' || menu.id === 'waermepumpe') && <span></span>}
                   </li>
 

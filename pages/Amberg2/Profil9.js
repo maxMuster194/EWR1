@@ -20,6 +20,9 @@ ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip,
 // MongoDB-Verbindung
 const mongoURI = process.env.MONGO_URI || 'mongodb+srv://max:Julian1705@strom.vm0dp8f.mongodb.net/?retryWrites=true&w=majority&appName=Strom';
 
+// **AUF SCHLAG AUF DYNAMISCHEN PREIS (unsichtbar, standardmäßig 2.00 Cent/kWh)**
+const DYNAMIC_MARKUP = 2.00;
+
 async function connectDB() {
   if (mongoose.connection.readyState >= 1) {
     console.log('MongoDB already connected');
@@ -240,7 +243,7 @@ const styles = {
     width: '16px',
     height: '16px',
     cursor: 'pointer',
-    color: '#FFFFFF', // Changed to white
+    color: '#FFFFFF',
     fontWeight: 'bold',
   },
   noteText: {
@@ -328,13 +331,13 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
   const [s25Data, setS25Data] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [availableDates, setAvailableDates] = useState([]);
-  const [customPrice, setCustomPrice] = useState('34.06'); // Default to AM base price
+  const [customPrice, setCustomPrice] = useState('34.06');
   const [inputError, setInputError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeProfile, setActiveProfile] = useState(1);
   const [householdType, setHouseholdType] = useState('none');
-  const [selectedDiscount, setSelectedDiscount] = useState(20.14); // Default to AM discount
+  const [selectedDiscount, setSelectedDiscount] = useState(20.14);
 
   const profileFactors = { 1: 2.1, 2: 3.4, 3: 5.4, 4: 7, 5: 8.9 };
   const discounts = [
@@ -476,21 +479,27 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
     ? parseFloat(customPrice) 
     : (regionBasisPreise[discounts.find(d => d.value === selectedDiscount)?.label] - selectedDiscount) || parseFloat(customPrice);
 
-  // useMemo für sofortige Berechnung
+  // **HILFSFUNKTION: Dynamischen Preis mit Aufschlag anpassen**
+  const applyDynamicMarkup = (price) => {
+    return price + DYNAMIC_MARKUP;
+  };
+
+  // useMemo für sofortige Berechnung (MIT AUF SCHLAG, UNVERÄNDERT FÜR TABELLE)
   const consumptionAndCosts = useMemo(() => {
-    const factor = profileFactors[activeProfile] || 2.1; // Fallback to profile 1 factor if none selected
+    const factor = profileFactors[activeProfile] || 2.1;
 
     // Daten für das gewählte Datum holen
     const selH25 = h25Data.find(i => i.date === formatDateForComparison(selectedDate));
     const selP25 = p25Data.find(i => i.date === formatDateForComparison(selectedDate));
     const selS25 = s25Data.find(i => i.date === formatDateForComparison(selectedDate));
 
-    // Strompreise
+    // Strompreise MIT AUF SCHLAG
     const filtered = strompreisData.filter(r => r['Delivery day'] === formatDateForComparison(selectedDate));
     const priceVals = filtered.length
       ? priceFields.map(f => {
           const v = filtered[0][f]?.$numberDouble ?? filtered[0][f]?.$numberInt ?? filtered[0][f] ?? 0;
-          return parseFloat(v) * 0.1;
+          const basePrice = parseFloat(v) * 0.1;
+          return applyDynamicMarkup(basePrice); // **AUF SCHLAG ANWENDEN**
         })
       : Array(96).fill(0);
 
@@ -541,11 +550,13 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
     return <p style={styles.error}>Daten nicht verfügbar</p>;
   }
 
+  // **STROMPREIS WERTE MIT AUF SCHLAG**
   const filteredData = strompreisData.filter(record => record['Delivery day'] === formatDateForComparison(selectedDate));
   const strompreisValues = filteredData.length > 0 ? priceFields.map(field => {
     const record = filteredData[0];
     const value = record[field]?.$numberDouble || record[field]?.$numberInt || record[field] || 0;
-    return parseFloat(value);
+    const basePrice = parseFloat(value);
+    return applyDynamicMarkup(basePrice * 0.1); // **AUF SCHLAG ANWENDEN**
   }) : [];
 
   const labelsAll = Array.from({ length: 24 }, (_, hour) =>
@@ -555,10 +566,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
   const strompreisChartData = labelsAll
     .map((label, i) => ({ label, value: strompreisValues[i], index: i }))
     .filter((entry) => entry.value != null);
-  const strompreisChartValues = strompreisChartData.map((entry) => {
-    const value = entry.value;
-    return typeof value === 'number' ? value * 0.1 : parseFloat(value) * 0.1 || null;
-  });
+  const strompreisChartValues = strompreisChartData.map((entry) => entry.value);
 
   const selectedH25Data = h25Data.find((item) => item.date === formatDateForComparison(selectedDate));
   const selectedP25Data = p25Data.find((item) => item.date === formatDateForComparison(selectedDate));
@@ -568,37 +576,39 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
     (() => {
       const profile = activeProfile;
       const factor = profileFactors[profile];
+      
+      // **DYNAMISCHE WERTE MIT AUF SCHLAG, KOMMA VERSCHOBEN**
       const h25AdjustedValues = selectedH25Data?.__parsed_extra && strompreisChartValues.length > 0
         ? Object.values(selectedH25Data.__parsed_extra).map((h25Value, index) => {
             const strompreisValue = strompreisChartValues[index];
-            return strompreisValue != null && h25Value != null ? ((h25Value / 10) * factor) * strompreisValue : null;
+            return strompreisValue != null && h25Value != null ? ((h25Value / 10) * factor) * strompreisValue * 10 : null; // Multiplikation mit 10
           })
         : Array(96).fill(null);
 
       const p25AdjustedValues = selectedP25Data?.__parsed_extra && strompreisChartValues.length > 0
         ? Object.values(selectedP25Data.__parsed_extra).map((p25Value, index) => {
             const strompreisValue = strompreisChartValues[index];
-            return strompreisValue != null && p25Value != null ? ((p25Value / 10) * factor) * strompreisValue : null;
+            return strompreisValue != null && p25Value != null ? ((p25Value / 10) * factor) * strompreisValue * 10 : null; // Multiplikation mit 10
           })
         : Array(96).fill(null);
 
       const s25AdjustedValues = selectedS25Data?.__parsed_extra && strompreisChartValues.length > 0
         ? Object.values(selectedS25Data.__parsed_extra).map((s25Value, index) => {
             const strompreisValue = strompreisChartValues[index];
-            return strompreisValue != null && s25Value != null ? ((s25Value / 10) * factor) * strompreisValue : null;
+            return strompreisValue != null && s25Value != null ? ((s25Value / 10) * factor) * strompreisValue * 10 : null; // Multiplikation mit 10
           })
         : Array(96).fill(null);
 
       const customPriceValues = !isNaN(adjustedCustomPrice) && adjustedCustomPrice >= 0 && selectedH25Data?.__parsed_extra
-        ? Object.values(selectedH25Data.__parsed_extra).map((value) => ((value / 10) * factor) * adjustedCustomPrice)
+        ? Object.values(selectedH25Data.__parsed_extra).map((value) => ((value / 10) * factor) * adjustedCustomPrice * 10) // Multiplikation mit 10
         : Array(96).fill(null);
 
       const customP25PriceValues = !isNaN(adjustedCustomPrice) && adjustedCustomPrice >= 0 && selectedP25Data?.__parsed_extra
-        ? Object.values(selectedP25Data.__parsed_extra).map((value) => ((value / 10) * factor) * adjustedCustomPrice)
+        ? Object.values(selectedP25Data.__parsed_extra).map((value) => ((value / 10) * factor) * adjustedCustomPrice * 10) // Multiplikation mit 10
         : Array(96).fill(null);
 
       const customS25PriceValues = !isNaN(adjustedCustomPrice) && adjustedCustomPrice >= 0 && selectedS25Data?.__parsed_extra
-        ? Object.values(selectedS25Data.__parsed_extra).map((value) => ((value / 10) * factor) * adjustedCustomPrice)
+        ? Object.values(selectedS25Data.__parsed_extra).map((value) => ((value / 10) * factor) * adjustedCustomPrice * 10) // Multiplikation mit 10
         : Array(96).fill(null);
 
       const datasetsForProfile = [];
@@ -716,7 +726,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
           label: function (context) {
             const label = context.dataset.label || '';
             const value = context.raw != null ? context.raw.toFixed(3) : 'N/A';
-            return `${label}: ${value} Ct`;
+            return `${label}: ${value} mCt`; // Einheit geändert zu mCt
           },
         },
       },
@@ -724,7 +734,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
     scales: {
       y: {
         beginAtZero: false,
-        title: { display: true, text: 'Stromkosten in Ct', font: { size: 14, family: "'Inter', sans-serif" }, color: '#FFFFFF' },
+        title: { display: true, text: 'Stromkosten in mCt', font: { size: 14, family: "'Inter', sans-serif" }, color: '#FFFFFF' }, // Einheit geändert zu mCt
         ticks: { 
           callback: (value) => `${value.toFixed(2)}`,
           color: '#FFFFFF'
@@ -866,8 +876,8 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
           }
           .tooltip {
             position: absolute;
-            bottom: 100%; /* Opens upwards */
-            right: 0; /* Aligns to the left of the icon */
+            bottom: 100%;
+            right: 0;
             background-color: #4372b7;
             color: #fff;
             padding: 8px;
@@ -879,7 +889,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
             transition: opacity 0.2s ease, visibility 0.2s ease;
             z-index: 10;
             width: 300px;
-            transform: translateX(10px); /* Slight offset to avoid overlapping the icon */
+            transform: translateX(10px);
           }
           .tooltip-container:hover .tooltip {
             visibility: visible;
@@ -998,6 +1008,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
               {activeProfile ? `${activeProfile} Person${activeProfile === 1 ? '' : 'en'}` : '1 Person'}
             </div>
           </div>
+
           <div style={styles.controlGroup}>
             <label style={styles.inputLabel}>Haben Sie eine PV-Anlage?</label>
             <div style={styles.householdSelector}>
@@ -1143,7 +1154,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
               <thead>
                 <tr>
                   <th style={styles.summaryTableHeader}>Verbrauch (kWh)</th>
-                  <th style={styles.summaryTableHeader}>Kosten (Euro)</th>
+                  <th style={styles.summaryTableHeader}>Kosten (Euro)</th> {/* Unverändert */}
                   <th style={styles.summaryTableHeader}>
                     <div style={styles.tooltipContainer} className="tooltip-container">
                       <span style={styles.infoIcon}>!</span>
@@ -1196,7 +1207,6 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
               </tbody>
             </table>
           </div>
-          {/* Der Hinweistext wird nicht mehr hier ausgegeben, da er jetzt im Tooltip ist */}
         </div>
       </div>
     </div>
