@@ -63,213 +63,24 @@ export async function getServerSideProps() {
 // Angepasster Stil-Code
 const styles = `
   .layout {
-    width: 100%;
-    display: grid;
-    grid:
-      "header header" auto
-      "sidebar top-box" auto
-      "sidebar main" 1fr
-      "sidebar bottom-boxes" auto
-      "sidebar extra-box-1" auto
-      "sidebar extra-box-2" auto
-      "footer footer" auto
-      / 200px 1fr;
-    min-height: 100vh;
-    background-color: #F3F4F6;
-  }
-  .header {
-    grid-area: header;
-    display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-    border-bottom: 1px solid #D1D5DB;
-    padding: 6px 24px;
-    background: linear-gradient(90deg, #063d37, #063d37);
-  }
-  .header-logo {
-    width: 125px;
-    height: 47.5px;
-    object-fit: contain;
-  }
-  .top-box { 
-    grid-area: top-box; 
-    position: relative;
-  }
-  .top-box .button-container {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    display: flex;
-    gap: 10px;
-  }
-  .top-box .button-container a {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    background-color: #063d37;
-    color: #FFFFFF;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    transition: background-color 0.2s;
-    position: relative;
-  }
-  .top-box .button-container a:hover {
-    background-color: #3c6055;
-  }
-  .top-box .button-container a.active {
-    background-color: #88bf50;
-    color: #FFFFFF;
-  }
-  .top-box .button-container a .tooltip {
-    visibility: hidden;
-    width: 120px;
-    background-color: #202026;
-    color: #FFFFFF;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px;
-    position: absolute;
-    z-index: 1;
-    top: 100%;
-    left: 50%;
-    margin-left: -60px;
-    margin-top: 8px;
-    font-size: 12px;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .top-box .button-container a:hover .tooltip {
-    visibility: visible;
-    opacity: 1;
-  }
-  .sidebar {
-    grid-area: sidebar;
-    width: 100%;
-    max-width: 200px;
-    padding: 12px;
-    background-color: #202026;
-    border-right: 1px solid #D1D5DB;
-  }
-  .sidebar .flex {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-  }
-  .sidebar a {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    padding: 8px;
-    border-radius: 12px;
-    color: #FFFFFF;
-    text-decoration: none;
-    transition: background-color 0.2s;
-  }
-  .sidebar a:hover {
-    background-color: #063d37;
-  }
-  .sidebar a.active {
-    background-color: #063d37;
-  }
-  .sidebar a.active .fa-house {
-    color: #FFFFFF !important;
-  }
-  .sidebar a p {
-    text-align: center;
-    font-size: 12px;
-    font-weight: 500;
-    margin: 0;
-  }
-  .main {
-    grid-area: main;
-    display: flex;
-    flex-direction: row;
-    gap: 12px;
-    padding: 24px;
-    background-color: #fafafa;
-    border-radius: 12px;
-  }
-  .bottom-boxes {
-    grid-area: bottom-boxes;
-    padding: 24px;
-    background-color: #fafafa;
-    border-radius: 12px;
-  }
-  .extra-box-1 {
-    grid-area: extra-box-1;
-    padding: 24px;
-    background-color: #fafafa;
-    border-radius: 12px;
-  }
-  .extra-box-2 {
-    grid-area: extra-box-2;
-    padding: 16px;
-    background-color: #fafafa;
-    border-radius: 12px;
-  }
-  .extra-box-2 .inner-box {
-    max-width: 400px;
-    margin: 0 auto;
-  }
-  .content {
-    flex: 1;
-    overflow: auto;
-    max-height: 100vh;
-  }
-  .chart {
-    flex: 1;
-    overflow: auto;
-    max-height: 100vh;
-    background-color: #fafafa;
-  }
-  .chart .flex.min-w-[200px] {
-    background-color: #fafafa;
-    border: none;
-    box-shadow: none;
-  }
-  .chart canvas {
-    max-width: 100%;
-  }
-  .footer {
-    grid-area: footer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-top: 1px solid #fafafa;
-    padding: 12px 48px;
-    background: linear-gradient(90deg, #063d37, #063d37);
-  }
-  .bottom-nav {
-    display: none;
-  }
- @media (max-width: 767px) {
-  .layout {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    gap: 8px; /* Reduzierte Lücke */
     padding-bottom: 60px;
-    background-color: #1D3050; /* Hintergrundfarbe für mobile Geräte */
-    color: #FFFFFF; /* Weißer Text für die gesamte Seite */
+    background-color: #1D3050;
+    color: #FFFFFF;
+    min-height: 100vh;
+    font-family: 'Manrope, "Noto Sans", sans-serif';
   }
-  .header, .top-box, .main, .bottom-boxes, .extra-box-1, .extra-box-2, .footer {
+  .top-box, .main, .bottom-boxes, .extra-box-1, .extra-box-2, .footer {
     width: 100%;
-    padding: 12px;
-    color: #FFFFFF; /* Weißer Text für diese Bereiche */
-  }
-  .header {
-    padding: 6px;
-    order: 1;
-    background: linear-gradient(90deg, #063d37, #063d37); /* Beibehalten der ursprünglichen Header-Farbe */
+    padding: 8px; /* Reduzierte Padding */
+    color: #FFFFFF;
   }
   .top-box {
-    order: 3;
+    order: 1;
     position: relative;
-    background-color: #1D3050; /* Hintergrundfarbe für top-box */
+    background-color: #1D3050;
   }
   .top-box .button-container {
     top: 8px;
@@ -280,15 +91,45 @@ const styles = `
   .top-box .button-container a {
     font-size: 12px;
     padding: 6px 10px;
-    background-color: #063d37;
-    color: #FFFFFF; /* Weißer Text für Buttons */
+    border-radius: 8px;
+    background-color: #1D3050;
+    color: #FFFFFF;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .top-box .button-container a:hover {
+    background: linear-gradient(90deg, #4372b7, #905fa4);
+  }
+  .top-box .button-container a.active {
+    background: linear-gradient(90deg, #4372b7, #905fa4);
+    color: #FFFFFF;
   }
   .top-box .button-container a .tooltip {
+    visibility: hidden;
     width: 100px;
+    background-color: #1D3050;
+    color: #FFFFFF;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: 50%;
     margin-left: -50px;
+    margin-top: 8px;
     font-size: 10px;
-    background-color: #202026;
-    color: #FFFFFF; /* Weißer Text für Tooltips */
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .top-box .button-container a:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
   }
   .sidebar {
     display: none;
@@ -296,28 +137,35 @@ const styles = `
   .main {
     flex-direction: column;
     order: 2;
-    background-color: #1D3050; /* Hintergrundfarbe für main */
+    background-color: #1D3050;
   }
   .content {
     order: 2;
-    max-height: none;
-    background-color: #1D3050; /* Hintergrundfarbe für content */
-    color: #FFFFFF; /* Weißer Text für content */
+    background-color: #1D3050;
+    color: #FFFFFF;
   }
   .content p {
-    color: #FFFFFF; /* Weißer Text für alle p-Elemente in content */
+    color: #FFFFFF;
+  }
+  .content a.rechner-button,
+  .content a.kontakt-button {
+    background: linear-gradient(90deg, #4372b7, #905fa4);
+  }
+  .content a.rechner-button:hover,
+  .content a.kontakt-button:hover {
+    background: linear-gradient(90deg, #4372b7, #905fa4);
   }
   .chart {
     order: 1;
-    max-height: none;
-    background-color: #1D3050; /* Hintergrundfarbe für chart */
-    padding: 8px 4px;
+    background-color: #1D3050;
+    padding: 4px 4px 0 4px; /* Reduziertes Padding unten auf 0 */
     width: 100%;
     box-sizing: border-box;
-    color: #FFFFFF; /* Weißer Text für chart */
+    color: #FFFFFF;
+    margin-bottom: 20px; /* Etwa 2cm Abstand unter dem Chart */
   }
   .chart .flex.min-w-[200px] {
-    background-color: #1D3050; /* Hintergrundfarbe für chart container */
+    background-color: #1D3050;
     border: none;
     box-shadow: none;
     width: 100%;
@@ -330,34 +178,43 @@ const styles = `
   }
   .bottom-boxes {
     order: 4;
-    background-color: #1D3050; /* Hintergrundfarbe für bottom-boxes */
-    color: #FFFFFF; /* Weißer Text für bottom-boxes */
+    background-color: #1D3050;
+    color: #FFFFFF;
   }
   .bottom-boxes p, .bottom-boxes li, .bottom-boxes span {
-    color: #FFFFFF; /* Weißer Text für alle p, li und span in bottom-boxes */
+    color: #FFFFFF;
+  }
+  .bottom-boxes .border-black {
+    border-color: #FFFFFF;
   }
   .extra-box-1 {
     order: 5;
-    background-color: #1D3050; /* Hintergrundfarbe für extra-box-1 */
-    color: #FFFFFF; /* Weißer Text für extra-box-1 */
+    background-color: #1D3050;
+    color: #FFFFFF;
   }
   .extra-box-2 {
     order: 6;
-    background-color: #1D3050; /* Hintergrundfarbe für extra-box-2 */
-    color: #FFFFFF; /* Weißer Text für extra-box-2 */
+    background-color: #1D3050;
+    color: #FFFFFF;
   }
   .extra-box-2 .inner-box {
-    background-color: #1D3050; /* Hintergrundfarbe für inner-box */
-    color: #FFFFFF; /* Weißer Text für inner-box */
-    border-color: #FFFFFF; /* Weiße Border für inner-box */
+    background-color: #1D3050;
+    color: #FFFFFF;
+    border-color: #FFFFFF;
   }
   .extra-box-2 .inner-box p {
-    color: #FFFFFF; /* Weißer Text für p-Elemente in inner-box */
+    color: #FFFFFF;
+  }
+  .extra-box-2 .inner-box a.rechner-button {
+    background: linear-gradient(90deg, #4372b7, #905fa4);
+  }
+  .extra-box-2 .inner-box a.rechner-button:hover {
+    background: linear-gradient(90deg, #4372b7, #905fa4);
   }
   .footer {
     padding: 12px;
     order: 7;
-    background: linear-gradient(90deg, #063d37, #063d37); /* Beibehalten der ursprünglichen Footer-Farbe */
+    background: linear-gradient(90deg, #4372b7, #905fa4);
   }
   .bottom-nav {
     display: flex;
@@ -365,7 +222,7 @@ const styles = `
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: #202026;
+    background-color: #1D3050;
     border-top: 1px solid #D1D5DB;
     justify-content: space-around;
     align-items: center;
@@ -380,17 +237,18 @@ const styles = `
     gap: 4px;
     padding: 8px;
     border-radius: 12px;
-    color: #FFFFFF; /* Weißer Text für Bottom-Nav-Links */
+    color: #FFFFFF;
     text-decoration: none;
-    transition: background-color 0.2s;
+    transition: background 0.2s;
     flex: 1;
     text-align: center;
+    background-color: #1D3050;
   }
   .bottom-nav a:hover {
-    background-color: #062316;
+    background: linear-gradient(90deg, #4372b7, #905fa4);
   }
   .bottom-nav a.active {
-    background-color: #062316;
+    background: linear-gradient(90deg, #4372b7, #905fa4);
   }
   .bottom-nav a.active .fa-house {
     color: #FFFFFF !important;
@@ -400,13 +258,20 @@ const styles = `
     font-size: 10px;
     font-weight: 500;
     margin: 0;
-    color: #FFFFFF; /* Weißer Text für p-Elemente in Bottom-Nav */
+    color: #FFFFFF;
   }
   .bottom-nav a svg {
     font-size: 18px;
-    color: #FFFFFF; /* Weiße Icons für Bottom-Nav */
+    color: #FFFFFF;
   }
-}
+  @media (max-width: 768px) {
+    .main {
+      gap: 4px; /* Noch kleinere Lücke auf mobilen Geräten */
+    }
+    .content, .chart {
+      padding: 4px; /* Reduzierte Padding für mobile Geräte */
+    }
+  }
 `;
 
 export default function Energiemanager({ data, uniqueDates, todayBerlin, error }) {
@@ -426,97 +291,32 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
   return (
     <>
       <style>{styles}</style>
-      <div className="layout relative" style={{
-        backgroundColor: '#fafafa',
-        fontFamily: 'Manrope, "Noto Sans", sans-serif'
-      }}>
-        <header className="header">
-          <div className="flex items-start">
-            <img src="/bilder/ilumylogo2.png" alt="Ilumy Logo" className="header-logo" />
-          </div>
-        </header>
-
-        <div className="top-box p-6 rounded-xl bg-[#fafafa]">
-          <div className="flex flex-col gap-3 rounded-xl p-6 bg-[#fafafa] text-center relative">
+      <div className="layout relative">
+        <div className="top-box p-3 rounded-xl">
+          <div className="flex flex-col gap-3 rounded-xl p-3 text-center relative">
             <div className="flex items-center justify-center gap-4">
-              <p className="text-[#3c6055] text-4xl font-bold leading-normal">Dynamischer Stromtarif</p>
-            </div>
-            <div className="button-container">
-              <a href="/test/startseite" className="flex items-center gap-2">
-                <FontAwesomeIcon icon={faBackward} style={{ color: '#fafafa', fontSize: '16px' }} />
-                <span>Datenrückblick</span>
-                <span className="tooltip">Preisdaten bis zum 30.09.2025</span>
-              </a>
-              <a href="/test15/startseite" className="flex items-center gap-2 active">
-                <FontAwesomeIcon icon={faClock} style={{ color: '#fafafa', fontSize: '16px' }} />
-                <span>Aktuell</span>
-                <span className="tooltip">Preisdaten ab dem 01.10.2025</span>
-              </a>
+              <p className="text-[#FFFFFF] text-4xl font-bold leading-normal">Dynamischer Stromtarif</p>
             </div>
           </div>
         </div>
 
-        <div className="sidebar w-full p-3 bg-[#202026] border-r border-gray-300">
-          <div className="flex h-full flex-col justify-between">
-            <div className="flex flex-col gap-3">
-              <div className="flex gap-2">
-                <div
-                  className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8"
-                  style={{
-                    backgroundImage: `url("https://lh3.googleusercontent.com/aida-public/AB6AXuAmnxnxpn4igDe4BfK3Jk0-s2CVTa4kG5bBXQK5Q3sz97EVpfvDRNoYRZ6IEY1cwzMbdDYAvnZyx1ElWq2chI_K9WMbnvRtLpaXMuFW17eHrHQGE9L767-I personallyWAxet4V8qjLi4FQMa0xDybtXWlP--5VrYcGVklH6MAfwyPJx0hXFxRrf2ayne-MgYYH6E9dYyqmRLSJvKFlhhylpFvpSyM-aHM2XdirG1dzKHzCiz6QAbBjL1skTZVWmnyTGnWwgYTfOZymx-fv0Dms")`,
-                  }}
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <a
-                  href="/test15/startseite"
-                  className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#202026] hover:bg-[#D9043D] text-white active"
-                >
-                  <FontAwesomeIcon icon={faHouse} style={{ color: '#fafafa', fontSize: '20px' }} />
-                  <p className="text-white text-xs font-medium leading-normal">Home</p>
-                </a>
-                <a href="/test15/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
-                  <FontAwesomeIcon icon={faChartLine} style={{ color: '#fafafa', fontSize: '20px' }} />
-                  <p className="text-white text-xs font-medium leading-normal">Preis</p>
-                </a>
-                <a href="/test15/rechner" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
-                  <FontAwesomeIcon icon={faCalculator} style={{ color: '#fafafa', fontSize: '20px' }} />
-                  <p className="text-white text-xs font-medium leading-normal">Rechner</p>
-                </a>
-                <a href="/test15/details" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
-                  <FontAwesomeIcon icon={faFileLines} style={{ color: '#fafafa', fontSize: '20px' }} />
-                  <p className="text-white text-xs font-medium leading-normal">Detail-Rechner</p>
-                </a>
-                <a href="/test15/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
-                  <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#fafafa', fontSize: '20px' }} />
-                  <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="main flex flex-col lg:flex-row gap-6">
-          <div className="content flex-1 p-6 rounded-xl bg-[#fafafa] flex flex-col">
-            <p className="text-[#D9043D] tracking-tight text-3xl font-bold leading-tight text-center"></p>
-            <p className="text-[#202026] text-lg font-normal leading-relaxed text-center mt-2"></p>
-            <div className="flex flex-col gap-6 mt-6 flex-1">
-              <div className="flex min-w-[200px] flex-1 flex-col gap-3 rounded-xl p-6 bg-[#fafafa]">
-                <p className="text-[#3c6055] text-2xl font-bold leading-normal">Preisrechner dynamische Tarife <a
+        <div className="main flex flex-col gap-4">
+          <div className="content p-4 rounded-xl flex flex-col">
+            <div className="flex flex-col gap-2 mt-2">
+              <div className="flex flex-col gap-2 rounded-xl p-4">
+                <p className="text-[#FFFFFF] text-2xl font-bold leading-normal">Preisrechner dynamische Tarife <a
                   href="/test15/rechner"
-                  className="inline-flex items-center justify-center gap-1 px-4 py-1.5 rounded-xl bg-[#063d37] hover:bg-[#3c6055] text-white text-lg font-medium leading-normal"
+                  className="rechner-button inline-flex items-center justify-center gap-1 px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white text-lg font-medium leading-normal"
                 >
-                  <FontAwesomeIcon icon={faCalculator} style={{ color: '#fafafa', fontSize: '19px' }} />
+                  <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '19px' }} />
                   Zum Rechner
                 </a></p>
-                <p className="text-[#202026] text-base font-normal leading-normal">
-                  
-                <p>Jetzt in wenigen Schritten herausfinden, ob sich ein dynamischer Stromtarif für Ihren Haushalt lohnt.</p>
-                  <p>Wir vergleichen in diesem Tool den reinen Energiepreis. Steuern, Netzentgelte sowie alle weiteren Abgaben sind in den Vergleichen abgezogen. 
-                  </p>
+                <p className="text-[#FFFFFF] text-base font-normal leading-normal">
+                  <p>Jetzt in wenigen Schritten herausfinden, ob sich ein dynamischer Stromtarif für Ihren Haushalt lohnt.</p>
+                  <p>Wir vergleichen in diesem Tool den reinen Energiepreis. Steuern, Netzentgelte sowie alle weiteren Abgaben sind in den Vergleichen abgezogen.</p>
                 </p>
-                <p className="text-[#3c6055] text-2xl font-bold leading-normal">Was ist ein dynamischer Stromtarif?</p>
-                <p className="text-[#202026] text-base font-normal leading-normal">
+                <p className="text-[#FFFFFF] text-2xl font-bold leading-normal">Was ist ein dynamischer Stromtarif?</p>
+                <p className="text-[#FFFFFF] text-base font-normal leading-normal">
                   Dynamische Stromtarife sind flexible Strompreise, 
                   die sich in Echtzeit oder stündlich an den aktuellen Börsenstrompreisen orientieren.
                   Im Gegensatz zu festen Tarifen variiert der Preis je nach Angebot und Nachfrage – 
@@ -524,18 +324,18 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
                 </p>
                 <a
                   href=""
-                  className="inline-flex items-center justify-center gap-1 px-4 py-1.5 mt-4 rounded-xl bg-[#063d37] hover:bg-[#3c6055] text-white text-lg font-medium leading-normal w-fit"
+                  className="kontakt-button inline-flex items-center justify-center gap-1 px-4 py-1.5 mt-2 rounded-xl bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white text-lg font-medium leading-normal w-fit"
                 >
-                  <FontAwesomeIcon icon={faComment} style={{ color: '#fafafa', fontSize: '19px' }} />
+                  <FontAwesomeIcon icon={faComment} style={{ color: '#FFFFFF', fontSize: '19px' }} />
                   Kontakt
                 </a>
               </div>
             </div>
           </div>
-          <div className="chart flex-1 p-2 rounded-xl flex flex-col"> 
-            <div className="flex flex-col gap-2 mt-2 flex-1">
-              <div className="flex min-w-[220px] flex-1 flex-col gap-2 rounded-xl p-2">
-                <div className="flex min-h-[220px] flex-1 flex-col gap-2 py-2">
+          <div className="chart p-2 rounded-xl flex flex-col">
+            <div className="flex flex-col gap-0 mt-0"> {/* Reduzierte gap und mt auf 0 */}
+              <div className="flex min-w-[220px] flex-col gap-0 rounded-xl p-0"> {/* Reduzierte gap und p auf 0 */}
+                <div className="flex flex-col gap-0 py-0"> {/* Reduzierte gap und py auf 0, min-h entfernt */}
                   <DynamischerPreis data={data} uniqueDates={uniqueDates} todayBerlin={todayBerlin} error={error} />
                 </div>
               </div>
@@ -544,62 +344,60 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
         </div>
 
         <div className="bottom-boxes">
-          <div className="flex flex-col gap-4 rounded-xl p-6 bg-[#fafafa] shadow-sm border border-black">
-            <p className="text-black text-xl font-bold leading-normal">Vorteile</p>
-            <ul className="text-[#202026] text-base font-normal leading-relaxed list-disc list-inside space-y-2">
-              <li><span className="font-medium text-[#202026]">Kostenersparnis:</span> <span className="text-[#202026]">Wer seinen Stromverbrauch in günstige Zeiten verlegt (z. B. Wäsche nachts waschen), kann spürbar sparen.</span></li>
-              <li><span className="font-medium text-[#202026]">Transparenz:</span> <span className="text-[#202026]">Nutzer sehen, wann Strom teuer oder billig ist, und können entsprechend reagieren.</span></li>
-              <li><span className="font-medium text-[#202026]">Umweltfreundlich:</span> <span className="text-[#202026]">Fördert die Nutzung von erneuerbaren Energien, wenn diese im Überfluss verfügbar sind.</span></li>
-              <li><span className="font-medium text-[#202026]">Anreiz zur Automatisierung:</span> <span className="text-[#202026]">Smarte Haushaltsgeräte oder Energiemanagementsysteme lassen sich optimal einsetzen.</span></li>
+          <div className="flex flex-col gap-3 rounded-xl p-4 shadow-sm border border-black">
+            <p className="text-[#FFFFFF] text-xl font-bold leading-normal">Vorteile</p>
+            <ul className="text-[#FFFFFF] text-base font-normal leading-relaxed list-disc list-inside space-y-1">
+              <li><span className="font-medium text-[#FFFFFF]">Kostenersparnis:</span> <span className="text-[#FFFFFF]">Wer seinen Stromverbrauch in günstige Zeiten verlegt (z. B. Wäsche nachts waschen), kann spürbar sparen.</span></li>
+              <li><span className="font-medium text-[#FFFFFF]">Transparenz:</span> <span className="text-[#FFFFFF]">Nutzer sehen, wann Strom teuer oder billig ist, und können entsprechend reagieren.</span></li>
+              <li><span className="font-medium text-[#FFFFFF]">Umweltfreundlich:</span> <span className="text-[#FFFFFF]">Fördert die Nutzung von erneuerbaren Energien, wenn diese im Überfluss verfügbar sind.</span></li>
+              <li><span className="font-medium text-[#FFFFFF]">Anreiz zur Automatisierung:</span> <span className="text-[#FFFFFF]">Smarte Haushaltsgeräte oder Energiemanagementsysteme lassen sich optimal einsetzen.</span></li>
             </ul>
           </div>
-          <div className="flex flex-col gap-4 rounded-xl p-6 bg-[#fafafa] shadow-sm border border-black mt-4">
-            <p className="text-black text-xl font-bold leading-normal">Nachteile</p>
-            <ul className="text-[#202026] text-base font-normal leading-relaxed list-disc list-inside space-y-2">
-              <li><span className="font-medium text-[#202026]">Preisschwankungen:</span> <span className="text-[#202026]">Strom kann zu bestimmten Tageszeiten sehr teuer sein, was die Planung erschwert.</span></li>
-              <li><span className="font-medium text-[#202026]">Technischer Aufwand:</span> <span className="text-[#202026]">Ein digitaler Stromzähler (Smart Meter) ist meist Voraussetzung.</span></li>
-              <li><span className="font-medium text-[#202026]">Komplexität:</span> <span className="text-[#202026]">Erfordert aktives Mitdenken oder technische Lösungen, um vom günstigen Preis zu profitieren.</span></li>
-              <li><span className="font-medium text-[#202026]">Unvorhersehbarkeit:</span> <span className="text-[#202026]">Bei starker Nachfrage oder Krisen können Preise unerwartet steigen.</span></li>
+          <div className="flex flex-col gap-3 rounded-xl p-4 shadow-sm border border-black mt-3">
+            <p className="text-[#FFFFFF] text-xl font-bold leading-normal">Nachteile</p>
+            <ul className="text-[#FFFFFF] text-base font-normal leading-relaxed list-disc list-inside space-y-1">
+              <li><span className="font-medium text-[#FFFFFF]">Preisschwankungen:</span> <span className="text-[#FFFFFF]">Strom kann zu bestimmten Tageszeiten sehr teuer sein, was die Planung erschwert.</span></li>
+              <li><span className="font-medium text-[#FFFFFF]">Technischer Aufwand:</span> <span className="text-[#FFFFFF]">Ein digitaler Stromzähler (Smart Meter) ist meist Voraussetzung.</span></li>
+              <li><span className="font-medium text-[#FFFFFF]">Komplexität:</span> <span className="text-[#FFFFFF]">Erfordert aktives Mitdenken oder technische Lösungen, um vom günstigen Preis zu profitieren.</span></li>
+              <li><span className="font-medium text-[#FFFFFF]">Unvorhersehbarkeit:</span> <span className="text-[#FFFFFF]">Bei starker Nachfrage oder Krisen können Preise unerwartet steigen.</span></li>
             </ul>
           </div>
         </div>
 
         <div className="extra-box-2">
-          <div className="inner-box flex flex-col gap-3 rounded-xl p-4 bg-[#fafafa] shadow-sm border border-gray-300 text-center">
-            <p className="text-[#3c6055] text-lg font-medium leading-normal">Jetzt berechnen, ob der dynamische Stromtarif für Sie in Frage kommt.</p>
-            <p className="text-[#202026] text-base font-normal leading-normal">
+          <div className="inner-box flex flex-col gap-2 rounded-xl p-3 shadow-sm border border-gray-300 text-center">
+            <p className="text-[#FFFFFF] text-lg font-medium leading-normal">Jetzt berechnen, ob der dynamischer Stromtarif für Sie in Frage kommt.</p>
+            <p className="text-[#FFFFFF] text-base font-normal leading-normal">
               <a
                 href="/test15/rechner"
-                className="inline-flex items-center justify-center gap-1 px-3 py-1 rounded-xl bg-[#063d37] hover:bg-[#3c6055] text-white text-sm font-medium leading-normal"
+                className="rechner-button inline-flex items-center justify-center gap-1 px-3 py-1 rounded-xl bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white text-sm font-medium leading-normal"
               >
-                <FontAwesomeIcon icon={faCalculator} style={{ color: '#fafafa', fontSize: '14px' }} />
+                <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '14px' }} />
                 Zum Rechner
               </a>
             </p>
           </div>
         </div>
 
-        <footer className="footer"></footer>
-
         <nav className="bottom-nav">
-          <a href="/test15/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#D9043D] text-white active">
-            <FontAwesomeIcon icon={faHouse} style={{ color: '#fafafa', fontSize: '18px' }} />
+          <a href="/test15/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white active">
+            <FontAwesomeIcon icon={faHouse} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Home</p>
           </a>
-          <a href="/test15/preise" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
-            <FontAwesomeIcon icon={faChartLine} style={{ color: '#fafafa', fontSize: '18px' }} />
+          <a href="/test15/preise" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+            <FontAwesomeIcon icon={faChartLine} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Preis</p>
           </a>
-          <a href="/test15/rechner" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
-            <FontAwesomeIcon icon={faCalculator} style={{ color: '#fafafa', fontSize: '18px' }} />
+          <a href="/test15/rechner" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+            <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Rechner</p>
           </a>
-          <a href="/test15/details" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
-            <FontAwesomeIcon icon={faFileLines} style={{ color: '#fafafa', fontSize: '18px' }} />
+          <a href="/test15/details" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+            <FontAwesomeIcon icon={faFileLines} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Detail</p>
           </a>
-          <a href="/test15/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 hover:bg-[#D9043D] text-white">
-            <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#fafafa', fontSize: '18px' }} />
+          <a href="/test15/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+            <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
           </a>
         </nav>
