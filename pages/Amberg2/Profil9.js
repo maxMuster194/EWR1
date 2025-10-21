@@ -14,6 +14,8 @@ import {
 } from 'chart.js';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // FontAwesome Import
+import { faComment } from '@fortawesome/free-solid-svg-icons'; // Kommentar-Icon Import
 
 ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement, Tooltip, Legend, Title);
 
@@ -1157,7 +1159,9 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
                   <th style={styles.summaryTableHeader}>Kosten (Euro)</th> {/* Unverändert */}
                   <th style={styles.summaryTableHeader}>
                     <div style={styles.tooltipContainer} className="tooltip-container">
-                      <span style={styles.infoIcon}>!</span>
+                      <span style={styles.infoIcon}>
+                        <FontAwesomeIcon icon={faComment} /> {/* Korrektes Icon */}
+                      </span>
                       <span className="tooltip">
                         *Hinweis: Bei den gezeigten Daten handelt es sich um Vergleichswerte, die für 1 bis zu 5 Personen in einem Haushalt
                         durchschnittlich ermittelt werden. Diese Daten sind nur als grober Richtwert zu verstehen und bieten keine genaue
