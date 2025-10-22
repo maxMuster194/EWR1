@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 const IframeNavigation = ({
-  backgroundColor = 'rgba(0, 32, 63, 0.8)',
-  menuBackgroundColor = 'rgba(44,62,80,0.8)',
-  menuHoverColor = 'rgba(52,73,94,0.8)',
-  menuActiveColor = 'rgba(123, 0, 29, 0.9)',
-  menuBorderColor = 'rgba(255,255,255,0.15)',
+  backgroundColor = 'rgb(117, 116, 116)',
+  menuBackgroundColor = '	rgb(6,61,55)',
+  menuHoverColor = '	rgb(60,96,85)',
+  menuActiveColor = '	rgb(60,96,85)',
+  menuBorderColor = 	'rgb(6,61,55)',
   baseUrl = 'https://stadtwerkeprofis.de/MASTER/Frame',
 }) => {
   const iframeRef = useRef(null);
@@ -69,7 +69,7 @@ const IframeNavigation = ({
           }
           .loader {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
+            border-top: 4px solid #063d37;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -81,7 +81,7 @@ const IframeNavigation = ({
           }
         `}
       </style>
-      <div className="w-[1200px] h-[860px] flex flex-col rounded-xl shadow-2xl overflow-hidden backdrop-blur-md">
+      <div className="w-[1200px] h-[900px] flex flex-col rounded-xl shadow-2xl overflow-hidden backdrop-blur-md">
         {/* Menüleiste */}
         <div
           className="flex text-white h-[60px] items-center justify-around font-bold text-base cursor-pointer"

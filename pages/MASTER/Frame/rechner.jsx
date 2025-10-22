@@ -13,8 +13,8 @@ import {
 } from 'chart.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import Profil10 from './Profil10'; // Mobile profile
-import Profil9 from './Profil9'; // Desktop profile
+import Profil10 from '@/pages/MASTER/Frame/Profil10'; // Mobile profile
+import Profil9 from '@/pages/MASTER/Frame/Profil9'; // Desktop profile
 import LoadingScreen from '@/pages/loading/Loadingscreen';
 import mongoose from 'mongoose';
 import GermanyMin15Prices from '@/models/min15Prices';
@@ -339,7 +339,7 @@ const Energiemanager = ({ data, uniqueDates, todayBerlin, error }) => {
     return (
       <div className="layout relative" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
         <div className="top-box">
-          <h2>Energiemanager</h2>
+          <h2></h2>
         </div>
         <div className="main flex flex-col gap-2">
           <div className="content-box flex flex-1 flex-col gap-1 rounded-xl w-full">
@@ -358,7 +358,7 @@ const Energiemanager = ({ data, uniqueDates, todayBerlin, error }) => {
       <style>{styles}</style>
       <div className="layout relative" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
         <div className="top-box">
-          <h2>Energiemanager</h2>
+          <h2></h2>
         </div>
         <div className="main flex flex-col gap-2">
           <div

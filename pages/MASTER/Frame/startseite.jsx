@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalculator, faComment } from '@fortawesome/free-solid-svg-icons';
 import mongoose from 'mongoose';
-import GermanyMin15Prices from '/models/min15Prices'; // Adjust path as needed
+import GermanyMin15Prices from '@/models/min15Prices'; // Adjust path as needed
 import DynamischerPreis from '@/pages/MASTER/Frame/dypreis1';
 import LoadingScreen from '@/pages/loading/Loadingscreen';
 
@@ -147,7 +147,7 @@ const styles = `
   }
 
   .gradient-heading {
-    background: linear-gradient(90deg, #4372b7, #905fa4);
+    background: linear-gradient(90deg, #063d37, #88bf50);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -168,7 +168,7 @@ const styles = `
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(90deg, #4372b7, #905fa4) !important;
+    background: linear-gradient(90deg, #063d37, #88bf50) !important;
     border-radius: 12px;
     padding: 12px 20px;
     text-decoration: none;
@@ -179,7 +179,7 @@ const styles = `
   }
 
   a.inline-flex:hover {
-    background: linear-gradient(90deg, #905fa4, #4372b7) !important;
+    background: linear-gradient(90deg, #88bf50, #063d37) !important;
     transform: scale(1.05);
   }
 
@@ -267,8 +267,8 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
         {/* Main: Content + Chart */}
         <div className="main">
           <div className="content">
-            <h1 className="text-2xl font-bold gradient-heading text-center">Energiemanager</h1>
-            <p className="text-lg text-center mt-2">Entdecken Sie dynamische Stromtarife</p>
+            <h1 className="text-2xl font-bold gradient-heading text-center"></h1>
+            <p className="text-lg text-center mt-2 ">Entdecken Sie dynamische Stromtarife</p>
             
             <div className="mt-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-4">

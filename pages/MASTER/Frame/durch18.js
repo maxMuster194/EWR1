@@ -300,7 +300,7 @@ export default function MongoDBPricesPage() {
 
   if (loading) {
     return (
-      <div className="text-center p-3 text-base text-[#4372b7] bg-transparent rounded-lg">
+      <div className="text-center p-3 text-base text-[#063d37] bg-transparent rounded-lg">
         ⏳ Daten werden geladen…
       </div>
     );
@@ -308,7 +308,7 @@ export default function MongoDBPricesPage() {
 
   if (!Object.keys(monthlyData).length) {
     return (
-      <div className="text-center p-3 text-base text-[#4372b7] bg-transparent rounded-lg">
+      <div className="text-center p-3 text-base text-[#063d37] bg-transparent rounded-lg">
         ⚠️ Keine Daten gefunden.
       </div>
     );
@@ -317,24 +317,24 @@ export default function MongoDBPricesPage() {
   return (
     <div className="max-w-full mx-auto p-3 bg-transparent rounded-lg">
       <div className="bg-transparent">
-        <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-center mb-4">
+        <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#063d37] to-[#88bf50] text-center mb-4">
           Dynamischer Tarif: Strompreise 2025
         </h1>
       </div>
 
       <div className="bg-transparent p-4 rounded-xl mb-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-          <label className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-center sm:text-left">
+          <label className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#063d37] to-[#88bf50] text-center sm:text-left">
             Rückblick Kosten und Ersparnis (exklusiv Wärmepumpe und E-Mobilität)
           </label>
           <div className="flex flex-col items-center">
-            <div className="text-[#4372b7] font-bold text-sm mb-3 text-center">
+            <div className="text-[#88bf50] font-bold text-sm mb-3 text-center">
               Region auswählen
             </div>
             <div className="flex flex-row gap-4 items-center p-3 rounded-lg">
               {discounts.map((discount) => (
                 <div key={discount.label} className="flex items-center gap-2">
-                  <span className="text-xs font-medium text-[#4372b7]">{discount.label}</span>
+                  <span className="text-xs font-medium text-[#88bf50]">{discount.label}</span>
                   <label className="relative inline-block w-10 h-5">
                     <input
                       type="checkbox"
@@ -346,7 +346,7 @@ export default function MongoDBPricesPage() {
                     <span
                       className={`absolute cursor-pointer top-0 left-0 right-0 bottom-0 rounded-full transition-all duration-300 ${
                         selectedDiscount === discount.label
-                          ? 'bg-gradient-to-r from-[#4372b7] to-[#905fa4]'
+                          ? 'bg-gradient-to-r from-[#063d37] to-[#88bf50]'
                           : 'bg-gray-300'
                       }`}
                     >
@@ -365,7 +365,7 @@ export default function MongoDBPricesPage() {
 
         <div className="flex flex-col sm:flex-row sm:justify-between gap-4 w-full">
           <div className="relative">
-            <label className="block text-xs font-medium text-[#4372b7] mb-1.5">
+            <label className="block text-xs font-medium text-[#88bf50] mb-1.5">
               Preis pro kWh (Cent)
             </label>
             <input
@@ -374,12 +374,12 @@ export default function MongoDBPricesPage() {
               placeholder="z. B. 30 Cent/kWh"
               value={eigenerPreis}
               onChange={(e) => setEigenerPreis(e.target.value)}
-              className="p-2.5 text-sm border-2 border-[#4372b7] rounded-lg w-full max-w-[250px] bg-white text-[#4372b7] focus:border-[#905fa4] focus:ring-2 focus:ring-[#905fa4] focus:ring-opacity-50 transition-all"
+              className="p-2.5 text-sm border-2 border-[#88bf50] rounded-lg w-full max-w-[250px] bg-white text-[#063d37] focus:border-[#88bf50] focus:ring-2 focus:ring-[#88bf50] focus:ring-opacity-50 transition-all"
               title="Preis pro kWh in Cent"
             />
           </div>
           <div className="relative">
-            <label className="block text-xs font-medium text-[#4372b7] mb-1.5">
+            <label className="block text-xs font-medium text-[#88bf50] mb-1.5">
               Jährlicher Verbrauch (kWh)
             </label>
             <input
@@ -388,7 +388,7 @@ export default function MongoDBPricesPage() {
               placeholder="z. B. 3600 kWh/Jahr"
               value={verbrauchInput}
               onChange={(e) => setVerbrauchInput(e.target.value)}
-              className="p-2.5 text-sm border-2 border-[#4372b7] rounded-lg w-full max-w-[250px] bg-white text-[#4372b7] focus:border-[#905fa4] focus:ring-2 focus:ring-[#905fa4] focus:ring-opacity-50 transition-all"
+              className="p-2.5 text-sm border-2 border-[#88bf50] rounded-lg w-full max-w-[250px] bg-white text-[#063d37] focus:border-[#063d37] focus:ring-2 focus:ring-[#88bf50] focus:ring-opacity-50 transition-all"
               title="Jährlicher Verbrauch in kWh"
             />
           </div>
@@ -408,7 +408,7 @@ export default function MongoDBPricesPage() {
             <div
               key={monthKey}
               onClick={() => handleCardClick(monthKey)}
-              className={`p-2 rounded-lg shadow-md cursor-pointer text-center transition-all duration-300 bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white hover:bg-gradient-to-r hover:from-[#905fa4] hover:to-[#4372b7] hover:shadow-lg`}
+              className={`p-2 rounded-lg shadow-md cursor-pointer text-center transition-all duration-300 bg-gradient-to-r from-[#063d37] to-[#88bf50] text-white hover:bg-gradient-to-r hover:from-[#063d37] hover:to-[#88bf50] hover:shadow-lg`}
             >
               <div className="text-sm font-bold">{monthNames[index]}</div>
               <div className="text-[10px]">
@@ -436,29 +436,29 @@ export default function MongoDBPricesPage() {
             </button>
             {monthlyData[selectedMonth] && monthlyData[selectedMonth].length > 0 ? (
               <>
-                <h2 className="text-base font-semibold text-[#4372b7] text-center mb-3">
+                <h2 className="text-base font-semibold text-[#063d37] text-center mb-3">
                   {monthNames[parseInt(selectedMonth.split('/')[0]) - 1]} {selectedMonth.split('/')[1]}
                 </h2>
-                <div className="bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white p-2 rounded-lg mb-3 flex items-center gap-2 text-xs">
+                <div className="bg-gradient-to-r from-[#063d37] to-[#88bf50] text-white p-2 rounded-lg mb-3 flex items-center gap-2 text-xs">
                   Monatsdurchschnitt: {calculateMonthlyAverage(monthlyData[selectedMonth])} Cent/kWh
                 </div>
-                <div className="bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white p-2 rounded-lg mb-3 flex items-center gap-2 text-xs">
+                <div className="bg-gradient-to-r from-[#063d37] to-[#88bf50] text-white p-2 rounded-lg mb-3 flex items-center gap-2 text-xs">
                   Eingegebener Verbrauch: {displayedKwh[selectedMonth] || '–'} kWh
                 </div>
-                <div className="bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white p-2 rounded-lg mb-3 flex items-center gap-2 text-xs">
+                <div className="bg-gradient-to-r from-[#063d37] to-[#88bf50] text-white p-2 rounded-lg mb-3 flex items-center gap-2 text-xs">
                   Eingegebener Preis: {getAdjustedPrice() ? `${getAdjustedPrice()} Cent/kWh` : '–'}
                   {selectedDiscount && (
                     <span className="text-[10px]"> ({selectedDiscount} Abzüge: -{discounts.find((r) => r.label === selectedDiscount)?.value}¢)</span>
                   )}
                 </div>
                 <div className="bg-white p-3 rounded-lg shadow-md mb-3">
-                  <h3 className="text-base font-semibold text-[#4372b7] text-center mb-3">
+                  <h3 className="text-base font-semibold text-[#063d37] text-center mb-3">
                     Zusammenfassung Wöchentliche Kosten
                   </h3>
                   <div className="overflow-x-auto">
                     <table className="w-full border-collapse bg-white rounded-lg shadow-md text-[10px]">
                       <thead>
-                        <tr className="bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+                        <tr className="bg-gradient-to-r from-[#063d37] to-[#88bf50] text-white">
                           <th className="p-2 text-left font-semibold">Kalenderwoche</th>
                           <th className="p-2 text-left font-semibold">Zeitraum</th>
                           <th className="p-2 text-left font-semibold">Ø Preis (Cent/kWh)</th>
@@ -480,18 +480,18 @@ export default function MongoDBPricesPage() {
 
                           return (
                             <tr key={week.kw} className={i % 2 === 0 ? 'bg-[#f5f5f5]' : 'bg-white'}>
-                              <td className="p-2 text-[#4372b7]">KW {week.kw}</td>
-                              <td className="p-2 text-[#4372b7]">{getWeekDateRange(week.days)}</td>
-                              <td className="p-2 text-[#4372b7]">{week.average}</td>
-                              <td className="p-2 text-[#4372b7]">{week.weeklyKwh}</td>
-                              <td className="p-2 text-[#4372b7]">{kosten}</td>
-                              <td className="p-2 text-[#4372b7]">{kostenEigenerPreis}</td>
+                              <td className="p-2 text-[#063d37]">KW {week.kw}</td>
+                              <td className="p-2 text-[#063d37]">{getWeekDateRange(week.days)}</td>
+                              <td className="p-2 text-[#063d37]">{week.average}</td>
+                              <td className="p-2 text-[#063d37]">{week.weeklyKwh}</td>
+                              <td className="p-2 text-[#063d37]">{kosten}</td>
+                              <td className="p-2 text-[#063d37]">{kostenEigenerPreis}</td>
                             </tr>
                           );
                         })}
                       </tbody>
                       <tfoot>
-                        <tr className="bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+                        <tr className="bg-gradient-to-r from-[#063d37] to-[#88bf50] text-white">
                           <td className="p-2 font-bold" colSpan={2}>Gesamt</td>
                           <td className="p-2 font-bold">
                             {calculateMonthlyAverage(monthlyData[selectedMonth])}
@@ -530,7 +530,7 @@ export default function MongoDBPricesPage() {
                 </div>
                 {calculateWeeklyAverages(selectedMonth).filter((week) => week.average !== '–').length > 0 && (
                   <div className="bg-white p-3 rounded-lg shadow-md">
-                    <h2 className="text-base font-semibold text-[#4372b7] text-center mb-3">
+                    <h2 className="text-base font-semibold text-[#063d37] text-center mb-3">
                       Wöchentliche Durchschnitte für {monthNames[parseInt(selectedMonth.split('/')[0]) - 1]} {selectedMonth.split('/')[1]}
                     </h2>
                     <Bar
@@ -544,8 +544,8 @@ export default function MongoDBPricesPage() {
                             data: calculateWeeklyAverages(selectedMonth)
                               .filter((week) => week.average !== '–')
                               .map((week) => parseFloat(week.average)),
-                            backgroundColor: 'rgba(67, 114, 183, 0.8)',
-                            borderColor: '#905fa4',
+                            backgroundColor: '	rgb(6,61,55)',
+                            borderColor: '#063d37',
                             borderWidth: 1,
                           },
                         ],
@@ -556,12 +556,12 @@ export default function MongoDBPricesPage() {
                           legend: {
                             position: 'top',
                             labels: {
-                              color: '#4372b7',
+                              color: '#063d37',
                               font: { size: 10, weight: '500' },
                             },
                           },
                           tooltip: {
-                            backgroundColor: '#905fa4',
+                            backgroundColor: '#88bf50',
                             titleColor: '#fafafa',
                             bodyColor: '#fafafa',
                           },
@@ -570,21 +570,21 @@ export default function MongoDBPricesPage() {
                           y: {
                             beginAtZero: true,
                             ticks: {
-                              color: '#4372b7',
+                              color: '#063d37',
                               callback: (value) => `${value.toFixed(2)} ct`,
                               font: { size: 8 },
                             },
                             grid: { color: 'rgba(144, 95, 164, 0.1)' },
                           },
                           x: {
-                            ticks: { color: '#4372b7', font: { size: 8 } },
+                            ticks: { color: '#063d37', font: { size: 8 } },
                             grid: { color: 'rgba(144, 95, 164, 0.1)' },
                           },
                         },
                       }}
                     />
                     <div className="bg-white p-3 rounded-lg mt-3 text-center">
-                      <div className="text-xs font-medium text-[#4372b7] mb-2">
+                      <div className="text-xs font-medium text-[#063d37] mb-2">
                         Gesamtkosten bei Durchschnittspreis: {(() => {
                           const weeklyCosts = calculateWeeklyAverages(selectedMonth)
                             .map((week) => {
@@ -596,7 +596,7 @@ export default function MongoDBPricesPage() {
                           return weeklyCosts > 0 ? `${weeklyCosts.toFixed(2)} €` : '–';
                         })()}
                       </div>
-                      <div className="text-xs font-medium text-[#4372b7] mb-2">
+                      <div className="text-xs font-medium text-[#063d37] mb-2">
                         Gesamtkosten Eigener Preis: {(() => {
                           const weeklyOwnCosts = calculateWeeklyAverages(selectedMonth)
                             .map((week) => {
@@ -608,7 +608,7 @@ export default function MongoDBPricesPage() {
                           return weeklyOwnCosts > 0 ? `${weeklyOwnCosts.toFixed(2)} €` : '–';
                         })()}
                       </div>
-                      <div className="text-xs font-medium text-[#4372b7]">
+                      <div className="text-xs font-medium text-[#063d37]">
                         {(() => {
                           const weeklyCosts = calculateWeeklyAverages(selectedMonth)
                             .map((week) => {
@@ -636,10 +636,10 @@ export default function MongoDBPricesPage() {
                 )}
               </>
             ) : (
-              <div className="text-center p-3 text-base text-[#4372b7] bg-white rounded-lg">
+              <div className="text-center p-3 text-base text-[#063d37] bg-white rounded-lg">
                 ⚠️ Keine Daten für {monthNames[parseInt(selectedMonth.split('/')[0]) - 1]} {selectedMonth.split('/')[1]} verfügbar.
               </div>
-            )}
+            )}7
           </div>
         </div>
       )}

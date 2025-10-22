@@ -6,7 +6,9 @@ import DatePicker from 'react-datepicker'; // Import react-datepicker
 import 'react-datepicker/dist/react-datepicker.css'; // Import CSS for datepicker
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import LoadingScreen from '@/pages/loading/Loadingscreen';
+import LoadingScreen from '@/pages/loading/Amberg';
+
+
 
 // Dynamisch den Line-Chart importieren, um SSR zu vermeiden
 const Line = dynamic(() => import('react-chartjs-2').then((mod) => mod.Line), {
@@ -627,6 +629,7 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
   const [agb, setAgb] = useState(false);
   const [werbung, setWerbung] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
 
 
@@ -753,6 +756,13 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
     }
     return () => clearInterval(timer);
   }, [cooldown]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -1548,11 +1558,11 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
     }),
     datasets: [
       {
-        label: 'Stromverbrauch Normaltarif(kW)',
+        label: 'Stromverbrauch ohne Wärmepumpe (kW)',
         data: hourlyData.flatMap(d => Array(4).fill(d.total - d.waermepumpe)),
         fill: false,
-        borderColor: '#063d37',
-        backgroundColor: '#063d37',
+        borderColor: '#4372b7',
+        backgroundColor: '#4372b7',
         tension: 0.1,
         yAxisID: 'y',
         // Linie dünner machen
@@ -1560,8 +1570,8 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
     
       // Punkte anzeigen
       pointRadius: 1,       // Größe der Punkte
-      pointBackgroundColor: '#063d37',  // Punktfarbe (innen)
-      pointBorderColor: '#063d37',      // Punktfarbe (außen)
+      pointBackgroundColor: '#4372b7',  // Punktfarbe (innen)
+      pointBorderColor: '#4372b7',      // Punktfarbe (außen)
       pointBorderWidth: 1,
 
       },
@@ -1586,8 +1596,8 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
         label: 'Dynamischer Preis (Ct/kWh)',
         data: chartConvertedValues,
         fill: false,
-        borderColor: '#88bf50',
-        backgroundColor: '#88bf50',
+        borderColor: '#905fa4',
+        backgroundColor: '#905fa4',
         tension: 0.1,
         yAxisID: 'y1',
         // Linie dünner machen
@@ -1595,8 +1605,8 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
     
       // Punkte anzeigen
       pointRadius: 1,       // Größe der Punkte
-      pointBackgroundColor: '#88bf50',  // Punktfarbe (innen)
-      pointBorderColor: '#88bf50',      // Punktfarbe (außen)
+      pointBackgroundColor: '#905fa4',  // Punktfarbe (innen)
+      pointBorderColor: '#905fa4',      // Punktfarbe (außen)
       pointBorderWidth: 1,
       },
     ],
@@ -1670,16 +1680,16 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
         label: 'Kosten Dynamischer Tarif  (Ct/h)',
         data: hourlyData.flatMap((d, h) => chartConvertedValues.slice(h*4, (h+1)*4).map(price => (d.total - d.waermepumpe) * price)),
         fill: false,
-        borderColor: '#88bf50',
-        backgroundColor: '#88bf50',
+        borderColor: '#905fa4',
+        backgroundColor: '#905fa4',
         tension: 0.1,
         // Linie dünner machen
       borderWidth: 1,
     
       // Punkte anzeigen
       pointRadius: 1,       // Größe der Punkte
-      pointBackgroundColor: '#88bf50',  // Punktfarbe (innen)
-      pointBorderColor: '#88bf50',      // Punktfarbe (außen)
+      pointBackgroundColor: '#905fa4',  // Punktfarbe (innen)
+      pointBorderColor: '#905fa4',      // Punktfarbe (außen)
       pointBorderWidth: 1,
       },
       {
@@ -1702,16 +1712,16 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
         label: 'Kosten Fester Tarif (Ct/h)',
         data: hourlyData.flatMap(d => Array(4).fill(d.total * fixedPrice)),
         fill: false,
-        borderColor: '#063d37',
-        backgroundColor: '#063d37',
+        borderColor: '#4372b7',
+        backgroundColor: '#4372b7',
         tension: 0.1,
         // Linie dünner machen
       borderWidth: 1,
     
       // Punkte anzeigen
       pointRadius: 1,       // Größe der Punkte
-      pointBackgroundColor: '#063d37',  // Punktfarbe (innen)
-      pointBorderColor: '#063d37',      // Punktfarbe (außen)
+      pointBackgroundColor: '#4372b7',  // Punktfarbe (innen)
+      pointBorderColor: '#4372b7',      // Punktfarbe (außen)
       pointBorderWidth: 1,
       },
     ],
@@ -1755,14 +1765,6 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
       },
     },
   };
-
-
-
-
-
-
-
-
 
   
   // Überprüfen, ob Wärmepumpe aktiv ist
@@ -1902,7 +1904,9 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
     : [];
   console.log('Filtered data:', filteredData); // Debug log
 
-
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <>
@@ -1919,7 +1923,7 @@ html {
 
 body {
   font-family: 'Inter', Arial, sans-serif;
-  background: transparent;
+  background: #1D3050;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -1990,7 +1994,7 @@ body {
 }
 
 .discount-switch-input:checked + .discount-switch-slider {
-  background-color: #88bf50;
+  background-color: #905fa4;
 }
 
 .discount-switch-input:checked + .discount-switch-slider:before {
@@ -2006,7 +2010,7 @@ body {
 }
 
 .discount-switch-input:checked + .discount-switch-slider:hover {
-  background-color: #88bf50;
+  background-color: #7a4d8b;
 }
 
 .region-switch-wrapper:hover .region-label {
@@ -2074,7 +2078,7 @@ body {
   overflow-y: auto;
   max-height: calc(100vh - 64px);
   scrollbar-width: thin;
-  scrollbar-color: #88bf50 #e5e7eb;
+  scrollbar-color: #905fa4 #e5e7eb;
 }
 
 .calculation-report::-webkit-scrollbar {
@@ -2087,14 +2091,14 @@ body {
 }
 
 .calculation-report::-webkit-scrollbar-thumb {
-  background: #88bf50;
+  background: #905fa4;
   border-radius: 4px;
 }
 
 .calculation-report:hover {
   transform: translateY(-4px);
   box-shadow: 0 0 30px rgba(144, 95, 164, 0.2), 0 0 60px rgba(67, 114, 183, 0.1);
-  border-color: rgb(136,191,80);
+  border-color: rgba(144, 95, 164, 0.4);
 }
 
 .diagrams-container {
@@ -2104,7 +2108,7 @@ body {
   overflow-y: auto;
   max-height: calc(100vh - 64px);
   scrollbar-width: thin;
-  scrollbar-color: #88bf50 #e5e7eb;
+  scrollbar-color: #905fa4 #e5e7eb;
   background: transparent;
 }
 
@@ -2118,7 +2122,7 @@ body {
 }
 
 .diagrams-container::-webkit-scrollbar-thumb {
-  background: #88bf50;
+  background: #905fa4;
   border-radius: 4px;
 }
 
@@ -2159,14 +2163,14 @@ body {
   align-items: center;
   padding: 16px;
   cursor: pointer;
-  background: linear-gradient(90deg, #063d37,  #88bf50);
+  background: linear-gradient(90deg, #7a4d8b, #905fa4, #4372b7);
   border-radius: 12px;
   color: #ffffff;
   transition: background 0.3s ease;
 }
 
 .menu-header:hover {
-  background: linear-gradient(90deg, #063d37,  #88bf50);
+  background: linear-gradient(90deg, #6a437b, #7a4d8b, #355f9a);
 }
 
 .menu-header span {
@@ -2206,7 +2210,7 @@ body {
 .menu-content input:focus,
 .menu-content select:focus {
   outline: none;
-  border-color: #88bf50;
+  border-color: #905fa4;
   box-shadow: 0 0 0 3px rgba(144, 95, 164, 0.3);
 }
 
@@ -2255,7 +2259,7 @@ body {
 .input-container-html input:focus,
 .input-container-html select:focus {
   outline: none;
-  border-color: #88bf50;
+  border-color: #905fa4;
   box-shadow: 0 0 0 3px rgba(144, 95, 164, 0.3);
 }
 
@@ -2318,7 +2322,7 @@ body {
 .checkbox-group-label input {
   width: 16px;
   height: 16px;
-  accent-color: #88bf50;
+  accent-color: #905fa4;
   cursor: pointer;
 }
 
@@ -2331,7 +2335,7 @@ body {
 .info-field .tooltip {
   visibility: hidden;
   position: absolute;
-  background: #88bf50;
+  background: #905fa4;
   font-size: 0.75rem;
   padding: 4px 6px;
   border-radius: 3px;
@@ -2363,7 +2367,7 @@ body {
 
 .input-group input.watt-input:focus {
   outline: none;
-  border-color: #88bf50;
+  border-color: #905fa4;
   box-shadow: 0 0 0 2px rgba(144, 95, 164, 0.2);
 }
 
@@ -2374,7 +2378,7 @@ body {
 }
 
 .settings-field {
-  background: linear-gradient(90deg, #063d37, #88bf50);
+  background: linear-gradient(90deg, #905fa4, #4372b7);
   padding: 4px 8px;
   border-radius: 3px;
   font-size: 0.875rem;
@@ -2384,7 +2388,7 @@ body {
 }
 
 .settings-field:hover {
-  background: linear-gradient(90deg, #063d37, #88bf50);
+  background: linear-gradient(90deg, #7a4d8b, #355f9a);
   transform: scale(1.05);
 }
 
@@ -2404,7 +2408,7 @@ body {
 
 .confirm-dialog {
   grid-column: 1 / -1;
-  background: transparent;
+  background: linear-gradient(135deg, #fef9c3, #fef08a);
   padding: 8px;
   border-radius: 4px;
   margin-top: 4px;
@@ -2420,7 +2424,7 @@ body {
 }
 
 .confirm-button {
-  background: transparent;
+  background: linear-gradient(90deg, #dc2626, #ef4444);
   padding: 4px 8px;
   border-radius: 3px;
   font-size: 0.875rem;
@@ -2430,12 +2434,12 @@ body {
 }
 
 .confirm-button:hover {
-  background: transparent;
+  background: linear-gradient(90deg, #b91c1c, #dc2626);
   transform: scale(1.05);
 }
 
 .cancel-button {
-  background: transparent;
+  background: linear-gradient(90deg, #9ca3af, #d1d5db);
   padding: 4px 8px;
   border-radius: 3px;
   font-size: 0.875rem;
@@ -2514,7 +2518,7 @@ body {
 
 .settings-container select:focus {
   outline: none;
-  border-color: #88bf50;
+  border-color: #905fa4;
   box-shadow: 0 0 0 3px rgba(144, 95, 164, 0.3);
 }
 
@@ -2533,7 +2537,7 @@ body {
 .radio-group-settings input {
   width: 16px;
   height: 16px;
-  accent-color: #88bf50;
+  accent-color: #905fa4;
   cursor: pointer;
 }
 
@@ -2544,7 +2548,7 @@ body {
 }
 
 .add-option-button {
-  background: linear-gradient(90deg, #063d37, #88bf50);
+  background: linear-gradient(90deg, #905fa4, #4372b7);
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 0.875rem;
@@ -2556,7 +2560,7 @@ body {
 }
 
 .add-option-button:hover {
-  background: linear-gradient(90deg, #063d37, #88bf50);
+  background: linear-gradient(90deg, #7a4d8b, #355f9a);
   transform: scale(1.05);
 }
 
@@ -2594,12 +2598,12 @@ body {
 .new-option-input:focus,
 .new-option-watt:focus {
   outline: none;
-  border-color: #88bf50;
+  border-color: #905fa4;
   box-shadow: 0 0 0 3px rgba(144, 95, 164, 0.3);
 }
 
 .save-option-button {
-  background: linear-gradient(90deg, #063d37, #88bf50);
+  background: linear-gradient(90deg, #905fa4, #4372b7);
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 0.875rem;
@@ -2610,12 +2614,13 @@ body {
 }
 
 .save-option-button:hover {
-  background: linear-gradient(90deg, #063d37, #88bf50);
+  background: linear-gradient(90deg, #7a4d8b, #355f9a);
   transform: scale(1.05);
 }
 
 .summary-container {
   margin-top: 24px;
+  margin-bottom: 40px;
   background: transparent;
   padding: 16px;
   border-radius: 10px;
@@ -2686,7 +2691,7 @@ table, th, td {
 
 .kw-input:focus {
   outline: none;
-  border-color: #88bf50;
+  border-color: #905fa4;
   box-shadow: 0 0 0 2px rgba(144, 95, 164, 0.2);
 }
 
@@ -2704,7 +2709,7 @@ table, th, td {
 
 .dynamic-consumer-layout input[type="range"] {
   width: 100%;
-  accent-color: #88bf50;
+  accent-color: #905fa4;
   margin-top: 4px;
 }
 
@@ -2716,7 +2721,7 @@ table, th, td {
 
   .dynamic-consumer-layout input[type="range"] {
     width: 100%;
-    accent-color: #88bf50;
+    accent-color: #905fa4;
     margin-top: 4px;
   }
 }
@@ -2735,15 +2740,96 @@ table, th, td {
 
 .new-option-kw:focus {
   outline: none;
-  border-color: #88bf50;
+  border-color: #905fa4;
   box-shadow: 0 0 0 2px rgba(144, 95, 164, 0.2);
-}`}</style>
+}
+
+
+ .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #1D3050;
+    border-top: 1px solid #D1D5DB;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 0;
+    z-index: 1000;
+    order: 8;
+    border-radius: 12px; /* Fügt abgerundete Ecken hinzu */
+  }
+  .bottom-nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    border-radius: 12px;
+    color: #FFFFFF;
+    text-decoration: none;
+    transition: background 0.2s;
+    flex: 1;
+    text-align: center;
+    background-color: #1D3050;
+  }
+  .bottom-nav a:hover {
+    background: linear-gradient(90deg, #4372b7, #905fa4);
+  }
+  .bottom-nav a.active {
+    background: linear-gradient(90deg, #4372b7, #905fa4);
+  }
+  .bottom-nav a.active .fa-house {
+    color: #FFFFFF !important;
+  }
+  .bottom-nav a p {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 500;
+    margin: 0;
+    color: #FFFFFF;
+  }
+  .bottom-nav a svg {
+    font-size: 18px;
+    color: #FFFFFF;
+  }
+  .dynamischer-preis-container {
+    border-radius: 8px;
+    padding: 4px;
+    max-height: 500px; /* Set maximum height to 500px for desktop */
+  }
+@media (max-width: 768px) {
+  .main {
+    gap: 4px; /* Noch kleinere Lücke auf mobilen Geräten */
+  }
+  .content, .chart {
+    padding: 4px; /* Reduzierte Padding für mobile Geräte */
+  }
+  .dynamischer-preis-container {
+    max-height: 470px; /* Set maximum height to 450px for mobile */
+  }
+  /* Scrollbar verstecken */
+  .layout {
+    scrollbar-width: none; /* Für Firefox */
+    -ms-overflow-style: none; /* Für Internet Explorer und ältere Edge-Versionen */
+  }
+  .layout::-webkit-scrollbar {
+    display: none; /* Für Chrome, Safari und Chromium-basierte Edge */
+  }
+}
+`}</style>
 
 
 <div className="layout relative bg-transparent" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
   <div className="app-container">
+  <h2 className="report-title">Detail-Rechner</h2>
+  <div className="chart-container">
+          <Line data={chartData} options={chartOptions} />
+        </div>
+
     <div className="calculation-report">
-      <h2 className="report-title">Detail-Rechner</h2>
+    
       <div className="report-content">
         <div className="input-container-html">
           <label htmlFor="strompreis">Strompreis (Ct/kWh):</label>
@@ -3328,26 +3414,13 @@ table, th, td {
           <div className="summary-item"> Wärmepumpe Jahreskosten (fixer Tarif): {zusammenfassung.waermepumpe} €</div>
           <div className="summary-item"> Wärmepumpe Jahreskosten (dynamischer Tarif): {zusammenfassung.waermepumpeDyn} €</div>
           <div className="summary-item"> Wärmepumpe Tageskosten (dynamischer Tarif): {zusammenfassung.dynselbstbestimmt} €</div>
-          <button className="download-button bg-[#063d37] text-white py-2 px-4 rounded hover:bg-blue-700" onClick={handleDownloadClick}>
+          <button className="download-button bg-[#4372b7] text-white py-2 px-4 rounded hover:bg-blue-700" onClick={handleDownloadClick}>
             Download PDF
           </button>
         </div>
       </div>
     </div>
-    <div className="diagrams-container">
-      <div className="diagram">
-        <h3 className="diagram-title">Stromverbrauch pro Stunde</h3>
-        <div className="chart-container">
-          <Line data={chartData} options={chartOptions} />
-        </div>
-      </div>
-      <div className="diagram">
-        <h3 className="diagram-title">Ergebnis pro Stunde</h3>
-        <div className="chart-container">
-          <Line data={chartDataKosten} options={chartOptionsKosten} />
-        </div>
-      </div>
-    </div>
+    
     {showModal && (
       <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
         <div className="modal-content relative bg-white rounded-lg p-6 w-full max-w-md">
@@ -3474,10 +3547,37 @@ table, th, td {
         </div>
       </div>
     )}
-  </div>
-</div>
-        
-    
+   </div>
+   </div>
+
+
+
+
+
+
+<nav className="bottom-nav">
+          <a href="/Amberg2/mobile/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white ">
+            <FontAwesomeIcon icon={faHouse} style={{ color: '#FFFFFF', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Home</p>
+          </a>
+          <a href="/Amberg2/mobile/preise" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+            <FontAwesomeIcon icon={faChartLine} style={{ color: '#FFFFFF', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Preis</p>
+          </a>
+          <a href="/Amberg2/mobile/rechner" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+            <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Rechner</p>
+          </a>
+          <a href="/MASTER/Mobile/details" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white active">
+            <FontAwesomeIcon icon={faFileLines} style={{ color: '#FFFFFF', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Detail</p>
+          </a>
+          <a href="/Amberg2/mobile/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+            <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#FFFFFF', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
+          </a>
+        </nav>
+      
         </>
       );
     }

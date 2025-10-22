@@ -92,7 +92,7 @@ const styles = `
     background-color: transparent !important;
   }
   .gradient-heading {
-    background: linear-gradient(90deg, #4372b7, #905fa4);
+    background: linear-gradient(90deg, #063d37, #88bf50);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -137,12 +137,12 @@ const styles = `
     color: #FFFFFF;
   }
   .react-datepicker__day:hover {
-    background: linear-gradient(90deg, #4372b7, #905fa4);
+    background: linear-gradient(90deg, #063d37, #88bf50);
     color: #FFFFFF;
   }
   .react-datepicker__day--selected,
   .react-datepicker__day--keyboard-selected {
-    background: linear-gradient(90deg, #4372b7, #905fa4);
+    background: linear-gradient(90deg, #063d37, #88bf50);
     color: #FFFFFF;
   }
   .react-datepicker__navigation-icon::before {
@@ -220,14 +220,14 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
         const adjustedValue = (parseFloat(value) / 10) + dynamicMarkup; // Werte durch 10 teilen und Aufschlag hinzufügen
         return parseFloat(adjustedValue.toFixed(2)); // Auf 2 Dezimalstellen runden
       }),
-      borderColor: '#905fa4',
+      borderColor: '#88bf50',
       backgroundColor: 'rgba(144, 95, 164, 0.2)',
       fill: true,
       tension: 0.4,
       spanGaps: true,
       borderWidth: 1,
       pointRadius: 2,
-      pointBackgroundColor: '#905fa4',
+      pointBackgroundColor: '#88bf50',
     }] : [],
   };
 

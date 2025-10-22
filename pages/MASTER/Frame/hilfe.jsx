@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import VideosPage from './video1';
+import VideosPage from '@/pages/MASTER/Frame/video1';
 import LoadingScreen from '@/pages/loading/Loadingscreen';
 
 const Energiemanager = () => {

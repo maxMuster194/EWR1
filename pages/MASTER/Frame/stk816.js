@@ -67,18 +67,18 @@ export default function WeeklyPriceChart() {
   };
 
   if (loading) {
-    return <div className="text-center p-4 text-lg text-[#4372b7] rounded-2xl">⏳ Laden…</div>;
+    return <div className="text-center p-4 text-lg text-[#063d37] rounded-2xl">⏳ Laden…</div>;
   }
 
   if (!Object.keys(data).length) {
-    return <div className="text-center p-4 text-lg text-[#4372b7] rounded-2xl">⚠️ Keine Daten</div>;
+    return <div className="text-center p-4 text-lg text-[#063d37] rounded-2xl">⚠️ Keine Daten</div>;
   }
 
   const yearlyAverages = calculateYearlyAverages();
 
   return (
     <div className="max-w-full mx-auto p-4 bg-transparent rounded-2xl">
-      <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-center mb-6">
+      <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#063d37] to-[#88bf50] text-center mb-6">
         Wöchentliche Strompreise 2025
       </h1>
       <div className="bg-transparent p-4 rounded-lg">
@@ -92,7 +92,7 @@ export default function WeeklyPriceChart() {
                   .filter((week) => week.average !== '–')
                   .map((week) => parseFloat(week.average)),
                 backgroundColor: 'rgba(0, 0, 0, 0)', // Transparente Füllung
-                borderColor: '#905fa4',
+                borderColor: '#88bf50',
                 borderWidth: 2,
                 fill: false, // Keine Füllung unter der Linie
                 tension: 0.1,
@@ -104,10 +104,10 @@ export default function WeeklyPriceChart() {
             plugins: {
               legend: {
                 position: 'top',
-                labels: { color: '#4372b7', font: { size: 12, weight: '500' } },
+                labels: { color: '#88bf50', font: { size: 12, weight: '500' } },
               },
               tooltip: {
-                backgroundColor: '#905fa4',
+                backgroundColor: '#88bf50',
                 titleColor: '#fafafa',
                 bodyColor: '#fafafa',
               },
