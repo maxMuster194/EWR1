@@ -162,7 +162,7 @@ const styles = `
     width: 100%;
     box-sizing: border-box;
     color: #FFFFFF;
-    margin-bottom: 20px; /* Etwa 2cm Abstand unter dem Chart */
+    margin-bottom: 0px; /* Etwa 2cm Abstand unter dem Chart */
   }
   .chart .flex.min-w-[200px] {
     background-color: #1D3050;
@@ -264,12 +264,20 @@ const styles = `
     font-size: 18px;
     color: #FFFFFF;
   }
+  .dynamischer-preis-container {
+    border-radius: 8px;
+    padding: 4px;
+    max-height: 500px; /* Set maximum height to 500px for desktop */
+  }
   @media (max-width: 768px) {
     .main {
       gap: 4px; /* Noch kleinere Lücke auf mobilen Geräten */
     }
     .content, .chart {
       padding: 4px; /* Reduzierte Padding für mobile Geräte */
+    }
+    .dynamischer-preis-container {
+      max-height: 470px; /* Set maximum height to 450px for mobile */
     }
   }
 `;
@@ -301,44 +309,42 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
         </div>
 
         <div className="main flex flex-col gap-4">
-          <div className="content p-4 rounded-xl flex flex-col">
-            <div className="flex flex-col gap-2 mt-2">
-              <div className="flex flex-col gap-2 rounded-xl p-4">
-                <p className="text-[#FFFFFF] text-2xl font-bold leading-normal">Preisrechner dynamische Tarife <a
+          <div className="dynamischer-preis-container">
+            <DynamischerPreis data={data} uniqueDates={uniqueDates} todayBerlin={todayBerlin} error={error} />
+          </div>
+
+          <div className="flex flex-col gap-2 mt-2">
+            <div className="flex flex-col gap-2 rounded-xl p-4">
+              <div className="flex items-center gap-2">
+                <p className="text-[#FFFFFF] text-2xl font-bold leading-normal">Preisrechner dynamische Tarife</p>
+                <a
                   href="/test15/rechner"
                   className="rechner-button inline-flex items-center justify-center gap-1 px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white text-lg font-medium leading-normal"
                 >
                   <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '19px' }} />
                   Zum Rechner
-                </a></p>
-                <p className="text-[#FFFFFF] text-base font-normal leading-normal">
-                  <p>Jetzt in wenigen Schritten herausfinden, ob sich ein dynamischer Stromtarif für Ihren Haushalt lohnt.</p>
-                  <p>Wir vergleichen in diesem Tool den reinen Energiepreis. Steuern, Netzentgelte sowie alle weiteren Abgaben sind in den Vergleichen abgezogen.</p>
-                </p>
-                <p className="text-[#FFFFFF] text-2xl font-bold leading-normal">Was ist ein dynamischer Stromtarif?</p>
-                <p className="text-[#FFFFFF] text-base font-normal leading-normal">
-                  Dynamische Stromtarife sind flexible Strompreise, 
-                  die sich in Echtzeit oder stündlich an den aktuellen Börsenstrompreisen orientieren.
-                  Im Gegensatz zu festen Tarifen variiert der Preis je nach Angebot und Nachfrage – 
-                  zum Beispiel ist Strom nachts oder bei viel Wind und Sonne oft günstiger.
-                </p>
-                <a
-                  href=""
-                  className="kontakt-button inline-flex items-center justify-center gap-1 px-4 py-1.5 mt-2 rounded-xl bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white text-lg font-medium leading-normal w-fit"
-                >
-                  <FontAwesomeIcon icon={faComment} style={{ color: '#FFFFFF', fontSize: '19px' }} />
-                  Kontakt
                 </a>
               </div>
-            </div>
-          </div>
-          <div className="chart p-2 rounded-xl flex flex-col">
-            <div className="flex flex-col gap-0 mt-0"> {/* Reduzierte gap und mt auf 0 */}
-              <div className="flex min-w-[220px] flex-col gap-0 rounded-xl p-0"> {/* Reduzierte gap und p auf 0 */}
-                <div className="flex flex-col gap-0 py-0"> {/* Reduzierte gap und py auf 0, min-h entfernt */}
-                  <DynamischerPreis data={data} uniqueDates={uniqueDates} todayBerlin={todayBerlin} error={error} />
-                </div>
-              </div>
+              <p className="text-[#FFFFFF] text-base font-normal leading-normal">
+                Jetzt in wenigen Schritten herausfinden, ob sich ein dynamischer Stromtarif für Ihren Haushalt lohnt.
+              </p>
+              <p className="text-[#FFFFFF] text-base font-normal leading-normal">
+                Wir vergleichen in diesem Tool den reinen Energiepreis. Steuern, Netzentgelte sowie alle weiteren Abgaben sind in den Vergleichen abgezogen.
+              </p>
+              <p className="text-[#FFFFFF] text-2xl font-bold leading-normal">Was ist ein dynamischer Stromtarif?</p>
+              <p className="text-[#FFFFFF] text-base font-normal leading-normal">
+                Dynamische Stromtarife sind flexible Strompreise, 
+                die sich in Echtzeit oder stündlich an den aktuellen Börsenstrompreisen orientieren.
+                Im Gegensatz zu festen Tarifen variiert der Preis je nach Angebot und Nachfrage – 
+                zum Beispiel ist Strom nachts oder bei viel Wind und Sonne oft günstiger.
+              </p>
+              <a
+                href=""
+                className="kontakt-button inline-flex items-center justify-center gap-1 px-4 py-1.5 mt-2 rounded-xl bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white text-lg font-medium leading-normal w-fit"
+              >
+                <FontAwesomeIcon icon={faComment} style={{ color: '#FFFFFF', fontSize: '19px' }} />
+                Kontakt
+              </a>
             </div>
           </div>
         </div>
@@ -380,23 +386,23 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
         </div>
 
         <nav className="bottom-nav">
-          <a href="/test15/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white active">
+          <a href="/Amberg2/mobile/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white active">
             <FontAwesomeIcon icon={faHouse} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Home</p>
           </a>
-          <a href="/test15/preise" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+          <a href="/Amberg2/mobile/preise" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
             <FontAwesomeIcon icon={faChartLine} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Preis</p>
           </a>
-          <a href="/test15/rechner" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+          <a href="/Amberg2/mobile/rechner" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
             <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Rechner</p>
           </a>
-          <a href="/test15/details" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+          <a href="/Amberg2/mobile/details" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
             <FontAwesomeIcon icon={faFileLines} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Detail</p>
           </a>
-          <a href="/test15/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+          <a href="/Amberg2/mobile/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
             <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
           </a>

@@ -5,19 +5,19 @@ const videos = [
     id: 1,
     title: 'Startseite',
     description: 'In diesem Video erhalten Sie einen kurzen Einblick in die Startseite des Dynasmchen Preis-Tools und die wichtigsten Funktionen der Anwendung',
-    src: '../videos/Homeseite.mp4', // Pfad relativ zum public-Ordner
+    src: '/videos/Homeseite.mp4', // Absolute path from public/videos
   },
   {
     id: 2,
     title: 'Preiseseite',
     description: 'In diesem Video erhalten Sie einen kurzen Einblick in die Preisseite des Dynasmchen Preis-Tools und die wichtigsten Funktionen der Anwendung.',
-    src: '../videos/Preiseseite.mp4', // Pfad relativ zum public-Ordner
+    src: '/videos/Preiseseite.mp4', // Absolute path from public/videos
   },
   {
     id: 3,
-    title: 'Rechnerseite ',
+    title: 'Rechnerseite',
     description: 'In diesem Video erhalten Sie einen kurzen Einblick in die Rechnerseite des Dynasmchen Preis-Tools und die wichtigsten Funktionen der Anwendung.',
-    src: '../videos/Rechnerseite.mp4', // Pfad relativ zum public-Ordner
+    src: '/videos/Rechnerseite.mp4', // Absolute path from public/videos
   },
 ];
 

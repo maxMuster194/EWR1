@@ -1,12 +1,14 @@
 import mongoose from 'mongoose';
-import GermanyMin15Prices from '../../models/min15Prices';
+import GermanyMin15Prices from '@/models/min15Prices';
 import { useState, useEffect, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import DatePicker from 'react-datepicker'; // Import react-datepicker
 import 'react-datepicker/dist/react-datepicker.css'; // Import CSS for datepicker
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import LoadingScreen from '../loading/Loadingscreen';
+import LoadingScreen from '@/pages/loading/Amberg';
+
+
 
 // Dynamisch den Line-Chart importieren, um SSR zu vermeiden
 const Line = dynamic(() => import('react-chartjs-2').then((mod) => mod.Line), {
@@ -1756,14 +1758,6 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
     },
   };
 
-
-
-
-
-
-
-
-
   
   // Überprüfen, ob Wärmepumpe aktiv ist
   const isWaermepumpeActive = Object.keys(verbraucherDaten).some(
@@ -1902,7 +1896,7 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
     : [];
   console.log('Filtered data:', filteredData); // Debug log
 
-
+  
 
   return (
     <>
@@ -1919,7 +1913,7 @@ html {
 
 body {
   font-family: 'Inter', Arial, sans-serif;
-  background: transparent;
+  background: #1D3050;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -2616,6 +2610,7 @@ body {
 
 .summary-container {
   margin-top: 24px;
+  margin-bottom: 40px;
   background: transparent;
   padding: 16px;
   border-radius: 10px;
@@ -2737,13 +2732,73 @@ table, th, td {
   outline: none;
   border-color: #905fa4;
   box-shadow: 0 0 0 2px rgba(144, 95, 164, 0.2);
-}`}</style>
+}
+
+
+.bottom-nav {
+  display: none;
+}
+@media (max-width: 767px) {
+  .bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #1D3050;
+    border-top: 1px solid #D1D5DB;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 0;
+    z-index: 1000;
+  }
+  .bottom-nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    border-radius: 12px;
+    color: #FFFFFF;
+    text-decoration: none;
+    transition: background 0.2s;
+    flex: 1;
+    text-align: center;
+    background-color: #1D3050;
+  }
+  .bottom-nav a:hover {
+    background: linear-gradient(90deg, #4372b7, #905fa4);
+  }
+  .bottom-nav a.active {
+    background: linear-gradient(90deg, #4372b7, #905fa4);
+  }
+  .bottom-nav a.active .fa-house {
+    color: #FFFFFF !important;
+  }
+  .bottom-nav a p {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 500;
+    margin: 0;
+    color: #FFFFFF;
+  }
+  .bottom-nav a svg {
+    font-size: 18px;
+    color: #FFFFFF;
+  }
+}
+`}</style>
 
 
 <div className="layout relative bg-transparent" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
   <div className="app-container">
+  <h2 className="report-title">Detail-Rechner</h2>
+  <div className="chart-container">
+          <Line data={chartData} options={chartOptions} />
+        </div>
+
     <div className="calculation-report">
-      <h2 className="report-title">Detail-Rechner</h2>
+    
       <div className="report-content">
         <div className="input-container-html">
           <label htmlFor="strompreis">Strompreis (Ct/kWh):</label>
@@ -2841,7 +2896,7 @@ table, th, td {
                     <span>Info</span>
                     {menu.id !== 'waermepumpe' && <span>Watt/h</span>}
                     {menu.id === 'waermepumpe' && <span>kW</span>}
-                    <span>Normaltarif/ Jahr</span>
+                    <span>Normaltarif/Jahr</span>
                     {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto' || menu.id === 'waermepumpe') && <span></span>}
                   </li>
 
@@ -3334,20 +3389,7 @@ table, th, td {
         </div>
       </div>
     </div>
-    <div className="diagrams-container">
-      <div className="diagram">
-        <h3 className="diagram-title">Stromverbrauch pro Stunde</h3>
-        <div className="chart-container">
-          <Line data={chartData} options={chartOptions} />
-        </div>
-      </div>
-      <div className="diagram">
-        <h3 className="diagram-title">Ergebnis pro Stunde</h3>
-        <div className="chart-container">
-          <Line data={chartDataKosten} options={chartOptionsKosten} />
-        </div>
-      </div>
-    </div>
+    
     {showModal && (
       <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
         <div className="modal-content relative bg-white rounded-lg p-6 w-full max-w-md">
@@ -3476,8 +3518,33 @@ table, th, td {
     )}
   </div>
 </div>
-        
-    
+
+
+
+
+
+<nav className="bottom-nav">
+        <a href="/Amberg2/mobile/startseite" >
+          <FontAwesomeIcon icon={faHouse} />
+          <p>Home</p>
+        </a>
+        <a href="/Amberg2/mobile/preise">
+          <FontAwesomeIcon icon={faChartLine} />
+          <p>Preis</p>
+        </a>
+        <a href="/Amberg2/mobile/rechner">
+          <FontAwesomeIcon icon={faCalculator} />
+          <p>Rechner</p>
+        </a>
+        <a href="/Amberg2/mobile/details"className="active">
+          <FontAwesomeIcon icon={faFileLines} />
+          <p>Detail</p>
+        </a>
+        <a href="/Amberg2/mobile/hilfe">
+          <FontAwesomeIcon icon={faQuestionCircle} />
+          <p>Hilfe</p>
+        </a>
+      </nav>
         </>
       );
     }
