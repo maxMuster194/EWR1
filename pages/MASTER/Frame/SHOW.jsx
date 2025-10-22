@@ -81,7 +81,7 @@ const IframeNavigation = ({
           }
         `}
       </style>
-      <div className="w-[1100px] h-[860px] flex flex-col rounded-xl shadow-2xl overflow-hidden backdrop-blur-md">
+      <div className="w-[1200px] h-[860px] flex flex-col rounded-xl shadow-2xl overflow-hidden backdrop-blur-md">
         {/* Menüleiste */}
         <div
           className="flex text-white h-[60px] items-center justify-around font-bold text-base cursor-pointer"

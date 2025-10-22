@@ -629,6 +629,7 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
   const [agb, setAgb] = useState(false);
   const [werbung, setWerbung] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
 
 
@@ -755,6 +756,13 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
     }
     return () => clearInterval(timer);
   }, [cooldown]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -1896,7 +1904,9 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
     : [];
   console.log('Filtered data:', filteredData); // Debug log
 
-  
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <>
