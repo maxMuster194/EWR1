@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle, faComment, faBackward, faClock } from '@fortawesome/free-solid-svg-icons';
 import mongoose from 'mongoose';
 import GermanyMin15Prices from '/models/min15Prices'; // Adjust path as needed
-import DynamischerPreis from '@/pages/Amberg2/dypreis1';
-import LoadingScreen from '@/pages/loading/Amberg';
+import DynamischerPreis from '@/pages/MASTER/Frame/dypreis1';
+import LoadingScreen from '@/pages/loading/Loadingscreen';
 
 // MongoDB-Verbindung
 const mongoURI = process.env.MONGO_URI || 'mongodb+srv://max:Julian1705@strom.vm0dp8f.mongodb.net/?retryWrites=true&w=majority&appName=Strom';
@@ -67,7 +67,7 @@ const styles = `
     flex-direction: column;
     gap: 8px; /* Reduzierte Lücke */
     padding-bottom: 60px;
-    background-color: #1D3050;
+    background-color: 	#757474;
     color: #FFFFFF;
     min-height: 100vh;
     font-family: 'Manrope, "Noto Sans", sans-serif';
@@ -81,7 +81,7 @@ const styles = `
   .top-box {
     order: 1;
     position: relative;
-    background-color: #1D3050;
+    background-color: 	#757474;
   }
   .top-box .button-container {
     top: 8px;
@@ -93,7 +93,7 @@ const styles = `
     font-size: 12px;
     padding: 6px 10px;
     border-radius: 8px;
-    background-color: #1D3050;
+    background-color: #757474;
     color: #FFFFFF;
     text-decoration: none;
     font-weight: 500;
@@ -104,16 +104,16 @@ const styles = `
     gap: 8px;
   }
   .top-box .button-container a:hover {
-    background: linear-gradient(90deg, #4372b7, #905fa4);
+    background: linear-gradient(90deg, #063d37, #063d37);
   }
   .top-box .button-container a.active {
-    background: linear-gradient(90deg, #4372b7, #905fa4);
+    background: linear-gradient(90deg, #063d37, #063d37);
     color: #FFFFFF;
   }
   .top-box .button-container a .tooltip {
     visibility: hidden;
     width: 100px;
-    background-color: #1D3050;
+    background-color: #757474;
     color: #FFFFFF;
     text-align: center;
     border-radius: 6px;
@@ -138,11 +138,11 @@ const styles = `
   .main {
     flex-direction: column;
     order: 2;
-    background-color: #1D3050;
+    background-color: #757474;
   }
   .content {
     order: 2;
-    background-color: #1D3050;
+    background-color: #757474;
     color: #FFFFFF;
   }
   .content p {
@@ -150,15 +150,15 @@ const styles = `
   }
   .content a.rechner-button,
   .content a.kontakt-button {
-    background: linear-gradient(90deg, #4372b7, #905fa4);
+    background: linear-gradient(90deg, #063d37, #063d37);
   }
   .content a.rechner-button:hover,
   .content a.kontakt-button:hover {
-    background: linear-gradient(90deg, #4372b7, #905fa4);
+    background: linear-gradient(90deg, #063d37, #063d37);
   }
   .chart {
     order: 1;
-    background-color: #1D3050;
+    background-color: #757474;
     padding: 4px 4px 0 4px; /* Reduziertes Padding unten auf 0 */
     width: 100%;
     box-sizing: border-box;
@@ -166,7 +166,7 @@ const styles = `
     margin-bottom: 0px; /* Etwa 2cm Abstand unter dem Chart */
   }
   .chart .flex.min-w-[200px] {
-    background-color: #1D3050;
+    background-color: #757474;
     border: none;
     box-shadow: none;
     width: 100%;
@@ -179,7 +179,7 @@ const styles = `
   }
   .bottom-boxes {
     order: 4;
-    background-color: #1D3050;
+    background-color: #757474;
     color: #FFFFFF;
   }
   .bottom-boxes p, .bottom-boxes li, .bottom-boxes span {
@@ -190,16 +190,16 @@ const styles = `
   }
   .extra-box-1 {
     order: 5;
-    background-color: #1D3050;
+    background-color: #757474;
     color: #FFFFFF;
   }
   .extra-box-2 {
     order: 6;
-    background-color: #1D3050;
+    background-color: #757474;
     color: #FFFFFF;
   }
   .extra-box-2 .inner-box {
-    background-color: #1D3050;
+    background-color: #757474;
     color: #FFFFFF;
     border-color: #FFFFFF;
   }
@@ -207,15 +207,15 @@ const styles = `
     color: #FFFFFF;
   }
   .extra-box-2 .inner-box a.rechner-button {
-    background: linear-gradient(90deg, #4372b7, #905fa4);
+    background: linear-gradient(90deg, #063d37, #063d37);
   }
   .extra-box-2 .inner-box a.rechner-button:hover {
-    background: linear-gradient(90deg, #4372b7, #905fa4);
+    background: linear-gradient(90deg, #063d37, #063d37);
   }
   .footer {
     padding: 12px;
     order: 7;
-    background: linear-gradient(90deg, #4372b7, #905fa4);
+    background: linear-gradient(90deg, #063d37, #063d37);
   }
   .bottom-nav {
     display: flex;
@@ -223,7 +223,7 @@ const styles = `
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: #1D3050;
+    background-color:rgb(66, 66, 66);
     border-top: 1px solid #D1D5DB;
     justify-content: space-around;
     align-items: center;
@@ -243,13 +243,13 @@ const styles = `
     transition: background 0.2s;
     flex: 1;
     text-align: center;
-    background-color: #1D3050;
+    background-color: rgb(66, 66, 66);
   }
   .bottom-nav a:hover {
-    background: linear-gradient(90deg, #4372b7, #905fa4);
+    background: linear-gradient(90deg, #063d37, #063d37);
   }
   .bottom-nav a.active {
-    background: linear-gradient(90deg, #4372b7, #905fa4);
+    background: linear-gradient(90deg, #063d37, #063d37);
   }
   .bottom-nav a.active .fa-house {
     color: #FFFFFF !important;
@@ -328,7 +328,7 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
                 <p className="text-[#FFFFFF] text-2xl font-bold leading-normal">Preisrechner dynamische Tarife</p>
                 <a
                   href="/test15/rechner"
-                  className="rechner-button inline-flex items-center justify-center gap-1 px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white text-lg font-medium leading-normal"
+                  className="rechner-button inline-flex items-center justify-center gap-1 px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#063d37] to-[#063d37] text-white text-lg font-medium leading-normal"
                 >
                   <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '19px' }} />
                   Zum Rechner
@@ -349,7 +349,7 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
               </p>
               <a
                 href=""
-                className="kontakt-button inline-flex items-center justify-center gap-1 px-4 py-1.5 mt-2 rounded-xl bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white text-lg font-medium leading-normal w-fit"
+                className="kontakt-button inline-flex items-center justify-center gap-1 px-4 py-1.5 mt-2 rounded-xl bg-gradient-to-r from-[#063d37] to-[#063d37] text-white text-lg font-medium leading-normal w-fit"
               >
                 <FontAwesomeIcon icon={faComment} style={{ color: '#FFFFFF', fontSize: '19px' }} />
                 Kontakt
