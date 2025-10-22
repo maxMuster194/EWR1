@@ -2077,7 +2077,7 @@ body {
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
   overflow-y: auto;
   max-height: calc(100vh - 64px);
-  scrollbar-width: no;
+  scrollbar-width: thin;
   scrollbar-color: #063d37 #e5e7eb;
 }
 
@@ -2746,103 +2746,115 @@ table, th, td {
 
 
  .bottom-nav {
-  display: flex;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: rgb(66, 66, 66);
-  border-top: 1px solid #D1D5DB;
-  justify-content: space-around;
-  align-items: center;
-  padding: 8px 0;
-  z-index: 1000;
-  order: 8;
-  border-radius: 12px;
-}
-
-.bottom-nav a {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 8px;
-  border-radius: 12px;
-  color: #FFFFFF;
-  text-decoration: none;
-  transition: background 0.2s;
-  flex: 1;
-  text-align: center;
-  background-color: rgb(66, 66, 66);
-}
-
-.bottom-nav a:hover {
-  background: linear-gradient(90deg, #063d37, #063d37);
-}
-
-.bottom-nav a.active {
-  background: linear-gradient(90deg, #063d37, #063d37);
-}
-
-.bottom-nav a.active .fa-house {
-  color: #FFFFFF !important;
-}
-
-.bottom-nav a p {
-  text-align: center;
-  font-size: 10px;
-  font-weight: 500;
-  margin: 0;
-  color: #FFFFFF;
-}
-
-.bottom-nav a svg {
-  font-size: 18px;
-  color: #FFFFFF;
-}
-
-.dynamischer-preis-container {
-  border-radius: 8px;
-  padding: 4px;
-  max-height: 500px;
-}
-
-@media (max-width: 768px) {
-  .main {
-    gap: 4px;
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color:rgb(66, 66, 66);
+    border-top: 1px solid #D1D5DB;
+    justify-content: space-around;
+    align-items: center;
+    padding: 8px 0;
+    z-index: 1000;
+    order: 8;
+    border-radius: 12px; /* Fügt abgerundete Ecken hinzu */
   }
-  .content,
-  .chart {
-    padding: 4px;
+  .bottom-nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    border-radius: 12px;
+    color: #FFFFFF;
+    text-decoration: none;
+    transition: background 0.2s;
+    flex: 1;
+    text-align: center;
+    background-color:rgb(66, 66, 66);
+  }
+  .bottom-nav a:hover {
+    background: linear-gradient(90deg, #063d37, #063d37);
+  }
+  .bottom-nav a.active {
+    background: linear-gradient(90deg, #063d37, #063d37);
+  }
+  .bottom-nav a.active .fa-house {
+    color: #FFFFFF !important;
+  }
+  .bottom-nav a p {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 500;
+    margin: 0;
+    color: #FFFFFF;
+  }
+  .bottom-nav a svg {
+    font-size: 18px;
+    color: #FFFFFF;
   }
   .dynamischer-preis-container {
-    max-height: 470px;
+    border-radius: 8px;
+    padding: 4px;
+    max-height: 500px; /* Set maximum height to 500px for desktop */
   }
+@media (max-width: 768px) {
+  .main {
+    gap: 4px; /* Noch kleinere Lücke auf mobilen Geräten */
+  }
+  .content, .chart {
+    padding: 4px; /* Reduzierte Padding für mobile Geräte */
+  }
+  .dynamischer-preis-container {
+    max-height: 470px; /* Set maximum height to 450px for mobile */
+  }
+  /* Scrollbar verstecken */
   .layout {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    scrollbar-width: none; /* Für Firefox */
+    -ms-overflow-style: none; /* Für Internet Explorer und ältere Edge-Versionen */
   }
   .layout::-webkit-scrollbar {
-    display: none;
+    display: none; /* Für Chrome, Safari und Chromium-basierte Edge */
   }
 }
 `}</style>
 
-
+<div>
+<nav className="bottom-nav">
+          <a href="/MASTER/Mobile/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#063d37] hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white ">
+            <FontAwesomeIcon icon={faHouse} style={{ color: '#FFFFFF', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Home</p>
+          </a>
+          <a href="/MASTER/Mobile/preise" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#063d37] hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white">
+            <FontAwesomeIcon icon={faChartLine} style={{ color: '#FFFFFF', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Preis</p>
+          </a>
+          <a href="/MASTER/Mobile/rechner" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#063d37] hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white">
+            <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Rechner</p>
+          </a>
+          <a href="/MASTER/Mobile/details" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#063d37] hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white active">
+            <FontAwesomeIcon icon={faFileLines} style={{ color: '#FFFFFF', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Detail</p>
+          </a>
+          <a href="/MASTER/Mobile/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#063d37] hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white">
+            <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#FFFFFF', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
+          </a>
+        </nav>
+</div>
 
 
 <div className="layout relative bg-transparent" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
-  <div className="app-container flex flex-col min-h-screen">
-    <h2 className="report-title">Detail-Rechner</h2>
-    <div className="chart-container">
-      <Line data={chartData} options={chartOptions} />
-    </div>
+  <div className="app-container">
+  <h2 className="report-title">Detail-Rechner</h2>
+  <div className="chart-container">
+          <Line data={chartData} options={chartOptions} />
+        </div>
 
-
-
-
-
-    <div className="calculation-report flex-grow">
+    <div className="calculation-report">
+    
       <div className="report-content">
         <div className="input-container-html">
           <label htmlFor="strompreis">Strompreis (Ct/kWh):</label>
@@ -3433,33 +3445,7 @@ table, th, td {
         </div>
       </div>
     </div>
-  
-   
-
-    {/* Bottom Navigation */}
-    <nav className="bottom-nav fixed bottom-0 left-0 right-0 bg-[#063d37] flex justify-around items-center py-2 shadow-lg">
-      <a href="/MASTER/Mobile/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white">
-        <FontAwesomeIcon icon={faHouse} style={{ color: '#FFFFFF', fontSize: '18px' }} />
-        <p className="text-white text-xs font-medium leading-normal">Home</p>
-      </a>
-      <a href="/MASTER/Mobile/preise" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white">
-        <FontAwesomeIcon icon={faChartLine} style={{ color: '#FFFFFF', fontSize: '18px' }} />
-        <p className="text-white text-xs font-medium leading-normal">Preis</p>
-      </a>
-      <a href="/MASTER/Mobile/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white">
-        <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '18px' }} />
-        <p className="text-white text-xs font-medium leading-normal">Rechner</p>
-      </a>
-      <a href="/MASTER/Mobile/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#4372b7] text-white active">
-        <FontAwesomeIcon icon={faFileLines} style={{ color: '#FFFFFF', fontSize: '18px' }} />
-        <p className="text-white text-xs font-medium leading-normal">Detail</p>
-      </a>
-      <a href="/MASTER/Mobile/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white">
-        <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#FFFFFF', fontSize: '18px' }} />
-        <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
-      </a>
-    </nav>
-
+    
     {showModal && (
       <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
         <div className="modal-content relative bg-white rounded-lg p-6 w-full max-w-md">
@@ -3586,8 +3572,8 @@ table, th, td {
         </div>
       </div>
     )}
-  </div>
-</div>
+   </div>
+   </div>
 
         </>
       );
