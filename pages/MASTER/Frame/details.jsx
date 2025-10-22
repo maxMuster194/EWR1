@@ -1,12 +1,12 @@
 import mongoose from 'mongoose';
-import GermanyMin15Prices from '../../models/min15Prices';
+import GermanyMin15Prices from '@/models/min15Prices';
 import { useState, useEffect, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import DatePicker from 'react-datepicker'; // Import react-datepicker
 import 'react-datepicker/dist/react-datepicker.css'; // Import CSS for datepicker
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import LoadingScreen from '../loading/Loadingscreen';
+import LoadingScreen from '@/pages/loading/Loadingscreen';
 
 // Dynamisch den Line-Chart importieren, um SSR zu vermeiden
 const Line = dynamic(() => import('react-chartjs-2').then((mod) => mod.Line), {
