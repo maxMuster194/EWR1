@@ -6,7 +6,7 @@ import DatePicker from 'react-datepicker'; // Import react-datepicker
 import 'react-datepicker/dist/react-datepicker.css'; // Import CSS for datepicker
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import LoadingScreen from '@/pages/loading/Amberg';
+import LoadingScreen from '@/pages/loading/Loadingscreen';
 
 
 
@@ -1561,8 +1561,8 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
         label: 'Stromverbrauch ohne Wärmepumpe (kW)',
         data: hourlyData.flatMap(d => Array(4).fill(d.total - d.waermepumpe)),
         fill: false,
-        borderColor: '#4372b7',
-        backgroundColor: '#4372b7',
+        borderColor: '#063d37',
+        backgroundColor: '#063d37',
         tension: 0.1,
         yAxisID: 'y',
         // Linie dünner machen
@@ -1570,8 +1570,8 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
     
       // Punkte anzeigen
       pointRadius: 1,       // Größe der Punkte
-      pointBackgroundColor: '#4372b7',  // Punktfarbe (innen)
-      pointBorderColor: '#4372b7',      // Punktfarbe (außen)
+      pointBackgroundColor: '#063d37',  // Punktfarbe (innen)
+      pointBorderColor: '#063d37',      // Punktfarbe (außen)
       pointBorderWidth: 1,
 
       },
@@ -1596,8 +1596,8 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
         label: 'Dynamischer Preis (Ct/kWh)',
         data: chartConvertedValues,
         fill: false,
-        borderColor: '#905fa4',
-        backgroundColor: '#905fa4',
+        borderColor: '#88bf50',
+        backgroundColor: '#88bf50',
         tension: 0.1,
         yAxisID: 'y1',
         // Linie dünner machen
@@ -1605,8 +1605,8 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
     
       // Punkte anzeigen
       pointRadius: 1,       // Größe der Punkte
-      pointBackgroundColor: '#905fa4',  // Punktfarbe (innen)
-      pointBorderColor: '#905fa4',      // Punktfarbe (außen)
+      pointBackgroundColor: '#88bf50',  // Punktfarbe (innen)
+      pointBorderColor: '#88bf50',      // Punktfarbe (außen)
       pointBorderWidth: 1,
       },
     ],
@@ -1680,16 +1680,16 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
         label: 'Kosten Dynamischer Tarif  (Ct/h)',
         data: hourlyData.flatMap((d, h) => chartConvertedValues.slice(h*4, (h+1)*4).map(price => (d.total - d.waermepumpe) * price)),
         fill: false,
-        borderColor: '#905fa4',
-        backgroundColor: '#905fa4',
+        borderColor: '#88bf50',
+        backgroundColor: '#88bf50',
         tension: 0.1,
         // Linie dünner machen
       borderWidth: 1,
     
       // Punkte anzeigen
       pointRadius: 1,       // Größe der Punkte
-      pointBackgroundColor: '#905fa4',  // Punktfarbe (innen)
-      pointBorderColor: '#905fa4',      // Punktfarbe (außen)
+      pointBackgroundColor: '#88bf50',  // Punktfarbe (innen)
+      pointBorderColor: '#88bf50',      // Punktfarbe (außen)
       pointBorderWidth: 1,
       },
       {
@@ -1712,16 +1712,16 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
         label: 'Kosten Fester Tarif (Ct/h)',
         data: hourlyData.flatMap(d => Array(4).fill(d.total * fixedPrice)),
         fill: false,
-        borderColor: '#4372b7',
-        backgroundColor: '#4372b7',
+        borderColor: '#063d37',
+        backgroundColor: '#063d37',
         tension: 0.1,
         // Linie dünner machen
       borderWidth: 1,
     
       // Punkte anzeigen
       pointRadius: 1,       // Größe der Punkte
-      pointBackgroundColor: '#4372b7',  // Punktfarbe (innen)
-      pointBorderColor: '#4372b7',      // Punktfarbe (außen)
+      pointBackgroundColor: '#063d37',  // Punktfarbe (innen)
+      pointBorderColor: '#063d37',      // Punktfarbe (außen)
       pointBorderWidth: 1,
       },
     ],
@@ -1923,7 +1923,7 @@ html {
 
 body {
   font-family: 'Inter', Arial, sans-serif;
-  background: #1D3050;
+  background: #757474;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -1994,7 +1994,7 @@ body {
 }
 
 .discount-switch-input:checked + .discount-switch-slider {
-  background-color: #905fa4;
+  background-color: #063d37;
 }
 
 .discount-switch-input:checked + .discount-switch-slider:before {
@@ -2078,7 +2078,7 @@ body {
   overflow-y: auto;
   max-height: calc(100vh - 64px);
   scrollbar-width: thin;
-  scrollbar-color: #905fa4 #e5e7eb;
+  scrollbar-color: #063d37 #e5e7eb;
 }
 
 .calculation-report::-webkit-scrollbar {
@@ -2091,7 +2091,7 @@ body {
 }
 
 .calculation-report::-webkit-scrollbar-thumb {
-  background: #905fa4;
+  background: #063d37;
   border-radius: 4px;
 }
 
@@ -2108,7 +2108,7 @@ body {
   overflow-y: auto;
   max-height: calc(100vh - 64px);
   scrollbar-width: thin;
-  scrollbar-color: #905fa4 #e5e7eb;
+  scrollbar-color: #063d37 #e5e7eb;
   background: transparent;
 }
 
@@ -2122,7 +2122,7 @@ body {
 }
 
 .diagrams-container::-webkit-scrollbar-thumb {
-  background: #905fa4;
+  background: #063d37;
   border-radius: 4px;
 }
 
@@ -2163,14 +2163,14 @@ body {
   align-items: center;
   padding: 16px;
   cursor: pointer;
-  background: linear-gradient(90deg, #7a4d8b, #905fa4, #4372b7);
+  background: linear-gradient(90deg, #063d37, #063d37, #063d37);
   border-radius: 12px;
   color: #ffffff;
   transition: background 0.3s ease;
 }
 
 .menu-header:hover {
-  background: linear-gradient(90deg, #6a437b, #7a4d8b, #355f9a);
+  background: linear-gradient(90deg, #063d37, #063d37, #063d37);
 }
 
 .menu-header span {
@@ -2210,7 +2210,7 @@ body {
 .menu-content input:focus,
 .menu-content select:focus {
   outline: none;
-  border-color: #905fa4;
+  border-color: #063d37;
   box-shadow: 0 0 0 3px rgba(144, 95, 164, 0.3);
 }
 
@@ -2259,7 +2259,7 @@ body {
 .input-container-html input:focus,
 .input-container-html select:focus {
   outline: none;
-  border-color: #905fa4;
+  border-color: #063d37;
   box-shadow: 0 0 0 3px rgba(144, 95, 164, 0.3);
 }
 
@@ -2322,7 +2322,7 @@ body {
 .checkbox-group-label input {
   width: 16px;
   height: 16px;
-  accent-color: #905fa4;
+  accent-color: #063d37;
   cursor: pointer;
 }
 
@@ -2335,7 +2335,7 @@ body {
 .info-field .tooltip {
   visibility: hidden;
   position: absolute;
-  background: #905fa4;
+  background: #063d37;
   font-size: 0.75rem;
   padding: 4px 6px;
   border-radius: 3px;
@@ -2367,7 +2367,7 @@ body {
 
 .input-group input.watt-input:focus {
   outline: none;
-  border-color: #905fa4;
+  border-color: #063d37;
   box-shadow: 0 0 0 2px rgba(144, 95, 164, 0.2);
 }
 
@@ -2378,7 +2378,7 @@ body {
 }
 
 .settings-field {
-  background: linear-gradient(90deg, #905fa4, #4372b7);
+  background: linear-gradient(90deg, #063d37, #063d37);
   padding: 4px 8px;
   border-radius: 3px;
   font-size: 0.875rem;
@@ -2388,7 +2388,7 @@ body {
 }
 
 .settings-field:hover {
-  background: linear-gradient(90deg, #7a4d8b, #355f9a);
+  background: linear-gradient(90deg, #063d37, #063d37);
   transform: scale(1.05);
 }
 
@@ -2518,7 +2518,7 @@ body {
 
 .settings-container select:focus {
   outline: none;
-  border-color: #905fa4;
+  border-color: #063d37;
   box-shadow: 0 0 0 3px rgba(144, 95, 164, 0.3);
 }
 
@@ -2537,7 +2537,7 @@ body {
 .radio-group-settings input {
   width: 16px;
   height: 16px;
-  accent-color: #905fa4;
+  accent-color: #063d37;
   cursor: pointer;
 }
 
@@ -2548,7 +2548,7 @@ body {
 }
 
 .add-option-button {
-  background: linear-gradient(90deg, #905fa4, #4372b7);
+  background: linear-gradient(90deg, #063d37, #063d37);
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 0.875rem;
@@ -2598,12 +2598,12 @@ body {
 .new-option-input:focus,
 .new-option-watt:focus {
   outline: none;
-  border-color: #905fa4;
+  border-color: #063d37;
   box-shadow: 0 0 0 3px rgba(144, 95, 164, 0.3);
 }
 
 .save-option-button {
-  background: linear-gradient(90deg, #905fa4, #4372b7);
+  background: linear-gradient(90deg, #063d37, #063d37);
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 0.875rem;
@@ -2691,7 +2691,7 @@ table, th, td {
 
 .kw-input:focus {
   outline: none;
-  border-color: #905fa4;
+  border-color: #063d37;
   box-shadow: 0 0 0 2px rgba(144, 95, 164, 0.2);
 }
 
@@ -2709,7 +2709,7 @@ table, th, td {
 
 .dynamic-consumer-layout input[type="range"] {
   width: 100%;
-  accent-color: #905fa4;
+  accent-color: #063d37;
   margin-top: 4px;
 }
 
@@ -2721,7 +2721,7 @@ table, th, td {
 
   .dynamic-consumer-layout input[type="range"] {
     width: 100%;
-    accent-color: #905fa4;
+    accent-color: #063d37;
     margin-top: 4px;
   }
 }
@@ -2740,7 +2740,7 @@ table, th, td {
 
 .new-option-kw:focus {
   outline: none;
-  border-color: #905fa4;
+  border-color: #063d37;
   box-shadow: 0 0 0 2px rgba(144, 95, 164, 0.2);
 }
 
@@ -2751,7 +2751,7 @@ table, th, td {
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: #1D3050;
+    background-color:rgb(66, 66, 66);
     border-top: 1px solid #D1D5DB;
     justify-content: space-around;
     align-items: center;
@@ -2772,13 +2772,13 @@ table, th, td {
     transition: background 0.2s;
     flex: 1;
     text-align: center;
-    background-color: #1D3050;
+    background-color:rgb(66, 66, 66);
   }
   .bottom-nav a:hover {
-    background: linear-gradient(90deg, #4372b7, #905fa4);
+    background: linear-gradient(90deg, #063d37, #063d37);
   }
   .bottom-nav a.active {
-    background: linear-gradient(90deg, #4372b7, #905fa4);
+    background: linear-gradient(90deg, #063d37, #063d37);
   }
   .bottom-nav a.active .fa-house {
     color: #FFFFFF !important;
@@ -3414,7 +3414,7 @@ table, th, td {
           <div className="summary-item"> Wärmepumpe Jahreskosten (fixer Tarif): {zusammenfassung.waermepumpe} €</div>
           <div className="summary-item"> Wärmepumpe Jahreskosten (dynamischer Tarif): {zusammenfassung.waermepumpeDyn} €</div>
           <div className="summary-item"> Wärmepumpe Tageskosten (dynamischer Tarif): {zusammenfassung.dynselbstbestimmt} €</div>
-          <button className="download-button bg-[#4372b7] text-white py-2 px-4 rounded hover:bg-blue-700" onClick={handleDownloadClick}>
+          <button className="download-button bg-[#063d37] text-white py-2 px-4 rounded hover:bg-blue-700" onClick={handleDownloadClick}>
             Download PDF
           </button>
         </div>
@@ -3556,23 +3556,23 @@ table, th, td {
 
 
 <nav className="bottom-nav">
-          <a href="/Amberg2/mobile/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white ">
+          <a href="/MASTER/Mobile/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#063d37] hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white ">
             <FontAwesomeIcon icon={faHouse} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Home</p>
           </a>
-          <a href="/Amberg2/mobile/preise" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+          <a href="/MASTER/Mobile/preise" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#063d37] hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white">
             <FontAwesomeIcon icon={faChartLine} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Preis</p>
           </a>
-          <a href="/Amberg2/mobile/rechner" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+          <a href="/MASTER/Mobile/rechner" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#063d37] hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white">
             <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Rechner</p>
           </a>
-          <a href="/MASTER/Mobile/details" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white active">
+          <a href="/MASTER/Mobile/details" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#063d37] hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white active">
             <FontAwesomeIcon icon={faFileLines} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Detail</p>
           </a>
-          <a href="/Amberg2/mobile/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+          <a href="/MASTER/Mobile/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#063d37] hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white">
             <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
           </a>

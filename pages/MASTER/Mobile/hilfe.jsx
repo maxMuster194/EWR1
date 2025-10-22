@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faVideo } from '@fortawesome/free-solid-svg-icons';
-import VideosPage from '@/pages/Amberg2/video1';
-import LoadingScreen from '@/pages/loading/Amberg';
+import VideosPage from '@/pages/MASTER/Frame/video1';
+import LoadingScreen from '@/pages/loading/Loadingscreen';
 
 const Energiemanager = () => {
   const [loading, setLoading] = useState(true);
@@ -29,7 +29,7 @@ const Energiemanager = () => {
               "sidebar main" 1fr
               / 200px 1fr;
             min-height: 100vh;
-            background-color: #1D3050;
+            background-color: #757474;
             color: #FFFFFF;
             font-family: 'Manrope', 'Noto Sans', sans-serif;
           }
@@ -38,7 +38,7 @@ const Energiemanager = () => {
             width: 100%;
             max-width: 200px;
             padding: 12px;
-            background-color: #1D3050;
+            background-color: #757474;
           }
           .sidebar .flex {
             display: flex;
@@ -56,13 +56,13 @@ const Energiemanager = () => {
             color: #FFFFFF;
             text-decoration: none;
             transition: background 0.2s;
-            background-color: #1D3050;
+            background-color: #757474;
           }
           .sidebar a:hover {
-            background: linear-gradient(90deg, #4372b7, #905fa4);
+            background: linear-gradient(90deg, #063d37, #063d37);
           }
           .sidebar a.active {
-            background: linear-gradient(90deg, #4372b7, #905fa4);
+            background: linear-gradient(90deg, #063d37, #063d37);
           }
           .sidebar a p {
             text-align: center;
@@ -81,10 +81,10 @@ const Energiemanager = () => {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            background-color: #1D3050;
+            background-color: #757474;
           }
           .content-box {
-            background-color: #1D3050;
+            background-color: #757474;
             border-radius: 12px;
             padding: 24px;
             flex: 1;
@@ -99,7 +99,7 @@ const Energiemanager = () => {
               flex-direction: column;
               gap: 12px;
               padding-bottom: 60px;
-              background-color: #1D3050;
+              background-color: #757474;
             }
             .sidebar {
               display: none;
@@ -110,7 +110,7 @@ const Energiemanager = () => {
             }
             .content-box {
               padding: 12px;
-              background-color: #1D3050;
+              background-color: #757474;
             }
             .bottom-nav {
               display: flex;
@@ -118,7 +118,7 @@ const Energiemanager = () => {
               bottom: 0;
               left: 0;
               right: 0;
-              background-color: #1D3050;
+              background-color:rgb(66, 66, 66);
               border-top: 1px solid #FFFFFF;
               justify-content: space-around;
               align-items: center;
@@ -137,13 +137,13 @@ const Energiemanager = () => {
               transition: background 0.2s;
               flex: 1;
               text-align: center;
-              background-color: #1D3050;
+              background-color:rgb(66, 66, 66);
             }
             .bottom-nav a:hover {
-              background: linear-gradient(90deg, #4372b7, #905fa4);
+              background: linear-gradient(90deg, #063d37, #063d37);
             }
             .bottom-nav a.active {
-              background: linear-gradient(90deg, #4372b7, #905fa4);
+              background: linear-gradient(90deg, #063d37, #063d37);
             }
             .bottom-nav a p {
               text-align: center;
@@ -169,23 +169,23 @@ const Energiemanager = () => {
               }}
             />
             <div className="flex flex-col gap-1">
-              <a href="/test15/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white">
+              <a href="/MASTER/Mobile/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white">
                 <FontAwesomeIcon icon={faHouse} style={{ color: '#FFFFFF', fontSize: '20px' }} />
                 <p>Home</p>
               </a>
-              <a href="/test15/preise" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white">
+              <a href="/MASTER/Mobile/preise" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white">
                 <FontAwesomeIcon icon={faChartLine} style={{ color: '#FFFFFF', fontSize: '20px' }} />
                 <p>Preis</p>
               </a>
-              <a href="/test15/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white">
+              <a href="/MASTER/Mobile/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white">
                 <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '20px' }} />
                 <p>Rechner</p>
               </a>
-              <a href="/test15/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white">
+              <a href="/MASTER/Mobile/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white">
                 <FontAwesomeIcon icon={faFileLines} style={{ color: '#FFFFFF', fontSize: '20px' }} />
                 <p>Detail-Rechner</p>
               </a>
-              <a href="/test15/hilfe-videos" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white active">
+              <a href="/MASTER/Mobile/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white active">
                 <FontAwesomeIcon icon={faVideo} style={{ color: '#FFFFFF', fontSize: '20px' }} />
                 <p>Hilfe Videos</p>
               </a>
@@ -200,23 +200,23 @@ const Energiemanager = () => {
         </div>
 
         <nav className="bottom-nav">
-          <a href="/Amberg2/mobile/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white">
+          <a href="/MASTER/Mobile/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white">
             <FontAwesomeIcon icon={faHouse} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p>Home</p>
           </a>
-          <a href="/Amberg2/mobile/preise" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white">
+          <a href="/MASTER/Mobile/preise" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white">
             <FontAwesomeIcon icon={faChartLine} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p>Preis</p>
           </a>
-          <a href="/Amberg2/mobile/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white">
+          <a href="/MASTER/Mobile/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white">
             <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p>Rechner</p>
           </a>
-          <a href="/Amberg2/mobile/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white">
+          <a href="/MASTER/Mobile/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white">
             <FontAwesomeIcon icon={faFileLines} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p>Detail</p>
           </a>
-          <a href="/Amberg2/mobile/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white active">
+          <a href="/MASTER/Mobile/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl text-white active">
             <FontAwesomeIcon icon={faVideo} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p>Hilfe Videos</p>
           </a>

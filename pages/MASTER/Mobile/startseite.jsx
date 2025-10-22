@@ -327,7 +327,7 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
               <div className="flex items-center gap-2">
                 <p className="text-[#FFFFFF] text-2xl font-bold leading-normal">Preisrechner dynamische Tarife</p>
                 <a
-                  href="/test15/rechner"
+                  href=""
                   className="rechner-button inline-flex items-center justify-center gap-1 px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#063d37] to-[#063d37] text-white text-lg font-medium leading-normal"
                 >
                   <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '19px' }} />
@@ -384,7 +384,7 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
             <p className="text-[#FFFFFF] text-lg font-medium leading-normal">Jetzt berechnen, ob der dynamischer Stromtarif für Sie in Frage kommt.</p>
             <p className="text-[#FFFFFF] text-base font-normal leading-normal">
               <a
-                href="/test15/rechner"
+                href=""
                 className="rechner-button inline-flex items-center justify-center gap-1 px-3 py-1 rounded-xl bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white text-sm font-medium leading-normal"
               >
                 <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '14px' }} />
@@ -395,15 +395,15 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
         </div>
 
         <nav className="bottom-nav">
-          <a href="/Amberg2/mobile/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white active">
+          <a href="/MASTER/Mobile/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white active">
             <FontAwesomeIcon icon={faHouse} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Home</p>
           </a>
-          <a href="/Amberg2/mobile/preise" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+          <a href="/MASTER/Mobile/preise" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
             <FontAwesomeIcon icon={faChartLine} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Preis</p>
           </a>
-          <a href="/Amberg2/mobile/rechner" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+          <a href="/MASTER/Mobile/rechner" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
             <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Rechner</p>
           </a>
@@ -411,7 +411,7 @@ export default function Energiemanager({ data, uniqueDates, todayBerlin, error }
             <FontAwesomeIcon icon={faFileLines} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Detail</p>
           </a>
-          <a href="/Amberg2/mobile/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+          <a href="/MASTER/Mobile/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
             <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
           </a>

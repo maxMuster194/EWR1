@@ -13,9 +13,9 @@ import {
 } from 'chart.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import Profil10 from '@/pages/Amberg2/Profil10'; // Mobile profile
+import Profil10 from '@/pages/MASTER/Frame/Profil10'; // Mobile profile
 import Profil9 from '@/pages/Amberg2/Profil9'; // Desktop profile (wird aber nicht mehr verwendet)
-import LoadingScreen from '@/pages/loading/Amberg';
+import LoadingScreen from '@/pages/loading/Loadingscreen';
 import mongoose from 'mongoose';
 import GermanyMin15Prices from '@/models/min15Prices';
 
@@ -49,21 +49,21 @@ const styles = `
       "footer footer" auto
       / 200px 1fr;
     min-height: 100vh;
-    background-color: #1D3050;
+    background-color: #757474;
     color: #FFFFFF;
     font-family: 'Manrope, "Noto Sans", sans-serif';
   }
   .top-box {
     grid-area: top-box;
     padding: 8px;
-    background-color: #1D3050;
+    background-color: #757474;
   }
   .sidebar {
     grid-area: sidebar;
     width: 100%;
     max-width: 200px;
     padding: 12px;
-    background-color: #1D3050;
+    background-color: #757474;
   }
   .sidebar .flex {
     display: flex;
@@ -81,13 +81,13 @@ const styles = `
     color: #FFFFFF;
     text-decoration: none;
     transition: background 0.2s;
-    background-color: #1D3050;
+    background-color: #757474;
   }
   .sidebar a:hover {
-    background: linear-gradient(90deg, #4372b7, #905fa4);
+    background: linear-gradient(90deg, #063d37, #063d37);
   }
   .sidebar a.active {
-    background: linear-gradient(90deg, #4372b7, #905fa4);
+    background: linear-gradient(90deg, #063d37, #063d37);
   }
   .sidebar a.active .fa-house {
     color: #FFFFFF !important;
@@ -109,39 +109,39 @@ const styles = `
     flex-direction: row;
     gap: 12px;
     padding: 24px;
-    background-color: #1D3050;
+    background-color: #757474;
   }
   .bottom-boxes {
     grid-area: bottom-boxes;
     padding: 24px;
-    background-color: #1D3050;
+    background-color: #757474;
     color: #FFFFFF;
   }
   .extra-box-1 {
     grid-area: extra-box-1;
     padding: 24px;
-    background-color: #1D3050;
+    background-color: #757474;
     color: #FFFFFF;
     border-radius: 12px;
   }
   .extra-box-2 {
     grid-area: extra-box-2;
     padding: 16px;
-    background-color: #1D3050;
+    background-color: #757474;
     color: #FFFFFF;
     border-radius: 12px;
   }
   .extra-box-2 .inner-box {
     max-width: 400px;
     margin: 0 auto;
-    background-color: #1D3050;
+    background-color: #757474;
     color: #FFFFFF;
   }
   .content {
     flex: 1;
     padding: 8px;
     border-radius: 12px;
-    background-color: #1D3050;
+    background-color: #757474;
     color: #FFFFFF;
     display: flex;
     flex-direction: column;
@@ -159,7 +159,7 @@ const styles = `
     flex: 1;
     padding: 24px;
     border-radius: 12px;
-    background-color: #1D3050;
+    background-color: #757474;
     color: #FFFFFF;
   }
   .footer {
@@ -168,7 +168,7 @@ const styles = `
     align-items: center;
     justify-content: center;
     padding: 12px;
-    background: linear-gradient(90deg, #4372b7, #905fa4);
+    background: linear-gradient(90deg, #063d37, #063d37);
   }
   .bottom-nav {
     display: none;
@@ -179,12 +179,12 @@ const styles = `
       flex-direction: column;
       gap: 12px;
       padding-bottom: 60px;
-      background-color: #1D3050;
+      background-color: #757474;
     }
     .top-box, .main, .bottom-boxes, .extra-box-1, .extra-box-2, .footer {
       width: 100%;
       padding: 12px;
-      background-color: #1D3050;
+      background-color: #757474;
       color: #FFFFFF;
     }
     .sidebar {
@@ -196,7 +196,7 @@ const styles = `
     }
     .content {
       padding: 8px;
-      background-color: #1D3050;
+      background-color: #757474;
     }
     .content * {
       font-size: 1em;
@@ -204,16 +204,16 @@ const styles = `
     }
     .chart {
       padding: 12px;
-      background-color: #1D3050;
+      background-color: #757474;
     }
     .extra-box-2 .inner-box {
       max-width: 100%;
-      background-color: #1D3050;
+      background-color: #757474;
       color: #FFFFFF;
     }
     .footer {
       padding: 12px;
-      background: linear-gradient(90deg, #4372b7, #905fa4);
+      background: linear-gradient(90deg, #063d37, #063d37);
     }
     .bottom-nav {
       display: flex;
@@ -221,7 +221,7 @@ const styles = `
       bottom: 0;
       left: 0;
       right: 0;
-      background-color: #1D3050;
+      background-color:rgb(66, 66, 66);
       border-top: 1px solid #D1D5DB;
       justify-content: space-around;
       align-items: center;
@@ -240,13 +240,13 @@ const styles = `
       transition: background 0.2s;
       flex: 1;
       text-align: center;
-      background-color: #1D3050;
+      background-color:rgb(66, 66, 66);
     }
     .bottom-nav a:hover {
-      background: linear-gradient(90deg, #4372b7, #905fa4);
+      background: linear-gradient(90deg, #063d37, #063d37);
     }
     .bottom-nav a.active {
-      background: linear-gradient(90deg, #4372b7, #905fa4);
+      background: linear-gradient(90deg, #063d37, #063d37);
     }
     .bottom-nav a.active .fa-house {
       color: #FFFFFF !important;
@@ -350,23 +350,23 @@ const Energiemanager = ({ data, uniqueDates, todayBerlin, error }) => {
       
 
         <nav className="bottom-nav">
-          <a href="/Amberg2/mobile/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#063d37] text-white">
+          <a href="/MASTER/Mobile/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#063d37] text-white">
             <FontAwesomeIcon icon={faHouse} style={{ color: '#fafafa', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Home</p>
           </a>
-          <a href="/Amberg2/mobile/preise" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#063d37] text-white">
+          <a href="/MASTER/Mobile/preise" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#063d37] text-white">
             <FontAwesomeIcon icon={faChartLine} style={{ color: '#fafafa', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Preis</p>
           </a>
-          <a href="/Amberg2/mobile/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#063d37] text-white active">
+          <a href="/MASTER/Mobile/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#063d37] text-white active">
             <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Rechner</p>
           </a>
-          <a href="/Amberg2/mobile/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#063d37] text-white">
+          <a href="/MASTER/Mobile/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#063d37] text-white">
             <FontAwesomeIcon icon={faFileLines} style={{ color: '#fafafa', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Detail</p>
           </a>
-          <a href="/Amberg2/mobile/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#063d37] text-white">
+          <a href="/MASTER/Mobile/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-transparent hover:bg-[#063d37] text-white">
             <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#fafafa', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
           </a>

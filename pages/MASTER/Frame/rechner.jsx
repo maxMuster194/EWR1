@@ -35,36 +35,29 @@ const chartOptions = {
   },
 };
 
-// CSS styles for ultra-compact layout
+// CSS styles for ultra-compact and fully visible layout
 const styles = `
 html, body {
   background-color: transparent !important;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* Changed from hidden to auto to allow scrolling if needed */
 }
 .layout {
   width: 100%;
   max-width: 1200px;
-  height: 800px;
-  display: grid;
-  grid:
-    ". ." 1px
-    "top-box" auto
-    "main" 1fr
-    "bottom-boxes" auto
-    "extra-box-1" auto
-    "extra-box-2" auto
-    ". ." 1px
-    / 1fr;
+  min-height: 100vh; /* Ensure layout takes at least full viewport height */
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
   padding: 0.2rem 0.1rem;
   background-color: transparent;
   box-sizing: border-box;
   margin: 0 auto;
-  overflow: hidden;
 }
 .top-box {
-  grid-area: top-box;
   padding: 0.2rem;
   background-color: transparent;
   border-radius: 3px;
@@ -78,7 +71,7 @@ html, body {
   margin: 0;
 }
 .main {
-  grid-area: main;
+  flex: 1; /* Allow main to grow and take available space */
   width: 100%;
   max-width: 1180px;
   margin: 0 auto;
@@ -93,12 +86,11 @@ html, body {
 .content-box {
   border-radius: 3px;
   max-width: 1180px;
-  max-height: 550px;
   width: 100%;
-  height: 100%;
+  flex: 1; /* Allow content-box to grow */
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   box-sizing: border-box;
   margin: 0 auto;
@@ -109,12 +101,8 @@ html, body {
   border-bottom: 1px solid #D1D5DB;
   padding: 0.1rem;
   background-color: transparent;
-  max-width: 1180px;
-  max-height: 550px;
   width: 100%;
-  height: 100%;
-  flex-shrink: 0;
-  flex-grow: 1;
+  flex: 1; /* Allow child div to grow */
   overflow: visible;
   display: flex;
   justify-content: center;
@@ -133,7 +121,6 @@ html, body {
   margin: 0 auto;
 }
 .bottom-boxes {
-  grid-area: bottom-boxes;
   width: 100%;
   max-width: 1180px;
   margin: 0 auto;
@@ -144,7 +131,6 @@ html, body {
   box-sizing: border-box;
 }
 .extra-box-1 {
-  grid-area: extra-box-1;
   padding: 0.2rem;
   background-color: transparent;
   border: 1px solid #D1D5DB;
@@ -152,7 +138,6 @@ html, body {
   box-sizing: border-box;
 }
 .extra-box-2 {
-  grid-area: extra-box-2;
   padding: 0.1rem;
   background-color: transparent;
   border: 1px solid #D1D5DB;
@@ -166,7 +151,7 @@ html, body {
 @media (max-width: 1024px) {
   .layout {
     padding: 0.2rem 0.1rem;
-    height: 800px;
+    min-height: 100vh;
   }
   .main, .bottom-boxes {
     width: 100%;
@@ -176,12 +161,10 @@ html, body {
   }
   .content-box {
     max-width: 1180px;
-    max-height: 450px;
     background-color: transparent;
   }
   .content-box > div {
     max-width: 1180px;
-    max-height: 450px;
     background-color: transparent;
     overflow: visible;
   }
@@ -192,11 +175,10 @@ html, body {
 }
 @media (max-width: 767px) {
   .layout {
-    display: flex;
     flex-direction: column;
-    gap: 1px;
+    gap: 0.2rem;
     padding: 0.2rem 0.1rem;
-    height: auto;
+    min-height: 100vh;
     background-color: transparent;
   }
   .top-box, .bottom-boxes, .extra-box-1, .extra-box-2 {
@@ -209,32 +191,28 @@ html, body {
     padding: 0.1rem;
     border: none;
     border-radius: 0;
-    min-height: auto;
+    flex: 1;
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
     background-color: transparent;
   }
   .content-box {
     max-width: 100%;
-    max-height: none;
-    height: 100%;
+    flex: 1;
     border: none;
     border-radius: 0;
     background-color: transparent;
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
     margin: 0;
   }
   .content-box > div {
     max-width: 100%;
-    max-height: none;
     padding: 0.1rem;
     border: none;
     background-color: transparent;
     border-radius: 3px;
-    flex-grow: 1;
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -337,7 +315,7 @@ const Energiemanager = ({ data, uniqueDates, todayBerlin, error }) => {
   // Show error if present
   if (error) {
     return (
-      <div className="layout relative" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
+      <div className="layout" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
         <div className="top-box">
           <h2></h2>
         </div>
@@ -356,7 +334,7 @@ const Energiemanager = ({ data, uniqueDates, todayBerlin, error }) => {
   return (
     <>
       <style>{styles}</style>
-      <div className="layout relative" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
+      <div className="layout" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
         <div className="top-box">
           <h2></h2>
         </div>
@@ -374,6 +352,7 @@ const Energiemanager = ({ data, uniqueDates, todayBerlin, error }) => {
             </div>
           </div>
         </div>
+    
       </div>
     </>
   );

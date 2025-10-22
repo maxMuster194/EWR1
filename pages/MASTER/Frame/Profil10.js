@@ -64,7 +64,7 @@ const styles = {
   chartTitle: {
     fontSize: '18px',
     fontWeight: '700',
-    color: '#905fa4',
+    color: '#063d37',
     margin: '8px 0 8px',
     textAlign: 'center',
   },
@@ -92,6 +92,7 @@ const styles = {
     color: '#FFFFFF',
   },
   controlGroup: {
+    marginTop:'40px',
     display: 'flex',
     flexDirection: 'column',
     gap: '8px',
@@ -170,7 +171,7 @@ const styles = {
     fontWeight: '600',
     marginBottom: '12px',
     textAlign: 'center',
-    color: '#905fa4',
+    color: '#063d37',
   },
   summaryTable: {
     width: '100%',
@@ -178,7 +179,7 @@ const styles = {
     fontSize: '14px',
   },
   summaryTableHeader: {
-    backgroundColor: '#905fa4',
+    backgroundColor: '#063d37',
     fontWeight: '600',
     padding: '8px',
     borderBottom: '1px solid #FFFFFF',
@@ -203,7 +204,7 @@ const styles = {
     width: '14px',
     height: '14px',
     cursor: 'pointer',
-    color: '#905fa4',
+    color: '#063d37',
   },
   noteText: {
     fontSize: '12px',
@@ -236,7 +237,7 @@ const styles = {
     transition: 'background-color 0.2s ease',
   },
   discountSwitchSliderActive: {
-    backgroundColor: '#4372b7',
+    backgroundColor: '#063d37',
   },
   discountSwitchSliderBefore: {
     position: 'absolute',
@@ -538,18 +539,18 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
     const datasetsForProfile = [];
     if (householdType === 'standard') {
       datasetsForProfile.push(
-        createDataset(selectedH25Data, h25Values, 'Dynamischer Tarif', '#905fa4'),
-        createDataset(selectedH25Data, customValues, `Normaltarif (${adjustedCustomPrice.toFixed(2)} Ct/kWh)`, '#4372b7')
+        createDataset(selectedH25Data, h25Values, 'Dynamischer Tarif', '#88bf50'),
+        createDataset(selectedH25Data, customValues, `Normaltarif (${adjustedCustomPrice.toFixed(2)} Ct/kWh)`, '#063d37')
       );
     } else if (householdType === 'pv') {
       datasetsForProfile.push(
-        createDataset(selectedP25Data, p25Values, 'Dynamischer Tarif', '#905fa4'),
-        createDataset(selectedP25Data, customValues, `Normaltarif (${adjustedCustomPrice.toFixed(2)} Ct/kWh)`, '#4372b7')
+        createDataset(selectedP25Data, p25Values, 'Dynamischer Tarif', '#88bf50'),
+        createDataset(selectedP25Data, customValues, `Normaltarif (${adjustedCustomPrice.toFixed(2)} Ct/kWh)`, '#063d37')
       );
     } else if (householdType === 'pvStorage') {
       datasetsForProfile.push(
-        createDataset(selectedS25Data, s25Values, 'Dynamischer Tarif', '#905fa4'),
-        createDataset(selectedS25Data, customValues, `Normaltarif (${adjustedCustomPrice.toFixed(2)} Ct/kWh)`, '#4372b7')
+        createDataset(selectedS25Data, s25Values, 'Dynamischer Tarif', '#88bf50'),
+        createDataset(selectedS25Data, customValues, `Normaltarif (${adjustedCustomPrice.toFixed(2)} Ct/kWh)`, '#063d37')
       );
     }
     return datasetsForProfile;
@@ -657,7 +658,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
           }
           .date-picker:focus {
             outline: none;
-            border-color: #905fa4;
+            border-color: #063d37;
             box-shadow: 0 0 0 2px rgba(144, 95, 164, 0.2);
           }
           .price-input {
@@ -674,7 +675,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
           }
           .price-input:focus {
             outline: none;
-            border-color: #4372b7;
+            border-color: #063d37;
             box-shadow: 0 0 0 2px rgba(67, 114, 183, 0.2);
           }
           .input-error {
@@ -695,24 +696,24 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
             -webkit-appearance: none;
             width: 16px;
             height: 16px;
-            background: #4372b7;
+            background: #063d37;
             border-radius: 50%;
             cursor: pointer;
             transition: background 0.2s ease;
           }
           .slider::-webkit-slider-thumb:hover {
-            background: #905fa4;
+            background: #063d37;
           }
           .slider::-moz-range-thumb {
             width: 16px;
             height: 16px;
-            background: #4372b7;
+            background: #063d37;
             border-radius: 50%;
             cursor: pointer;
             transition: background 0.2s ease;
           }
           .slider::-moz-range-thumb:hover {
-            background: #905fa4;
+            background: #063d37;
           }
           .radio-input {
             -webkit-appearance: none;
@@ -727,7 +728,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
             transition: border-color 0.2s ease, background-color 0.2s ease;
           }
           .radio-input:checked {
-            border: 2px solid #4372b7;
+            border: 2px solid #063d37;
             background-color: transparent;
           }
           .radio-input:checked::before {
@@ -738,17 +739,17 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
             transform: translate(-50%, -50%);
             width: 8px;
             height: 8px;
-            background-color: #4372b7;
+            background-color: #063d37;
             border-radius: 50%;
           }
           .radio-input:hover {
-            border-color: #905fa4;
+            border-color: #063d37;
           }
           .tooltip {
             position: absolute;
             top: 100%;
             left: 0;
-            background-color: #4372b7;
+            background-color: #063d37;
             color: #FFFFFF;
             padding: 6px 8px;
             border-radius: 4px;
@@ -791,7 +792,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
             }
             .chart-title {
               font-size: 20px;
-              color: #905fa4;
+              color: #063d37;
             }
             .image {
               width: 50px;
@@ -828,11 +829,11 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
       <div style={styles.chartContainer} className="chart-container">
         <div style={styles.legendContainer}>
           <div style={styles.legendItem}>
-            <div style={{ ...styles.legendColor, backgroundColor: '#905fa4' }} />
+            <div style={{ ...styles.legendColor, backgroundColor: '#88bf50' }} />
             <span style={styles.legendLabel}>Dynamischer Tarif</span>
           </div>
           <div style={styles.legendItem}>
-            <div style={{ ...styles.legendColor, backgroundColor: '#4372b7' }} />
+            <div style={{ ...styles.legendColor, backgroundColor: '#063d37' }} />
             <span style={styles.legendLabel}>Normaltarif</span>
           </div>
         </div>
