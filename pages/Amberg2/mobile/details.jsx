@@ -2906,7 +2906,7 @@ table, th, td {
                     <span>Info</span>
                     {menu.id !== 'waermepumpe' && <span>Watt/h</span>}
                     {menu.id === 'waermepumpe' && <span>kW</span>}
-                    <span>Normaltarif/Jahr</span>
+                    <span>Normaltarif/ Jahr</span>
                     {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto' || menu.id === 'waermepumpe') && <span></span>}
                   </li>
 

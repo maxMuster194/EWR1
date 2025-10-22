@@ -309,23 +309,23 @@ const Energiemanager = () => {
         
 
         <nav className="bottom-nav">
-          <a href="/test15/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+          <a href="/Amberg2/mobile/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
             <FontAwesomeIcon icon={faHouse} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Home</p>
           </a>
-          <a href="/test15/preise" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white active">
+          <a href="/Amberg2/mobile/preise" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white active">
             <FontAwesomeIcon icon={faChartLine} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Preis</p>
           </a>
-          <a href="/test15/rechner" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+          <a href="/Amberg2/mobile/rechner" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
             <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Rechner</p>
           </a>
-          <a href="/test15/details" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+          <a href="/Amberg2/mobile/details" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
             <FontAwesomeIcon icon={faFileLines} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Detail</p>
           </a>
-          <a href="/test15/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
+          <a href="/Amberg2/mobile/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#1D3050] hover:bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-white">
             <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#FFFFFF', fontSize: '18px' }} />
             <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
           </a>

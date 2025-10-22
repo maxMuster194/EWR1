@@ -296,7 +296,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
   const [error, setError] = useState(null);
   const [activeProfile, setActiveProfile] = useState(1);
   const [householdType, setHouseholdType] = useState('none');
-  const [selectedDiscount, setSelectedDiscount] = useState(null);
+  const [selectedDiscount, setSelectedDiscount] = useState(20.14);
 
   // **Konstanten**
   const profileFactors = { 1: 2.1, 2: 3.4, 3: 5.4, 4: 7, 5: 8.9 };
