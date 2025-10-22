@@ -92,7 +92,7 @@ const styles = `
     background-color: transparent !important;
   }
   .gradient-heading {
-    background: linear-gradient(90deg, #063d37, #88bf50);
+    background: linear-gradient(90deg, #063d37, #063d37);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -137,12 +137,12 @@ const styles = `
     color: #FFFFFF;
   }
   .react-datepicker__day:hover {
-    background: linear-gradient(90deg, #063d37, #88bf50);
+    background: linear-gradient(90deg, #063d37, #063d37);
     color: #FFFFFF;
   }
   .react-datepicker__day--selected,
   .react-datepicker__day--keyboard-selected {
-    background: linear-gradient(90deg, #063d37, #88bf50);
+    background: linear-gradient(90deg, #063d37, #063d37);
     color: #FFFFFF;
   }
   .react-datepicker__navigation-icon::before {

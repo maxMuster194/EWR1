@@ -24,7 +24,7 @@ const videos = [
 export default function VideosPage() {
   return (
     <>
-      <h1 className="text-4xl font-bold bg-gradient-to-b from-[#063d37] to-[#88bf50] text-transparent bg-clip-text mb-10 text-center">
+      <h1 className="text-4xl font-bold bg-gradient-to-b from-[#063d37] to-[#063d37] text-transparent bg-clip-text mb-10 text-center">
         Videogalerie
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -41,7 +41,7 @@ export default function VideosPage() {
               Dein Browser unterstützt das Video-Tag nicht.
             </video>
             <div className="p-6 bg-transparent">
-              <h2 className="text-2xl font-semibold bg-gradient-to-b from-[#063d37] to-[#88bf50] text-transparent bg-clip-text mb-3">
+              <h2 className="text-2xl font-semibold bg-gradient-to-b from-[#063d37] to-[#063d37] text-transparent bg-clip-text mb-3">
                 {video.title}
               </h2>
               <p className="text-white text-sm">{video.description}</p>

@@ -2159,7 +2159,7 @@ body {
   align-items: center;
   padding: 16px;
   cursor: pointer;
-  background: linear-gradient(90deg, #063d37,  #88bf50);
+  background: linear-gradient(90deg, #063d37,  #063d37);
   border-radius: 12px;
   color: #ffffff;
   transition: background 0.3s ease;

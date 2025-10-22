@@ -103,7 +103,7 @@ const styles = {
   chartTitle: {
     fontSize: '18px',
     fontWeight: '700',
-    color: '#88bf50',
+    color: '#063d37',
     margin: '24px 0 12px',
     textAlign: 'center',
   },
@@ -213,7 +213,7 @@ const styles = {
     fontWeight: '600',
     marginBottom: '12px',
     textAlign: 'center',
-    color: '#88bf50',
+    color: '#063d37',
   },
   summaryTable: {
     width: '100%',
@@ -784,7 +784,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
           }
           .date-picker:focus {
             outline: none;
-            border-color: #88bf50;
+            border-color: #063d37;
             box-shadow: 0 0 0 3px rgba(144, 95, 164, 0.1);
           }
           .price-input {
@@ -830,7 +830,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
             transition: background 0.2s ease;
           }
           .slider::-webkit-slider-thumb:hover {
-            background: #88bf50;
+            background: #063d37;
           }
           .slider::-moz-range-thumb {
             width: 20px;

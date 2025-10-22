@@ -78,7 +78,7 @@ export default function WeeklyPriceChart() {
 
   return (
     <div className="max-w-full mx-auto p-4 bg-transparent rounded-2xl">
-      <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#063d37] to-[#88bf50] text-center mb-6">
+      <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#063d37] to-[#063d37] text-center mb-6">
         Wöchentliche Strompreise 2025
       </h1>
       <div className="bg-transparent p-4 rounded-lg">
