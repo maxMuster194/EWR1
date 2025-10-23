@@ -88,7 +88,7 @@ const SHOW = ({ backgroundColor = '#757474' }) => {
               <iframe
                 style={styles.iframe}
                 className="hide-scrollbar"
-                src="https://stadtwerkeprofis.de/MASTER/Mobile/startseite"
+                src="http://localhost:3000/MASTER/Mobile/startseite"
                 sandbox="allow-same-origin allow-scripts"
                 allowFullScreen
               />

@@ -6,7 +6,7 @@ import DatePicker from 'react-datepicker'; // Import react-datepicker
 import 'react-datepicker/dist/react-datepicker.css'; // Import CSS for datepicker
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faChartLine, faCalculator, faFileLines, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import LoadingScreen from '@/pages/loading/Loadingscreen';
+import LoadingScreen from '@/pages/loading/Amberg';
 
 
 
