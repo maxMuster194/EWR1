@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SHOW = ({ backgroundColor = '	#757474' }) => {
+const SHOW = ({ backgroundColor = '#757474' }) => {
   const styles = {
     container: {
       height: '100vh',
@@ -8,19 +8,16 @@ const SHOW = ({ backgroundColor = '	#757474' }) => {
       alignItems: 'center',
       justifyContent: 'center',
       background: backgroundColor,
-      scrollbarWidth: 'none', // Für Firefox
-      msOverflowStyle: 'none', // Für IE und ältere Edge
-      '::-webkit-scrollbar': {
-        display: 'none', // Für Chrome, Safari und Chromium-basierte Edge
-      },
+      scrollbarWidth: 'none', // Firefox
+      msOverflowStyle: 'none', // IE and legacy Edge
     },
     phoneOuter: {
       width: `calc(var(--phone-css-width) * var(--scale) * 1px)`,
       height: `calc(var(--phone-css-height) * var(--scale) * 1px)`,
-      borderRadius: '46px',
-      background: 'linear-gradient(180deg, #0f1724 0%, #0b0b0d 100%)',
-      padding: '7.56px',
-      boxShadow: '0 18px 50px rgba(2,6,23,0.5), inset 0 2px 8px rgba(255,255,255,0.02)',
+      borderRadius: '50px', // Slightly larger radius for iPhone 16 Pro
+      background: 'linear-gradient(180deg, #0a0e1a 0%, #050509 100%)', // Darker, premium titanium-like gradient
+      padding: '6px', // Thinner bezel for Pro model
+      boxShadow: '0 20px 60px rgba(2,6,23,0.6), inset 0 2px 8px rgba(255,255,255,0.03)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -28,33 +25,34 @@ const SHOW = ({ backgroundColor = '	#757474' }) => {
     },
     notch: {
       position: 'absolute',
-      top: '10px',
-      right: '20px',
-      height: '26px',
-      width: '110px',
-      background: 'rgba(255,255,255,0.04)',
+      top: '8px', // Adjusted for iPhone 16 Pro's slimmer notch
+      left: '50%',
+      transform: 'translateX(-50%)',
+      height: '30px',
+      width: '120px', // Slightly wider for Dynamic Island
+      background: 'rgba(255,255,255,0.05)', // Subtle transparency
       borderRadius: '999px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
     },
-    notchAfter: {
-      content: '""',
+    notchDot: {
       width: '6px',
       height: '6px',
-      background: '#101112',
+      background: '#0a0e1a', // Matches phone outer for seamless look
       borderRadius: '50%',
+      marginLeft: '10px', // Simulates camera/sensor
     },
     screen: {
-      width: `calc(var(--phone-css-width) * 1px - 15.12px)`,
-      height: `calc(var(--phone-css-height) * 1px - 15.12px)`,
-      borderRadius: '38px',
+      width: `calc(var(--phone-css-width) * 1px - 12px)`, // Adjusted for thinner bezel
+      height: `calc(var(--phone-css-height) * 1px - 12px)`,
+      borderRadius: '44px', // Matches outer radius minus padding
       overflow: 'hidden',
       background: 'white',
       position: 'relative',
       transformOrigin: 'top left',
       transform: 'scale(var(--scale))',
-      boxShadow: '0 6px 30px rgba(15,23,42,0.25)',
+      boxShadow: '0 8px 35px rgba(15,23,42,0.3)', // Enhanced shadow for Pro
     },
     iframeWrapper: {
       width: '100%',
@@ -79,20 +77,21 @@ const SHOW = ({ backgroundColor = '	#757474' }) => {
   };
 
   return (
-    <div style={styles.container}>
+    <div style={styles.container} className="hide-scrollbar">
       <div style={{ '--phone-css-width': 393, '--phone-css-height': 852, '--scale': 1 }}>
-        <div style={styles.phoneOuter} title="iPhone 16 Vollbild iFrame">
-          <div style={styles.notch} aria-hidden="true">
-            <div style={styles.notchAfter}></div>
+        <div style={styles.phoneOuter} title="iPhone 16 Pro Fullscreen iFrame" className="transition-all duration-300">
+          <div style={styles.notch} aria-hidden="true" className="bg-opacity-10">
+            <div style={styles.notchDot}></div>
           </div>
-          <div style={styles.screen}>
+          <div style={styles.screen} className="bg-white">
             <div style={styles.iframeWrapper}>
               <iframe
-                style={{ ...styles.iframe, '::-webkit-scrollbar': { display: 'none' } }}
+                style={styles.iframe}
+                className="hide-scrollbar"
                 src="https://stadtwerkeprofis.de/MASTER/Mobile/startseite"
-                sandbox="allow-same-origin allow-scripts allow-forms"
+                sandbox="allow-same-origin allow-scripts"
                 allowFullScreen
-              ></iframe>
+              />
             </div>
           </div>
         </div>

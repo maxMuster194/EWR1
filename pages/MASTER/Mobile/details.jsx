@@ -1558,7 +1558,7 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
     }),
     datasets: [
       {
-        label: 'Stromverbrauch ohne Wärmepumpe (kW)',
+        label: 'Stromverbrauch (kW)',
         data: hourlyData.flatMap(d => Array(4).fill(d.total - d.waermepumpe)),
         fill: false,
         borderColor: '#063d37',
@@ -1576,7 +1576,7 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
 
       },
       {
-        label: 'Wärmepumpen-Verbrauch (kW)',
+        label: 'Wärmepumpe (kW)',
         data: hourlyData.flatMap(d => Array(4).fill(d.waermepumpe)),
         fill: false,
         borderColor: '#f93b01',
@@ -1593,7 +1593,7 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
       pointBorderWidth: 1,
       },
       {
-        label: 'Dynamischer Preis (Ct/kWh)',
+        label: 'Dyn. Preis (Ct/kWh)',
         data: chartConvertedValues,
         fill: false,
         borderColor: '#88bf50',
@@ -1910,56 +1910,156 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
 
   return (
     <>
-        <style>{`* {
+        <style>{`/* Definieren von CSS-Variablen für dynamische Farben */
+:root {
+  --primary-color: #063d37; /* Dunkelgrün für Überschriften */
+  --primary-dark: #052f2b; /* Dunklere Variante für Hover-Effekte */
+  --secondary-color: #ffffff; /* Weiß für Text */
+  --box-background: #757575; /* Boxen-Hintergrund */
+  --box-background-light: #757575; /* Helleres Grau für allgemeinen Hintergrund */
+  --box-background-grey: #757575; /* Graue Boxen */
+}
+
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  color: #ffffff;
 }
 
 html {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 body {
   font-family: 'Inter', Arial, sans-serif;
-  background: #757474;
-  line-height: 1.5;
+  background: var(--box-background-light); /* Hellerer Grau-Hintergrund */
+  color: var(--secondary-color); /* Weißer Text für Body */
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Container für die gesamte App */
+.app-container {
+  max-width: 90%; /* Begrenzt die Breite, damit es nicht die ganze Seite einnimmt */
+  margin-left: auto; /* Schiebt den Container nach rechts */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px; /* Angepasstes Padding */
+  min-height: 100vh;
+  padding-top: 296px; /* Platz für den fixierten Chart */
+  align-items: flex-end; /* Rechtsbündige Ausrichtung */
+}
+
+/* Fixierter Chart-Bereich */
+.fixed-chart {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: var(--box-background); /* Box-Hintergrund */
+  padding: 8px;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Chart-Container */
+.chart-container {
+  height: 280px;
+}
+
+/* Container für den Detail-Rechner */
+.calculation-report {
+  background: var(--box-background); /* Box-Hintergrund */
+  padding: 10px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  flex: 0 0 auto;
+  max-height: calc(100vh - 296px - 10px); /* Angepasster Abstand für bottom-nav */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 20px; /* Erhöhter margin-bottom für Jahreszusammenfassung */
+}
+
+/* Titel des Detail-Rechner */
+.report-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--primary-color); /* Dunkelgrün */
+}
+
+/* Inhalt des Detail-Rechner */
+.report-content {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Eingabefelder */
+.input-container-html {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-container-html label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--secondary-color); /* Weiß */
+  margin-bottom: 3px;
+}
+
+.input-container-html input,
+.input-container-html select {
+  padding: 5px;
+  border: 1px solid #d1d5db;
+  border-radius: 3px;
+  font-size: 0.8125rem;
+  width: 100%;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-container-html input:focus,
+.input-container-html select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 1.5px rgba(6, 61, 55, 0.25);
+}
+
+/* Region-Buttons */
 .region-buttons {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 8px;
   justify-content: center;
   align-items: center;
-  margin: 12px 0;
-  padding: 8px;
+  margin: 6px 0;
+  padding: 5px;
 }
 
 .region-switch-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  min-width: 80px;
+  gap: 3px;
+  min-width: 56px;
 }
 
 .region-label {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--secondary-color); /* Weiß */
   text-align: center;
-  margin-bottom: 6px;
   transition: color 0.2s ease;
 }
 
 .discount-switch-container {
-  display: inline-block;
   position: relative;
-  width: 48px;
-  height: 30px;
+  width: 32px;
+  height: 18px;
 }
 
 .discount-switch-input {
@@ -1974,35 +2074,35 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #d1d5db;
-  border-radius: 12px;
+  background-color: #d1d5db; /* Keine Transparenz */
+  border-radius: 9px;
   cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.2s ease;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .discount-switch-slider:before {
   position: absolute;
   content: '';
-  height: 20px;
-  width: 20px;
-  left: 0px;
-  bottom: 1.7px;
-  background-color: #ffffff;
+  height: 14px;
+  width: 14px;
+  left: 2px;
+  bottom: 2px;
+  background-color: var(--secondary-color);
   border-radius: 50%;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
 }
 
 .discount-switch-input:checked + .discount-switch-slider {
-  background-color: #063d37;
+  background-color: var(--primary-color); /* Keine Transparenz */
 }
 
 .discount-switch-input:checked + .discount-switch-slider:before {
-  transform: translateX(26px);
+  transform: translateX(14px);
 }
 
 .discount-switch-input:focus + .discount-switch-slider {
-  box-shadow: 0 0 0 3px rgba(144, 95, 164, 0.2);
+  box-shadow: 0 0 0 1.5px rgba(6, 61, 55, 0.25);
 }
 
 .discount-switch-slider:hover {
@@ -2010,337 +2110,121 @@ body {
 }
 
 .discount-switch-input:checked + .discount-switch-slider:hover {
-  background-color: #7a4d8b;
+  background-color: var(--primary-dark);
 }
 
 .region-switch-wrapper:hover .region-label {
-  color: #ffffff;
+  color: var(--primary-color);
 }
 
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  padding: 2rem;
-  border-radius: 0.5rem;
-  max-width: 28rem;
-  width: 100%;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.relative {
-  position: relative;
-}
-
-.modal-content input.pr-10 {
-  padding-right: 2.5rem;
-}
-
-.modal-content .absolute.top-2.right-2 {
-  z-index: 10;
-}
-
-.app-container {
-  max-width: 1100px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 24px;
-  padding: 20px;
-  min-height: calc(100vh - 64px);
-}
-
-@media (min-width: 1100px) {
-  .app-container {
-    grid-template-columns: minmax(0, 550px) minmax(0, 550px);
-  }
-}
-
-.calculation-report {
-  background: transparent;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(144, 95, 164, 0.1), 0 0 40px rgba(67, 114, 183, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(144, 95, 164, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-  overflow-y: auto;
-  max-height: calc(100vh - 64px);
-  scrollbar-width: no;
-  scrollbar-color: #063d37 #e5e7eb;
-}
-
-.calculation-report::-webkit-scrollbar {
-  width: 8px;
-}
-
-.calculation-report::-webkit-scrollbar-track {
-  background: rgba(229, 231, 235, 0.5);
-  border-radius: 4px;
-}
-
-.calculation-report::-webkit-scrollbar-thumb {
-  background: #063d37;
-  border-radius: 4px;
-}
-
-.calculation-report:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 0 30px rgba(144, 95, 164, 0.2), 0 0 60px rgba(67, 114, 183, 0.1);
-  border-color: rgba(144, 95, 164, 0.4);
-}
-
-.diagrams-container {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  overflow-y: auto;
-  max-height: calc(100vh - 64px);
-  scrollbar-width: thin;
-  scrollbar-color: #063d37 #e5e7eb;
-  background: transparent;
-}
-
-.diagrams-container::-webkit-scrollbar {
-  width: 8px;
-}
-
-.diagrams-container::-webkit-scrollbar-track {
-  background: rgba(229, 231, 235, 0.5);
-  border-radius: 4px;
-}
-
-.diagrams-container::-webkit-scrollbar-thumb {
-  background: #063d37;
-  border-radius: 4px;
-}
-
-.diagram {
-  background: transparent;
-  padding: 24px;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(144, 95, 164, 0.1), 0 0 30px rgba(67, 114, 183, 0.05);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(144, 95, 164, 0.15);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-}
-
-.diagram:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 0 25px rgba(144, 95, 164, 0.2), 0 0 50px rgba(67, 114, 183, 0.1);
-  border-color: rgba(144, 95, 164, 0.3);
-}
-
+/* Menüs */
 .menu {
-  background: transparent;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: transform 0.3s ease;
-  max-width: 550px;
-  width: 100%;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(144, 95, 164, 0.1);
-}
-
-.menu:hover {
-  transform: translateY(-2px);
+  background: var(--box-background); /* Box-Hintergrund */
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  margin-bottom: 8px;
 }
 
 .menu-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
+  padding: 8px;
   cursor: pointer;
-  background: linear-gradient(90deg, #063d37, #063d37, #063d37);
-  border-radius: 12px;
-  color: #ffffff;
-  transition: background 0.3s ease;
-}
-
-.menu-header:hover {
-  background: linear-gradient(90deg, #063d37, #063d37, #063d37);
+  background: linear-gradient(90deg, var(--primary-dark), var(--primary-color)); /* Dunkelgrün */
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  color: var(--secondary-color);
 }
 
 .menu-header span {
-  font-size: 0.875rem;
-  font-weight: 700;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--secondary-color); /* Weiß */
 }
 
 .triangle {
-  transition: transform 0.3s ease;
-}
-
-.triangle.open {
-  transform: rotate(180deg);
+  transition: transform 0.2s ease;
 }
 
 .menu-content {
-  padding: 12px;
-  background: transparent;
+  padding: 8px;
+  background: var(--box-background); /* Box-Hintergrund */
   border-radius: 0 0 6px 6px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(5px);
 }
 
-.menu-content input,
-.menu-content select {
-  border: 2px solid #ffffff;
-  border-radius: 6px;
-  padding: 8px;
-  font-size: 0.875rem;
-  width: 100%;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  background: transparent;
-  backdrop-filter: blur(5px);
-  color: #ffffff;
-}
-
-.menu-content input:focus,
-.menu-content select:focus {
-  outline: none;
-  border-color: #063d37;
-  box-shadow: 0 0 0 3px rgba(144, 95, 164, 0.3);
-}
-
-.report-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 16px;
-  color: #ffffff;
-}
-
-@media (min-width: 1100px) {
-  .report-title {
-    font-size: 1.75rem;
-  }
-}
-
-.report-content {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.input-container-html {
-  display: flex;
-  flex-direction: column;
-}
-
-.input-container-html label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.input-container-html input,
-.input-container-html select {
-  padding: 8px;
-  border: 2px solid #ffffff;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  width: 100%;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  background: transparent;
-  backdrop-filter: blur(5px);
-}
-
-.input-container-html input:focus,
-.input-container-html select:focus {
-  outline: none;
-  border-color: #063d37;
-  box-shadow: 0 0 0 3px rgba(144, 95, 164, 0.3);
-}
-
-.loading,
-.no-data {
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
+/* Checkbox-Gruppe */
 .checkbox-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .checkbox-group-header {
   display: grid;
-  grid-template-columns: 2fr 0.5fr 1fr 1fr 1fr;
-  gap: 8px;
-  font-weight: 700;
-  font-size: 0.9rem;
+  grid-template-columns: 36px 2fr 56px 72px 72px 36px;
+  gap: 6px;
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: var(--primary-color); /* Dunkelgrün */
   padding: 6px 0;
-  background: transparent;
-  border-radius: 4px;
-  backdrop-filter: blur(5px);
-}
-
-.checkbox-group-header > *:nth-child(4) {
-  padding-left: 40px;
-}
-
-.checkbox-group-header > *:nth-child(3) {
-  padding-left: 30px;
+  background: var(--box-background); /* Box-Hintergrund */
+  border-radius: 3px;
+  text-align: center;
 }
 
 .checkbox-group li {
   display: grid;
-  grid-template-columns: 2fr 0.5fr 1fr 1fr 1fr;
-  gap: 8px;
+  grid-template-columns: 36px 2fr 56px 72px 72px 36px;
+  gap: 6px;
   align-items: center;
   padding: 6px 0;
-  background: transparent;
-  border-radius: 4px;
-  transition: background 0.2s ease;
-  position: relative;
-  font-size: 0.85rem;
-  backdrop-filter: blur(5px);
+  background: var(--box-background); /* Box-Hintergrund */
+  border-radius: 3px;
+  font-size: 0.75rem;
 }
 
 .checkbox-group li:hover {
-  background: transparent;
+  background: #666666; /* Etwas dunkler */
 }
 
-.checkbox-group-label {
+.icon-field {
   display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 4px;
 }
 
-.checkbox-group-label input {
-  width: 16px;
-  height: 16px;
-  accent-color: #063d37;
-  cursor: pointer;
+.icon-field img {
+  width: 28px;
+  height: 28px;
+  object-fit: cover;
+  border-radius: 3px;
 }
 
 .info-field {
   position: relative;
   display: flex;
+  justify-content: left;
   align-items: center;
+  font-weight: 400;
 }
 
 .info-field .tooltip {
+  font-size: 0.9375rem;
+  font-weight: bold;
+  color: var(--secondary-color); /* Weiß */
+}
+
+.info-field .tooltip-text {
   visibility: hidden;
   position: absolute;
-  background: #063d37;
-  font-size: 0.75rem;
-  padding: 4px 6px;
-  border-radius: 3px;
+  background: var(--primary-color); /* Keine Transparenz für Tooltip */
+  color: var(--secondary-color);
+  font-size: 0.6875rem;
+  padding: 2px 4px;
+  border-radius: 2px;
   z-index: 10;
-  top: -28px;
+  top: 100%;
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
@@ -2348,417 +2232,360 @@ body {
   transition: opacity 0.2s ease, visibility 0s linear 0.2s;
 }
 
-.info-field:hover .tooltip {
+.info-field:hover .tooltip-text {
   visibility: visible;
   opacity: 1;
   transition: opacity 0.2s ease;
 }
 
+.checkbox-group-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.checkbox-group-label input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary-color);
+  cursor: pointer;
+}
+
+.input-group {
+  display: flex;
+  justify-content: center;
+  background: var(--box-background); /* Box-Hintergrund */
+}
+
 .input-group input.watt-input {
-  padding: 4px 6px;
+  padding: 3px 5px;
   border: 1px solid #d1d5db;
-  border-radius: 3px;
-  font-size: 0.875rem;
+  border-radius: 2px;
+  font-size: 0.75rem;
   width: 100%;
-  transition: border-color 0.2s ease;
-  background: transparent;
-  backdrop-filter: blur(5px);
+  text-align: center;
+  background: var(--box-background);
 }
 
 .input-group input.watt-input:focus {
   outline: none;
-  border-color: #063d37;
-  box-shadow: 0 0 0 2px rgba(144, 95, 164, 0.2);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 1.5px rgba(6, 61, 55, 0.25);
 }
 
 .price-display {
-  font-size: 0.875rem;
-  font-weight: 500;
-  text-align: right;
-}
-
-.settings-field {
-  background: linear-gradient(90deg, #063d37, #063d37);
-  padding: 4px 8px;
-  border-radius: 3px;
-  font-size: 0.875rem;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
-}
-
-.settings-field:hover {
-  background: linear-gradient(90deg, #063d37, #063d37);
-  transform: scale(1.05);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--secondary-color); /* Weiß */
+  text-align: center;
 }
 
 .delete-option-button {
-  font-size: 0.875rem;
-  font-weight: 500;
+  background: #dc2626; /* Keine Transparenz */
+  color: var(--secondary-color);
   border: none;
-  background: none;
+  border-radius: 3px;
+  padding: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   cursor: pointer;
-  padding: 2px 4px;
-  transition: color 0.2s ease;
+  width: 22px;
+  height: 22px;
+  transition: background-color 0.2s ease;
 }
 
 .delete-option-button:hover {
-  color: #ffffff;
+  background: #b91c1c;
 }
 
 .confirm-dialog {
   grid-column: 1 / -1;
-  background: linear-gradient(135deg, #fef9c3, #fef08a);
-  padding: 8px;
-  border-radius: 4px;
-  margin-top: 4px;
+  background: linear-gradient(135deg, #fef9c3, #fef08a); /* Keine Transparenz */
+  padding: 5px;
+  border-radius: 3px;
+  margin-top: 3px;
   display: flex;
-  gap: 6px;
+  gap: 5px;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   position: absolute;
   top: 100%;
   left: 0;
   width: 100%;
   z-index: 20;
+  font-size: 0.75rem;
 }
 
 .confirm-button {
-  background: linear-gradient(90deg, #dc2626, #ef4444);
-  padding: 4px 8px;
-  border-radius: 3px;
-  font-size: 0.875rem;
+  background: linear-gradient(90deg, #dc2626, #ef4444); /* Keine Transparenz */
+  color: var(--secondary-color);
+  padding: 2px 5px;
+  border-radius: 2px;
+  font-size: 0.75rem;
   border: none;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
 }
 
 .confirm-button:hover {
   background: linear-gradient(90deg, #b91c1c, #dc2626);
-  transform: scale(1.05);
 }
 
 .cancel-button {
-  background: linear-gradient(90deg, #9ca3af, #d1d5db);
-  padding: 4px 8px;
-  border-radius: 3px;
-  font-size: 0.875rem;
+  background: linear-gradient(90deg, #9ca3af, #d1d5db); /* Keine Transparenz */
+  color: #1f2937;
+  padding: 2px 5px;
+  border-radius: 2px;
+  font-size: 0.75rem;
   border: none;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
 }
 
 .cancel-button:hover {
   background: linear-gradient(90deg, #6b7280, #9ca3af);
-  transform: scale(1.05);
 }
 
 .settings-container {
   grid-column: 1 / -1;
-  background: transparent;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  margin-top: 10px;
+  background: var(--box-background); /* Box-Hintergrund */
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  margin-top: 6px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  transition: transform 0.3s ease;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(144, 95, 164, 0.1);
-}
-
-.settings-container:hover {
-  transform: translateY(-2px);
+  gap: 8px;
 }
 
 .settings-container h4 {
-  font-size: 1.25rem;
-  font-weight: 700;
-}
-
-.settings-container h5 {
-  font-size: 1rem;
+  font-size: 0.9375rem;
   font-weight: 600;
-  margin-bottom: 10px;
-}
-
-.settings-container .grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-
-@media (min-width: 640px) {
-  .settings-container .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .settings-container .zeitraum-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  color: var(--primary-color); /* Dunkelgrün */
 }
 
 .settings-container label {
   display: flex;
   flex-direction: column;
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--secondary-color); /* Weiß */
 }
 
 .settings-container select {
-  padding: 8px;
-  border: 2px solid #ffffff;
-  border-radius: 6px;
-  font-size: 0.875rem;
+  padding: 5px;
+  border: 1px solid #d1d5db;
+  border-radius: 3px;
+  font-size: 0.75rem;
   width: 100%;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  background: transparent;
-  backdrop-filter: blur(5px);
 }
 
 .settings-container select:focus {
   outline: none;
-  border-color: #063d37;
-  box-shadow: 0 0 0 3px rgba(144, 95, 164, 0.3);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 1.5px rgba(6, 61, 55, 0.25);
 }
 
 .radio-group-settings {
   display: flex;
-  gap: 12px;
-  margin-top: 6px;
+  gap: 6px;
+  margin-top: 3px;
 }
 
 .radio-group-settings label {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
 }
 
 .radio-group-settings input {
-  width: 16px;
-  height: 16px;
-  accent-color: #063d37;
+  width: 13px;
+  height: 13px;
+  accent-color: var(--primary-color);
   cursor: pointer;
 }
 
 .zeitraum-section {
-  border-top: 1px solid rgba(229, 231, 235, 0.8);
-  padding-top: 10px;
-  margin-top: 10px;
+  border-top: 1px solid #757575;
+  padding-top: 6px;
+  margin-top: 6px;
 }
 
 .add-option-button {
-  background: linear-gradient(90deg, #063d37, #063d37);
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 600;
+  background: linear-gradient(90deg, #062316, var(--primary-color)); /* Keine Transparenz */
+  color: var(--secondary-color);
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 500;
   border: none;
   cursor: pointer;
-  margin-top: 16px;
-  transition: transform 0.2s ease, background 0.3s ease;
+  margin-top: 6px;
 }
 
 .add-option-button:hover {
-  background: linear-gradient(90deg, #7a4d8b, #355f9a);
-  transform: scale(1.05);
+  background: linear-gradient(90deg, #062316, var(--primary-dark));
 }
 
-.new-option-container {
-  margin-top: 16px;
-  padding: 16px;
-  background: transparent;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(144, 95, 164, 0.1);
-}
-
-@media (min-width: 640px) {
-  .new-option-container {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-.new-option-input,
-.new-option-watt {
-  padding: 8px;
-  border: 2px solid #ffffff;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  width: 100%;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  background: transparent;
-  backdrop-filter: blur(5px);
-}
-
-.new-option-input:focus,
-.new-option-watt:focus {
-  outline: none;
-  border-color: #063d37;
-  box-shadow: 0 0 0 3px rgba(144, 95, 164, 0.3);
-}
-
-.save-option-button {
-  background: linear-gradient(90deg, #063d37, #063d37);
+.download-button {
+  background: linear-gradient(90deg, #1e3a8a, #3b82f6); /* Keine Transparenz */
+  color: var(--secondary-color);
   padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.2s ease, background 0.3s ease;
-}
-
-.save-option-button:hover {
-  background: linear-gradient(90deg, #7a4d8b, #355f9a);
-  transform: scale(1.05);
-}
-
-.summary-container {
-  margin-top: 24px;
-  margin-bottom: 40px;
-  background: transparent;
-  padding: 16px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(5px);
-  border: 1px solid #ffffff;
-}
-
-.summary-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #ffffff;
-  margin-bottom: 10px;
-}
-
-@media (min-width: 1100px) {
-  .summary-title {
-    font-size: 1.5rem;
-  }
-}
-
-.summary-item {
+  border-radius: 3px;
   font-size: 0.875rem;
   font-weight: 500;
-  margin-bottom: 6px;
-}
-
-.chart-container {
-  height: 300px;
-}
-
-table {
-  border-collapse: collapse;
-}
-
-table, th, td {
   border: none;
-}
-
-.option-icon {
-  font-size: 1.2rem;
-  vertical-align: middle;
-  margin-right: 8px;
-}
-
-.checkbox-group-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.kw-input-container {
+  cursor: pointer;
+  margin-top: 8px;
   display: flex;
   align-items: center;
   gap: 4px;
 }
 
-.kw-input {
-  width: 50px;
-  padding: 4px 2px 4px 4px;
-  font-size: 14px;
+.download-button:hover {
+  background: linear-gradient(90deg, #1e40af, #2563eb);
+}
+
+.download-hint {
+  font-size: 0.75rem;
+  color: var(--secondary-color); /* Weiß */
+  margin-top: 4px;
+}
+
+.new-option-container {
+  margin-top: 6px;
+  padding: 8px;
+  background: var(--box-background); /* Box-Hintergrund */
+  border-radius: 5px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.save-option-button {
+  background: linear-gradient(90deg, #062316, var(--primary-color)); /* Keine Transparenz */
+  color: var(--secondary-color);
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+}
+
+.save-option-button:hover {
+  background: linear-gradient(90deg, #062316, var(--primary-dark));
+}
+
+/* Modal-Styling */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modal-content {
+  background: var(--box-background); /* Box-Hintergrund */
+  padding: 16px;
+  border-radius: 6px;
+  width: 90%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.close-modal-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  font-size: 1.125rem;
+  cursor: pointer;
+  color: var(--secondary-color); /* Weiß */
+}
+
+.close-modal-button:hover {
+  color: #dc2626;
+}
+
+.modal-content h2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--primary-color); /* Dunkelgrün */
+}
+
+.modal-content p {
+  font-size: 0.8125rem;
+  color: var(--secondary-color); /* Weiß */
+}
+
+.modal-content input {
+  padding: 5px;
   border: 1px solid #d1d5db;
-  border-radius: 4px;
-  text-align: center;
-  background: transparent;
-  backdrop-filter: blur(5px);
+  border-radius: 3px;
+  font-size: 0.8125rem;
+  width: 100%;
 }
 
-.kw-input:focus {
+.modal-content input:focus {
   outline: none;
-  border-color: #063d37;
-  box-shadow: 0 0 0 2px rgba(144, 95, 164, 0.2);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 1.5px rgba(6, 61, 55, 0.25);
 }
 
-.kw-label {
-  font-size: 12px;
-  white-space: nowrap;
+.modal-content label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  color: var(--secondary-color); /* Weiß */
 }
 
+.modal-content input[type="checkbox"] {
+  width: 13px;
+  height: 13px;
+  accent-color: var(--primary-color);
+}
+
+/* Neues Layout für dynamische Verbraucher */
 .dynamic-consumer-layout {
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin-top: 8px;
+  background: var(--box-background); /* Box-Hintergrund für dynamische Verbraucher */
 }
 
-.dynamic-consumer-layout input[type="range"] {
-  width: 100%;
-  accent-color: #063d37;
-  margin-top: 4px;
+/* Eingaben-Wrapper für Strompreis und Datum */
+.inputs-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-@media (max-width: 768px) {
-  .dynamic-consumer-layout {
-    gap: 4px;
-    margin-top: 6px;
-  }
-
-  .dynamic-consumer-layout input[type="range"] {
-    width: 100%;
-    accent-color: #063d37;
-    margin-top: 4px;
-  }
-}
-
-.new-option-kw {
-  width: 50px;
-  padding: 4px;
-  font-size: 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  box-sizing: border-box;
-  text-align: right;
-  background: transparent;
-  backdrop-filter: blur(5px);
-}
-
-.new-option-kw:focus {
-  outline: none;
-  border-color: #063d37;
-  box-shadow: 0 0 0 2px rgba(144, 95, 164, 0.2);
-}
-
-
- .bottom-nav {
+/* Bottom Navigation */
+.bottom-nav {
   display: flex;
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgb(66, 66, 66);
+  background-color: rgb(66, 66, 66); /* Beibehalten des ursprünglichen Navbar-Hintergrunds */
   border-top: 1px solid #D1D5DB;
   justify-content: space-around;
   align-items: center;
   padding: 8px 0;
   z-index: 1000;
-  order: 8;
-  border-radius: 12px;
 }
 
 .bottom-nav a {
@@ -2768,7 +2595,7 @@ table, th, td {
   gap: 4px;
   padding: 8px;
   border-radius: 12px;
-  color: #FFFFFF;
+  color: var(--secondary-color);
   text-decoration: none;
   transition: background 0.2s;
   flex: 1;
@@ -2777,817 +2604,897 @@ table, th, td {
 }
 
 .bottom-nav a:hover {
-  background: linear-gradient(90deg, #063d37, #063d37);
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-color));
 }
 
 .bottom-nav a.active {
-  background: linear-gradient(90deg, #063d37, #063d37);
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-color));
 }
 
 .bottom-nav a.active .fa-house {
-  color: #FFFFFF !important;
+  color: var(--secondary-color) !important;
 }
 
 .bottom-nav a p {
   text-align: center;
-  font-size: 10px;
+  font-size: 12px; /* Größere Schriftgröße */
   font-weight: 500;
   margin: 0;
-  color: #FFFFFF;
+  color: var(--secondary-color);
 }
 
 .bottom-nav a svg {
-  font-size: 18px;
-  color: #FFFFFF;
+  font-size: 20px; /* Größere Symbolgröße */
+  color: var(--secondary-color);
 }
 
+/* Dynamischer Preis Container */
 .dynamischer-preis-container {
   border-radius: 8px;
   padding: 4px;
-  max-height: 500px;
+  max-height: 500px; /* Set maximum height to 500px for desktop */
+  background: var(--box-background); /* Box-Hintergrund */
 }
 
+@media (min-width: 769px) {
+  .inputs-wrapper {
+    flex-direction: row;
+    gap: 12px;
+    justify-content: space-between;
+  }
+  .input-container-html,
+  .date-picker-container {
+    flex: 1;
+    margin-bottom: 0;
+    box-shadow: none;
+    padding: 0;
+    background: transparent;
+  }
+}
+
+/* Media Query für Mobile */
 @media (max-width: 768px) {
+  html {
+    font-size: 12px;
+  }
+
   .main {
     gap: 4px;
   }
-  .content,
-  .chart {
+
+  .content, .chart {
     padding: 4px;
   }
+
+  .app-container {
+    max-width: 100%; /* Auf Mobilgeräten volle Breite, aber rechtsbündig */
+    margin-left: auto;
+    padding: 20px; /* Angepasstes Padding */
+    gap: 6px;
+    padding-top: 232px;
+    align-items: flex-end; /* Rechtsbündig */
+  }
+
+  .fixed-chart {
+    top: 64px;
+    padding: 6px;
+    border-radius: 0 0 5px 5px;
+  }
+
+  .chart-container {
+    height: 220px;
+    margin-bottom: 40px;
+  }
+
+  .calculation-report {
+    max-height: calc(100vh - 232px - 10px); /* Angepasster Abstand für bottom-nav */
+    overflow-y: auto;
+    margin-bottom: 20px; /* Erhöhter margin-bottom für Jahreszusammenfassung */
+  }
+
+  .region-buttons {
+    gap: 6px;
+    margin: 4px 0;
+    padding: 4px;
+    background: var(--box-background); /* Box-Hintergrund */
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  .region-switch-wrapper {
+    min-width: 48px;
+  }
+
+  .region-label {
+    font-size: 0.75rem;
+  }
+
+  .discount-switch-container {
+    width: 30px;
+    height: 16px;
+  }
+
+  .discount-switch-slider:before {
+    height: 12px;
+    width: 12px;
+    left: 2px;
+    bottom: 2px;
+  }
+
+  .discount-switch-input:checked + .discount-switch-slider:before {
+    transform: translateX(14px);
+  }
+
+  .inputs-wrapper {
+    flex-direction: row;
+    gap: 6px;
+    padding: 6px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    margin-bottom: 6px;
+  }
+
+  .date-picker-container input,
+  .date-picker-container select,
+  .input-container-html input,
+  .input-container-html select {
+    padding: 4px;
+    font-size: 0.75rem;
+    border-radius: 2px;
+  }
+
+  .input-container-html label {
+    font-size: 0.75rem;
+    margin-bottom: 2px;
+  }
+
+  .menu {
+    margin-bottom: 6px;
+  }
+
+  .menu-header {
+    padding: 6px;
+  }
+
+  .menu-header span {
+    font-size: 0.75rem;
+    color: var(--secondary-color);
+  }
+
+  .menu-content {
+    padding: 6px;
+    font-size: 0.75rem;
+  }
+
+  .checkbox-group {
+    gap: 4px;
+  }
+
+  .checkbox-group-header {
+    font-size: 0.6875rem;
+    padding: 4px 0;
+    gap: 4px;
+    grid-template-columns: 32px 1fr 48px 64px 64px 32px;
+  }
+
+  .checkbox-group li {
+    font-size: 0.6875rem;
+    padding: 4px 0;
+    gap: 4px;
+    grid-template-columns: 32px 1fr 48px 64px 64px 32px;
+    background: var(--box-background); /* Box-Hintergrund */
+  }
+
+  .icon-field img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .info-field .tooltip {
+    font-size: 0.9375rem;
+    font-weight: bold;
+    color: var(--secondary-color);
+  }
+
+  .info-field .tooltip-text {
+    font-size: 0.625rem;
+    padding: 2px 3px;
+  }
+
+  .checkbox-group-label input {
+    width: 16px;
+    height: 16px;
+  }
+
+  .input-group input.watt-input {
+    padding: 3px 4px;
+    font-size: 0.6875rem;
+    background: var(--box-background);
+  }
+
+  .price-display {
+    font-size: 0.6875rem;
+  }
+
+  .delete-option-button {
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+  }
+
+  .confirm-dialog {
+    font-size: 0.6875rem;
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .confirm-button,
+  .cancel-button {
+    padding: 2px 4px;
+    font-size: 0.6875rem;
+  }
+
+  .settings-container {
+    padding: 6px;
+    margin-top: 4px;
+    gap: 6px;
+  }
+
+  .settings-container h4 {
+    font-size: 0.875rem;
+  }
+
+  .settings-container label,
+  .settings-container select {
+    font-size: 0.6875rem;
+  }
+
+  .add-option-button,
+  .save-option-button {
+    padding: 3px 6px;
+    font-size: 0.6875rem;
+  }
+
+  .download-button {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+
+  .modal-content {
+    padding: 12px;
+    max-width: 320px;
+  }
+
+  .modal-content h2 {
+    font-size: 1rem;
+  }
+
+  .modal-content p,
+  .modal-content input,
+  .modal-content label {
+    font-size: 0.75rem;
+  }
+
+  .modal-content input[type="checkbox"] {
+    width: 12px;
+    height: 12px;
+  }
+
+  .close-modal-button {
+    font-size: 1rem;
+  }
+
+  .dynamic-consumer-layout {
+    gap: 4px;
+    margin-top: 6px;
+    background: var(--box-background); /* Box-Hintergrund */
+  }
+
+  .delete-zeitraum-button {
+    background-color: #ef4444;
+    color: var(--secondary-color);
+    border-radius: 3px;
+    padding: 3px 6px;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+  }
+
+  .delete-zeitraum-button:hover {
+    background-color: #dc2626;
+  }
+
+  .chart-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 50;
+    transition: opacity 0.3s ease;
+  }
+
+  .option-icon {
+    font-size: 1.2rem;
+    color: rgb(6, 35, 22);
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+
+  .checkbox-group-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   .dynamischer-preis-container {
-    max-height: 470px;
+    max-height: 470px; /* Set maximum height to 470px for mobile */
+    background: var(--box-background); /* Box-Hintergrund */
   }
+
   .layout {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    scrollbar-width: none; /* Für Firefox */
+    -ms-overflow-style: none; /* Für Internet Explorer und ältere Edge-Versionen */
   }
+
   .layout::-webkit-scrollbar {
-    display: none;
+    display: none; /* Für Chrome, Safari und Chromium-basierte Edge */
   }
-}
-`}</style>
+}`}</style>
 
 
 
 
-<div className="layout relative bg-transparent" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
-  <div className="app-container flex flex-col min-h-screen">
-    <h2 className="report-title">Detail-Rechner</h2>
+
+
+<div className="app-container">
+  {/* Fixierter Chart-Bereich */}
+  <div className="fixed-chart">
     <div className="chart-container">
       <Line data={chartData} options={chartOptions} />
     </div>
+  </div>
 
+  {/* Rechenbericht */}
+  <div className="calculation-report">
+    <h2 className="report-title">Detail-Rechner</h2>
+    <div className="report-content">
+      {/* Eingaben: Datum und Strompreis nebeneinander */}
+      <div className="inputs-wrapper">
+        <div className="date-picker-container">
+          <div className="input-container-html">
+            <label htmlFor="date-picker">Datum dynamische Preise</label>
+            <select
+              id="date-picker"
+              value={toInputDate(selectedDate)}
+              onChange={(e) => setSelectedDate(fromInputDate(e.target.value))}
+              disabled={apiLoading}
+            >
+              <option value="">Datum auswählen</option>
+              {availableDates.map((date) => (
+                <option key={date} value={toInputDate(date)}>
+                  {date}
+                </option>
+              ))}
+            </select>
+            {apiLoading && <p>Lade dynamische Preise...</p>}
+            {error && <p style={{ color: '#dc2626', fontSize: '0.75rem' }}>{error}</p>}
+          </div>
+        </div>
 
-
-
-
-    <div className="calculation-report flex-grow">
-      <div className="report-content">
         <div className="input-container-html">
-          <label htmlFor="strompreis">Strompreis (Ct/kWh):</label>
+          <label htmlFor="strompreis">Strompreis (€/kWh)</label>
           <input
-            type="number"
             id="strompreis"
+            type="number"
+            step="0.01"
             value={strompreis}
             onChange={(e) => handleStrompreisChange(e.target.value)}
-            step="0.01"
-            min="0"
           />
-        </div>
-        <div className="input-container-html">
-          <label>Region:</label>
-          <div className="region-buttons">
-            <div className="region-switch-wrapper">
-              <label className="region-label">AM</label>
-              <div className="discount-switch-container">
-                <input
-                  type="checkbox"
-                  id="region-kf"
-                  className="discount-switch-input"
-                  checked={selectedRegion === 'AM'}
-                  onChange={() => handleRegionChange('AM')}
-                  aria-label="Region Kraftwerk auswählen"
-                />
-                <label className="discount-switch-slider" htmlFor="region-kf"></label>
-              </div>
-            </div>
-            <div className="region-switch-wrapper">
-              <label className="region-label">SuRo</label>
-              <div className="discount-switch-container">
-                <input
-                  type="checkbox"
-                  id="region-mn"
-                  className="discount-switch-input"
-                  checked={selectedRegion === 'SuRo'}
-                  onChange={() => handleRegionChange('SuRo')}
-                  aria-label="Region Mittlerer Netzpreis auswählen"
-                />
-                <label className="discount-switch-slider" htmlFor="region-mn"></label>
-              </div>
-            </div>
-            <div className="region-switch-wrapper">
-              <label className="region-label">Regio</label>
-              <div className="discount-switch-container">
-                <input
-                  type="checkbox"
-                  id="region-mod"
-                  className="discount-switch-input"
-                  checked={selectedRegion === 'Regio'}
-                  onChange={() => handleRegionChange('Regio')}
-                  aria-label="Region Modellregion auswählen"
-                />
-                <label className="discount-switch-slider" htmlFor="region-mod"></label>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="input-container-html">
-          <label>Energiepreis (Ct/kWh):</label>
-          <span>{getPreisDifferenz(strompreis, selectedRegion)}</span>
-        </div>
-        <div className="input-container-html">
-          <label className="date-picker-label" htmlFor="date-picker">Datum für dynamischen Preis:</label>
-          <DatePicker
-            id="date-picker"
-            selected={selectedDate ? new Date(toInputDate(selectedDate)) : null}
-            onChange={(date) => setSelectedDate(date ? fromInputDate(date.toISOString().split('T')[0]) : '')}
-            includeDates={validDates}
-            dateFormat="yyyy-MM-dd"
-            className="mt-1 block w-full max-w-xs p-2 border border-black rounded-md shadow-sm focus:ring-red-500 focus:border-black sm:text-sm text-black"
-            placeholderText="Datum auswählen"
-            disabled={availableDates.length === 0}
-          />
-        </div>
-        {apiLoading && <div className="loading">Lade dynamische Strompreise...</div>}
-        {!apiLoading && availableDates.length === 0 && (
-          <div className="no-data">Keine Daten für dynamische Strompreise verfügbar.</div>
-        )}
-        {error && <div className="no-data">{error}</div>}
-
-        {menus.map((menu) => (
-          <div key={menu.id} className="menu">
-            <div className="menu-header" onClick={() => toggleMenu(menu.id)}>
-              <span>{menu.label}</span>
-              <span className={`triangle ${openMenus[menu.id] ? 'open' : 'closed'}`}>▼</span>
-            </div>
-
-            {openMenus[menu.id] && (
-              <div className="menu-content">
-                <ul className="checkbox-group">
-                  <li className="checkbox-group-header">
-                    <span>{menu.id === 'stromerzeuger' ? 'Erzeuger' : 'Verbraucher'}</span>
-                    <span>Info</span>
-                    {menu.id !== 'waermepumpe' && <span>Watt/h</span>}
-                    {menu.id === 'waermepumpe' && <span>kW</span>}
-                    <span>Normaltarif/ Jahr</span>
-                    {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto' || menu.id === 'waermepumpe') && <span></span>}
-                  </li>
-
-                  {menu.options.map((option) => (
-                    <li key={option.name}>
-                      <label className="checkbox-group-label">
-                        <input
-                          type="checkbox"
-                          checked={verbraucherDaten[option.name]?.checked || false}
-                          onChange={(e) => onCheckboxChange(option.name, e.target.checked)}
-                        />
-                        {iconMapping[option.name] === 'AcUnit' && <AcUnitIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
-                        {iconMapping[option.name] === 'Air' && <AirIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
-                        {iconMapping[option.name] === 'LocalLaundryService' && <LocalLaundryServiceIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
-                        {iconMapping[option.name] === 'Kitchen' && <KitchenIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
-                        {iconMapping[option.name] === 'Tv' && <TvIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
-                        {iconMapping[option.name] === 'Lightbulb' && <LightbulbIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
-                        {iconMapping[option.name] === 'ElectricCar' && <ElectricCarIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
-                        {iconMapping[option.name] === 'HeatPump' && <HeatPumpIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
-                        {!iconMapping[option.name] && <DescriptionIcon className="option-icon" aria-label={`Icon for ${option.name}`} />}
-                        <span>{option.name}</span>
-                      </label>
-                      <div className="info-field">
-                        <span className="tooltip">{verbraucherBeschreibungen[option.name] || option.specifications}</span>
-                        <span>ℹ️</span>
-                      </div>
-                      {menu.id !== 'waermepumpe' && (
-                        <div className="input-group">
-                          <input
-                            type="number"
-                            className="watt-input"
-                            value={verbraucherDaten[option.name]?.watt || ''}
-                            onChange={(e) => handleWattChange(option.name, e.target.value)}
-                            min="0"
-                            placeholder="Watt"
-                          />
-                        </div>
-                      )}
-                      {menu.id === 'waermepumpe' && (
-                        <div className="input-group kw-input-container">
-                          <input
-                            type="number"
-                            className="kw-input"
-                            value={(verbraucherDaten[option.name]?.watt / 1000) || ''}
-                            onChange={(e) => handleKWChange(option.name, e.target.value)}
-                            min="0"
-                            step="0.1"
-                            placeholder=""
-                          />
-                          <span className="kw-label">kW</span>
-                        </div>
-                      )}
-                      <div className="price-display">
-                        {verbraucherDaten[option.name]?.kosten || '0.00'} €
-                      </div>
-                      {(menu.id === 'dynamischeverbraucher' || menu.id === 'eauto' || menu.id === 'waermepumpe') && (
-                        <button
-                          className="settings-field"
-                          onClick={() => toggleErweiterteOptionen(menu.id, option.name)}
-                        >
-                          Einstellungen
-                        </button>
-                      )}
-                      <button
-                        className="delete-option-button"
-                        onClick={() => handleDeleteOptionClick(menu.id, option.name)}
-                      >
-                        Löschen
-                      </button>
-
-                      {deleteConfirmOption?.menuId === menu.id &&
-                        deleteConfirmOption?.optionName === option.name && (
-                        <div className="col-span-4 sm:col-span-6 bg-red-50 border border-red-200 p-4 rounded-lg flex flex-col sm:flex-row sm:items-center gap-3 shadow-sm">
-                          <span className="text-sm sm:text-base text-red-800 font-medium">
-                            Möchten Sie <strong>"{option.name}"</strong> wirklich löschen?
-                          </span>
-                          <div className="flex gap-2 sm:ml-auto">
-                            <button
-                              className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1.5 rounded-md transition-colors duration-150"
-                              onClick={() => confirmDeleteOption(menu.id, option.name)}
-                            >
-                              Ja, löschen
-                            </button>
-                            <button
-                              className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm px-3 py-1.5 rounded-md transition-colors duration-150"
-                              onClick={cancelDeleteOption}
-                            >
-                              Abbrechen
-                            </button>
-                          </div>
-                        </div>
-                      )}
-
-                      {showErweiterteOptionen[menu.id]?.[option.name] && (
-                        <div className="settings-container">
-                          {menu.id === 'eauto' ? (
-                            <div>
-                              <h4>E-Auto Einstellungen</h4>
-                              <div className="grid">
-                                <label>
-                                  Batteriekapazität (kWh):
-                                  <input
-                                    type="number"
-                                    className="settings-input"
-                                    value={erweiterteEinstellungen[option.name]?.batterieKapazitaet || ''}
-                                    onChange={(e) => handleErweiterteEinstellungChange(option.name, 'batterieKapazitaet', e.target.value, null)}
-                                    min="0"
-                                    step="0.1"
-                                    placeholder="z.B. 50"
-                                  />
-                                </label>
-                                <label>
-                                  Wallbox-Leistung (W):
-                                  <input
-                                    type="number"
-                                    className="settings-input"
-                                    value={erweiterteEinstellungen[option.name]?.wallboxLeistung || ''}
-                                    onChange={(e) => handleErweiterteEinstellungChange(option.name, 'wallboxLeistung', e.target.value, null)}
-                                    min="0"
-                                    step="100"
-                                    placeholder="z.B. 11000"
-                                  />
-                                </label>
-                                <label>
-                                  Ladehäufigkeit (pro Woche):
-                                  <input
-                                    type="number"
-                                    className="settings-input"
-                                    value={erweiterteEinstellungen[option.name]?.nutzung || ''}
-                                    onChange={(e) => handleErweiterteEinstellungChange(option.name, 'nutzung', e.target.value, null)}
-                                    min="0"
-                                    max="20"
-                                    step="1"
-                                    placeholder="z.B. 2"
-                                  />
-                                </label>
-                                <label>
-                                  Standardladung:
-                                  <div className="radio-group-settings">
-                                    <label>
-                                      <input
-                                        type="radio"
-                                        name={`standardLadung-${option.name}`}
-                                        value={true}
-                                        checked={erweiterteEinstellungen[option.name]?.standardLadung === true}
-                                        onChange={(e) => handleErweiterteEinstellungChange(option.name, 'standardLadung', e.target.value, null)}
-                                      />
-                                      Ja
-                                    </label>
-                                    <label>
-                                      <input
-                                        type="radio"
-                                        name={`standardLadung-${option.name}`}
-                                        value={false}
-                                        checked={erweiterteEinstellungen[option.name]?.standardLadung === false}
-                                        onChange={(e) => handleErweiterteEinstellungChange(option.name, 'standardLadung', e.target.value, null)}
-                                      />
-                                      Nein
-                                    </label>
-                                  </div>
-                                </label>
-                              </div>
-                              {!erweiterteEinstellungen[option.name]?.standardLadung && (
-                                <div className="zeitraum-section">
-                                  <h5>Zeiträume</h5>
-                                  {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum, index) => (
-                                    <div key={zeitraum.id} className="zeitraum-grid">
-                                      <div className="dynamic-consumer-layout flex flex-col gap-0.5">
-                                        <div className="flex flex-col items-center justify-center w-full">
-                                          <span className="text-[11px] font-semibold text-gray-700 text-center">
-                                            Zeitraum
-                                          </span>
-                                          <span className="text-[11px] text-gray-700 text-center">
-                                            {timePeriods.find(
-                                              (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-                                            )
-                                              ? `${timePeriods.find(
-                                                  (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-                                                ).label} (${zeitraum.startzeit}-${zeitraum.endzeit})`
-                                              : "–"}
-                                          </span>
-                                          <input
-                                            type="range"
-                                            min="0"
-                                            max={timePeriods.length - 1}
-                                            value={timePeriods.findIndex(
-                                              (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-                                            )}
-                                            onChange={(e) =>
-                                              handleTimePeriodChange(option.name, timePeriods[e.target.value].label, zeitraum.id)
-                                            }
-                                            className="w-full accent-[#063d37] mt-1"
-                                          />
-                                        </div>
-                                      </div>
-                                      <label>
-                                        Dauer (h):
-                                        <input
-                                          type="number"
-                                          className="settings-input"
-                                          value={zeitraum.dauer || ''}
-                                          onChange={(e) => handleErweiterteEinstellungChange(option.name, 'dauer', e.target.value, zeitraum.id)}
-                                          min="0"
-                                          max="23"
-                                          step="1"
-                                          placeholder="z.B. 2"
-                                        />
-                                      </label>
-                                      {index > 0 && (
-                                        <div>
-                                          <button
-                                            className="delete-option-button"
-                                            onClick={() => removeZeitraum(option.name, zeitraum.id)}
-                                          >
-                                            Zeitraum löschen
-                                          </button>
-                                        </div>
-                                      )}
-                                    </div>
-                                  ))}
-                                  <button
-                                    className="add-option-button"
-                                    onClick={() => addZeitraum(option.name)}
-                                  >
-                                    Zeitraum hinzufügen
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          ) : menu.id === 'waermepumpe' ? (
-                            <div>
-                              <h4>Wärmepumpe Einstellungen</h4>
-                              <div className="grid">
-                                <label>
-                                  JAZ (Jahresarbeitszahl):
-                                  <input
-                                    type="number"
-                                    className="settings-input"
-                                    value={erweiterteEinstellungen[option.name]?.jaz || ''}
-                                    onChange={(e) => handleErweiterteEinstellungChange(option.name, 'jaz', e.target.value, null)}
-                                    min="0"
-                                    step="0.1"
-                                    placeholder="z.B. 3.4"
-                                  />
-                                </label>
-                                <label>
-                                  Heizstunden (pro Jahr):
-                                  <input
-                                    type="number"
-                                    className="settings-input"
-                                    value={erweiterteEinstellungen[option.name]?.heizstunden || ''}
-                                    onChange={(e) => handleErweiterteEinstellungChange(option.name, 'heizstunden', e.target.value, null)}
-                                    min="0"
-                                    step="1"
-                                    placeholder="z.B. 2000"
-                                  />
-                                </label>
-                              </div>
-                              <div className="zeitraum-section">
-                                <h5>Zeiträume</h5>
-                                {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum, index) => (
-                                  <div key={zeitraum.id} className="zeitraum-grid">
-                                    <div className="dynamic-consumer-layout flex flex-col gap-0.5">
-                                      <div className="flex flex-col items-center justify-center w-full">
-                                        <span className="text-[11px] font-semibold text-gray-700 text-center">
-                                          Zeitraum
-                                        </span>
-                                        <span className="text-[11px] text-gray-700 text-center">
-                                          {timePeriods.find(
-                                            (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-                                          )
-                                            ? `${timePeriods.find(
-                                                (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-                                              ).label} (${zeitraum.startzeit}-${zeitraum.endzeit})`
-                                            : "–"}
-                                        </span>
-                                        <input
-                                          type="range"
-                                          min="0"
-                                          max={timePeriods.length - 1}
-                                          value={timePeriods.findIndex(
-                                            (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-                                          )}
-                                          onChange={(e) =>
-                                            handleTimePeriodChange(option.name, timePeriods[e.target.value].label, zeitraum.id)
-                                          }
-                                          className="w-full accent-[#063d37] mt-1"
-                                        />
-                                      </div>
-                                    </div>
-                                    <label>
-                                      Dauer (h):
-                                      <input
-                                        type="number"
-                                        className="settings-input"
-                                        value={zeitraum.dauer || ''}
-                                        onChange={(e) => handleErweiterteEinstellungChange(option.name, 'dauer', e.target.value, zeitraum.id)}
-                                        min="0"
-                                        max="23"
-                                        step="1"
-                                        placeholder="z.B. 2"
-                                      />
-                                    </label>
-                                    {index > 0 && (
-                                      <div>
-                                        <button
-                                          className="delete-option-button"
-                                          onClick={() => removeZeitraum(option.name, zeitraum.id)}
-                                        >
-                                          Zeitraum löschen
-                                        </button>
-                                      </div>
-                                    )}
-                                  </div>
-                                ))}
-                                <button
-                                  className="add-option-button"
-                                  onClick={() => addZeitraum(option.name)}
-                                >
-                                  Zeitraum hinzufügen
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
-                            <div>
-                              <h4>Verbraucher Einstellungen</h4>
-                              <div className="grid">
-                                <label>
-                                  Nutzung (pro Woche):
-                                  <input
-                                    type="number"
-                                    className="settings-input"
-                                    value={erweiterteEinstellungen[option.name]?.nutzung || ''}
-                                    onChange={(e) => handleErweiterteEinstellungChange(option.name, 'nutzung', e.target.value, null)}
-                                    min="0"
-                                    max="20"
-                                    step="1"
-                                    placeholder="z.B. 2"
-                                  />
-                                </label>
-                              </div>
-                              <div className="zeitraum-section">
-                                <h5>Zeiträume</h5>
-                                {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum, index) => (
-                                  <div key={zeitraum.id} className="zeitraum-grid">
-                                    <div className="dynamic-consumer-layout flex flex-col gap-0.5">
-                                      <div className="flex flex-col items-center justify-center w-full">
-                                        <span className="text-[11px] font-semibold text-gray-700 text-center">
-                                          Zeitraum
-                                        </span>
-                                        <span className="text-[11px] text-gray-700 text-center">
-                                          {timePeriods.find(
-                                            (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-                                          )
-                                            ? `${timePeriods.find(
-                                                (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-                                              ).label} (${zeitraum.startzeit}-${zeitraum.endzeit})`
-                                            : "–"}
-                                        </span>
-                                        <input
-                                          type="range"
-                                          min="0"
-                                          max={timePeriods.length - 1}
-                                          value={timePeriods.findIndex(
-                                            (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-                                          )}
-                                          onChange={(e) =>
-                                            handleTimePeriodChange(option.name, timePeriods[e.target.value].label, zeitraum.id)
-                                          }
-                                          className="w-full accent-[#063d37] mt-1"
-                                        />
-                                      </div>
-                                    </div>
-                                    <label>
-                                      Dauer (h):
-                                      <input
-                                        type="number"
-                                        className="settings-input"
-                                        value={zeitraum.dauer || ''}
-                                        onChange={(e) => handleErweiterteEinstellungChange(option.name, 'dauer', e.target.value, zeitraum.id)}
-                                        min="0"
-                                        max="23"
-                                        step="1"
-                                        placeholder="z.B. 2"
-                                      />
-                                    </label>
-                                    {index > 0 && (
-                                      <div>
-                                        <button
-                                          className="delete-option-button"
-                                          onClick={() => removeZeitraum(option.name, zeitraum.id)}
-                                        >
-                                          Zeitraum löschen
-                                        </button>
-                                      </div>
-                                    )}
-                                  </div>
-                                ))}
-                                <button
-                                  className="add-option-button"
-                                  onClick={() => addZeitraum(option.name)}
-                                >
-                                  Zeitraum hinzufügen
-                                </button>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-                <button
-                  className="add-option-button"
-                  onClick={() => toggleNewOptionForm(menu.id)}
-                >
-                  Neue Option hinzufügen
-                </button>
-                {showNewOptionForm[menu.id] && (
-                  <div className="new-option-container">
-                    <input
-                      type="text"
-                      className="new-option-input"
-                      placeholder="Name der neuen Option"
-                      value={newOptionNames[menu.id] || ''}
-                      onChange={(e) => handleNewOptionName(menu.id, e.target.value)}
-                    />
-                    {menu.id !== 'waermepumpe' && (
-                      <input
-                        type="number"
-                        className="new-option-watt"
-                        placeholder="Wattleistung"
-                        value={newOptionWatt[menu.id] || ''}
-                        onChange={(e) => handleNewOptionWatt(menu.id, e.target.value)}
-                        min="0"
-                      />
-                    )}
-                    {menu.id === 'waermepumpe' && (
-                      <div className="kw-input-container">
-                        <input
-                          type="number"
-                          className="new-option-kw"
-                          placeholder=""
-                          value={newOptionKW[menu.id] || ''}
-                          onChange={(e) => handleNewOptionKW(menu.id, e.target.value)}
-                          min="0"
-                          step="0.1"
-                        />
-                        <span className="kw-label">kW</span>
-                      </div>
-                    )}
-                    {menu.id === 'dynamischeverbraucher' && (
-                      <select
-                        value={newOptionTypes[menu.id] || 'week'}
-                        onChange={(e) => handleNewOptionType(menu.id, e.target.value)}
-                      >
-                        <option value="week">Wöchentlich (z.B. Waschmaschine)</option>
-                      </select>
-                    )}
-                    <button
-                      className="save-option-button"
-                      onClick={() => addNewOption(menu.id)}
-                    >
-                      Speichern
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        ))}
-        <div className="summary-container">
-          <h3 className="summary-title">Zusammenfassung pro Jahr (Energie)</h3>
-          <div className="summary-item">Kosten Grundlast (fixer Tarif): {zusammenfassung.grundlast} €</div>
-          <div className="summary-item">Kosten Schaltbare Verbraucher (fixer Tarif): {zusammenfassung.dynamisch} €</div>
-          <div className="summary-item">Kosten Wärmepumpe (fixer Tarif): {zusammenfassung.waermepumpe} €</div>
-          <div className="summary-item">Kosten Gesamt (fixer Tarif): {zusammenfassung.gesamt} €</div>
-          <div className="summary-item">Gesamtwattage: {zusammenfassung.totalWattage} W</div>
-          <div className="summary-item">Kosten Grundlast (dynamischer Tarif): {zusammenfassung.grundlastDyn} €</div>
-          <div className="summary-item">Kosten Schaltbare Verbraucher (dynamischer Tarif): {zusammenfassung.dynamischDyn} €</div>
-          <div className="summary-item">Kosten Gesamt (dynamischer Tarif): {zusammenfassung.gesamtDyn} €</div>
-          <div className="summary-item">Ersparnis (fixer vs. dynamischer Tarif): {(parseFloat(zusammenfassung.gesamt) - parseFloat(zusammenfassung.gesamtDyn)).toFixed(2)} €</div>
-          <h3 className="summary-title">Wärmepumpe</h3>
-          <div className="summary-item"> Wärmepumpe Jahreskosten (fixer Tarif): {zusammenfassung.waermepumpe} €</div>
-          <div className="summary-item"> Wärmepumpe Jahreskosten (dynamischer Tarif): {zusammenfassung.waermepumpeDyn} €</div>
-          <div className="summary-item"> Wärmepumpe Tageskosten (dynamischer Tarif): {zusammenfassung.dynselbstbestimmt} €</div>
-          <button className="download-button bg-[#063d37] text-white py-2 px-4 rounded hover:bg-blue-700" onClick={handleDownloadClick}>
-            Download PDF
-          </button>
         </div>
       </div>
-    </div>
-  
-   
 
-    {/* Bottom Navigation */}
-    <nav className="bottom-nav fixed bottom-0 left-0 right-0 bg-[#063d37] flex justify-around items-center py-2 shadow-lg">
-      <a href="/MASTER/Mobile/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white">
-        <FontAwesomeIcon icon={faHouse} style={{ color: '#FFFFFF', fontSize: '18px' }} />
-        <p className="text-white text-xs font-medium leading-normal">Home</p>
-      </a>
-      <a href="/MASTER/Mobile/preise" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white">
-        <FontAwesomeIcon icon={faChartLine} style={{ color: '#FFFFFF', fontSize: '18px' }} />
-        <p className="text-white text-xs font-medium leading-normal">Preis</p>
-      </a>
-      <a href="/MASTER/Mobile/rechner" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white">
-        <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '18px' }} />
-        <p className="text-white text-xs font-medium leading-normal">Rechner</p>
-      </a>
-      <a href="/MASTER/Mobile/details" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#4372b7] text-white active">
-        <FontAwesomeIcon icon={faFileLines} style={{ color: '#FFFFFF', fontSize: '18px' }} />
-        <p className="text-white text-xs font-medium leading-normal">Detail</p>
-      </a>
-      <a href="/MASTER/Mobile/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white">
-        <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#FFFFFF', fontSize: '18px' }} />
-        <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
-      </a>
-    </nav>
-
-    {showModal && (
-      <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-        <div className="modal-content relative bg-white rounded-lg p-6 w-full max-w-md">
-          <button
-            className="absolute top-3 right-3 text-red-500 hover:text-red-700 text-3xl font-extrabold"
-            onClick={closeModal}
-          >
-            ✕
-          </button>
-          <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
-            Download mit E-Mail-Verifizierung
-          </h1>
-          {step === 1 && (
-            <div className="space-y-4">
-              <div className="relative">
-                <input
-                  type="email"
-                  placeholder="Deine E-Mail"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700 pr-10"
-                />
-                {email && (
-                  <button
-                    type="button"
-                    onClick={() => setEmail('')}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-700 hover:text-gray-900 text-lg"
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
-              <div className="text-sm">
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={agb}
-                    onChange={(e) => setAgb(e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <span className="text-red-500">
-                    AGB akzeptieren <span className="text-red-500">*</span>
-                  </span>
-                </label>
-              </div>
-              <div className="text-sm">
-                <label className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    checked={werbung}
-                    onChange={(e) => setWerbung(e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                  />
-                  <span className="text-green-500">
-                    Einwilligung zur Verwendung für Werbung (optional)
-                  </span>
-                </label>
-              </div>
-              <button
-                onClick={requestCode}
-                disabled={cooldown > 0}
-                className={`w-full py-3 rounded-md transition-colors ${
-                  cooldown > 0
-                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
-                }`}
-              >
-                {cooldown > 0 ? `Erneut anfordern in ${cooldown}s` : 'Code anfordern'}
-              </button>
-            </div>
-          )}
-          {step === 2 && !verified && (
-            <div className="space-y-4">
-              <p className="text-gray-600">
-                Code wurde an <span className="font-semibold">{email}</span> gesendet. Bitte gib ihn ein:
-              </p>
+      <div className="region-buttons">
+        {['KF', 'MN', 'MOD'].map((region) => (
+          <div key={region} className="region-switch-wrapper">
+            <label className="region-label">{region}</label>
+            <div className="discount-switch-container">
               <input
-                type="text"
-                placeholder="6-stelliger Code"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-700"
+                type="checkbox"
+                className="discount-switch-input"
+                id={`region-${region}`}
+                checked={selectedRegion === region}
+                onChange={() => handleRegionChange(region)}
               />
-              <button
-                onClick={verifyCode}
-                className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition-colors"
-              >
-                Code prüfen
-              </button>
-              {cooldown > 0 && (
-                <p className="text-sm text-gray-500 text-center">
-                  Du kannst den Code in {cooldown} Sekunden erneut anfordern.
-                </p>
+              <label htmlFor={`region-${region}`} className="discount-switch-slider" />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {error && <p style={{ color: '#dc2626', fontSize: '0.75rem' }}>{error}</p>}
+
+      {/* Menüs und Verbraucher */}
+      {menus.map((menu) => (
+        <div key={menu.id} className="menu bg-white rounded-lg shadow-md mb-4">
+          <div
+            className="menu-header flex justify-between items-center p-3 bg-gray-100 rounded-t-lg cursor-pointer hover:bg-gray-200"
+            onClick={() => toggleMenu(menu.id)}
+          >
+            <span className="text-base font-semibold text-gray-800">{menu.label}</span>
+            <span
+              className={`triangle transform transition-transform duration-200 ${
+                openMenus[menu.id] ? "rotate-180" : ""
+              } text-gray-600`}
+            >
+              &#9660;
+            </span>
+          </div>
+
+          {openMenus[menu.id] && (
+            <div className="menu-content p-3">
+              <ul className="checkbox-group space-y-2">
+                <li className="checkbox-group-header grid grid-cols-4 gap-2 text-xs font-medium text-gray-700 bg-gray-50 p-2 rounded-md sm:grid-cols-6 sm:gap-3">
+                  <span className="col-span-2 sm:col-span-1">Icon</span>
+                  <span className="hidden sm:block">Info</span>
+                  <span>Aktiv</span>
+                  <span>Leistung (W)</span>
+                  <span>Kosten (€)</span>
+                  <span className="hidden sm:block">Löschen</span>
+                </li>
+
+                {menu.options.map((option) => (
+                  <li
+                    key={option.name}
+                    className="grid grid-cols-4 gap-2 items-center p-2 hover:bg-gray-50 rounded-md relative sm:grid-cols-6 sm:gap-3"
+                  >
+                    {/* Icon + Info */}
+                    <div className="icon-field col-span-2 flex items-center gap-2">
+                      {iconMapping[option.name] === 'AcUnit' && <AcUnitIcon className="w-5 h-5 sm:w-6 sm:h-6 object-contain" aria-label={`Icon for ${option.name}`} />}
+                      {iconMapping[option.name] === 'Air' && <AirIcon className="w-5 h-5 sm:w-6 sm:h-6 object-contain" aria-label={`Icon for ${option.name}`} />}
+                      {iconMapping[option.name] === 'LocalLaundryService' && <LocalLaundryServiceIcon className="w-5 h-5 sm:w-6 sm:h-6 object-contain" aria-label={`Icon for ${option.name}`} />}
+                      {iconMapping[option.name] === 'Kitchen' && <KitchenIcon className="w-5 h-5 sm:w-6 sm:h-6 object-contain" aria-label={`Icon for ${option.name}`} />}
+                      {iconMapping[option.name] === 'Tv' && <TvIcon className="w-5 h-5 sm:w-6 sm:h-6 object-contain" aria-label={`Icon for ${option.name}`} />}
+                      {iconMapping[option.name] === 'Lightbulb' && <LightbulbIcon className="w-5 h-5 sm:w-6 sm:h-6 object-contain" aria-label={`Icon for ${option.name}`} />}
+                      {iconMapping[option.name] === 'ElectricCar' && <ElectricCarIcon className="w-5 h-5 sm:w-6 sm:h-6 object-contain" aria-label={`Icon for ${option.name}`} />}
+                      {iconMapping[option.name] === 'HeatPump' && <HeatPumpIcon className="w-5 h-5 sm:w-6 sm:h-6 object-contain" aria-label={`Icon for ${option.name}`} />}
+                      {!iconMapping[option.name] && <DescriptionIcon className="w-5 h-5 sm:w-6 sm:h-6 object-contain" aria-label={`Icon for ${option.name}`} />}
+                      <div className="info-field relative group cursor-pointer">
+                        <span className="tooltip text-[15px] font-bold text-gray-700">{option.name}</span>
+                        {verbraucherBeschreibungen[option.name] && (
+                          <span className="tooltip-text absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded p-1 -mt-8 sm:-mt-6">
+                            {verbraucherBeschreibungen[option.name]}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Checkbox */}
+                    <div className="checkbox-group-label flex justify-center">
+                      <input
+                        type="checkbox"
+                        checked={verbraucherDaten[option.name]?.checked || false}
+                        onChange={(e) => onCheckboxChange(option.name, e.target.checked)}
+                        className="h-3 w-3 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                    </div>
+
+                    {/* Watt Input */}
+                    <div className="input-group">
+                      <input
+                        type="number"
+                        value={verbraucherDaten[option.name]?.watt || ""}
+                        onChange={(e) => handleWattChange(option.name, e.target.value)}
+                        disabled={!verbraucherDaten[option.name]?.checked}
+                        className="w-full p-1 border rounded-md focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 text-xs"
+                      />
+                    </div>
+
+                    {/* Kosten */}
+                    <span className="price-display text-gray-700 text-xs text-center">
+                      {verbraucherDaten[option.name]?.kosten || "0.00"}
+                    </span>
+
+                    {/* Löschen */}
+                    {(menu.id === "grundlastverbraucher" ||
+                      menu.id === "dynamischeverbraucher" ||
+                      menu.id === "eauto" ||
+                      menu.id === "waermepumpe") && (
+                      <button
+                        className="delete-option-button text-red-500 hover:text-red-700 absolute right-1 top-1 text-xs sm:static sm:text-base"
+                        onClick={() => handleDeleteOptionClick(menu.id, option.name)}
+                      >
+                        x
+                      </button>
+                    )}
+
+                    {/* Bestätigung Löschen */}
+                    {deleteConfirmOption?.menuId === menu.id &&
+                      deleteConfirmOption?.optionName === option.name && (
+                      <div className="col-span-4 sm:col-span-6 bg-red-50 border border-red-200 p-4 rounded-lg flex flex-col sm:flex-row sm:items-center gap-3 shadow-sm">
+                        <span className="text-sm sm:text-base text-red-800 font-medium">
+                          Möchten Sie <strong>"{option.name}"</strong> wirklich löschen?
+                        </span>
+                        <div className="flex gap-2 sm:ml-auto">
+                          <button
+                            className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1.5 rounded-md transition-colors duration-150"
+                            onClick={() => confirmDeleteOption(menu.id, option.name)}
+                          >
+                            Ja, löschen
+                          </button>
+                          <button
+                            className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm px-3 py-1.5 rounded-md transition-colors duration-150"
+                            onClick={cancelDeleteOption}
+                          >
+                            Abbrechen
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Erweiterte Einstellungen */}
+                    {(menu.id === "dynamischeverbraucher" || menu.id === "eauto" || menu.id === "waermepumpe") && (
+                      <div className="settings-container col-span-4 bg-white p-0.5 rounded-lg mt-1 max-w-full sm:col-span-6 sm:max-w-xs">
+                        <h4 className="text-sm font-semibold text-gray-800 mb-1 text-center">
+                          Einstellungen für {option.name}
+                        </h4>
+                        {menu.id === "waermepumpe" && (
+                          <div className="flex flex-col sm:flex-row gap-2 items-start flex-wrap sm:gap-3">
+                            <label className="flex flex-col flex-1 min-w-[70px] sm:min-w-[80px]">
+                              <span className="text-xs font-medium text-gray-700">JAZ (Jahresarbeitszahl)</span>
+                              <input
+                                type="number"
+                                step="0.1"
+                                value={erweiterteEinstellungen[option.name]?.jaz || ""}
+                                onChange={(e) =>
+                                  handleErweiterteEinstellungChange(option.name, "jaz", e.target.value, null)
+                                }
+                                className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
+                              />
+                            </label>
+                            <label className="flex flex-col flex-1 min-w-[70px] sm:min-w-[80px]">
+                              <span className="text-xs font-medium text-gray-700">Heizstunden (pro Jahr)</span>
+                              <input
+                                type="number"
+                                value={erweiterteEinstellungen[option.name]?.heizstunden || ""}
+                                onChange={(e) =>
+                                  handleErweiterteEinstellungChange(option.name, "heizstunden", e.target.value, null)
+                                }
+                                className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
+                              />
+                            </label>
+                          </div>
+                        )}
+                        {(menu.id === "dynamischeverbraucher" || menu.id === "waermepumpe") && (
+                          <div className="dynamic-consumer-layout flex flex-col gap-0.5">
+                            {menu.id === "dynamischeverbraucher" && (
+                              <div className="flex flex-col items-center justify-center w-full">
+                                <span className="text-[11px] font-semibold text-gray-700 text-center">
+                                  Nutzung/Woche
+                                </span>
+                                <span className="text-[15px] font-bold text-gray-700">
+                                  {erweiterteEinstellungen[option.name]?.nutzung || 0}
+                                </span>
+                                <input
+                                  type="range"
+                                  min="0"
+                                  max="20"
+                                  value={erweiterteEinstellungen[option.name]?.nutzung || 0}
+                                  onChange={(e) =>
+                                    handleErweiterteEinstellungChange(option.name, "nutzung", Number(e.target.value), null)
+                                  }
+                                  className="w-full accent-[#063d37] mt-1"
+                                />
+                              </div>
+                            )}
+                           {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum, index) => (
+  <div
+    key={zeitraum.id}
+    className="flex flex-row gap-0.5 bg-[#757575] p-0.5 rounded-md shadow justify-center"
+  >
+    <div className="flex flex-col gap-2 w-full">
+      {/* Zeitraum */}
+      <div className="flex flex-col items-center justify-center w-full">
+        <span className="text-[11px] font-semibold text-white text-center">
+          Zeitraum
+        </span>
+        <span className="text-[11px] text-white text-center">
+          {timePeriods.find(
+            (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+          )
+            ? `${timePeriods.find(
+                (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+              ).label} (${zeitraum.startzeit}-${zeitraum.endzeit})`
+            : "–"}
+        </span>
+        <input
+          type="range"
+          min="0"
+          max={timePeriods.length - 1}
+          value={timePeriods.findIndex(
+            (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+          )}
+          onChange={(e) =>
+            handleTimePeriodChange(option.name, timePeriods[e.target.value].label, zeitraum.id)
+          }
+          className="w-full accent-[#063d37] mt-1"
+        />
+      </div>
+
+      {/* Dauer */}
+      <div className="flex flex-col items-center justify-center w-full">
+        <span className="text-[11px] font-semibold text-white text-center">
+          Dauer (h)
+        </span>
+        <span className="text-[15px] font-bold text-white">
+          {zeitraum.dauer || 0}
+        </span>
+        <input
+          type="range"
+          min="0"
+          max="23"
+          step="1"
+          value={zeitraum.dauer || 0}
+          onChange={(e) =>
+            handleErweiterteEinstellungChange(option.name, "dauer", Number(e.target.value), zeitraum.id)
+          }
+          className="w-full accent-[#063d37] mt-1"
+        />
+      </div>
+
+      {/* Zeitraum löschen */}
+      {index > 0 && (
+        <div className="flex justify-center mt-1">
+          <button
+            className="delete-zeitraum-button bg-red-500 text-white rounded-md px-1 py-0.5 hover:bg-red-600 text-xs"
+            onClick={() => removeZeitraum(option.name, zeitraum.id)}
+          >
+            X
+          </button>
+        </div>
+      )}
+    </div>
+  </div>
+))}
+<div className="flex justify-center mt-1">
+  <button
+    className="bg-[#063d37] text-white px-1 py-0.5 rounded-md hover:bg-gray-700 text-[12px] font-semibold sm:px-[2.2px] sm:py-[0.55px] sm:text-[13px]"
+    onClick={() => addZeitraum(option.name)}
+  >
+    Zeitraum hinzufügen
+  </button>
+</div>
+                          </div>
+                        )}
+
+                        {menu.id === "eauto" && (
+                          <div className="flex flex-col sm:flex-row gap-2 items-start flex-wrap sm:gap-3">
+                            <label className="flex flex-col flex-1 min-w-[70px] sm:min-w-[80px]">
+                              <span className="text-xs font-medium text-gray-700">Batteriekapazität (kWh)</span>
+                              <input
+                                type="number"
+                                value={erweiterteEinstellungen[option.name]?.batterieKapazitaet || ""}
+                                onChange={(e) =>
+                                  handleErweiterteEinstellungChange(option.name, "batterieKapazitaet", e.target.value, null)
+                                }
+                                className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
+                              />
+                            </label>
+                            <label className="flex flex-col flex-1 min-w-[70px] sm:min-w-[80px]">
+                              <span className="text-xs font-medium text-gray-700">Wallbox-Leistung (W)</span>
+                              <input
+                                type="number"
+                                value={erweiterteEinstellungen[option.name]?.wallboxLeistung || ""}
+                                onChange={(e) =>
+                                  handleErweiterteEinstellungChange(option.name, "wallboxLeistung", e.target.value, null)
+                                }
+                                className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
+                              />
+                            </label>
+                            <div className="radio-group-settings flex flex-col gap-1">
+                              <label className="flex items-center gap-1">
+                                <input
+                                  type="radio"
+                                  name={`ladung-${option.name}`}
+                                  value="true"
+                                  checked={erweiterteEinstellungen[option.name]?.standardLadung === true}
+                                  onChange={(e) =>
+                                    handleErweiterteEinstellungChange(option.name, "standardLadung", e.target.value, null)
+                                  }
+                                  className="h-3 w-3 text-blue-600 focus:ring-blue-500"
+                                />
+                                <span className="text-xs text-gray-700">Standardladung</span>
+                              </label>
+                              <label className="flex items-center gap-1">
+                                <input
+                                  type="radio"
+                                  name={`ladung-${option.name}`}
+                                  value="false"
+                                  checked={erweiterteEinstellungen[option.name]?.standardLadung === false}
+                                  onChange={(e) =>
+                                    handleErweiterteEinstellungChange(option.name, "standardLadung", e.target.value, null)
+                                  }
+                                  className="h-3 w-3 text-blue-600 focus:ring-blue-500"
+                                />
+                                <span className="text-xs text-gray-700">Wallbox-Ladung</span>
+                              </label>
+                            </div>
+                            <label className="flex flex-col flex-1 min-w-[70px] sm:min-w-[80px]">
+                              <span className="text-xs font-medium text-gray-700">Ladehäufigkeit (pro Woche)</span>
+                              <input
+                                type="number"
+                                value={erweiterteEinstellungen[option.name]?.nutzung || ""}
+                                onChange={(e) =>
+                                  handleErweiterteEinstellungChange(option.name, "nutzung", e.target.value, null)
+                                }
+                                className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
+                              />
+                            </label>
+                            {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum) => (
+                              <div key={zeitraum.id} className="zeitraum-section flex flex-row gap-1 items-center sm:gap-2">
+                                <label className="flex flex-col flex-1 min-w-[90px] sm:min-w-[100px]">
+                                  <span className="text-xs font-medium text-gray-700">Zeitraum</span>
+                                  <select
+                                    value={
+                                      timePeriods.find(
+                                        (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+                                      )?.label || ""
+                                    }
+                                    onChange={(e) => handleTimePeriodChange(option.name, e.target.value, zeitraum.id)}
+                                    className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
+                                  >
+                                    <option value="">Zeitraum wählen</option>
+                                    {timePeriods.map((period) => (
+                                      <option key={period.label} value={period.label}>
+                                        {period.label} ({period.startzeit} - {period.endzeit})
+                                      </option>
+                                    ))}
+                                  </select>
+                                </label>
+                                <label className="flex flex-col flex-1 min-w-[50px] sm:min-w-[60px]">
+                                  <span className="text-xs font-medium text-gray-700">Dauer (Std)</span>
+                                  <input
+                                    type="number"
+                                    step="0.1"
+                                    value={zeitraum.dauer || ""}
+                                    onChange={(e) =>
+                                      handleErweiterteEinstellungChange(option.name, "dauer", e.target.value, zeitraum.id)
+                                    }
+                                    className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs"
+                                  />
+                                </label>
+                                <button
+                                  className="delete-option-button bg-red-500 text-white rounded-md px-1 py-0.5 hover:bg-red-600 text-xs sm:px-2 sm:py-1"
+                                  onClick={() => removeZeitraum(option.name, zeitraum.id)}
+                                >
+                                  X
+                                </button>
+                              </div>
+                            ))}
+                            <button
+                              className="add-option-button bg-gray-600 text-white rounded-md px-1 py-0.5 hover:bg-gray-700 text-xs mt-1 sm:px-2 sm:py-1 sm:mt-2"
+                              onClick={() => addZeitraum(option.name)}
+                            >
+                              Zeitraum +
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+
+              {/* Neue Option hinzufügen */}
+              {(menu.id === "grundlastverbraucher" ||
+                menu.id === "dynamischeverbraucher" ||
+                menu.id === "eauto" ||
+                menu.id === "stromerzeuger" ||
+                menu.id === "strompeicher" ||
+                menu.id === "waermepumpe") && (
+                <>
+                  <button
+                    className="add-option-button bg-blue-600 text-white rounded-md px-2 py-1 hover:bg-blue-700 mt-2 w-full sm:px-3 sm:py-1 sm:mt-3 sm:w-auto text-xs"
+                    onClick={() => toggleNewOptionForm(menu.id)}
+                  >
+                    {showNewOptionForm[menu.id] ? "Formular schließen" : "Neue Option hinzufügen"}
+                  </button>
+
+                  {showNewOptionForm[menu.id] && (
+                    <div className="new-option-container bg-gray-50 p-2 rounded-lg mt-2 sm:p-3 sm:mt-3">
+                      <label className="flex flex-col">
+                        <span className="text-xs font-medium text-gray-700">Name</span>
+                        <input
+                          type="text"
+                          value={newOptionNames[menu.id] || ""}
+                          onChange={(e) => handleNewOptionName(menu.id, e.target.value)}
+                          className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs mt-1"
+                        />
+                      </label>
+
+                      <label className="flex flex-col mt-1 sm:mt-2">
+                        <span className="text-xs font-medium text-gray-700">Leistung (W)</span>
+                        <input
+                          type="number"
+                          value={newOptionWatt[menu.id] || ""}
+                          onChange={(e) => handleNewOptionWatt(menu.id, e.target.value)}
+                          className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs mt-1"
+                        />
+                      </label>
+
+                      {menu.id === "dynamischeverbraucher" && (
+                        <label className="flex flex-col mt-1 sm:mt-2">
+                          <span className="text-xs font-medium text-gray-700">Typ</span>
+                          <select
+                            value={newOptionTypes[menu.id] || "week"}
+                            onChange={(e) => handleNewOptionType(menu.id, e.target.value)}
+                            className="p-1 border rounded-md focus:ring-2 focus:ring-blue-500 text-xs mt-1"
+                          >
+                            <option value="week">Wöchentlich</option>
+                            <option value="day">Täglich</option>
+                          </select>
+                        </label>
+                      )}
+
+                      <button
+                        className="save-option-button bg-blue-600 text-white rounded-md px-2 py-1 hover:bg-blue-700 mt-2 w-full sm:px-3 sm:py-1 sm:mt-3 sm:w-auto text-xs"
+                        onClick={() => addNewOption(menu.id)}
+                      >
+                        Speichern
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}
-          {verified && (
-            <div className="space-y-4 text-center">
-              <p className="text-green-500 text-lg font-semibold">
-                Verifiziert!
-              </p>
-              <button
-                onClick={() => {
-                  handleDownloadPDF();
-                  closeModal();
-                }}
-                className="w-full bg-[#063d37] text-white py-3 rounded-md hover:bg-green-600 transition-colors"
-              >
-                Hier klicken für Download
-              </button>
-            </div>
-          )}
-          {message && (
-            <p
-              className={`mt-4 text-center ${
-                message.includes('Fehler') || message.includes('Falscher') || message.includes('Bitte')
-                  ? 'text-red-500'
-                  : 'text-green-500'
-              }`}
-            >
-              {message}
-            </p>
-          )}
         </div>
+      ))}
+
+      {/* Zusammenfassung */}
+      <div className="calculation-report">
+        <h2 className="report-title">Jahreszusammenfassung pro Jahr (Energie)</h2>
+        <p>Kosten Grundlast: {zusammenfassung.grundlast} €</p>
+        <p>Kosten Schaltbere Verbraucher: {zusammenfassung.dynamisch} €</p>
+        <p>Kosten Gesamt: {zusammenfassung.gesamt} €</p>
+        <p>Gesamtwattage: {zusammenfassung.totalWattage} W/h</p>
+        <p>Kosten Grundlast (dynamischer Tarif): {zusammenfassung.grundlastDyn} €</p>
+        <p>Kosten Schaltbare Verbraucher (dynamischer Tarif): {zusammenfassung.dynamischDyn} €</p>
+        <p>Kosten Gesamt (dynamischer Tarif): {zusammenfassung.gesamtDyn} €</p>
+        <p>Vergleich (fester vs. dynamischer Tarif): {(parseFloat(zusammenfassung.gesamt) - parseFloat(zusammenfassung.gesamtDyn)).toFixed(2)} €</p>
+        <div className="report-title">Wärmepumpe</div>
+        <div className="">Kosten Wärmepumpe (fixer Tarif): {zusammenfassung.waermepumpe} €</div>
+        <div className="">Kosten Wärmepumpe (dynamischer Tarif): {zusammenfassung.waermepumpeDyn} €</div>
+        <div className="">Kosten Wärmepumpe (dyn) Selbsterstellt: {zusammenfassung.dynselbstbestimmt} €</div>
       </div>
-    )}
+    </div>
   </div>
 </div>
+
+<nav className="bottom-nav">
+          <a href="/MASTER/Mobile/startseite" className="flex flex-col items-center gap-1 px-2 py-1 rounded-xl bg-[#063d37] hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white ">
+            <FontAwesomeIcon icon={faHouse} style={{ color: '#FFFFFF', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Home</p>
+          </a>
+          <a href="/MASTER/Mobile/preise" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#063d37] hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white">
+            <FontAwesomeIcon icon={faChartLine} style={{ color: '#FFFFFF', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Preis</p>
+          </a>
+          <a href="/MASTER/Mobile/rechner" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#063d37] hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white">
+            <FontAwesomeIcon icon={faCalculator} style={{ color: '#FFFFFF', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Rechner</p>
+          </a>
+          <a href="/MASTER/Mobile/details" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#063d37] hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white active">
+            <FontAwesomeIcon icon={faFileLines} style={{ color: '#FFFFFF', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Detail</p>
+          </a>
+          <a href="/MASTER/Mobile/hilfe" className="flex flex-col items-center gap-1 px-2 py-1 bg-[#063d37] hover:bg-gradient-to-r from-[#4372b7] to-[#063d37] text-white">
+            <FontAwesomeIcon icon={faQuestionCircle} style={{ color: '#FFFFFF', fontSize: '18px' }} />
+            <p className="text-white text-xs font-medium leading-normal">Hilfe</p>
+          </a>
+        </nav>
 
         </>
       );
