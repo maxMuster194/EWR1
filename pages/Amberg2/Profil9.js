@@ -673,7 +673,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
       } else if (householdType === 'pvStorage') {
         datasetsForProfile.push(
           {
-            label: `Dynamischer Tarif (Profil ${profile}, Faktor ${factor})`,
+            label: `Dynamischer Tarif `,
             data: s25AdjustedValues,
             borderColor: '#905fa4',
             backgroundColor: 'rgba(144, 95, 164, 0.1)',
@@ -685,7 +685,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
             pointHoverBorderColor: '#333333',
           },
           {
-            label: `Normaltarif (${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh, Profil ${profile}, Faktor ${factor})`,
+            label: `Normaltarif ${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh`,
             data: customS25PriceValues,
             borderColor: '#4372b7',
             backgroundColor: 'rgba(67, 114, 183, 0.1)',
@@ -728,7 +728,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
           label: function (context) {
             const label = context.dataset.label || '';
             const value = context.raw != null ? context.raw.toFixed(3) : 'N/A';
-            return `${label}: ${value} mCt`; // Einheit geändert zu mCt
+            return `${label}: ${value} Ct`; // Einheit geändert zu Ct
           },
         },
       },
@@ -736,7 +736,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
     scales: {
       y: {
         beginAtZero: false,
-        title: { display: true, text: 'Stromkosten in mCt', font: { size: 14, family: "'Inter', sans-serif" }, color: '#FFFFFF' }, // Einheit geändert zu mCt
+        title: { display: true, text: 'Stromkosten in Ct', font: { size: 14, family: "'Inter', sans-serif" }, color: '#FFFFFF' }, // Einheit geändert zu Ct
         ticks: { 
           callback: (value) => `${value.toFixed(2)}`,
           color: '#FFFFFF'

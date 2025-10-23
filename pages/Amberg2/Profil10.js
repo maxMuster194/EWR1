@@ -589,7 +589,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
           label: (context) => {
             const label = context.dataset.label || '';
             const value = context.raw != null ? context.raw.toFixed(3) : 'N/A';
-            return `${label}: ${value} mCt`;
+            return `${label}: ${value} Ct`;
           },
         },
       },
@@ -597,8 +597,8 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
     scales: {
       y: {
         beginAtZero: false,
-        title: { display: true, text: 'Stromkosten in mCt', font: { size: 14, family: "'Inter', sans-serif" }, color: '#FFFFFF' },
-        ticks: { callback: (value) => `${value.toFixed(2)} mCt`, color: '#FFFFFF' },
+        title: { display: true, text: 'Stromkosten in Ct', font: { size: 14, family: "'Inter', sans-serif" }, color: '#FFFFFF' },
+        ticks: { callback: (value) => `${value.toFixed(2)} Ct`, color: '#FFFFFF' },
         grid: { color: 'rgba(255, 255, 255, 0.2)', lineWidth: 1 },
       },
       x: {
