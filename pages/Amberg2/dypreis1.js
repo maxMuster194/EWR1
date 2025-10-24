@@ -213,7 +213,7 @@ export default function DynamischerPreis({ data = [], uniqueDates = [], todayBer
       return `${(hourNum - 1).toString().padStart(2, '0')}:${quarterNum.toString().padStart(2, '0')}`;
     }),
     datasets: filteredData.length > 0 ? [{
-      label: `Preise am ${selectedDate ? selectedDate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : ''}`,
+      label: `Nettopreise am ${selectedDate ? selectedDate.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Netto'}`,
       data: priceFields.map(field => {
         const record = filteredData[0];
         const value = record[field]?.$numberDouble || record[field]?.$numberInt || record[field] || 0;

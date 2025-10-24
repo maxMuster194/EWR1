@@ -87,7 +87,7 @@ export default function WeeklyPriceChart() {
             labels: yearlyAverages.map((week) => `KW ${week.kw}`),
             datasets: [
               {
-                label: 'Durchschnittspreise (Cent/kWh)',
+                label: 'Durchschnittspreise Netto (Cent/kWh)',
                 data: yearlyAverages
                   .filter((week) => week.average !== '–')
                   .map((week) => parseFloat(week.average)),

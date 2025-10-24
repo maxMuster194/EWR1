@@ -1583,7 +1583,7 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
       pointBorderWidth: 1,
       },
       {
-        label: 'Dynamischer Preis (Ct/kWh)',
+        label: 'Dynamischer Preis Netto (Ct/kWh)',
         data: chartConvertedValues,
         fill: false,
         borderColor: '#905fa4',
@@ -1667,7 +1667,7 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
     labels: chartData.labels,
     datasets: [
       {
-        label: 'Kosten Dynamischer Tarif  (Ct/h)',
+        label: 'Kosten Dynamischer Tarif Netto (Ct/h)',
         data: hourlyData.flatMap((d, h) => chartConvertedValues.slice(h*4, (h+1)*4).map(price => (d.total - d.waermepumpe) * price)),
         fill: false,
         borderColor: '#905fa4',
@@ -1683,7 +1683,7 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
       pointBorderWidth: 1,
       },
       {
-        label: 'Kosten Wärmepumpe (Ct/h)',
+        label: 'Kosten Wärmepumpe Netto (Ct/h)',
         data: hourlyData.flatMap((d, h) => chartConvertedValues.slice(h*4, (h+1)*4).map(price => d.waermepumpe * price)),
         fill: false,
         borderColor: '#f93b01',
@@ -1699,7 +1699,7 @@ const [erweiterteEinstellungen, setErweiterteEinstellungen] = useState(
       pointBorderWidth: 1,
       },
       {
-        label: 'Kosten Fester Tarif (Ct/h)',
+        label: 'Kosten Fester Tarif Netto (Ct/h)',
         data: hourlyData.flatMap(d => Array(4).fill(d.total * fixedPrice)),
         fill: false,
         borderColor: '#4372b7',

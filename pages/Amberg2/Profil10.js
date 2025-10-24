@@ -493,9 +493,9 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
   const datasets = useMemo(() => {
     if (householdType === 'none' || activeProfile === null) return [];
     const factor = profileFactors[activeProfile];
-
+  
     const createDataset = (data, values, labelPrefix, color) => ({
-      label: `${labelPrefix} (Profil ${activeProfile}, Faktor ${factor})`,
+      label: labelPrefix === 'Normaltarif' ? `${labelPrefix} (Nettopreise)` : `${labelPrefix} (Nettopreise)`, // Angepasst: Preis für Normaltarif entfernt
       data: values,
       borderColor: color,
       backgroundColor: color,
@@ -505,25 +505,25 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
       pointHoverRadius: 0,
       hidden: values.every((v) => v === null),
     });
-
+  
     const h25Values = selectedH25Data?.__parsed_extra && strompreisValues.length
       ? Object.values(selectedH25Data.__parsed_extra).map((h25Value, index) =>
           strompreisValues[index] != null && h25Value != null ? ((h25Value / 10) * factor) * strompreisValues[index] * 10 : null
         )
       : Array(96).fill(null);
-
+  
     const p25Values = selectedP25Data?.__parsed_extra && strompreisValues.length
       ? Object.values(selectedP25Data.__parsed_extra).map((p25Value, index) =>
           strompreisValues[index] != null && p25Value != null ? ((p25Value / 10) * factor) * strompreisValues[index] * 10 : null
         )
       : Array(96).fill(null);
-
+  
     const s25Values = selectedS25Data?.__parsed_extra && strompreisValues.length
       ? Object.values(selectedS25Data.__parsed_extra).map((s25Value, index) =>
           strompreisValues[index] != null && s25Value != null ? ((s25Value / 10) * factor) * strompreisValues[index] * 10 : null
         )
       : Array(96).fill(null);
-
+  
     const customValues = !isNaN(adjustedCustomPrice) && adjustedCustomPrice >= 0
       ? (householdType === 'standard' && selectedH25Data?.__parsed_extra
           ? Object.values(selectedH25Data.__parsed_extra)
@@ -534,22 +534,22 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
           : Array(96).fill(null)
         ).map((value) => (value != null ? ((value / 10) * factor) * adjustedCustomPrice * 10 : null))
       : Array(96).fill(null);
-
+  
     const datasetsForProfile = [];
     if (householdType === 'standard') {
       datasetsForProfile.push(
         createDataset(selectedH25Data, h25Values, 'Dynamischer Tarif', '#905fa4'),
-        createDataset(selectedH25Data, customValues, `Normaltarif (${adjustedCustomPrice.toFixed(2)} Ct/kWh)`, '#4372b7')
+        createDataset(selectedH25Data, customValues, 'Normaltarif', '#4372b7') // Angepasst: Kein Preis im Label
       );
     } else if (householdType === 'pv') {
       datasetsForProfile.push(
         createDataset(selectedP25Data, p25Values, 'Dynamischer Tarif', '#905fa4'),
-        createDataset(selectedP25Data, customValues, `Normaltarif (${adjustedCustomPrice.toFixed(2)} Ct/kWh)`, '#4372b7')
+        createDataset(selectedP25Data, customValues, 'Normaltarif', '#4372b7') // Angepasst: Kein Preis im Label
       );
     } else if (householdType === 'pvStorage') {
       datasetsForProfile.push(
         createDataset(selectedS25Data, s25Values, 'Dynamischer Tarif', '#905fa4'),
-        createDataset(selectedS25Data, customValues, `Normaltarif (${adjustedCustomPrice.toFixed(2)} Ct/kWh)`, '#4372b7')
+        createDataset(selectedS25Data, customValues, 'Normaltarif', '#4372b7') // Angepasst: Kein Preis im Label
       );
     }
     return datasetsForProfile;

@@ -617,7 +617,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
       if (householdType === 'standard') {
         datasetsForProfile.push(
           {
-            label: `Dynamischer Tarif `,
+            label: `Dynamischer Tarif Nettopreis`,
             data: h25AdjustedValues,
             borderColor: '#905fa4',
             backgroundColor: 'rgba(30, 14, 252, 0.1)',
@@ -629,7 +629,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
             pointHoverBorderColor: '#333333',
           },
           {
-            label: `Normaltarif ${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh`,
+            label: `Normaltarif Nettopreis ${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh`,
             data: customPriceValues,
             borderColor: '#4372b7',
             backgroundColor: 'rgba(67, 114, 183, 0.1)',
@@ -645,7 +645,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
       } else if (householdType === 'pv') {
         datasetsForProfile.push(
           {
-            label: `Dynamischer Tarif `,
+            label: `Dynamischer Tarif Nettopreis `,
             data: p25AdjustedValues,
             borderColor: '#905fa4',
             backgroundColor: 'rgba(144, 95, 164, 0.1)',
@@ -657,7 +657,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
             pointHoverBorderColor: '#333333',
           },
           {
-            label: `Normaltarif ${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh`,
+            label: `Normaltarif Nettopreis ${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh`,
             data: customP25PriceValues,
             borderColor: '#4372b7',
             backgroundColor: 'rgba(67, 114, 183, 0.1)',
@@ -673,7 +673,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
       } else if (householdType === 'pvStorage') {
         datasetsForProfile.push(
           {
-            label: `Dynamischer Tarif `,
+            label: `Dynamischer Tarif Nettopreis `,
             data: s25AdjustedValues,
             borderColor: '#905fa4',
             backgroundColor: 'rgba(144, 95, 164, 0.1)',
@@ -685,7 +685,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
             pointHoverBorderColor: '#333333',
           },
           {
-            label: `Normaltarif ${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh`,
+            label: `Normaltarif Nettopreis ${adjustedCustomPrice.toFixed(2) || 'N/A'} Ct/kWh`,
             data: customS25PriceValues,
             borderColor: '#4372b7',
             backgroundColor: 'rgba(67, 114, 183, 0.1)',
