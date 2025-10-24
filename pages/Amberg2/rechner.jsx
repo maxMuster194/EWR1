@@ -339,7 +339,7 @@ const Energiemanager = ({ data, uniqueDates, todayBerlin, error }) => {
     return (
       <div className="layout relative" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
         <div className="top-box">
-          <h2>Energiemanager</h2>
+          <h1>Energiemanager</h1>
         </div>
         <div className="main flex flex-col gap-2">
           <div className="content-box flex flex-1 flex-col gap-1 rounded-xl w-full">
@@ -358,7 +358,7 @@ const Energiemanager = ({ data, uniqueDates, todayBerlin, error }) => {
       <style>{styles}</style>
       <div className="layout relative" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
         <div className="top-box">
-          <h2>Energiemanager</h2>
+          <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#4372b7] to-[#905fa4] text-center mb-6">Energiemanager</h1>
         </div>
         <div className="main flex flex-col gap-2">
           <div

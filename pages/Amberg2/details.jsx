@@ -207,7 +207,7 @@ const prices = {
 // Functions
 const getRegionPreis = (selectedRegion) => {
   if (selectedRegion === 'AM') return 20.14;
-  if (selectedRegion === 'SuRo') return 20.44;
+  if (selectedRegion === 'SuRo') return 22.42;
   if (selectedRegion === 'Regio') return 20.98;
   return 0;
 }
@@ -3317,7 +3317,7 @@ table, th, td {
           <h3 className="summary-title">Zusammenfassung pro Jahr (Energie)</h3>
           <div className="summary-item">Kosten Grundlast (fixer Tarif): {zusammenfassung.grundlast} €</div>
           <div className="summary-item">Kosten Schaltbare Verbraucher (fixer Tarif): {zusammenfassung.dynamisch} €</div>
-          <div className="summary-item">Kosten Wärmepumpe (fixer Tarif): {zusammenfassung.waermepumpe} €</div>
+          
           <div className="summary-item">Kosten Gesamt (fixer Tarif): {zusammenfassung.gesamt} €</div>
           <div className="summary-item">Gesamtwattage: {zusammenfassung.totalWattage} W</div>
           <div className="summary-item">Kosten Grundlast (dynamischer Tarif): {zusammenfassung.grundlastDyn} €</div>
@@ -3328,9 +3328,9 @@ table, th, td {
           <div className="summary-item"> Wärmepumpe Jahreskosten (fixer Tarif): {zusammenfassung.waermepumpe} €</div>
           <div className="summary-item"> Wärmepumpe Jahreskosten (dynamischer Tarif): {zusammenfassung.waermepumpeDyn} €</div>
           <div className="summary-item"> Wärmepumpe Tageskosten (dynamischer Tarif): {zusammenfassung.dynselbstbestimmt} €</div>
-          <button className="download-button bg-[#4372b7] text-white py-2 px-4 rounded hover:bg-blue-700" onClick={handleDownloadClick}>
-            Download PDF
-          </button>
+          <div className="download-button bg-[#4372b7] text-white py-2 px-4 rounded hover:bg-blue-700" onClick={handleDownloadClick}>
+           
+          </div>
         </div>
       </div>
     </div>
