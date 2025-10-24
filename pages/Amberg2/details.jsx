@@ -2914,10 +2914,11 @@ table, th, td {
 
                       {deleteConfirmOption?.menuId === menu.id &&
                         deleteConfirmOption?.optionName === option.name && (
-                        <div className="col-span-4 sm:col-span-6 bg-red-50 border border-red-200 p-4 rounded-lg flex flex-col sm:flex-row sm:items-center gap-3 shadow-sm">
+                          <div className="col-span-4 sm:col-span-6 border border-red-200 p-4 rounded-lg flex flex-col sm:flex-row sm:items-center gap-3 shadow-sm">
                           <span className="text-sm sm:text-base text-red-800 font-medium">
                             Möchten Sie <strong>"{option.name}"</strong> wirklich löschen?
                           </span>
+
                           <div className="flex gap-2 sm:ml-auto">
                             <button
                               className="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1.5 rounded-md transition-colors duration-150"
@@ -2926,11 +2927,11 @@ table, th, td {
                               Ja, löschen
                             </button>
                             <button
-                              className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm px-3 py-1.5 rounded-md transition-colors duration-150"
-                              onClick={cancelDeleteOption}
-                            >
-                              Abbrechen
-                            </button>
+  className="bg-transparent hover:bg-gray-100 text-gray-800 text-sm px-3 py-1.5 rounded-md transition-colors duration-150"
+  onClick={cancelDeleteOption}
+>
+  Abbrechen
+</button>
                           </div>
                         </div>
                       )}
@@ -3263,12 +3264,13 @@ table, th, td {
                 {showNewOptionForm[menu.id] && (
                   <div className="new-option-container">
                     <input
-                      type="text"
-                      className="new-option-input"
-                      placeholder="Name der neuen Option"
-                      value={newOptionNames[menu.id] || ''}
-                      onChange={(e) => handleNewOptionName(menu.id, e.target.value)}
-                    />
+    type="text"
+    className="new-option-input"
+    placeholder="Name der neuen Option"
+    value={newOptionNames[menu.id] || ''}
+    onChange={(e) => handleNewOptionName(menu.id, e.target.value)}
+    maxLength={30}
+  />
                     {menu.id !== 'waermepumpe' && (
                       <input
                         type="number"
@@ -3293,14 +3295,13 @@ table, th, td {
                         <span className="kw-label">kW</span>
                       </div>
                     )}
-                    {menu.id === 'dynamischeverbraucher' && (
-                      <select
-                        value={newOptionTypes[menu.id] || 'week'}
-                        onChange={(e) => handleNewOptionType(menu.id, e.target.value)}
-                      >
-                        <option value="week">Wöchentlich (z.B. Waschmaschine)</option>
-                      </select>
-                    )}
+                  {menu.id === 'dynamischeverbraucher' && (
+  <input
+    type="hidden"
+    value="week"
+    onChange={(e) => handleNewOptionType(menu.id, e.target.value)}
+  />
+)} 
                     <button
                       className="save-option-button"
                       onClick={() => addNewOption(menu.id)}
