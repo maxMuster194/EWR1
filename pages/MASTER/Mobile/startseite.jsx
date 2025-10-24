@@ -67,10 +67,10 @@ const styles = `
     flex-direction: column;
     gap: 8px; /* Reduzierte Lücke */
     padding-bottom: 60px;
-    background-color: 	#757474;
+    background-color: #757474;
     color: #FFFFFF;
     min-height: 100vh;
-    font-family: 'Manrope, "Noto Sans", sans-serif';
+    font-family: Arial; /* Schriftart auf Arial geändert */
     overflow: auto; 
   }
   .top-box, .main, .bottom-boxes, .extra-box-1, .extra-box-2, .footer {
@@ -81,7 +81,7 @@ const styles = `
   .top-box {
     order: 1;
     position: relative;
-    background-color: 	#757474;
+    background-color: #757474;
   }
   .top-box .button-container {
     top: 8px;
@@ -223,7 +223,7 @@ const styles = `
     bottom: 0;
     left: 0;
     right: 0;
-    background-color:rgb(66, 66, 66);
+    background-color: rgb(66, 66, 66);
     border-top: 1px solid #D1D5DB;
     justify-content: space-around;
     align-items: center;
