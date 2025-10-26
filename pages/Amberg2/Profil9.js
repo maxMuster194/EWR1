@@ -1105,13 +1105,7 @@ function StrompreisChart({ data, uniqueDates, todayBerlin, error: propsError }) 
                 </div>
               ))}
             </div>
-            <p style={{ fontSize: '12px', color: '#FFFFFF', marginTop: '8px' }}>
-              {selectedDiscount === null
-                ? `Keine Region ausgewählt, Preis: ${parseFloat(customPrice).toFixed(2) || 'N/A'} Ct/kWh`
-                : `Ausgewählte Region: ${
-                    discounts.find((r) => r.value === selectedDiscount)?.label
-                  }, Basispreis: ${regionBasisPreise[discounts.find((r) => r.value === selectedDiscount)?.label].toFixed(2)} Ct/kWh, Angepasster Preis: ${adjustedCustomPrice.toFixed(2)} Ct/kWh`}
-            </p>
+          
           </div>
 
           <div style={styles.controlGroup}>

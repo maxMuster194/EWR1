@@ -2803,10 +2803,10 @@ table, th, td {
             </div>
           </div>
         </div>
-        <div className="input-container-html">
-          <label>Energiepreis (Ct/kWh):</label>
-          <span>{getPreisDifferenz(strompreis, selectedRegion)}</span>
-        </div>
+        
+          
+          
+        
         <div className="input-container-html">
           <label className="date-picker-label" htmlFor="date-picker">Datum für dynamischen Preis:</label>
           <DatePicker
