@@ -2892,8 +2892,8 @@ table, th, td {
       }
       onChange={(e) => handleKWChange(option.name, e.target.value)}
       min="0"
-      step="1"
-      placeholder="12"
+      step="0.1"
+      placeholder=""
     />
     <span className="kw-label"></span>
   </div>
