@@ -3553,7 +3553,7 @@ body {
           <p>Kosten Grundlast: {zusammenfassung.grundlast} €</p>
           <p>Kosten Schaltbere Verbraucher: {zusammenfassung.dynamisch} €</p>
           <p>Kosten Gesamt: {zusammenfassung.gesamt} €</p>
-          <p>Gesamtwattage: {zusammenfassung.totalWattage} W/h</p>
+          
           <p>Kosten Grundlast (dynamischer Tarif): {zusammenfassung.grundlastDyn} €</p>
           <p>Kosten Schaltbare Verbraucher (dynamischer Tarif): {zusammenfassung.dynamischDyn} €</p>
           <p>Kosten Gesamt (dynamischer Tarif): {zusammenfassung.gesamtDyn} €</p>
