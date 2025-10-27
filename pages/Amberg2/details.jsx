@@ -3320,7 +3320,7 @@ table, th, td {
           <div className="summary-item">Kosten Schaltbare Verbraucher (fixer Tarif): {zusammenfassung.dynamisch} €</div>
           
           <div className="summary-item">Kosten Gesamt (fixer Tarif): {zusammenfassung.gesamt} €</div>
-          <div className="summary-item">Gesamtwattage: {zusammenfassung.totalWattage} W</div>
+         
           <div className="summary-item">Kosten Grundlast (dynamischer Tarif): {zusammenfassung.grundlastDyn} €</div>
           <div className="summary-item">Kosten Schaltbare Verbraucher (dynamischer Tarif): {zusammenfassung.dynamischDyn} €</div>
           <div className="summary-item">Kosten Gesamt (dynamischer Tarif): {zusammenfassung.gesamtDyn} €</div>
