@@ -2674,7 +2674,7 @@ table, th, td {
 }
 
 .kw-input {
-  width: 200px; // Larger width for easier typing
+  width: 220px; // Larger width for easier typing
   height: 32px; // Larger height for better visibility
   text-align: right; // Align numbers to the right
   padding: 6px 10px; // Moderate padding for comfort
@@ -2892,7 +2892,7 @@ table, th, td {
       }
       onChange={(e) => handleKWChange(option.name, e.target.value)}
       min="0"
-      step="0.1"
+      step="1"
       placeholder=""
     />
     <span className="kw-label"></span>
