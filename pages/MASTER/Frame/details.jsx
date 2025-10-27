@@ -2668,33 +2668,36 @@ table, th, td {
 }
 
 .kw-input-container {
-  display: flex;
+  display:;
   align-items: center;
-  gap: 4px;
+  gap: 10px; // Space between input and label
 }
 
 .kw-input {
-  width: 50px;
-  padding: 4px 2px 4px 4px;
-  font-size: 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  text-align: center;
-  background: transparent;
-  backdrop-filter: blur(5px);
-}
+  width: 200px; // Larger width for easier typing
+  height: 32px; // Larger height for better visibility
+  text-align: right; // Align numbers to the right
+  padding: 6px 10px; // Moderate padding for comfort
+  font-size: 12px; // Smaller font for numbers
+  border: 1px solid #ccc; // Clean border
+  border-radius: 4px; // Subtle rounding
+  box-sizing: border-box; // Prevent padding from increasing size
 
-.kw-input:focus {
-  outline: none;
-  border-color: #88bf50;
-  box-shadow: 0 0 0 2px rgba(144, 95, 164, 0.2);
+  // Remove up/down arrows (spinners) for number input
+  -webkit-appearance: none; // For Chrome, Safari, Edge
+  -moz-appearance: textfield; // For Firefox
+
+  &:focus {
+    outline: none;
+    border-color: #88bf50; // Green border on focus
+    box-shadow: 0 0 0 2px rgba(136, 191, 80, 0.2); // Matching shadow
+  }
 }
 
 .kw-label {
-  font-size: 12px;
-  white-space: nowrap;
+  font-size: 12px; // Match input font size
+  color: #333; // Darker color for readability
 }
-
 .dynamic-consumer-layout {
   display: flex;
   flex-direction: column;
@@ -2877,20 +2880,24 @@ table, th, td {
                           />
                         </div>
                       )}
-                      {menu.id === 'waermepumpe' && (
-                        <div className="input-group kw-input-container">
-                          <input
-                            type="number"
-                            className="kw-input"
-                            value={(verbraucherDaten[option.name]?.watt / 1000) || ''}
-                            onChange={(e) => handleKWChange(option.name, e.target.value)}
-                            min="0"
-                            step="0.1"
-                            placeholder=""
-                          />
-                          <span className="kw-label">kW</span>
-                        </div>
-                      )}
+{menu.id === 'waermepumpe' && (
+  <div className="kw-input-container">
+    <input
+      type="number"
+      className="kw-input"
+      value={
+        verbraucherDaten[option.name]?.watt
+          ? (verbraucherDaten[option.name].watt / 1000).toFixed(2)
+          : ''
+      }
+      onChange={(e) => handleKWChange(option.name, e.target.value)}
+      min="0"
+      step="1"
+      placeholder="12"
+    />
+    <span className="kw-label"></span>
+  </div>
+)}
                       <div className="price-display">
                         {verbraucherDaten[option.name]?.kosten || '0.00'} €
                       </div>
