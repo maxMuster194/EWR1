@@ -2961,6 +2961,125 @@ body {
   .layout::-webkit-scrollbar {
     display: none;
   }
+
+.zeitraum-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.zeitraum-item {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* Stellt sicher, dass Kinder die volle Breite nutzen */
+  width: 100%; /* Oder eine feste Breite, z. B. 200px, je nach Design */
+  max-width: 200px; /* Optional: Begrenzt die Breite der Sektion */
+}
+
+.zeitraum-item span {
+  display: block;
+  text-align: left;
+  margin-bottom: 0.5rem;
+}
+
+.range-slider {
+  width: 100%; /* Slider nimmt die volle Breite der übergeordneten Div ein */
+  box-sizing: border-box; /* Verhindert, dass Padding/Margin die Breite beeinflusst */
+  margin: 0; /* Entfernt unerwünschte Margins */
+}
+
+.delete-zeitraum-button {
+  align-self: flex-start;
+  margin-top: 0.5rem;
+  cursor: pointer;
+}
+
+.dynamic-consumer-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Abstand zwischen Sektionen */
+  align-items: flex-start;
+  width: 100%;
+}
+
+.nutzung-item,
+.zeitraum-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 200px; /* Anpassbare Breite für alle Sektionen */
+}
+
+.zeitraum-item {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* Kinder nehmen die volle Breite ein */
+  width: 100%;
+}
+
+.nutzung-item span,
+.zeitraum-item span {
+  display: block;
+  text-align: left;
+  margin-bottom: 0.5rem;
+}
+
+.range-slider {
+  width: 100%; /* Slider nimmt die volle Breite des Containers ein */
+  box-sizing: border-box;
+  margin: 0;
+  -webkit-appearance: none; /* Entfernt Standard-Browser-Styling */
+  appearance: none;
+  height: 8px;
+  background: #ddd;
+  border-radius: 4px;
+}
+
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #007bff; /* Blaue Farbe für den Schieberegler */
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.range-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #007bff;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.delete-zeitraum-button,
+.add-option-button {
+  align-self: flex-start;
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #dc3545; /* Rot für Delete-Button */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-option-button {
+  background: linear-gradient(to right, #4372b7, #905fa4);
+}
+
+.delete-zeitraum-button:hover {
+  background: #c82333;
+}
+
+.add-option-button:hover {
+  background: linear-gradient(to right, #905fa4, #4372b7);
+}
+
+
 }`}</style>
 
 
@@ -3017,7 +3136,7 @@ body {
         </div>
 
         <div className="region-buttons">
-          {['KF', 'MN', 'MOD'].map((region) => (
+          {['AM', 'SuRo', 'MOD'].map((region) => (
             <div key={region} className="region-switch-wrapper">
               <label className="region-label">{region}</label>
               <div className="discount-switch-container">
@@ -3181,78 +3300,81 @@ body {
                             </div>
                           )}
                           {(menu.id === "dynamischeverbraucher" || menu.id === "waermepumpe") && (
-                            <div className="dynamic-consumer-layout">
-                              {menu.id === "dynamischeverbraucher" && (
-                                <div>
-                                  <span>Nutzung/Woche</span>
-                                  <span>{erweiterteEinstellungen[option.name]?.nutzung || 0}</span>
-                                  <input
-                                    type="range"
-                                    min="0"
-                                    max="20"
-                                    value={erweiterteEinstellungen[option.name]?.nutzung || 0}
-                                    onChange={(e) =>
-                                      handleErweiterteEinstellungChange(option.name, "nutzung", Number(e.target.value), null)
-                                    }
-                                  />
-                                </div>
-                              )}
-                              {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum, index) => (
-                                <div key={zeitraum.id} className="zeitraum-section">
-                                  <div>
-                                    <span>Zeitraum</span>
-                                    <span>
-                                      {timePeriods.find(
-                                        (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-                                      )
-                                        ? `${timePeriods.find(
-                                            (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-                                          ).label} (${zeitraum.startzeit}-${zeitraum.endzeit})`
-                                        : "–"}
-                                    </span>
-                                    <input
-                                      type="range"
-                                      min="0"
-                                      max={timePeriods.length - 1}
-                                      value={timePeriods.findIndex(
-                                        (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
-                                      )}
-                                      onChange={(e) =>
-                                        handleTimePeriodChange(option.name, timePeriods[e.target.value].label, zeitraum.id)
-                                      }
-                                    />
-                                  </div>
-                                  <div>
-                                    <span>Dauer (h)</span>
-                                    <span>{zeitraum.dauer || 0}</span>
-                                    <input
-                                      type="range"
-                                      min="0"
-                                      max="23"
-                                      step="1"
-                                      value={zeitraum.dauer || 0}
-                                      onChange={(e) =>
-                                        handleErweiterteEinstellungChange(option.name, "dauer", Number(e.target.value), zeitraum.id)
-                                      }
-                                    />
-                                  </div>
-                                  {index > 0 && (
-                                    <button
-                                      className="delete-zeitraum-button"
-                                      onClick={() => removeZeitraum(option.name, zeitraum.id)}
-                                    >
-                                      X
-                                    </button>
-                                  )}
-                                </div>
-                              ))}
-                              <button
-                                className="add-option-button"
-                                onClick={() => addZeitraum(option.name)}
-                              >
-                                Zeitraum hinzufügen
-                              </button>
-                            </div>
+                           <div className="dynamic-consumer-layout">
+                           {menu.id === "dynamischeverbraucher" && (
+                             <div className="nutzung-item">
+                               <span>Nutzung/Woche</span>
+                               <span>{erweiterteEinstellungen[option.name]?.nutzung || 0}</span>
+                               <input
+                                 type="range"
+                                 min="0"
+                                 max="20"
+                                 value={erweiterteEinstellungen[option.name]?.nutzung || 0}
+                                 onChange={(e) =>
+                                   handleErweiterteEinstellungChange(option.name, "nutzung", Number(e.target.value), null)
+                                 }
+                                 className="range-slider"
+                               />
+                             </div>
+                           )}
+                           {erweiterteEinstellungen[option.name]?.zeitraeume?.map((zeitraum, index) => (
+                             <div key={zeitraum.id} className="zeitraum-section">
+                               <div className="zeitraum-item">
+                                 <span>Zeitraum</span>
+                                 <span>
+                                   {timePeriods.find(
+                                     (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+                                   )
+                                     ? `${timePeriods.find(
+                                         (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+                                       ).label} (${zeitraum.startzeit}-${zeitraum.endzeit})`
+                                     : "–"}
+                                 </span>
+                                 <input
+                                   type="range"
+                                   min="0"
+                                   max={timePeriods.length - 1}
+                                   value={timePeriods.findIndex(
+                                     (p) => p.startzeit === zeitraum.startzeit && p.endzeit === zeitraum.endzeit
+                                   )}
+                                   onChange={(e) =>
+                                     handleTimePeriodChange(option.name, timePeriods[e.target.value].label, zeitraum.id)
+                                   }
+                                   className="range-slider"
+                                 />
+                               </div>
+                               <div className="zeitraum-item">
+                                 <span>Dauer (h)</span>
+                                 <span>{zeitraum.dauer || 0}</span>
+                                 <input
+                                   type="range"
+                                   min="0"
+                                   max="23"
+                                   step="1"
+                                   value={zeitraum.dauer || 0}
+                                   onChange={(e) =>
+                                     handleErweiterteEinstellungChange(option.name, "dauer", Number(e.target.value), zeitraum.id)
+                                   }
+                                   className="range-slider"
+                                 />
+                               </div>
+                               {index > 0 && (
+                                 <button
+                                   className="delete-zeitraum-button"
+                                   onClick={() => removeZeitraum(option.name, zeitraum.id)}
+                                 >
+                                   X
+                                 </button>
+                               )}
+                             </div>
+                           ))}
+                           <button
+                             className="add-option-button"
+                             onClick={() => addZeitraum(option.name)}
+                           >
+                             Zeitraum hinzufügen
+                           </button>
+                         </div>
                           )}
                           {menu.id === "eauto" && (
                             <div className="flex flex-col sm:flex-row gap-2">
